@@ -1,0 +1,20 @@
+@import "~src/sass/utilities/variables";
+
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+.mrgL6 {
+  margin-left: 6px;
+}
+
+
+.preview-icon {
+  width: 50%;
+  cursor: pointer;
+}
+.refresh-icon {
+  width: 100%;
+}

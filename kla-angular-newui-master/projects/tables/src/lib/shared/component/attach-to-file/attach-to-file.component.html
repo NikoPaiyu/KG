@@ -1,0 +1,42 @@
+<div class="p-20 width-100">
+<nz-tabset>
+    <nz-tab nzTitle="Create File">
+        <div class="row margnrtp-15">
+            <div class="col-md-4">File Subject</div>
+            <div class="col-md-8">
+              <input nz-input placeholder="File subject" [(ngModel)]="file.subject" />
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-4">Priority</div>
+            <div class="col-md-8">
+              <nz-radio-group [(ngModel)]="file.priority">
+                <label nz-radio nzValue="URGENT">Urgent</label>
+                <label nz-radio nzValue="NORMAL">Normal</label>
+                <label nz-radio nzValue="ACTION_TODAY"> Action Today</label>
+                <label nz-radio nzValue="ASSEMBLY_URGENT">Assembly Urgent</label>
+              </nz-radio-group>
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-4">Description</div>
+            <div class="col-md-8">
+              <textarea nz-input rows="2" placeholder="File description" [(ngModel)]="file.description"></textarea>
+            </div>
+          </div>
+          <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font"
+                (click)="handlePreviewCancel()">
+                Cancel
+              </button>
+              <button type="button" nz-button nzType="primary" nz-popconfirm
+                nzPopconfirmTitle="Are you sure you want to create file?" (nzOnConfirm)="createFile()"
+                class="btn btn-primary primary-button" [disabled]="file.subject === '' || file.priority === null">
+                Create File
+              </button>
+            </div>
+          </div>
+          </nz-tab>
+</nz-tabset>
+</div>

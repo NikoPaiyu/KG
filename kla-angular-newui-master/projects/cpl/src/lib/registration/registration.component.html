@@ -1,0 +1,2184 @@
+<form nz-form [formGroup]="validateForm" class="cpl-register">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ 
+            "cpl.actregistration.cpl" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{"cpl.documents.docregistration" | translate}}
+      </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      <div class="d-flex justify-content-between">
+        <button
+        class="mr-6"
+        nz-button
+          nzType="default"
+          (click)="goBack()"
+          *ngIf="osDisable"
+        >
+          {{"cpl.actregistration.discard"| translate}}
+        </button>
+        <button
+        nz-button
+        class="mr-6"
+          class=""
+          nzType="primary"
+          (click)="submitForm(true)"
+        >
+          {{"cpl.docupload.save"| translate}}
+        </button>
+        <button
+        nz-button
+          class="mr-6"
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to Submit?"
+          (nzOnConfirm)="submitForm(false)"
+          (nzOnCancel)="cancel()"
+          *ngIf="showButton && cplPermission.department"
+        >
+          {{"cpl.docupload.submit" | translate}}
+        </button>
+        <button
+          nz-button
+        
+          [nzType]="'primary'"
+          type="submit"
+          (click)="showAttachModal()"
+          [disabled]="!this.validateForm.valid || mainDoc.length === 0"
+          *ngIf="showButton && !cplPermission.department"
+        >
+          {{"cpl.documents.createorattachtofile" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label> 
+                {{"cpl.docupload.assembly" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder='{{"business-dashboard.cpl.view.selassembly" | translate}}'
+                name="assemblyId"
+                formControlName="assembly"
+                [nzDisabled]="osDisable"
+                (ngModelChange)="getSessionForAssembly()"
+              >
+                <nz-option
+                  *ngFor="let item of assemblyList"
+                  [nzLabel]="item.assemblyId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.docupload.session" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder='{{"business-dashboard.cpl.view.selsession" | translate}}'
+                name="sessionId"
+                formControlName="session"
+                [nzDisabled]="osDisable"
+              >
+                <nz-option
+                  *ngFor="let item of sessionList"
+                  [nzLabel]="item.sessionId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enteDocType" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.actregistration.doctype" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzPlaceHolder='{{"cpl.docupload.selectdoctype" | translate}}'
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="doctype"
+                [nzDisabled]="osDisable"
+                (ngModelChange)="addDynamicValidation()"
+                formControlName="doctype"
+              >
+                <nz-option
+                  *ngFor="let type of docType"
+                  [nzLabel]="type"
+                  [nzValue]="type"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype === 'REPORT'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enterdocsubtype" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label nzFor="docsubtype">
+                {{"cpl.documents.docsubtype" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="docsubtype"
+                formControlName="docsubtype"
+                nzPlaceHolder='{{"cpl.registration.selectsubtype" | translate}}'
+                (ngModelChange)="yearValidation()"
+              >
+                <nz-option
+                  *ngFor="let type of docSubType"
+                  [nzLabel]="type.name"
+                  [nzValue]="type.code"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype === 'SRO'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.selectSRO Type" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label nzFor="docsubtype"> {{"cpl.cplview.SroType" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-radio-group
+                [(ngModel)]="docsubtype"
+                (ngModelChange)="addReferenceValidation()"
+                formControlName="docsubtype"
+              >
+                <label nz-radio nzValue="NEW">{{"cpl.cplview.new" | translate}}</label>
+                <label nz-radio nzValue="REVISED">{{"cpl.cplview.revised" | translate}}</label>
+              </nz-radio-group>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="docsubtype === 'REVISED'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.selectreferencedocument" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label nzFor="typeReference">
+                {{"cpl.cplview.refSroNo" | translate}}.</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="typeReference"
+                nzPlaceHolder='{{"business-dashboard.cpl.view.referncedocument" | translate}}'
+                formControlName="typeReference"
+              >
+                <nz-option
+                  *ngFor="let doc of listOfReferenceDoc"
+                  [nzLabel]="doc.sroNumber"
+                  [nzValue]="doc.id"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{ doctype | titlecase | uppercase }} Name"
+        >
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label
+                >{{ doctype | titlecase | uppercase }} {{"cpl.cplview.docName" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                maxlength="254"
+                placeholder="{{ doctype | titlecase }} name"
+                [(ngModel)]="documentname"
+                formControlName="documentname"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype !== 'REPORT' && doctype !== ''">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{ doctype | titlecase | uppercase }} Number"
+        >
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label
+                >{{ doctype | titlecase | uppercase }} {{"cpl.cplview.number" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                placeholder='{{"cpl.documents.documentnumber" | translate}}'
+                [(ngModel)]="docNumber"
+                maxlength="40"
+                formControlName="docNumber"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterDepartmentFileNo" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.registration.departmentfileno" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                placeholder='{{"cpl.documents.departmentfileno" | translate}}'
+                maxlength="40"
+                [(ngModel)]="documentfileno"
+                formControlName="documentfileno"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-6" *ngIf="doctype === 'ACT'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectsectionname" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.sectionName" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="sectionName"
+                nzPlaceHolder='{{"cpl.registration.selectsection" | translate}}'
+                formControlName="sectionName"
+              >
+                <nz-option nzLabel="CPL Section" nzValue="CPL Section">
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype === 'ORDINANCE'">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{
+            returnLetter() | translate
+          }} Date"
+        >
+          <div class="row">
+            <div class="col-md-4" [formGroup]="validateForm">
+              <nz-form-label
+                >{{
+                  returnLetter() | translate
+                }}
+                {{"cpl.docpreparion.date" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [nzDisabledDate]="disabledDate"
+                [(ngModel)]="docDate"
+                formControlName="docDate"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div
+      class="col-md-6"
+      *ngIf="
+        (doctype === 'REPORT' || doctype === 'SRO') && !cplPermission.department
+      "
+    >
+      <nz-form-item>
+        <nz-form-control
+        nzErrorTip="Enter {{
+          returnLetter() | translate
+        }} Date"
+        >
+          <div class="row">
+            <div class="col-md-4" [formGroup]="validateForm">
+              <nz-form-label
+                >{{
+                  returnLetter() | translate
+                }}
+                {{"cpl.docpreparion.date" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [nzDisabledDate]="disabledDate"
+                [(ngModel)]="docDate"
+                formControlName="docDate"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div
+      class="col-md-6"
+      *ngIf="
+        (doctype === 'REPORT' || doctype === 'SRO') && cplPermission.department
+      "
+    >
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterdate" | translate}}'>
+          <div class="row">
+            <div class="col-md-4" [formGroup]="validateForm">
+              <nz-form-label> {{"cpl.cplview.letterdate" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [(ngModel)]="docDate"
+                formControlName="docDate"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="doctype === 'REPORT'">
+    <div class="col-md-6" *ngIf="doctype === 'REPORT'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.selectinstitutionname" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.Nmaeofinstitution" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                placeholder='{{"cpl.registration.addinstitutionname" | translate}}'
+                nz-input
+                [(ngModel)]="nameOfInst"
+                formControlName="nameOfInst"
+                (ngModelChange)="onInstChange($event)"
+                [nzAutocomplete]="auto1"
+              />
+              <nz-autocomplete #auto1>
+                <nz-auto-option
+                  *ngFor="let option of listOfInstName"
+                  [nzValue]="option.name"
+                  [nzLabel]="option.name"
+                >
+                  {{ option.name }}
+                </nz-auto-option>
+              </nz-autocomplete>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  <!-- </div>
+  <div class="row" *ngIf="doctype === 'REPORT' || doctype === 'ACT'">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{ "Year Type" }}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-radio-group [(ngModel)]="yearRadio" formControlName="yearType">
+                <label nz-radio nzValue="Financial Year">Financial Year</label>
+                <label nz-radio nzValue="Calendar Year">Calendar Year</label>
+              </nz-radio-group>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div> -->
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Select {{ doctype | titlecase | uppercase }} year"
+        >
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label
+                >{{ doctype | titlecase | uppercase }} {{"cpl.filelistflow.year" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                (ngModelChange)="docYearChange()"
+                [(ngModel)]="docYear"
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.registration.selectyear" | translate}}'
+                formControlName="docYear"
+              >
+              <nz-option *ngFor="let year of rangeList" [nzLabel]="year" [nzValue]="year"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div
+    class="row"
+    *ngIf="
+      (doctype === 'REPORT' || doctype === 'SRO' || doctype === 'ORDINANCE') &&
+      !cplPermission.department
+    "
+  >
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enterministerfor" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.ministerfor" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="ministerfor"
+                nzPlaceHolder='{{"cpl.docupload.selectminister" | translate}}'
+                [nzDisabled]="osDisable"
+                formControlName="ministerfor"
+                (ngModelChange)="onMinisterChange($event)"
+              >
+                <nz-option
+                  *ngFor="let portfolio of minPortfolios"
+                  nzLabel="
+                  {{translate.getDefaultLang()=='mal'?
+                  (portfolio.nameInMalayalam + '(' + portfolio.ministerName + ')'):
+                    (portfolio.name + '(' + portfolio.ministerName + ')')
+                  }}
+                  "
+                  [nzValue]="portfolio.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enterdep" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.dep" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.registration.selectdepartment" | translate}}'
+                [nzDisabled]="osDisable"
+                formControlName="ministerdepartmentId"
+                [(ngModel)]="ministerdepartmentId"
+                (ngModelChange)="onDepartmentChange($event);getAllSubjects($event)"
+              >
+                <nz-option
+                  *ngFor="let dept of ministerDept"
+                  [nzLabel]="dept.departmentName"
+                  [nzValue]="dept.id"
+                >
+                <!-- nzLabel="{{translate.getDefaultLang()=='mal'?dept.departmentNameMalayalam:dept.departmentName}}" -->
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div
+    class="row"
+    *ngIf="
+      (doctype === 'REPORT' || doctype === 'SRO' || doctype === 'ORDINANCE') &&
+      cplPermission.department
+    "
+  >
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enterministerfor" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.ministerfor" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+                            <!-- [nzDisabled]="(disableFields && !cplPermission.createOrdinance)
+              || (cplPermission.createOrdinance && doctype !== 'ORDINANCE')" -->
+              <!-- remove onMinisterChange while adding disable and add getMinisterDepartments($event) -->
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="deptUser?.data?.details.portfolioId"
+                nzPlaceHolder='{{"cpl.docupload.selectminister" | translate}}'
+                formControlName="ministerfor"
+                (ngModelChange)="onDeptMinisterChange($event)"
+              >
+                <nz-option
+                  *ngFor="let portfolio of minPortfolios"
+                  nzLabel="{{translate.getDefaultLang()=='mal'?
+                  (portfolio.nameInMalayalam + '(' + portfolio.ministerName + ')'):
+                    (portfolio.name + '(' + portfolio.ministerName + ')')
+                  }}
+                  "
+                  [nzValue]="portfolio.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enterdep" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.dep" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <!-- [nzDisabled]="(disableFields && !cplPermission.createOrdinance)
+              || (cplPermission.createOrdinance && doctype !== 'ORDINANCE')" -->
+              <!-- remove onDepartmentChange while adding disable and add -->
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="deptUser?.data?.details.departmentId"
+                (ngModelChange)="onDepartmentChange($event);getAllSubjects($event)"
+                nzPlaceHolder='{{"cpl.registration.selectdepartment" | translate}}'
+                formControlName="ministerdepartmentId"
+              >
+                <nz-option
+                  *ngFor="let dept of ministerDept"
+                  [nzLabel]="dept.departmentName"
+                  [nzValue]="dept.id"
+                >
+                </nz-option>
+                <!-- nzLabel="{{translate.getDefaultLang()=='mal'?dept.departmentNameMalayalam:dept.departmentName}}" -->
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row" *ngIf="(doctype === 'REPORT' || doctype === 'SRO' || doctype === 'ORDINANCE')">
+     <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectsubject" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.subject" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="subId"
+                [nzDisabled]="osDisable"
+                nzPlaceHolder='{{"cpl.registration.selectsubject" | translate }}'
+                formControlName="deptSubjectId"
+              >
+                <nz-option
+                *ngFor="let subject of deptSubjects"
+                nzLabel="{{translate.getDefaultLang()=='mal'?subject.titleInMalayalam:subject.title}}"
+                [nzValue]="subject.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row" *ngIf="doctype === 'SRO' || doctype === 'ORDINANCE'">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{
+            returnGO()|translate
+          }}"
+        >
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                returnGO()|translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                placeholder="{{
+                  returnGO()|translate
+                }}"
+                [(ngModel)]="gono"
+                maxlength="40"
+                formControlName="gono"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype === 'SRO'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterGODate" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.Godate" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [nzDisabledDate]="disabledDate"
+                [(ngModel)]="goDate"
+                formControlName="goDate"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row" *ngIf="doctype === 'SRO'">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selecttypeoftheAct" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.typeofact" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.registration.selectActtype" | translate}}'
+                formControlName="actType"
+                [(ngModel)]="actType"
+                (ngModelChange)="validateForm.controls.actName.reset()"
+              >
+                <nz-option nzLabel="STATE ACT" nzValue="STATE ACT"></nz-option>
+                <nz-option
+                  nzLabel="CENTRAL ACT"
+                  nzValue="CENTRAL ACT"
+                ></nz-option>
+                <nz-option
+                  nzLabel="CONSTITUTION"
+                  nzValue="CONSTITUTION"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+
+
+
+    <div class="col-md-6"  *ngIf="actType === 'CONSTITUTION'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectarticlenumber" | translate}}'>
+          <div class="row">
+            <div
+              class="col-md-4"
+              [formGroup]="validateForm"
+            >
+              <nz-form-label>{{"cpl.cplview.articleNo" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                placeholder='{{"cpl.registration.selectarticlenumber" | translate}}'
+                nz-input
+                [(ngModel)]="actName"
+                formControlName="actName"
+                (ngModelChange)="onActNameChange($event)"
+                [nzAutocomplete]="auto"
+              />
+              <nz-autocomplete #auto>
+                <nz-auto-option
+                  *ngFor="
+                    let option of listOfActName | commonFilter: this.actType
+                  "
+                  [nzValue]="option.name"
+                  [nzLabel]="option.name"
+                >
+                  {{ option.name }}
+                </nz-auto-option>
+              </nz-autocomplete>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+
+
+
+    <div class="col-md-6"   *ngIf="actType !== 'CONSTITUTION'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectActname" | translate}}'>
+          <div class="row">
+            <div
+              class="col-md-4"
+              [formGroup]="validateForm"
+            
+            >
+              <nz-form-label>{{"cpl.cplview.nameofact" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-input-group [nzSuffix]="suffixIconSearch">
+                <input
+                placeholder='{{"cpl.registration.addactname" | translate}}'
+                nz-input
+                [(ngModel)]="actName"
+                formControlName="actName"
+                (ngModelChange)="onActNameChange($event)"
+                [nzAutocomplete]="auto"
+              />
+              </nz-input-group>
+              <ng-template #suffixIconSearch>
+                <i nz-icon nzType="search"></i>
+              </ng-template>
+              <nz-autocomplete #auto>
+                <nz-auto-option
+                  *ngFor="
+                    let option of listOfActName | commonFilter: this.actType
+                  "
+                  [nzValue]="option.name"
+                  [nzLabel]="option.name"
+                >
+                  {{ option.name }}
+                </nz-auto-option>
+              </nz-autocomplete>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngIf="doctype === 'SRO' || doctype === 'ORDINANCE'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.cplview.EnterDateofpublishinginthegazette" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.cplview.Dateofpublishinginthegazette" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [nzDisabledDate]="disabledDate"
+                formControlName="dateOfGazette"
+                [nzFormat]="'dd-MM-yyyy'"
+                [(ngModel)]="dateOfGazette"
+                (ngModelChange)="dateOfGazetteValidationCheck()"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="isDelayNeeded">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"business-dashboard.cpl.view.uploaddelaystateent" | translate}}'>
+          <!-- this container only view department login -->
+          <ng-container *ngIf="!user.authorities.includes('assistant')">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.fileworkflow.delaystatement" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <nz-upload
+                  nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                  [nzAction]="uploadURL"
+                  [(nzFileList)]="delayList"
+                  [nzShowButton]="delayList.length < 1"
+                  [nzShowUploadList]="showDelayList"
+                  (nzChange)="handleDelayChange($event)"
+                  [nzPreview]="handlePreview"
+                >
+                  <button nz-button>
+                    <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                  </button>
+                </nz-upload>
+              </div>
+            </div>
+          </ng-container>
+          <!-- end container only view department login -->
+          <!-- this container only view in assistent login -->
+          <ng-container *ngIf="user.authorities.includes('assistant')">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.fileworkflow.delaystatement" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <nz-radio-group
+                  [(ngModel)]="delaystatement_radioButtonValue"
+                  [ngModelOptions]="{ standalone: true }"
+                  (ngModelChange)="
+                    otherRadioButtonClick(
+                      'delay',
+                      delayDoc.length > 0 ? delayDoc[0].attachmentUrl : '', delaystatement_radioButtonValue
+                    )
+                  "
+                >
+                  <label nz-radio nzValue="browse">{{"cpl.cplview.browse" | translate}}</label>
+                  <label
+                    nz-radio
+                    nzValue="existing"
+                    *ngIf="
+                      existingOtherDocuments &&
+                      existingOtherDocuments.attachments
+                    "
+                    >{{"cpl.cplview.AddfromList" | translate}}</label
+                  >
+                </nz-radio-group>
+              </div>
+            </div>
+
+            <div class="row d-flex justify-content-center">
+              <div class="col-md-4"></div>
+              <div
+                class="col-md-8"
+                *ngIf="delaystatement_radioButtonValue == 'browse'"
+              >
+                <nz-upload
+                  nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                  [nzAction]="uploadURL"
+                  [(nzFileList)]="delayList"
+                  [nzShowButton]="delayList.length < 1"
+                  [nzShowUploadList]="showDelayList"
+                  (nzChange)="handleDelayChange($event)"
+                  [nzPreview]="handlePreview"
+                >
+                  <button nz-button>
+                    <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                  </button>
+                </nz-upload>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4"></div>
+              <div
+                class="col-md-8"
+                *ngIf="delaystatement_radioButtonValue == 'existing'"
+              >
+                <button
+                  *ngIf="delayDoc.length == 0"
+                  nz-button
+                  (click)="showOtherDocumentModel('delay')"
+                >
+                  <i nz-icon nzType="upload"></i>{{"cpl.cplview.Uploadexistingfile" | translate}}
+                </button>
+                <div
+                  *ngIf="delayDoc.length > 0"
+                  class="d-flex align-items-center attach_hover marginbtm-10"
+                >
+                  <span class="d-flex align-items-center"
+                    ><i
+                      nz-icon
+                      nzType="paper-clip"
+                      nzTheme="outline"
+                      class="mr6"
+                    ></i
+                    ><a
+                      (click)="
+                        showExistingFilePreview(delayDoc[0].attachmentUrl, true)
+                      "
+                      >{{ delayDoc[0].name }}</a
+                    ></span
+                  >
+                  <i
+                    (click)="
+                      otherRadioButtonClick(
+                        'delay',
+                        delayDoc.length > 0 ? delayDoc[0].attachmentUrl : '', 'browse'
+                      )
+                    "
+                    nz-icon
+                    nzType="close"
+                    nzTheme="outline"
+                    class="ml-6 pointer"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          <!-- end container only view in assistent login -->
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="doctype === 'SRO' || doctype === 'REPORT'">
+    <div class="col-md-6"  *ngIf="actType !== 'CONSTITUTION'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterlayingprovisioninact" | translate }}'>
+          <div class="row">
+            <div
+              class="col-md-4"
+              [formGroup]="validateForm"
+             
+            >
+              <nz-form-label>{{"cpl.cplview.layingprovisionact" | translate}}</nz-form-label>
+            </div>
+          
+            <div class="col-md-8">
+              <textarea
+                nz-input
+                placeholder='{{"cpl.registration.layingprovisioninact" | translate}}'
+                maxlength="256"
+                [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                formControlName="layingprovision"
+                oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+              >
+              </textarea>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div class="col-md-6"  *ngIf="actType === 'CONSTITUTION'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterlayingprovision" | translate }}'>
+          <div class="row">
+            <div
+              class="col-md-4"
+              [formGroup]="validateForm"
+             
+            >
+              <nz-form-label>{{"cpl.cplview.layingprovision" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <textarea
+                nz-input
+                placeholder='{{"cpl.registration.layingprovision" | translate}}'
+                maxlength="40"
+                [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                formControlName="layingprovision"
+                oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+              >
+              </textarea>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+
+    <div class="col-md-6" *ngIf="doctype === 'SRO'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enteraNumber" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.fileworkflowdocs.noofdaystobelaidinsabha" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                type="number"
+                max="999"
+                min="0"
+                onKeyDown="if((this.value.length == 0 && event.keyCode == 48) ||(this.value.length==3 && event.keyCode>47 && event.keyCode<58) )return false;"
+                placeholder='{{"cpl.registration.numofdaystobelaidinsabha" | translate}}'
+                [(ngModel)]="insabha"
+                formControlName="insabha"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row" *ngIf="doctype === 'ORDINANCE'">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectyes/no" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label
+                >{{"cpl.fileworkflow.whetherunderconsofsabha" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder='{{"business-dashboard.cpl.view.yes/no" | translate}}'
+                formControlName="asPerRule"
+                [(ngModel)]="asPerRule"
+              >
+                <nz-option nzLabel="yes" nzValue="yes"></nz-option>
+                <nz-option nzLabel="no" nzValue="no"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="asPerRule === 'yes'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"business-dashboard.cpl.view.uploaddocument" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.registration.uploadstatementasperrule75(2)" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <ng-container *ngIf="!user.authorities.includes('assistant')">
+              <nz-upload
+                nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                [nzAction]="uploadURL"
+                [(nzFileList)]="ruleList"
+                [nzShowButton]="ruleList.length < 1"
+                [nzShowUploadList]="showRuleList"
+                (nzChange)="handleRuleChange($event)"
+                [nzPreview]="handlePreview"
+              >
+                <button nz-button>
+                  <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                </button>
+              </nz-upload>
+              </ng-container>
+              <ng-container *ngIf="user.authorities.includes('assistant')">
+                    <nz-radio-group
+                      [(ngModel)]="ruleRadioButtonValue"
+                      [ngModelOptions]="{ standalone: true }"
+                      (ngModelChange)="
+                        otherRadioButtonClick(
+                          'rule',
+                          ruleDoc.length > 0 ? ruleDoc[0].attachmentUrl : '', ruleRadioButtonValue
+                        )
+                      "
+                    >
+                      <label nz-radio nzValue="browse">{{"cpl.cplview.browse" | translate}}</label>
+                      <label
+                        nz-radio
+                        nzValue="existing"
+                        *ngIf="
+                          existingOtherDocuments &&
+                          existingOtherDocuments.attachments
+                        "
+                        >{{"cpl.cplview.AddfromList" | translate}}</label
+                      >
+                    </nz-radio-group>
+    
+                <div class="row d-flex justify-content-center">
+                  <div class="col-md-4"></div>
+                  <div
+                    class="col-md-8"
+                    *ngIf="ruleRadioButtonValue == 'browse'"
+                  >
+                    <nz-upload
+                      nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                      [nzAction]="uploadURL"
+                      [(nzFileList)]="ruleList"
+                      [nzShowButton]="ruleList.length < 1"
+                      [nzShowUploadList]="showRuleList"
+                      (nzChange)="handleRuleChange($event)"
+                      [nzPreview]="handlePreview"
+                    >
+                      <button nz-button>
+                        <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                      </button>
+                    </nz-upload>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4"></div>
+                  <div
+                    class="col-md-8"
+                    *ngIf="ruleRadioButtonValue== 'existing'"
+                  >
+                    <button
+                      *ngIf="ruleDoc.length == 0"
+                      nz-button
+                      (click)="showOtherDocumentModel('rule')"
+                    >
+                      <i nz-icon nzType="upload"></i>{{"cpl.cplview.Uploadexistingfile" | translate}}
+                    </button>
+                    <div
+                      *ngIf="ruleDoc.length > 0"
+                      class="d-flex align-items-center attach_hover marginbtm-10"
+                    >
+                      <span class="d-flex align-items-center"
+                        ><i
+                          nz-icon
+                          nzType="paper-clip"
+                          nzTheme="outline"
+                          class="mr6"
+                        ></i
+                        ><a
+                          (click)="
+                            showExistingFilePreview(ruleDoc[0].attachmentUrl, true)
+                          "
+                          >{{ ruleDoc[0].name }}</a
+                        ></span
+                      >
+                      <i
+                        (click)="
+                          otherRadioButtonClick(
+                            'rule',
+                            ruleDoc.length > 0 ? ruleDoc[0].attachmentUrl : '', 'browse'
+                          )
+                        "
+                        nz-icon
+                        nzType="close"
+                        nzTheme="outline"
+                        class="ml-6 pointer"
+                      ></i>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngIf="doctype === 'ORDINANCE'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.enterdate" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.docpreparion.date" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [(ngModel)]="dateOfOrdinance"
+                [nzDisabledDate]="disabledDate"
+                formControlName="dateOfOrdinance"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="doctype === 'ORDINANCE'">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"cpl.registration.selectyear" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.registration.ordinanceyear" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-select nzShowSearch nzAllowClear
+                nzPlaceHolder='{{"cpl.registration.selectyear" | translate}}' formControlName="docYear">
+                <nz-option *ngFor="let year of ordYearList" [nzLabel]="year" [nzValue]="year"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <!-- maindocument this container only view in assistent login upload from list option -->
+  <ng-container *ngIf="user.authorities.includes('assistant') && ministerfor && ministerdepartmentId && subId">
+    <div class="row">
+      <div class="col-md-2">
+        <nz-form-label>{{"cpl.actregistration.covletter" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-6">
+        <nz-radio-group
+          [nzDisabled]="osDisable"
+          [(ngModel)]="coveringDocument_radioButtonValue"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="coverRadioButtonClick()"
+        >
+          <label nz-radio nzValue="browse">{{"cpl.cplview.browse" | translate}}</label>
+          <label nz-radio nzValue="existing">{{"cpl.cplview.AddfromList" | translate}}</label>
+        </nz-radio-group>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div
+        class="col-md-6"
+        *ngIf="coveringDocument_radioButtonValue == 'browse'"
+      >
+        <nz-upload
+          nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+          [nzAction]="uploadURL"
+          [(nzFileList)]="coveringDocFileList"
+          [nzShowUploadList]="showUploadList"
+          [nzShowButton]="coveringDocFileList.length < 1"
+          (nzChange)="uploadCoveringLetter($event)"
+          [nzPreview]="handlePreview"
+        >
+          <button nz-button>
+            <i nz-icon nzType="upload" class="white"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+          </button>
+        </nz-upload>
+      </div>
+      <div
+        class="col-md-6"
+        *ngIf="coveringDocument_radioButtonValue == 'existing'"
+      >
+        <button
+          *ngIf="coveringDoc.length == 0"
+          nz-button
+          (click)="showCoverLetterModel()"
+        >
+          <i nz-icon nzType="upload" class="white"></i>{{"cpl.cplview.Uploadexistingfile" | translate}}
+        </button>
+        <div
+          *ngIf="coveringDoc.length > 0"
+          class="d-flex align-items-center attach_hover marginbtm-10"
+        >
+          <span
+            ><i nz-icon nzType="paper-clip" nzTheme="outline" class="mr6"></i
+            ></span
+          ><a
+          (click)="showExistingFilePreview(coveringDoc[0].attachmentUrl, true)"
+          >{{ coveringDoc[0].name }}</a
+        >
+          <i
+            (click)="coverRadioButtonClick()"
+            nz-icon
+            nzType="close"
+            nzTheme="outline"
+            class="ml-6 pointer"
+            *ngIf="!osDisable"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- end container only view in assistent login -->
+
+  <!--covering letter this container only view department login -->
+  <ng-container *ngIf="!user.authorities.includes('assistant')">
+    <div class="row">
+      <div class="col-md-2">
+        <nz-form-label>{{"cpl.docupload.coveringletter"| translate}}</nz-form-label>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-8 marginbtm-10">
+            <nz-upload
+              nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+              [nzAction]="uploadURL"
+              [(nzFileList)]="coveringDocFileList"
+              [nzShowUploadList]="showUploadList"
+              [nzShowButton]="
+                coveringDoc.length < 1 && coveringDocFileList.length < 1
+              "
+              (nzChange)="uploadCoveringLetter($event)"
+              [nzPreview]="handlePreview"
+            >
+              <button nz-button>
+                <i nz-icon nzType="upload" class="white"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+              </button>
+            </nz-upload>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- this container only view department login -->
+  <nz-divider></nz-divider>
+  <!-- maindocument this container only view in assistent login upload from list option -->
+  <ng-container *ngIf="user.authorities.includes('assistant')  && this.validateForm.valid">
+    <div class="row">
+      <div class="col-md-2">
+        <nz-form-label>{{"cpl.actregistration.maindoc" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-6">
+        <nz-radio-group
+          [(ngModel)]="mainDocument_radioButtonValue"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="
+            otherRadioButtonClick(
+              'main',
+              mainDoc.length > 0 ? mainDoc[0].attachmentUrl : '', mainDocument_radioButtonValue
+            )
+          "
+        >
+          <label nz-radio nzValue="browse">{{"cpl.cplview.browse" | translate}}</label>
+          <label
+            nz-radio
+            nzValue="existing"
+            *ngIf="existingOtherDocuments && existingOtherDocuments.attachments"
+            >{{"cpl.cplview.AddfromList" | translate}}</label
+          >
+        </nz-radio-group>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-6" *ngIf="mainDocument_radioButtonValue == 'browse'">
+        <nz-upload
+          nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+          [nzAction]="uploadURL"
+          [(nzFileList)]="fileList"
+          [nzShowButton]="fileList.length < 1 && mainDoc.length < 1"
+          [nzShowUploadList]="showUploadList"
+          (nzChange)="handleChange($event)"
+          [nzPreview]="handlePreview"
+        >
+          <button nz-button>
+            <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+          </button>
+        </nz-upload>
+      </div>
+      <div class="col-md-6" *ngIf="mainDocument_radioButtonValue == 'existing'">
+        <button
+          *ngIf="mainDoc.length == 0"
+          nz-button
+          (click)="showOtherDocumentModel('main')"
+        >
+          <i nz-icon nzType="upload"></i>{{"cpl.cplview.Uploadexistingfile" | translate}}
+        </button>
+        <div
+          *ngIf="mainDoc.length > 0"
+          class="d-flex align-items-center attach_hover marginbtm-10"
+        >
+          <span class="d-flex align-items center"
+            ><i nz-icon nzType="paper-clip" nzTheme="outline" class="mr6"></i
+            ><a (click)="showExistingFilePreview(mainDoc[0].attachmentUrl, true)">{{
+              mainDoc[0].name
+            }}</a></span
+          >
+          <i
+            (click)="
+              otherRadioButtonClick(
+                'main',
+                mainDoc.length > 0 ? mainDoc[0].attachmentUrl : '', 'browse'
+              )
+            "
+            nz-icon
+            nzType="close"
+            nzTheme="outline"
+            class="ml-6 pointer"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- end container only view in assistent login -->
+
+  <!--maindocument this container only view department login -->
+  <ng-container *ngIf="!user.authorities.includes('assistant')  && this.validateForm.valid">
+    <div class="row">
+      <div class="col-md-2">
+        <nz-form-label>{{"cpl.actregistration.maindoc" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-6">
+        <div class="row">
+          <div class="col-md-8 marginbtm-10">
+            <nz-upload
+              nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+              [nzAction]="uploadURL"
+              [(nzFileList)]="fileList"
+              [nzShowButton]="fileList.length < 1 && mainDoc.length < 1"
+              [nzShowUploadList]="showUploadList"
+              (nzChange)="handleChange($event)"
+              [nzPreview]="handlePreview"
+            >
+              <button nz-button>
+                <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+              </button>
+            </nz-upload>
+          </div>
+          <div class="col-md-4 marginbtm-10">
+            <label
+              nz-checkbox
+              [(ngModel)]="maindocCheck"
+              formControlName="maindocCheck"
+              *ngIf="confidentialityCheck && mainDoc.length > 0"
+              >{{"cpl.registration.confidential" | translate}}</label
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  <!-- this container only view department login -->
+
+  <!-- additional files this container only view in department login -->
+  <ng-container *ngIf="!user.authorities.includes('assistant')">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-item *ngIf="this.validateForm.valid && mainDoc.length !== 0">
+          <nz-form-control>
+            <nz-card style="width: 1000spx;">
+              <p>{{"cpl.actregistration.additionalfile" | translate}}</p>
+
+              <div class="col-md-6">
+                <nz-upload
+                  nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                  [nzAction]="uploadURL1"
+                  [(nzFileList)]="fileLists"
+                  [nzShowButton]="fileLists.length < 3"
+                  [nzShowUploadList]="showUploadList1"
+                  (nzChange)="handleChange1($event)"
+                  [nzMultiple]="true"
+                  [nzPreview]="handlePreview"
+                >
+                  <button nz-button>
+                    <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                  </button>
+                </nz-upload>
+              </div>
+            </nz-card>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </ng-container>
+  <!-- end container only view in department login -->
+
+  <!--additional files this container only view in assistent login  upload form list-->
+  <ng-container *ngIf="user.authorities.includes('assistant')">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-item *ngIf="this.validateForm.valid && mainDoc.length !== 0">
+          <nz-form-control>
+            <nz-card style="width: 1000spx;">
+              <div class="row">
+                <div class="col-md-2">
+                  <p>{{"cpl.actregistration.additionalfile" | translate}}</p>
+                </div>
+                <div class="col-md-6">
+                  <nz-radio-group
+                    [(ngModel)]="additionalDocument_radioButtonValue"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="
+                      additonalFileRadioClick(addDocs ? addDocs : '')
+                    "
+                  >
+                    <label nz-radio nzValue="browse">{{"cpl.cplview.browse" | translate}}</label>
+                    <label
+                      nz-radio
+                      nzValue="existing"
+                      *ngIf="
+                        existingOtherDocuments &&
+                        existingOtherDocuments.attachments
+                      "
+                      >{{"cpl.cplview.AddfromList" | translate}}</label
+                    >
+                  </nz-radio-group>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-2"></div>
+                <div
+                  class="col-md-6"
+                  *ngIf="additionalDocument_radioButtonValue == 'browse'"
+                >
+                  <nz-upload
+                    nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                    [nzAction]="uploadURL1"
+                    [(nzFileList)]="fileLists"
+                    [nzShowButton]="fileLists.length < 3"
+                    [nzShowUploadList]="showUploadList1"
+                    (nzChange)="handleChange1($event)"
+                    [nzMultiple]="true"
+                    [nzPreview]="handlePreview"
+                  >
+                    <button nz-button>
+                      <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                    </button>
+                  </nz-upload>
+                </div>
+                <div
+                  class="col-md-6"
+                  *ngIf="additionalDocument_radioButtonValue == 'existing'"
+                >
+                  <button
+                    nz-button
+                    (click)="showOtherDocumentModel('additional')"
+                  >
+                    <i nz-icon nzType="upload"></i>{{"cpl.cplview.Uploadexistingfile" | translate}}
+                  </button>
+                  <ng-container *ngIf="addDocs.length > 0">
+                    <div
+                      *ngFor="let item of addDocs"
+                      class="d-flex align-items-center attach_hover marginbtm-10"
+                    >
+                      <span class="d-flex align-items center"
+                        ><i
+                          nz-icon
+                          nzType="paper-clip"
+                          nzTheme="outline"
+                          class="mr6"
+                        ></i
+                        ><a
+                          (click)="showExistingFilePreview(item.attachmentUrl, true)"
+                          >{{ item.name }}</a
+                        ></span
+                      >
+                      <i
+                        (click)="
+                          otherRadioButtonClick(
+                            'additional',
+                            item.attachmentUrl,
+                            'browse'
+                          )
+                        "
+                        nz-icon
+                        nzType="close"
+                        nzTheme="outline"
+                        class="ml-6 pointer"
+                      ></i>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </nz-card>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </ng-container>
+  <!-- end container only view in assistant login -->
+</form>
+<nz-modal
+  [(nzVisible)]="isAttachVisible"
+  [nzFooter]="null"
+  [nzClosable]="false"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-tabset>
+          <nz-tab nzTitle='{{"cpl.documents.createfile" | translate}}'>
+            <div class="row margnrtp-15">
+              <div class="col-md-12">
+                <nz-radio-group
+                  [(ngModel)]="fileNumType"
+                  (ngModelChange)="fileNum()"
+                  [nzDisabled]="currentNumber.length < 1"
+                >
+                  <label nz-radio nzValue="true">{{"cpl.documents.currentfilenumber" | translate}}</label>
+                  <label nz-radio nzValue="false">{{"cpl.documents.arisingfile" | translate}}</label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-4">
+                <nz-select
+                  nzPlaceHolder='{{"cpl.registration.selectNo" | translate}}'
+                  [(ngModel)]="currentNum"
+                  *ngIf="fileNumType === 'true'"
+                >
+                  <nz-option
+                    *ngFor="let num of currentNumber"
+                    [nzValue]="num"
+                    [nzLabel]="num"
+                  ></nz-option>
+                </nz-select>
+              </div>
+            </div>
+            <div class="row margnrtp-15 align-items-center">
+              <div class="col-md-4">
+                {{"cpl.docamendments.filesubject" | translate}}
+              </div>
+              <div class="col-md-8">
+                <input
+                  nz-input
+                  placeholder='{{"business-dashboard.cpl.view.filesubject" | translate}}'
+                  [(ngModel)]="fileSub"
+                />
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-2">
+                {{"cpl.docamendments.filepriority" | translate}}
+              </div>
+              <div class="col-md-10">
+                <nz-radio-group [(ngModel)]="filePriority">
+                  <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                  <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                  <label nz-radio nzValue="ACTION_TODAY">{{"cpl.docamendments.actiontoday" | translate}}</label>
+                  <label nz-radio nzValue="ASSEMBLY_URGENT"
+                    >{{"cpl.docamendments.assemblyurgent" | translate}}</label
+                  >
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-4">
+                {{"cpl.docamendments.description" | translate}}
+              </div>
+              <div class="col-md-8">
+                <textarea
+                  nz-input
+                  rows="2"
+                  placeholder='{{"business-dashboard.cpl.view.filesdescription" | translate}}'
+                  [(ngModel)]="fileDesc"
+                ></textarea>
+              </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+              <div class="col-md-12 d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="secondary-button button-admin-radius button-font dark-border dark-font"
+                  nz-button
+                  nzType="default"
+                  (click)="handleCancel()"
+                >
+                  {{"cpl.correspondencelist.cancel" | translate}}
+                </button>
+                <button
+                  type="button"
+                  [disabled]="fileSub === null || filePriority === null"
+                  nz-button
+                  nzType="primary"
+                  (click)="submitForm(false)"
+                  class="primary-button button-admin-radius button-font margnlft-15"
+                >
+                  {{"cpl.registration.registerandattach" | translate}}
+                </button>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle='{{"cpl.documents.attachtofile" | translate}}'>
+            <div class="row margnrtp-15 align-items-center">
+              <div class="col-md-4">{{"cpl.documents.searchexistingfile" | translate}}</div>
+              <div class="col-md-8 customgp">
+                <nz-input-group nzSearch [nzAddOnAfter]="suffixButton" class="">
+                  <input
+                    type="text"
+                    nz-input
+                    placeholder='{{"business-dashboard.cpl.view.inputfilesearch" | translate}}'
+                    nzSearch
+                    [(ngModel)]="searchPending"
+                    (ngModelChange)="onSearch()"
+                  />
+                </nz-input-group>
+
+                <ng-template #suffixButton>
+                  <button nz-button nzType="primary" class="ml-6">
+                    {{"cpl.documents.search" | translate}}
+                  </button>
+                </ng-template>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="!hide">
+              <div class="col-md-12 d-flex justify-content-end">
+                <button nz-button nzType="default" (click)="hide = !hide">
+                  {{"cpl.documents.advancedfilter" | translate}}
+                </button>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="hide">
+              <div class="col-md-5">
+                {{"cpl.documents.fileno" | translate}}
+                <input
+                  nz-input
+                  placeholder='{{"business-dashboard.cpl.view.filenumber" | translate}}'
+                  [(ngModel)]="searchFileNum"
+                  (ngModelChange)="advancedSearch()"
+                />
+              </div>
+              <div class="col-md-5">
+                {{"cpl.docupload.subject" | translate}}
+                <input
+                  nz-input
+                  placeholder='{{"business-dashboard.aod.aod-list.subject" | translate}}'
+                  [(ngModel)]="searchFileSub"
+                  (ngModelChange)="advancedSearch()"
+                />
+              </div>
+                <div class="col-md-2">
+                <i
+                  nz-icon
+                  nzType="close"
+                  nzTheme="outline"
+                  (click)="closeadvancefilter()"
+                ></i>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-12">
+                <nz-card [nzTitle]="null" class="checklist-all">
+                  <nz-table #pendingFileTable [nzData]="fileForPortfolio">
+                    <tbody>
+                      <tr *ngFor="let file of pendingFileTable.data">
+                        <ng-container>
+                          <td>
+                            <nz-radio-group
+                              [(ngModel)]="radioValue"
+                              (ngModelChange)="onFileChecked(file.fileId, file)"
+                            >
+                              <label nz-radio [nzValue]="file.fileId"></label>
+                            </nz-radio-group>
+                          </td>
+                          <td>{{ file.fileNumber }}&nbsp;&nbsp;</td>
+                          <td>{{ file.subject }}</td>
+                        </ng-container>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </nz-card>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-12 d-flex justify-content-end">
+                <button
+                  type="button"
+                  class="secondary-button button-admin-radius button-font dark-border dark-font"
+                  nz-button
+                  nzType="default"
+                  (click)="handleCancel()"
+                >
+                  {{"cpl.correspondencelist.cancel" | translate}}
+                </button>
+                <button
+                  type="button"
+                  [disabled]="radioValue === null"
+                  nz-button
+                  nzType="primary"
+                  class="primary-button button-admin-radius button-font float-right"
+                  (click)="handleCancel(); submitForm(false)"
+                >
+                  {{"cpl.registration.registerandattach" | translate}}
+                </button>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- model for show covering letter existing file -->
+<nz-modal
+  (nzOnCancel)="hideExistingFileModel('cover')"
+  [nzFooter]="null"
+  [(nzVisible)]="model_ExistFile_cover"
+  nzWidth="1000"
+>
+  <div class="pd">
+    <div class="row">
+      <div class="col-md-4 marginbtm-15">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="existingFileSearch"
+            (ngModelChange)="searchCoverLetterExistingFile()"
+            nz-input
+            placeholder='{{"cpl.registration.searchhere" | translate }}'
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #rowSelectionTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="listOfExistingDocs"
+    >
+      <thead>
+        <tr>
+          <th></th>
+          <th>{{"cpl.registration.no" | translate}}</th>
+          <th>{{"cpl.cplview.currentnumber" | translate}}</th>
+          <th>{{"cpl.actregistration.doctype" | translate}}</th>
+          <th>{{"cpl.registration.title" | translate}}</th>
+          <th>{{"cpl.cplview.ministerfor" | translate}}</th>
+          <th>{{"cpl.registration.departmentname" | translate}}</th>
+          <th>{{"cpl.docamendments.status" | translate}}</th>
+          <th>{{"cpl.cplview.coverletter" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data; let i = index">
+          <td>
+            <label
+              nz-checkbox
+              [(ngModel)]="data.checked"
+              (ngModelChange)="coverLetterTableCheckBoxCheck(data)"
+            ></label>
+          </td>
+          <td>{{ i + 1 }}</td>
+          <td>{{ data.currentNumber }}</td>
+          <td>{{ data.type }}</td>
+          <td>{{ data.title }}</td>
+          <td>{{ data.portfolio }}</td>
+          <td>{{ data.department }}</td>
+          <td>{{ data.status }}</td>
+          <td (click)="showCOveringLetterFilePreview(data.attachments)">
+            <i
+              class="preview-icon pointer"
+              nz-icon
+              nzType="file"
+              nzTheme="outline"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          (click)="uploadCoverExistingFileDocument()"
+          class="mr6"
+          nz-button
+          nzType="primary"
+        >
+          {{"cpl.correspondencelist.upload" | translate}}
+        </button>
+        <button
+          (click)="hideExistingFileModel('cover')"
+          nz-button
+          nzType="default"
+        >
+          {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end model for show covering letter existing file -->
+
+<!-- model for show other existing file -->
+<nz-modal
+  (nzOnCancel)="hideExistingFileModel('other')"
+  [nzFooter]="null"
+  [(nzVisible)]="model_ExistFile_other"
+  nzWidth="1000"
+>
+  <div class="pd">
+    <div class="row">
+      <div class="col-md-4 marginbtm-15">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input placeholder='{{"cpl.registration.searchhere" | translate }}' />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #rowSelectionTable1
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="existingOtherDocuments.attachments"
+    >
+      <thead>
+        <tr>
+          <th></th>
+          <th>{{"cpl.registration.no" | translate}}</th>
+          <th>{{"cpl.cplview.currentnumber" | translate}}</th>
+          <th>{{"cpl.actregistration.doctype" | translate}}</th>
+          <th>{{"cpl.documents.documenttitle" | translate}}</th>
+          <th>{{"cpl.cplview.ministerfor" | translate}}</th>
+          <th>{{"cpl.cplview.dep" | translate}}</th>
+          <th>{{"cpl.docamendments.status" | translate}}</th>
+          <th>{{"cpl.docamendments.preview" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable1.data; let i = index">
+          <td>
+            <label
+              nz-checkbox
+              [(ngModel)]="data.checked"
+              (ngModelChange)="otherExistingTableCheckBoxCheck(data)"
+            ></label>
+          </td>
+          <td>{{ i + 1 }}</td>
+          <td>{{ existingOtherDocuments.currentNumber }}</td>
+          <td>{{ existingOtherDocuments.type }}</td>
+          <td>{{ existingOtherDocuments.title }}</td>
+          <td>{{ existingOtherDocuments.portfolio }}</td>
+          <td>{{ existingOtherDocuments.department }}</td>
+          <td>{{ existingOtherDocuments.status }}</td>
+          <td (click)="showExistingFilePreview(data.documentUrl, false)">
+            <i
+              class="preview-icon pointer"
+              nz-icon
+              nzType="file"
+              nzTheme="outline"
+            ></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          (click)="uploadOtherExistingDocument()"
+          class="mr6"
+          nz-button
+          nzType="primary"
+        >
+          {{"cpl.correspondencelist.upload" | translate}}
+        </button>
+        <button
+          (click)="hideExistingFileModel('other')"
+          nz-button
+          nzType="default"
+        >
+          {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end model for show other existing file -->
+<nz-modal
+  [(nzVisible)]="previewVisible"
+  [nzFooter]="null"
+  (nzOnCancel)="hidePreview()"
+  nzWidth="800"
+>
+<div class="width-100 pading-all" *ngIf="this.docUrl !== null">
+  <form nz-form [formGroup]="validateForm" class="cpl-register"  *ngIf="showForm">
+  <div class="row margnrtp-15 margnrgt-15">
+    <div class="col-md-6" *ngIf="doctype !== 'REPORT' && doctype !== ''">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{ doctype | titlecase | uppercase }} Number"
+        >
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label
+                >{{ doctype | titlecase | uppercase }} {{"cpl.cplview.number" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8" [formGroup]="validateForm">
+              <input
+                nz-input
+                placeholder='{{"cpl.documents.documentnumber" | translate }}'
+                [(ngModel)]="docNumber"
+                maxlength="40"
+                formControlName="docNumber"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+      <div class="col-md-6" *ngIf="doctype === 'REPORT'">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"cpl.cplview.selectinstitutionname" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.cplview.Nmaeofinstitution" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8" [formGroup]="validateForm">
+                <input
+                  placeholder='{{"cpl.registration.addinstitutionname" | translate}}'
+                  nz-input
+                  [(ngModel)]="nameOfInst"
+                  formControlName="nameOfInst"
+                  (ngModelChange)="onInstChange($event)"
+                  [nzAutocomplete]="auto1"
+                />
+                <nz-autocomplete #auto1>
+                  <nz-auto-option
+                    *ngFor="let option of listOfInstName"
+                    [nzValue]="option.name"
+                    [nzLabel]="option.name"
+                  >
+                    {{ option.name }}
+                  </nz-auto-option>
+                </nz-autocomplete>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    <div
+    class="col-md-6"
+    *ngIf="
+      (doctype === 'REPORT' || doctype === 'SRO') && !cplPermission.department
+    "
+  >
+    <nz-form-item>
+      <nz-form-control
+        nzErrorTip="Enter {{ doctype | titlecase | uppercase }} Date"
+      >
+        <div class="row">
+          <div class="col-md-4" [formGroup]="validateForm">
+            <nz-form-label
+              >{{ doctype | titlecase | uppercase }} {{"cpl.docpreparion.date" | translate}}</nz-form-label
+            >
+          </div>
+          <div class="col-md-8">
+            <nz-date-picker
+              [nzDisabledDate]="disabledDate"
+              [(ngModel)]="docDate"
+              formControlName="docDate"
+              [nzFormat]="'dd-MM-yyyy'"
+            >
+            </nz-date-picker>
+          </div>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div
+    class="col-md-6"
+    *ngIf="
+      (doctype === 'REPORT' || doctype === 'SRO') && cplPermission.department
+    "
+  >
+    <nz-form-item>
+      <nz-form-control nzErrorTip='{{"cpl.registration.enterdate" | translate}}'>
+        <div class="row">
+          <div class="col-md-4" [formGroup]="validateForm">
+            <nz-form-label> {{"cpl.cplview.letterdate" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-date-picker
+              [nzDisabledDate]="disabledDate"
+              [(ngModel)]="docDate"
+              formControlName="docDate"
+              [nzFormat]="'dd-MM-yyyy'"
+            >
+            </nz-date-picker>
+          </div>
+        </div>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div class="col-md-6" *ngIf="doctype === 'ORDINANCE'">
+      <nz-form-item>
+        <nz-form-control
+          nzErrorTip="Enter {{
+            doctype === 'ORDINANCE'
+              ? 'NOTIFICATION '
+              : (doctype | titlecase | uppercase)
+          }} Date"
+        >
+          <div class="row">
+            <div class="col-md-4" [formGroup]="validateForm">
+              <nz-form-label
+                >{{
+                  doctype === "ORDINANCE"
+                    ? "NOTIFICATION "
+                    : (doctype | titlecase | uppercase)
+                }}
+                {{"cpl.docpreparion.date" | translate}}</nz-form-label
+              >
+            </div>
+            <div class="col-md-8">
+              <nz-date-picker
+                [nzDisabledDate]="disabledDate"
+                [(ngModel)]="docDate"
+                formControlName="docDate"
+                [nzFormat]="'dd-MM-yyyy'"
+              >
+              </nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+ </form>
+  <div class="row margnrtp-15 margnrgt-15">
+    <div class="col-md-12 align-items-center">
+      <ngx-doc-viewer
+        [url]="docUrl"
+        viewer="url"
+        style="width: 100%; height: 500px;"
+      ></ngx-doc-viewer>
+    </div>
+  </div>
+</div>
+</nz-modal>

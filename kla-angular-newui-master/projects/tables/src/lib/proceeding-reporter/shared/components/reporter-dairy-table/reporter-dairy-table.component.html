@@ -1,0 +1,52 @@
+<nz-table #rowSelectionTable nzShowPagination nzShowSizeChanger #filterTable [nzData]="reportDiaryDetails">
+    <thead>
+        <tr>
+            <th>{{"business-dashboard.question.report.slno"|translate}}</th>
+            <th>
+                {{ "business-dashboard.table.table-diary.date" | translate }}
+            </th>
+            <th>
+                {{ "business-dashboard.table.table-diary.kla" | translate }}
+            </th>
+            <th>
+                {{ "business-dashboard.table.table-diary.session" | translate }}
+            </th>
+            <th>
+                {{ "business-dashboard.table.table-diary.status" | translate }}
+            </th>
+            <th *ngIf='allowActionColumn'>
+                {{"bussiness-dashboard.user-managemnet.biometric-enrollment.action"|translate}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class='myDiv' *ngFor="let list of filterTable.data;let i=index">
+            <td>{{i+1}}
+        <tr class='only-show-on-hover'>
+            <td>
+                <a class="viewlink" (click)='viewDiary(list.id)'>View </a>
+            </td>
+        </tr>
+        </td>
+        <td>{{list.date}}</td>
+        <td>{{ list.assemblyValue }}</td>
+        <td>{{ list.sessionValue }}</td>
+        <td>
+            <nz-tag> {{ list?.status }}</nz-tag>
+        </td>
+        <td *ngIf='allowActionColumn'>
+            <div class='d-flex'>
+                <button *ngIf='list.wfStatus=="SUBMITTED"&&allowApproveButton' class="mr-6 approve-btn" nz-button
+                    nz-popconfirm nzPopconfirmTitle="Do you want to approve?"
+                    (nzOnConfirm)="approveProceedingDiary(list.id,i,filterTable.data)"
+                    nzPopconfirmPlacement="bottomRight">
+                    {{"noticeprocessing.noticeprocess.approve"|translate}}
+                </button>
+                <button *ngIf='allowDownLoadButton' (click)='downLoadPdf(list.description)' class="mr-6" nz-button
+                    nzType="default">
+                    <i nz-icon nzType="download" nzTheme="outline"></i>
+                </button>
+            </div>
+        </td>
+        </tr>
+    </tbody>
+</nz-table>

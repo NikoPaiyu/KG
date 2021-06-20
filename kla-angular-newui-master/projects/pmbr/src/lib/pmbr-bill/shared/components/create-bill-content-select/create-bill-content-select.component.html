@@ -1,0 +1,51 @@
+<div class="row mrgB20">
+  <div class="col-md-12"><h4>Select section to import</h4></div>
+</div>
+<hr />
+<!-- <div class="row marginbtm-25">
+  <div class="col-md-12">
+    <h6>safffffffffffffffffffffffff dfdfd</h6>
+  </div>
+</div> -->
+<ng-template *ngIf="billDetails.length > 0"></ng-template>
+<div class="row mrgB20" *ngFor="let block of billDetails">
+  <div class="col checkbx">
+    <label
+      nz-checkbox
+      [(ngModel)]="block.checked"
+      (ngModelChange)="uncheckOtherCheckbox(block.id)"
+      *ngIf="checkCheckBoxPermission(block.type.code)"
+    ></label>
+  </div>
+  <!-- <div class="col nmber"><span>1</span></div> -->
+  <div class="col">
+    <div class="row">
+      <div class="col-md-12 marginbtm-10 indent-10">
+        {{ block.indexValue }} {{ block.content }}
+      </div>
+      <div
+        class="col-md-12 marginbtm-10 indent-20"
+        *ngFor="let subBlock1 of block.subBlockDto"
+      >
+        {{ subBlock1.indexValue }} {{ subBlock1.content }}
+      </div>
+    </div>
+  </div>
+</div>
+<nz-empty *ngIf="billDetails.length == 0"></nz-empty>
+<hr />
+<div class="row margnrtp-15">
+  <div class="col-md-12 d-flex justify-content-end">
+    <button nz-button class="mr6" nzType="default" (click)="onCancel()">
+      {{ "cpl.correspondencelist.cancel" | translate }}
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      *ngIf="billDetails.length > 0"
+      (click)="import()"
+    >
+      {{ "business-dashboard.bill-management.billCreate.import" | translate }}
+    </button>
+  </div>
+</div>

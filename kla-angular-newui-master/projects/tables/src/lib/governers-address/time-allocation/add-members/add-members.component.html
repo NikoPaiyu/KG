@@ -1,0 +1,161 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "committee.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                Tables
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">
+            Member Time Allocation - CPI(M)
+        </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="onBack()">
+                back
+            </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="save()">
+                Save
+            </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="submit()">
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<form [formGroup]="timeAllcForm">
+    <div class="row margnrtp-5">
+        <div class="col-md-8">
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    <nz-form-label>{{ "Session" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-6">
+                   {{assemblySessionObj.currentsessionVal}}
+                </div>
+            </div>
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    <nz-form-label>{{"Day" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-6">
+                    <form-item>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Date">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="day">
+                                <nz-option *ngFor="let day of days" [nzLabel]="day" [nzValue]="day">
+                                </nz-option>
+                            </nz-select>
+                            <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="date"
+                                [nzDisabledDate]="disabledDate">
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </form-item>
+                </div>
+            </div>
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    Allocation For :
+                </div>
+                <div class="col-md-6">
+                    <form-item>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Enter Allocation">
+                            <input nz-input placeholder="Enter Allocation" formControlName="allocation"/>
+                        </nz-form-control>
+                    </form-item>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex justify-content-flex-end">
+            <div class="">
+                <nz-card style="width:300px;" nzTitle="For the Day">
+                    <p>Total time available: 12 Minutes</p>
+                    <p>Allocated time: 06 Minutes</p>
+                    <p>UnAllocated time: 06 Minutes</p>
+                </nz-card>
+            </div>
+        </div>
+    </div>
+    <div class="row margnrtp-10">
+        <div class="col-md-6">
+            <div class="row margnrtp-5">
+                <div formArrayName="members">
+                    <div *ngFor="let member of getMemberData.controls; let timeIndex = index">
+                        <div [formGroupName]="timeIndex">
+                            <nz-form-item>
+                                <nz-form-control>
+                                    <nz-card class="committee_blk marginbtm-15">
+                                        <span class="mr-6">{{ member.value.name }}</span>
+                                        <span class="mr-6">({{ member.value.time }})</span>
+                                        <span class="flr">
+                                            <i nz-icon nzType="delete" nzTheme="outline"
+                                                (click)="deleteMember(member, timeIndex)"></i>
+                                        </span>
+                                    </nz-card>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <button nz-button nzType="dashed"
+                    class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+                    (click)="shownewMemberPopup()">
+                    <i nz-icon nzType="plus"></i>
+                    Add Member
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+<nz-modal [(nzVisible)]="showAddMmemModal" nzTitle="Create Governor's Address" [nzClosable]="false" [nzFooter]="null">
+    <div class="width-100  pading-all">
+        <form [formGroup]="addMemForm">
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">{{"Select Member" |translate}}:</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Member">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="selectedAssembly"
+                                formControlName="memberId">
+                                <nz-option *ngFor="let mla of mlaList" [nzLabel]="mla.details?.fullName"
+                                    [nzValue]="mla.userId">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">{{"Allocated Time" |translate}}</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Enter time">
+                            <nz-form-control nzErrorTip="Please Enter Name">
+                                <input nz-input placeholder="" formControlName="time" />
+                            </nz-form-control>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="button" nz-button nzType="default" class="margnlt-5" (click)="showAddMmemModal=false">
+                        {{"table.listga.cancel" |translate}}
+                    </button>
+                    <button type="button" nz-button nzType="primary" (click)="getAddedData($event)" class="margnlt-5"
+                        [disabled]="!addMemForm.valid">
+                        {{"Add" |translate}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</nz-modal>

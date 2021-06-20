@@ -1,0 +1,62 @@
+<nz-collapse class="erratum-collapse" *ngIf="letterDetails.length > 0">
+    <nz-collapse-panel
+      *ngFor="let panel of letterDetails"
+      [nzActive]="panel.letterStatus == 'PENDING' || panel.letterStatus == 'DRAFT'"
+      [nzExtra]="extraTpl"
+      [nzDisabled]="panel.disabled"
+      [nzHeader]="panel.name"
+    >
+
+<div *ngIf="panel.correspondenceId == null">
+    <div class="row marginbtm-15">
+        <div class="col-md-4">
+            {{ "cpl.correspondence.correspondence" | translate}}:
+        </div>
+        <div class="col-md-4">
+            <button
+        class="ml-6"
+        nz-button
+        nzType="primary"
+        *ngIf="panel.correspondenceId === null"
+        (click)="draftCorrespondence(panel)"
+      >
+      {{ "bill.bill-clause.list.attachcorrespondence" | translate}}
+      </button>
+        </div>
+    </div>
+    </div>
+    <div *ngIf="panel.correspondenceId != null">
+        <div class="padding_15">   
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+               <button 
+               class="ml-6"
+               nz-button
+               nzType="primary"
+               (click)="viewCorrespondence(panel.correspondenceId)">
+               {{ "committee.attendence.attendencelist.fullview" | translate}}
+               </button>
+            </div>
+        </div>
+        
+            <div class="row margnrtp-15">
+                <div class="col-md-12">
+            <div class="preview-main">
+                <div class="mrgT20 preview-main-text">
+                    
+                    <div>
+                        <quill-view-html [content]="panel.letterContent" *ngIf="panel.letterContent">
+                        </quill-view-html>
+                    </div>
+                </div>
+            </div>  
+            </div>
+            </div>  
+    </div>
+    </div>
+<ng-template #extraTpl>
+        <nz-tag>{{panel.letterStatus}}</nz-tag>
+      </ng-template>
+    </nz-collapse-panel>
+</nz-collapse>   
+    

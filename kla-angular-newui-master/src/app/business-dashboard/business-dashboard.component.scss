@@ -1,0 +1,53 @@
+@import "../../sass/utilities/font";
+* {
+  font-family: "Roboto";
+}
+.notification_cont h3 {
+  float: left;
+  width: 100%;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.notification_cont p {
+  float: left;
+  width: 220px;
+  font-size: 15px;
+  margin-bottom: 0px;
+  color: #999;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.note_icon {
+  width: 5px;
+  height: 5px;
+  float: left;
+  border-radius: 100%;
+  background-color: #ccc;
+}
+.brdrb {
+  border-bottom: 1px solid #e8e8e8;
+  padding-bottom: 10px;
+
+  margin-bottom: 10px;
+}
+.see_all {
+  color: blue;
+  float: left;
+  padding-top: 15px;
+}
+.notification_container {
+  float: left;
+  width: 100%;
+  max-height: 250px;
+  overflow: auto;
+  overflow-x: hidden;
+}
+.logo_area{width: 260px;
+  position: fixed;
+  left: 50px;
+  top: 0px;
+  height: 60px;
+opacity: 0;
+z-index: 9;}
+.header_options{width: 100%;}

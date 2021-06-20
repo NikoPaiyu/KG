@@ -1,0 +1,119 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between ">
+        <div class="col-md-12 col-sm-12 mb-2 ">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "cpl.actregistration.dash" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{"table.listga.table" |translate}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">Amendment-List Preparation</h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end ">
+            <button class="ml-6" nz-button [nzType]="'primary'" *ngIf="noticeContent" (click)="showPopup() ">
+     View MOT
+            </button>
+            <button class="ml-6" nz-button [nzType]="'primary'" *ngIf="(commonAmendmentList.length> 0 && amendmentsList?.amendmentListStatus ===null)" (click)="create()"> Create AmendmentList
+    </button>
+            <button class="ml-6" nz-button [nzType]="'primary'" *ngIf="(commonAmendmentList.length > 0 && listData?.status==='GENERATED') || (commonAmendmentList.length > 0 && amendmentsList?.amendmentListStatus==='GENERATED')" (click)="attachToFile()">
+            Attach To File
+            </button>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <!-- <nz-select nzShowSearch nzAllowClear formControlName="assemblyId"(ngModelChange)="getDateList()">
+            <nz-option *ngFor="let type of approvedMOTList" [nzLabel]="type.noticeNumber" [nzValue]="type.id"></nz-option>
+          </nz-select> -->
+            <nz-select nzAllowClear nzShowSearch nzPlaceHolder="Select an MOT" [formControl]="searchParam" (ngModelChange)="getAllAmendment()" name="searchParam">
+                <nz-option *ngFor="let option of approvedMOTList" [nzLabel]="option.noticeNumber" [nzValue]="option.id"></nz-option>
+            </nz-select>
+        </div>
+    </div>
+</ng-container>
+<div class="row" *ngIf="commonAmendmentList.length">
+    <div class="col-md-12">
+        <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="commonAmendmentList" (nzCurrentPageDataChange)="currentPageDataChange($event)" class="table-all">
+            <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr>
+                    <!-- <th *ngIf="isSpeaker() && isFileView"></th> -->
+                    <th *ngIf="!(isSpeaker() && isFileView)">SL No</th>
+                    <th nzShowSort nzSortKey="noticenumber">
+                        Notice Number
+                    </th>
+                    <th nzShowSort nzSortKey="membername">
+                        Member Name
+                    </th>
+                    <th nzShowSort nzSortKey="subject">
+                        Subject
+                    </th>
+                    <th *ngIf="isSpeaker() && isFileView"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <tr *ngIf="tableParams.colSpan">
+                <th colspan="10" class="tb-data">
+                    {{ checkbxParams.numberOfChecked }} Selected :
+                    <button class="ant-btn mr-6" (click)="cancelAmendment()">
+            Cancel
+          </button>
+                </th>
+            </tr> -->
+                <tr *ngFor="let list of filterTable.data;let i=index">
+                    <!-- <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="refreshStatus(list)" *ngIf="isSpeaker() &&isFileView"></td> -->
+                    <td *ngIf="!(isSpeaker() && isFileView)">
+                        {{i+1}}
+                    </td>
+                    <td>
+                        <tr>
+                            {{list.motionOfThanks?.noticeNumber ? list.motionOfThanks?.noticeNumber : ''}}
+                        </tr>
+                        <!-- <tr *ngIf="list.viewLinks">
+                        <a nz-button nzType="link" class="viewlink"(click)="noticeView(list.noticeId)">View</a></tr>
+                    </tr> -->
+                    </td>
+
+                    <td>
+                        <!-- <a style="color: #1890ff; " *ngIf="list.fileNumber" (click)="viewFile(list.fileId) ">{{
+                    list.fileNumber}}</a> -->
+                        {{list.submittedMemberName?.details?.fullName}}
+                    </td>
+                    <td>
+                        <tr>
+                            {{list?.subject}}
+                        </tr>
+                        <tr>
+                            <a nz-button nzType="link" class="viewlink" (click)="viewAmendment(list.amendmentText)">View</a>
+                        </tr>
+
+                    </td>
+                    <td *ngIf="isSpeaker() && isFileView">
+                        <button class="ml-6" nz-button [nzType]="'primary'" (click)="cancelAmendment(list.id)">Cancel</button>
+                        <!-- <button type="button" nz-button nzType="primary" (click)="saveAmendment()" class="bmargnlt-5">
+                            {{"table.listga.submit" |translate}}
+                         </button> -->
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<nz-modal [(nzVisible)]="isViewNotice" nzTitle="View" (nzOnCancel)="handleCancel()" [nzFooter]="null" nzWidth="800">
+    <ng-container>
+        <quill-view-html [content]="noticeContent" *ngIf="noticeContent"></quill-view-html>
+    </ng-container>
+</nz-modal>
+<nz-modal [(nzVisible)]="isViewAmendement" nzTitle="View" (nzOnCancel)="cancel()" [nzFooter]="null" nzWidth="800">
+    <div class="row d-flex justify-content-center">
+        <quill-view-html [content]="amendmentText" *ngIf="amendmentText"></quill-view-html>
+    </div>
+</nz-modal>

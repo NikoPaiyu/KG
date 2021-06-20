@@ -1,0 +1,96 @@
+<!-- <p>questionnaire works!</p> -->
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b>
+            {{ "committee.committe-mgmnt" | translate}}
+          </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">{{ "committee.list.questionnaire" | translate}}</h2>
+            
+          </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="createquestionnarie()">
+            {{ "committee.list.createquestionnaire" | translate}}
+          </button>
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+  <div class="row">
+    <div class="col-md-3">
+    </div>
+        <div class="col-md-3">
+        <button
+          class="plus-arrange"
+          nz-button
+          [nzType]="'primary'"
+        >
+        {{ "noticeprocessing.staff.personalregister.addfilter" | translate}}
+        </button>
+      </div>
+      <div class="col-md-3 d-flex align-items-center">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            placeholder="search here"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+      <div class="col-md-3">
+      <i nz-icon nzType="layout" nzTheme="outline"></i>
+      <span>{{"cpl.documents.cols" | translate}}</span>
+      </div>
+    </div>
+    <nz-divider></nz-divider>
+  <nz-table #rowSelectionTable nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="onCurrentPageDataChange()">
+    <thead>
+      <tr>
+        <th
+          [nzSelections]="listOfSelection"
+          [(nzChecked)]="checked"
+          [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)"
+        ></th>
+        <th>{{"cpl.docamendments.fileno" | translate}}</th>
+        <th>{{"cpl.docamendments.filesubject" | translate}}</th>
+        <th>{{"committee.list.dateofmeeting" | translate}}</th>
+        <th>{{"committee.list.backfilereference" | translate}}</th>
+        <th>{{"committee.list.createdon" | translate}}</th>
+        <th>{{"business-dashboard.question.questionlist.status" | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td [nzChecked]="setOfCheckedId.has(data.id)" (nzCheckedChange)="onItemChecked(data.id, $event)"></td>
+        <td>{{ data.fileNumber }}</td>
+        <td>{{ data.fileSubject }}</td>
+        <td>{{ data.dateofMeeting }}</td>
+        <td>{{ data.backfileno }}</td>
+        <td>{{ data.createdon }}</td>
+        <td><nz-tag *ngIf="data.status==='Yes'"[nzColor]="'green'">{{ data.status }} </nz-tag>
+            <nz-tag *ngIf="data.status==='No'"[nzColor]="'red'">{{ data.status }}
+        </nz-tag></td>
+      </tr>
+    </tbody>
+  </nz-table>

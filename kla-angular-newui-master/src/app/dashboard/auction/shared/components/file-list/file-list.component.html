@@ -1,0 +1,31 @@
+<div class="file-list-wrapper">
+    <input type="file" class="form-control-file" class="mb-3" [disabled]="attachmentDisabled" (change)="onUpload($event.target.files)">
+    <ul class="file-list-list">
+        <li class="file-list-item d-flex flex-row justify-content-start align-items-center" *ngFor="let file of fileList; let i = index">
+            <div class="file-list-item-icon d-flex">
+                <i nz-icon nzType="file" nzTheme="outline"></i>
+            </div>
+            <div class="file-list-item-content d-flex flex-row justify-content-start align-items-center">
+                <span (click)="downloadFile(file)" >{{file.attachmentName}}</span>
+                <i [hidden]="attachmentDisabled"  (click)="deleteFile(i)" nz-icon nzType="delete" nzTheme="fill" #icon></i>
+            </div>
+        </li>
+    </ul>
+</div>  
+
+<nz-modal (nzOnCancel)="handleCancel()" [nzFooter]="null" [(nzVisible)]="isVisible"
+nzTitle='Pdf' nzWidth="1000"
+[nzStyle]="{ top: '10px' }">
+<div class="d-flex justify-content-center">
+    <div class="frame-pdf" *ngIf="finalUrl">
+        <ng2-pdfjs-viewer *ngIf="finalUrl" 
+            [pdfSrc]="finalUrl" scroll="V" 
+            [downloadFileName]="'Report.pdf'"
+            [openFile]="false" [viewBookmark]="false" 
+            [download]="true" [print]="true" spread="N"
+            [fullScreen]="false" [showSpinner]="true" 
+            >
+        </ng2-pdfjs-viewer>   
+    </div>
+</div>
+</nz-modal>

@@ -1,0 +1,147 @@
+card1 {
+  padding: 15px 0px;
+}
+.card2 {
+  padding: 15px 0px;
+}
+.mrgb-6 {
+  margin-bottom: 15px;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-end {
+  display: flex;
+  justify-content: flex-end;
+}
+.card-main {
+  &-box {
+    margin-bottom: 15px;
+    border: 1px solid #eee;
+    background: #f7f7f7;
+    padding: 15px;
+    line-height: 18px;
+    border-radius: 5px;
+
+    h4 {
+      font-size: 19px;
+      margin-top: 10px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 23px;
+      color: #717171;
+    }
+  }
+}
+
+.card1 .ant-card {
+  background-color: #fff;
+  border-radius: 5px;
+  border: #edf2f6 solid 1px;
+  box-shadow: 0px -5px 15px -5px white, 0px 1px 6px 0px rgba(4, 0, 0, 0.1), 3px 0px 8px 0px rgba(0, 0, 0, 0.1), -2px 0px 10px 0px white;
+}
+.card1 .ant-card h4 a{font-size: 55px;}
+.button_grp {
+  float: left;
+  width: 100%;
+}
+.button_grp .green_btn {
+  background-color: #a6fdbb;
+  border-radius: 5px;
+  border: #329929 solid 1px;
+  color: #329929;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .green_btn a{ color: #329929 !important;} 
+.button_grp .red_btn {
+  background-color: #f5b4b4;
+  border-radius: 5px;
+  border: #f70b0b solid 1px;
+  color: #f70b0b;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .red_btn a{ color: #f70b0b !important;}
+.button_grp .yellow_btn {
+  background-color: #f5eea7;
+  border-radius: 5px;
+  border: #fcce04 solid 1px;
+  color: #fcce04;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .yellow_btn a{color: #fcce04 !important;}
+.button_grp .orange_btn {
+  background-color: #f5cf9e;
+  border-radius: 5px;
+  border: #fa7b05 solid 1px;
+  color: #fa7b05;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .orange_btn a{color: #fa7b05 !important;}
+.button_grp .blue_btn {
+  background-color: #a2e1fa;
+  border-radius: 5px;
+  border: #0567fa solid 1px;
+  color: #0567fa;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .blue_btn a{  color: #0567fa !important;}
+.button_grp .lblue_btn {
+  background-color: #bdfff2;
+  border-radius: 5px;
+  border: #05c9fa solid 1px;
+  color: #05c9fa;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .lblue_btn a{  color: #05c9fa !important; }
+.button_grp .violet_btn {
+  background-color: #e9c8cc;
+  border-radius: 5px;
+  border: #681f27 solid 1px;
+  color: #681f27;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .violet_btn a{color: #681f27 !important;}
+
+.sortable  {
+  cursor: pointer;
+}

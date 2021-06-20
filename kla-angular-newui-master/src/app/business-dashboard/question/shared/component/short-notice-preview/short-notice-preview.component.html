@@ -1,0 +1,88 @@
+<div class="pading-all width-100 word-break brd-clr" id="preview-section" *ngIf="previewData && previewData.question">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12 align-center">
+        <strong style="font-size: 24px;"> {{ assembly }} {{ " -ാം കേരള നിയമസഭ" }}</strong>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{ session }}
+        {{ "-ാം സമ്മേളനം" }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        <u> {{ previewData.date | date: "dd-MMMM-yyyy,EEEE" }}</u>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{ getFormattedDate(previewData.question.questionDate) }}
+      </div>
+    </div>
+    <div class="row mb10">
+      <div class="col-md-12 align-center">
+      <span style="font-size: 24px;"> {{ "അടിയന്തര ചോദ്യം " }} </span>
+      </div>
+    </div>
+    <div class="row paddingT20">
+      <div class="col-md-12 align-center mb15">
+        <span
+          ><U
+            ><strong>{{ previewData.question.heading }}</strong></U
+          ></span
+        >
+      </div>
+      <div class="col-md-12">
+        <div class="width-100 d-flex">
+          <div class="count-column mr15">
+            <span
+              ><strong
+                >{{ previewData.question.questionNumber ? previewData.question.questionNumber + ".  " : "" }}</strong
+              ></span
+            >
+          </div>
+          <div class="data-column">
+            <div class="width-100 mb10">
+              <span>
+                {{
+                  previewData.question.primaryMemberNameInMalayalam +
+                    ", എം .എൽ .എ" +
+                    " : താഴെ കാണുന്ന ചോദ്യങ്ങൾക്ക്  " +
+                    previewData.question.nameInMalayalam +
+                    " സദയം മറുപടി നൽകുമോ :"
+                }}
+              </span>
+            </div>
+            <div
+              class="width-100 d-flex"
+              *ngFor="let clause of previewData.question.clauses; let j = index"
+            >
+              <div class="clouse_wid">
+                {{ "( " + clauseNo[j] + " )" }}
+              </div>
+              <div class="clouse_txt">{{ clause.clause }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="previewData.question && previewData.question.questionNumber"   class="col-md-12" style="margin-top: 25px;">
+        <table style="width: 100%;">
+          <tr>
+            <td style="width: 50%;">
+              കേരള നിയമസഭാ സെക്രട്ടേറിയറ്റ്, <br />
+              തിരുവനന്തപുരം, <br />
+              {{ getFormattedDate(null) }}
+            </td>
+            <td style="width: 50%;" class="tr">
+              എസ് വി ഉണ്ണികൃഷ്ണൻ നായർ,
+              <br />
+              സെക്രട്ടറി
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

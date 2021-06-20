@@ -1,0 +1,52 @@
+.btn-flex {
+    display: flex;
+    margin: 20px 0 0 20px;
+    width: auto;
+    justify-content: flex-start;
+  }
+  
+  .btn-style {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60px;
+    font-size: 14px;
+    height: auto;
+    white-space: normal;
+  }
+  
+  .mrgT20 {
+    margin-top: 20px;
+  }
+  .mrgT50 {
+    margin-top: 50px;
+  }
+  .mrgL6 {
+    margin-left: 6px;
+  }
+  .btn-active-bg {
+    background: #dfe8ef;
+  }
+  
+  .bg-box-notice {
+    background: #f9f9f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 350px;
+    position: sticky;
+    top: 15px;
+  }
+  
+  .text-align-right {
+    text-align: right;
+  }
+  h4 {
+    font-size: 18px;
+    font-weight: 500;
+  }
+  h6 {
+    margin: 15px 0;
+    font-weight: 600;
+  }
+  

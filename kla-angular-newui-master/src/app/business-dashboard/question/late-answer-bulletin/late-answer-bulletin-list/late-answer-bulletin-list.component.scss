@@ -1,0 +1,75 @@
+input {
+  width: 100%;
+}
+.input-group {
+  margin-bottom: 15px;
+}
+.star {
+  visibility: hidden;
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+.star:before {
+  content: "\2605";
+  position: absolute;
+  visibility: visible;
+}
+.star:checked:before {
+  content: "\2606";
+  position: absolute;
+}
+
+.arrow {
+  height: 20px;
+  transform: rotate(90deg);
+}
+
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+.txt-align-R {
+  text-align: right;
+}
+
+.mlatable {
+  height: 45px;
+  text-align: left;
+  font-family: roboto;
+  background: #fff;
+}
+.icon-color .anticon {
+  color: #fd6969;
+}
+.plus-arrange {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #dfe8ef;
+  color: #707070;
+  border: 0;
+}
+.padding_15 {
+  padding: 20px;
+}
+.table_blkp {
+  padding: 10px 20px;
+  background: #fff;
+}
+
+.mlatablefull {
+  width: 100%;
+  margin-top: 15px;
+}
+.mlatablefull th {
+  border-bottom: #dfe8ef 1px solid !important;
+  border-top: #dfe8ef 1px solid !important;
+  padding: 15px 5px !important;
+  font-weight: 700 !important;
+  background: #fff !important;
+}
+.mlatablefull td {
+  padding: 15px 5px !important;
+  font-size: 14px !important;
+  border-bottom: #dfe8ef 1px solid !important;
+}

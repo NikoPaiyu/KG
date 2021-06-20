@@ -1,0 +1,289 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{"business-dashboard.sod.scheduleofactivity" | translate}} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+
+<div class="row">
+    <div class="col-md-3">
+      <h2 class="admin-page-heading">{{"business-dashboard.sod.scheduleofactivity" | translate}}</h2>
+    </div>
+    <div class="col-md-9 d-flex justify-content-end">
+        <div>
+            <!-- <button nz-button nzType="default"class="mrgL6"  (click)="handleTracker(true)">Workflow status</button> -->
+            <button nz-button nzType="default"class="mrgL6" [disabled]="disableNotes" (click)="handleNotes(true)">{{"business-dashboard.question.questionedit.notes" | translate}}</button>
+            <button nz-button nzType="default"class="mrgL6"  nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttorefresh" | translate}}' 
+            [disabled]="!(assemblyId && sessionId && (currentAssignee ||  soaDetails.wfStatus))" (nzOnConfirm)="refreshSoa()" (nzOnCancel)="cancel()"
+            *ngIf ="Service.doIHaveAnAccess('SOA','REFRESH')"
+            >{{"business-dashboard.question.refresh" | translate}}</button>
+            <button [disabled]="disableSave" nz-button nzType="default"class="mrgL6"  nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttosave" | translate}}' [disabled]="listOfData.length < 1 || !currentAssignee" (nzOnConfirm)="saveSoa()" (nzOnCancel)="cancel()"
+            *ngIf ="Service.doIHaveAnAccess('SOA','SAVE')"
+            >{{"business-dashboard.question.save" | translate}}</button>
+            <button nz-button nzType="default"class="mrgL6"  nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttosubmit" | translate}}'  
+            [disabled]="!(soaId && currentAssignee)" (nzOnConfirm)="submitSoa()" (nzOnCancel)="cancel()"
+            *ngIf ="Service.doIHaveAnAccess('SOA','SUBMIT')"
+            >{{"business-dashboard.question.submit" | translate}}</button>
+            <button nz-button nzType="default"class="mrgL6"  nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttoApprove" | translate}}'  
+            [disabled]="!(soaId && currentAssignee)" (nzOnConfirm)="approvesoa()" (nzOnCancel)="cancel()"
+            *ngIf ="Service.doIHaveAnAccess('SOA','APPROVE')">{{"cpl.filelistflow.approve" | translate}}</button>
+            <button nz-button nzType="default"class="mrgL6" [routerLink]="['/business-dashboard/soa/list']">{{"cpl.docupload.back" | translate}}</button>
+        </div>
+    </div>
+</div>  
+<nz-divider></nz-divider>  
+</div>
+<div class="row" *ngIf="showSessonFilter">
+    <div class="col-md-4">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"cpl.docupload.assembly" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{"business-dashboard.question.selectaassembly" | translate}}' 
+                [(ngModel)]="assemblyId"
+                (ngModelChange)="filterAssembly()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id"></nz-option>
+                  </nz-select>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"business-dashboard.question.selectassemblysession" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"business-dashboard.question.assemblysession" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{"business-dashboard.question.selectaassemblysession" | translate}}' 
+                    [(ngModel)]="sessionId"
+                    (ngModelChange)="getSoa()">
+                    <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+                  </nz-select>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div> 
+</div>
+<br/>
+<div class="row">
+    <div class="col-md-12">
+ <div class="width-100 overflow">
+<nz-table #borderedTable nzBordered [nzShowPagination]="false" class="tbl-td" [nzData]="listOfData">
+    <thead>
+     <tr>
+        <th>ക്രമ നമ്പർ</th>
+        <th>ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകേണ്ട തീയതി</th>
+        <th>നറുക്കെടുപ്പ് തീയതി</th>
+        <th>ചോദ്യങ്ങൾ പ്രെസ്സിൽ അയക്കേണ്ട തീയതി </th>
+        <th>ചോദ്യങ്ങൾ പ്രെസ്സിൽ നിന്നും അച്ചടിച്ച് ലഭിക്കേണ്ട തീയതി </th>
+        <th>ചോദ്യങ്ങൾ വകുപ്പുകൾക് അയക്കേണ്ട തീയതി </th>
+        <th>അംഗങ്ങൾക് വിതരണം ചെയ്യേണ്ട തീയതി </th>
+        <th>ഉത്തരം നിയമസഭ സെക്രെട്ടറിയേറ്റിൽ ലഭിക്കേണ്ട തീയതി,സമയം [ചട്ടം47(1)] </th>
+        <th>ഡിലേ സ്റ്റേറ്റ്മെൻറ് ഇല്ലാതെ താത്കാലിക മറുപടി ലഭ്യമാക്കിയവയ്ക്കുള്ള അന്തിമ മറുപടി നൽകുന്നതിനുള്ള അവസാന
+            തീയതി [ചട്ടം 47(2)]</th>
+            <div *ngIf="false" class="rotated" style="display: table-caption; width: 80px; height:100px;">
+              <button
+              nz-button
+              nzType="default"
+              (click)="drawer()"
+              class="mrgR6">
+              {{"business-dashboard.question.Notes(2)" | translate}}
+            </button>
+              </div>
+      </tr>
+     </thead>
+    <tbody>
+      <tr *ngFor="let data of listOfData; index as i">
+        <td>{{i+1}}</td>
+        <td>{{data.answerDate | date: 'dd-MM-yyyy'}}</td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.lottingDate" (ngModelChange)="enableSaveButton()"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker1 (ngModelChange)="checkSecondDate($event, picker1, i,data)"  nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.sendToPressDate"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker2 (ngModelChange)="checkThirdDate($event, picker2, i,data)"  nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.printFromPressDate"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker3 (ngModelChange)="checkFourthDate($event, picker3, i,data)" nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.sendToDepartmentsDate"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker4 (ngModelChange)="checkFifthDate($event, picker4, i,data)"   nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.distributedToMembersDate"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" #picker5 (ngModelChange)="checkSixthDate($event, picker5, i,data)"   nzFormat="dd-MM-yyyy 5:00" [nzAllowClear]="true" [(ngModel)]="data.answerReceivedAtSecreteriatDate"></nz-date-picker></td>
+        <td><nz-date-picker [disabled]="!(Service.doIHaveAnAccess('SOA','UPDATE') && currentAssignee)" nzFormat="dd-MM-yyyy" [nzAllowClear]="true" [(ngModel)]="data.tempReplyIssueDeadlineDate"></nz-date-picker></td>
+    </tr>
+    </tbody>
+  </nz-table>
+</div>
+</div>
+</div>
+
+<nz-drawer
+[nzMaskClosable]="false"
+[nzWidth]="550"
+[nzVisible]="showNotes"
+nzTitle='{{"business-dashboard.question.notes&comments" | translate}}'
+(nzOnClose)="handleNotes(false)"
+>
+<app-soa-notes #notes [setsoaId]="soaId" [currentAssignee]="soaDetails?.currentAssignee"></app-soa-notes>
+</nz-drawer>
+
+
+
+<nz-drawer
+    [nzWidth]="510"
+    [nzClosable]="true"
+    [nzVisible]="visible"
+    nzPlacement="right"
+    nzTitle='{{"business-dashboard.question.notes&comments" | translate}}'
+    (nzOnClose)="drawer()"
+  >
+    <div class="chat-main-body" #scrollme [scrollTop]="scrollme.scrollHeight">
+      <nz-card
+        class="margin-10 notesp"
+        *ngFor="let item of listOfDetails; let index; of: i"
+      >
+        <div class="row">
+          <div class="col-md-7">
+            <h6>{{ item.name}}</h6>
+            <!-- <p *ngFor="let role of item?.owner?.roles; index as i">
+              <span *ngIf="i === 0">{{ getRoles(item.owner.roles) }}</span>
+            </p> -->
+          </div>
+          <div class="col-md-5 d-flex justify-content-flex-end">
+            <button
+              nz-button
+              nzType="default"
+              class="m-r5"
+            >
+            {{"business-dashboard.question.edit" | translate}}
+            </button>
+            <button
+              nz-button
+              nzType="info"
+              nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.soa.douwanttodelete" | translate}}'
+              (nzOnConfirm)="deleteNote()"
+              (nzOnCancel)="cancel()"
+            >
+            {{"business-dashboard.question.delete" | translate}}
+            </button>
+          </div>
+        </div>
+        <div class="row marginbtm-25 margnrtp-15">
+          <div class="col-md-12">
+            <p>
+              {{ item.address }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 text-align-right">
+            <p>
+              {{ item.age}}
+            </p>
+          </div>
+          <!-- <div class="col-md-3 text-align-right">
+            <p>{{ item.age}}</p>
+          </div> -->
+          <div class="col-md-6 text-align-right"></div>
+        </div>
+      </nz-card>
+    </div>
+    <div class="footer-chat">
+      <form [formGroup]="noteForm" (ngSubmit)="saveNote()">
+        <div class="txt-area-main"> 
+          <div class="col">
+            <strong>{{"cpl.fileworkflow.quickoptions" | translate}}: </strong>
+            <nz-tag
+              *ngFor="let tag of quickOptions; let i = index"
+              nzMode="checkable"
+              [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+              (nzCheckedChange)="CheckforRules($event, tag, i)"
+            >
+              {{ tag.label }}
+            </nz-tag>
+          </div> 
+         </div>
+        <div class="type_msg col-md-12 p-L0">
+          <div class="col-md-9">
+            <textarea
+              rows="2"
+              nz-input
+              placeholder='{{"business-dashboard.question.typeamessage" | translate}}'
+              name="note"
+              formControlName="note"
+            ></textarea>
+          </div>
+          <div class="col-md-3">
+            <button
+              type="submit"
+              nz-button
+              nzType="primary"
+              class="send-btn-style p-R15"
+            >
+             {{"business-dashboard.question.save" | translate}}
+            </button>
+            <button
+            *ngIf ="isEdit"
+              type="submit"
+              nz-button
+              nzType="primary"
+              class="send-btn-style p-R15"
+            >
+           {{"cpl.docupload.update" | translate}}
+            </button>
+          </div>
+        </div>
+        <div class="">
+          <nz-modal
+            [(nzVisible)]="ShowRules"
+            nzTitle='{{"business-dashboard.question.rulesanddirections" | translate}}'
+            (nzOnCancel)="cancelRuleSelection()"
+            (nzOnOk)="applyRule()"
+            [nzOkDisabled]="isChecked"
+          >
+            <div class="width-100 pading-all">
+              <nz-table #rulesForNotes [nzData]="allRules" [nzPageSize]="5">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>{{"business-dashboard.question.ruleno" | translate}}</th>
+                    <th>{{"business-dashboard.question.description" | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of rulesForNotes.data">
+                    <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="onChecked($event)"></td>
+                    <td>{{ data.code }}</td>
+                    <td>{{ data.englishDescription }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </div>
+          </nz-modal>
+        </div>
+      </form>
+    </div>
+  </nz-drawer>
+
+  <nz-drawer
+  [nzWidth]="510"
+  [nzClosable]="true"
+  [nzVisible]="showTracker"
+  nzPlacement="right"
+  nzTitle='{{"business-dashboard.question.notes&comments" | translate}}'
+  (nzOnClose)="drawer()"
+>
+  <app-process-tracker
+        *ngIf="soaDetails?.workflowId"
+        [processInfoId]="soaDetails?.workflowId"
+      ></app-process-tracker>
+</nz-drawer>
+

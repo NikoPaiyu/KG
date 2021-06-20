@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="49" height="49" viewBox="0 0 49 49">
+  <g id="Group_974" data-name="Group 974" transform="translate(-2360 871)">
+    <g id="Group_970" data-name="Group 970">
+      <circle id="Ellipse_63" data-name="Ellipse 63" cx="24.5" cy="24.5" r="24.5" transform="translate(2360 -871)" fill="#d05757"/>
+      <g id="Group_957" data-name="Group 957" transform="translate(2322.971 -1364.448)">
+        <g id="Group_651" data-name="Group 651" transform="translate(55.459 505.843)">
+          <path id="Path_151" data-name="Path 151" d="M20.749,13.858a.649.649,0,0,0-.649.649.658.658,0,0,0,.649.649H24.8a1.641,1.641,0,0,1-1.487.973H21.046a.664.664,0,0,0-.608.406.694.694,0,0,0,.135.717l4.556,4.556a.653.653,0,0,0,.919,0,.645.645,0,0,0,0-.919l-1.365-1.379L22.628,17.44h.7a2.292,2.292,0,0,0,.311-.014,2.937,2.937,0,0,0,2.542-2.258h1.352a.649.649,0,0,0,.649-.649.658.658,0,0,0-.649-.649H26.184a3.124,3.124,0,0,0-.419-.973h1.771a.649.649,0,0,0,.649-.649.658.658,0,0,0-.649-.649H20.749a.649.649,0,0,0-.649.649.658.658,0,0,0,.649.649h2.582a1.641,1.641,0,0,1,1.487.973H20.749Z" transform="translate(-18.423 -11.6)" fill="#fff"/>
+          <g id="Group_650" data-name="Group 650" transform="translate(0 12.025)">
+            <g id="Group" transform="translate(0 1.876)">
+              <path id="Path_159" data-name="Path 159" d="M10.814,20.359a4.491,4.491,0,0,1,0-8.983.479.479,0,0,1,.479.479v3.533h3.552a.479.479,0,0,1,.479.479,4.505,4.505,0,0,1-4.509,4.491Zm-.479-7.993a3.535,3.535,0,1,0,4,3.981H10.814a.479.479,0,0,1-.479-.479Z" transform="translate(-6.323 -11.377)" fill="#fff" stroke="#fff" stroke-width="0.2"/>
+            </g>
+            <g id="Group-2" data-name="Group" transform="translate(5.895)">
+              <path id="Path_160" data-name="Path 160" d="M23.142,12.431H19.112a.479.479,0,0,1-.479-.479V7.94a.479.479,0,0,1,.479-.479,4.505,4.505,0,0,1,4.509,4.491.479.479,0,0,1-.479.479Zm-3.552-.958h3.04a3.552,3.552,0,0,0-3.04-3.023Z" transform="translate(-18.633 -7.461)" fill="#fff" stroke="#fff" stroke-width="0.2"/>
+            </g>
+          </g>
+        </g>
+        <path id="Path_144" data-name="Path 144" d="M25.06,18.674H1V49.1H25.061ZM1.971,48.127V19.645H24.044V48.127H1.971Zm23.089,0v0Z" transform="translate(48.029 483.774)" fill="#fff" stroke="#fff" stroke-width="0.5"/>
+      </g>
+    </g>
+  </g>
+</svg>

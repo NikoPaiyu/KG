@@ -1,0 +1,94 @@
+<div class="padding_25" *ngIf="nominationData">
+    <form nz-form [formGroup]="nominationForm" *ngIf="nominationForm">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h5>{{currentAssemblySession?.assemblyValue}}
+                    {{"business-dashboard.election-management.create-election-nomination.kerala-assembly" | translate}}
+                </h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h5>{{translate.getDefaultLang()=='mal'?electionType:electionTypeEnglish}}
+                    {{"business-dashboard.election-management.create-election-nomination.election" | translate}}
+                     </h5>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h5>{{"business-dashboard.election-management.nomination-list" | translate}}</h5>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <p>{{"business-dashboard.election-management.create-election-nomination.legislative-assembly-member" | translate}}
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="This field is required">
+                            <nz-select formControlName="nomineeId" name="nominee" nzAllowClear nzShowSearch
+                                nzPlaceHolder='{{"business-dashboard.election-management.create-election-nomination.select-member" | translate }}' 
+                                class="select-width">
+                                <ng-container *ngFor="let member of returnMemberList()">
+                                <nz-option 
+                                [nzLabel]="member.details.fullName"
+                                    [nzValue]="member.userId"></nz-option>
+                                </ng-container>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    {{"business-dashboard.election-management.create-election-nomination.legislative-assembly" | translate}}
+                    {{translate.getDefaultLang()=='mal'?electionType:electionTypeEnglish}} 
+                    {{"business-dashboard.election-management.create-election-nomination.nomination" | translate}}
+                    
+                </p>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-4">
+                {{"business-dashboard.election-management.create-election-nomination.nominatedby" | translate}}:
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="This field is required">
+                        <nz-select formControlName="nominatedById" name="nominatedBy" nzAllowClear nzShowSearch
+                            nzPlaceHolder='{{"business-dashboard.election-management.create-election-nomination.select-member" | translate }}'
+                            class="select-width" [nzDisabled]="!permission.selectNominatedBy">
+                            <nz-option *ngFor="let member of usersForNomination" [nzLabel]="member.details.fullName"
+                                [nzValue]="member.userId"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-4">
+                {{"business-dashboard.election-management.create-election-nomination.supportedby" | translate}}:
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="This field is required">
+                        <nz-select formControlName="supporterId" name="supporter" nzAllowClear nzShowSearch
+                            nzPlaceHolder='{{"business-dashboard.election-management.create-election-nomination.select-member" | translate }}' 
+                            class="select-width">
+                            <ng-container *ngFor="let member of usersForNomination">
+                                <nz-option  *ngIf="member.userId != user.userId && member.userId != nominationForm.get('nomineeId').value" 
+                                [nzLabel]="member.details.fullName"
+                                [nzValue]="member.userId"></nz-option>
+                            </ng-container> 
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <button class="mr-6" nz-button (click)="cancel()">
+                    {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                </button>
+                <button nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Do you want to create nomination?" (nzOnConfirm)="create()">
+                    {{ "business-dashboard.election-management.speaker-election-list.create-nomination" | translate }}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

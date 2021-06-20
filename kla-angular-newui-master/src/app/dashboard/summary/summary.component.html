@@ -1,0 +1,36 @@
+<ul class="folder-list-view d-flex flex-wrap justify-content-between">
+
+  <li
+  (click)="openSummaryFolderTemplate()">
+  <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+  <!-- <img src="../../assets/img/03.png" alt="" /> -->
+  <span>{{"dashboard.summary.summary" | translate}}</span>
+  <div>
+    <!-- <span>Date: </span
+    ><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span> -->
+  </div>
+</li>
+  <li
+    (click)="openMiscellaneousTemplate()"
+  >
+    <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+    <!-- <img src="../../assets/img/03.png" alt="" /> -->
+    <span>{{"dashboard.summary.others" | translate}}</span>
+    <div>
+      <!-- <span>Date: </span
+      ><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span> -->
+    </div>
+  </li>
+
+  <li
+    (click)="openCoverTemplate()">
+    <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+    <!-- <img src="../../assets/img/03.png" alt="" /> -->
+    <span>{{"dashboard.summary.cover" | translate}}</span>
+    <div>
+      <!-- <span>Date: </span
+      ><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span> -->
+    </div>
+  </li>
+
+</ul>

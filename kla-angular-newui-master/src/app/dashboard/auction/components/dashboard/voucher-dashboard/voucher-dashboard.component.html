@@ -1,0 +1,62 @@
+<app-dashboard dashboardTitle="Voucher Dashboard" [dashboardBreadcums]="BreadCums" [dashboardSearchPlaceholder]="'Search Request'" (dashboardSearchEvent)="onDashboardSearch($event)">
+    <div class="header-action">
+        <button nz-button nzType="primary" (click)="navigateToCreateRequest()">Create Request</button>
+    </div>
+    <div class="grid-action-left d-flex flex-row justify-content-between align-items-center">
+        <form [formGroup]="filterForm">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <div class="filter d-flex flex-row justify-content-between align-items-center">
+                    <div class="filter-datepicker mr-2 d-flex flex-row justify-content-between align-items-center flex-fill">
+                        <span class="filter-label">Auction Date</span>
+                        <nz-range-picker formControlName="date" [nzPlaceHolder]="['Auction Start Date','Auction End Date']"></nz-range-picker>
+                    </div>
+                    <div class="filter-status d-flex flex-row justify-content-between align-items-center flex-fill">
+                        <span class="filter-label">Voucher Status</span>
+                        <nz-select formControlName="status">
+                            <nz-option nzValue="{{status}}" nzLabel="{{status}}" *ngFor="let status of statusList"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="filter-reset">
+                        <button nz-button nzType="default"(click)="resetFilter()" class="ml-3">Clear Filter</button>
+                    </div>
+            </div>  
+            </div>
+        </form> 
+    </div>
+    <div class="grid-action-right">
+
+    </div>
+    <div class="grid-content">
+        <nz-table #basicTable [nzData]="(voucherList$ | async)" nzShowPagination
+        nzShowSizeChanger>
+            <thead>
+                <tr>
+                    <th>Auction File Number</th>
+                    <th>Auction Value</th>
+                    <th>Buyers Name</th>
+                    <th>Buyers Phone Number</th>
+                    <th>Date Of Auction</th>
+                    <th>Payment Status</th>
+                    <th>Buyer's Address</th>
+                    <th>Voucher Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of basicTable.data | search : dashboardSearchTest : 'auctionFileNumber'">
+                    <td>
+                        <span class="text-decoration-link" (click)="navigateToEditRequest(request)">{{request.auctionFileNumber}}</span>
+                    </td>
+                    <td>{{request.auctionValue}}</td>
+                    <td>{{request.buyersName}}</td>
+                    <td>{{request.buyersPhone}}</td>
+                    <td>{{request.dateOfAuction | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{request.paymentStatus}}</td>
+                    <td>{{request.buyersAddress}}</td>
+                    <td [ngStyle]="{'color': request.voucherStatus === 'Active' ? '#155724' : 'Blue' }" class="font-weight-bold">{{request.voucherStatus | uppercase}}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>  
+
+
+</app-dashboard>

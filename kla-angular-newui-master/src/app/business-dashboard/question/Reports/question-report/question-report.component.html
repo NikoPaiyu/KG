@@ -1,0 +1,199 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <ng-container  [ngSwitch]="reportParams.heading">
+        <nz-breadcrumb-item>
+          <a *ngSwitchCase="'Calendar of Sittings'"> {{ "business-dashboard.question.cos" | translate }} </a>
+          <a  *ngSwitchCase="'Allotment of Days'"> {{ "business-dashboard.aod.allotmentofdays" | translate }} </a>
+          <a *ngSwitchCase="'Schedule of Answer Report'"> {{ "business-dashboard.question.answerreport" | translate }} </a>
+          <a *ngSwitchCase="'Schedule of Activity Report'"> {{ "business-dashboard.question.soa" | translate }} </a>
+          <a *ngSwitchCase="'Ballot Chart Report'"> {{ "business-dashboard.question.ballotchartreport" | translate }} </a>
+          <a *ngSwitchCase="'Unstarred Question Booklet'"> {{ "business-dashboard.question.unstarredqbooklet" | translate }} </a>
+          <a *ngSwitchCase="'Starred Question Booklet'"> {{ "business-dashboard.question.starredqbooklet" | translate }} </a>
+          <a *ngSwitchCase="'Answer Received Statistics'"> {{ "business-dashboard.question.ansreceivedstatics" | translate }} </a>
+        </nz-breadcrumb-item>
+      </ng-container>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-between">
+  <div class="col-md-6" [ngSwitch]="reportParams.heading">
+    <h2 class="admin-page-heading" *ngSwitchCase="'Calendar of Sittings'">
+      {{ "business-dashboard.question.cos" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Allotment of Days'">
+      {{ "business-dashboard.aod.allotmentofdays" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Schedule of Answer Report'">
+      {{ "business-dashboard.question.answerreport" | translate }}
+    </h2>
+    <h2
+      class="admin-page-heading"
+      *ngSwitchCase="'Schedule of Activity Report'"
+    >
+      {{ "business-dashboard.question.soa" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Ballot Chart Report'">
+      {{ "business-dashboard.question.ballotchartreport" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Unstarred Question Booklet'">
+      {{ "business-dashboard.question.unstarredqbooklet" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Starred Question Booklet'">
+      {{ "business-dashboard.question.starredqbooklet" | translate }}
+    </h2>
+    <h2 class="admin-page-heading" *ngSwitchCase="'Answer Received Statistics'">
+      {{ "business-dashboard.question.ansreceivedstatics" | translate }}
+    </h2>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div
+    class="col-md-2 d-flex align-items-center whitespace"
+    *ngIf="assemblySession['assembly']"
+  >
+    {{ "business-dashboard.question.assembly" | translate }}
+    <nz-select
+      nzShowSearch
+      nzAllowClear
+      nzPlaceHolder=""
+      name="assemblyId"
+      [(ngModel)]="assemblySession['assembly'].currentassembly"
+      (ngModelChange)="findSessionListByAssembly(assemblySession['assembly'].currentassembly)"
+    >
+      <nz-option
+        *ngFor="let assembly of assemblySession['assembly']"
+        [nzLabel]="assembly.assemblyId"
+        [nzValue]="assembly.id"
+      >
+      </nz-option>
+    </nz-select>
+  </div>
+  <div
+    class="col-md-2 d-flex align-items-center whitespace"
+    *ngIf="assemblySession['session']"
+  >
+    {{ "business-dashboard.question.questionlist.session" | translate }}
+    <nz-select
+      nzShowSearch
+      nzAllowClear
+      nzPlaceHolder=""
+      name="sessionId"
+      [(ngModel)]="assemblySession['session'].currentsession"
+      (ngModelChange)="checkPermission()"
+    >
+      <nz-option
+        *ngFor="let session of assemblySession['session']"
+        [nzLabel]="session.sessionId"
+        [nzValue]="session.id"
+      >
+      </nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-5" *ngIf="reportParams.showQdate">
+    <div class="row align-items-center">
+      <div>{{"business-dashboard.question.questiondate" | translate}}:</div>
+      <div class="col-md-8">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+            <nz-select
+              nzRequired
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="{{
+                'business-dashboard.question.questioncreate.placehldqdate'
+                  | translate
+              }}"
+              [(ngModel)]="questionDate"
+            >
+              <nz-option
+                *ngFor="let item of questionDates"
+                nzLabel="{{ item.date | date: 'dd/MM/yyyy' }}"
+                nzValue="{{ item.date }}"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" *ngIf="reportParams.showButton">
+    <button
+      nz-button
+      nzType="primary"
+      (click)="onAssemblySessionChange()"
+      [ngSwitch]="reportParams.buttonLabel"
+    >
+      <span *ngSwitchCase="'Calendar Report'">{{
+        "business-dashboard.question.report.cosbutton" | translate
+      }}</span>
+      <span *ngSwitchCase="'Allotment of Days Report'">{{
+        "business-dashboard.question.report.aodbutton" | translate
+      }}</span>
+      <span *ngSwitchCase="'Schedule of Answer Report'">{{
+        "business-dashboard.question.answerreport" | translate
+      }}</span>
+      <span *ngSwitchCase="'Schedule of Activity Report'">{{
+        "business-dashboard.question.soa" | translate
+      }}</span>
+      <span *ngSwitchCase="'Ballot Chart Report'">{{
+        "business-dashboard.question.ballotchartreport" | translate
+      }}</span>
+      <span *ngSwitchCase="'Unstarred Question Booklet'">{{
+        "business-dashboard.question.unstarredqbooklet" | translate
+      }}</span>
+      <span *ngSwitchCase="'Starred Question Booklet'">{{
+        "business-dashboard.question.starredqbooklet" | translate
+      }}</span>
+      <span *ngSwitchCase="'Answer Received Statistics'">{{
+        "business-dashboard.question.ansreceivedstatics" | translate
+      }}</span>
+    </button>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="width-100">
+    <div class="col-md-12 d-flex justify-content-center">
+      <nz-spin [nzSpinning]="loading" [nzSize]="'large'" nzTip="Loading....">
+        <div class="frame-pdf" *ngIf="finalUrl">
+          <!-- <iframe
+            [src]="finalUrl"
+            type="application/pdf"
+            frameborder="0"
+            style="
+              border: 0;
+              top: 0px;
+              left: 0px;
+              bottom: 0px;
+              right: 0px;
+              width: 1000px;
+              height: 900px;
+            "
+            allowfullscreen
+          >
+          </iframe> -->
+          <ng2-pdfjs-viewer
+            *ngIf="finalUrl"
+            [pdfSrc]="finalUrl"
+            scroll="V"
+            [downloadFileName]="'Report.pdf'"
+            [openFile]="false"
+            [viewBookmark]="false"
+            [download]="true"
+            [print]="true"
+            spread="N"
+            [fullScreen]="false"
+            [showSpinner]="true"
+            [viewerId]="auth.getCurrentUser().userId"
+            (onDocumentLoad)="afterLoaded($event)"
+          ></ng2-pdfjs-viewer>
+        </div>
+      </nz-spin>
+    </div>
+  </div>
+  <!-- </div> -->
+</div>

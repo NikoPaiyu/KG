@@ -1,0 +1,180 @@
+.marginbtm-15 {
+    margin-bottom: 15px;
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
+}
+
+.justify-content-space-end {
+    justify-content: flex-end;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.mrgL6 {
+    margin-left: 6px;
+}
+
+.mrgTB10 {
+    margin: 10px 0;
+}
+
+.mrgT20 {
+    margin-top: 20px;
+}
+
+.mrgT10 {
+    margin-top: 10px;
+}
+
+.mrgT10 {
+    margin: 10px;
+}
+
+.mrgLR20 {
+    margin: 0 20px;
+}
+
+
+/* .nz-close-style {
+   
+  } */
+
+.justify-content-end {
+    justify-content: flex-end;
+}
+
+.abs_btn {
+    background-color: #e6eff4;
+    padding: 5px 10px;
+    float: right;
+    border: none;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.padding0 {
+    padding: 0px !important;
+}
+
+.p-20 {
+    padding: 20px !important;
+}
+
+.p-r15 {
+    padding-right: 15px;
+}
+
+.mrgT20 {
+    margin-top: 20px;
+}
+
+.btn-style-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nz-pagination {
+    display: flex;
+    justify-content: flex-end;
+    margin: 16px 0px;
+}
+
+p {
+    margin: 1;
+}
+
+.flex-container {
+    display: flex;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-content {
+    height: 120px;
+    margin-top: -16px;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
+    background: #fff;
+    padding: 16px;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar {
+    border-color: #fff;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab {
+    border-color: transparent;
+    background: transparent;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+    border-color: #fff;
+    background: #fff;
+}
+
+.overflow-blt {
+    max-height: 90vh;
+    overflow: auto;
+    width: 100%;
+}
+
+.ant-radio-wrapper {
+    margin-bottom: 15px;
+}
+
+.pt20 {
+    padding-top: 20px;
+}
+
+.whitespace {
+    white-space: nowrap;
+}
+
+.checkbox-style li {
+    padding: 5px 10px;
+}
+
+.content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: 50%;
+    max-height: 100px;
+    overflow: auto;
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.ant-card {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 100px;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 14px;
+    font-variant: tabular-nums;
+    line-height: 1.5;
+    list-style: none;
+    font-feature-settings: 'tnum';
+    position: relative;
+    background: #fff;
+    border-radius: 2px;
+    transition: all 0.3s;
+}
+
+.card {
+    width: 100%;
+    align-self: center;
+    height: 150px;
+    /* overflow-y: scroll; */
+}

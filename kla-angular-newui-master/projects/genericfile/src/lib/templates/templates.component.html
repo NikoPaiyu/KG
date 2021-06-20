@@ -1,0 +1,235 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "Dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "miscellaneous-business-file.business.template" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+<<<<<<< HEAD
+  <h2 class="admin-page-heading">{{"Generic File Templatelist" | translate}}</h2>
+=======
+    <h4>
+      <b>{{
+        "miscellaneous-business-file.business.template.list" | translate
+      }}</b>
+    </h4>
+>>>>>>> 70df9a5f399c8dffa668d3c898dfa9fb092036f5
+  </div>
+  <div class="col-md-6">
+    <button
+      (click)="createTemp()"
+      style="float: right"
+      nz-button
+      nzType="primary"
+      class="mrgL6"
+    >
+      {{ "miscellaneous-business-file.business.template.create" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+      <input
+        type="text"
+        [(ngModel)]="searchParam"
+        (ngModelChange)="search()"
+        nz-input
+        placeholder="{{ 'Search Here' | translate }}"
+      />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+  <div class="col-md-8 text-align-right">
+    <button (click)="getAllTemplate()" nz-button nzType="primary" class="mrgL6">
+      <i class="refresh-icon" nz-icon nzType="reload" nzTheme="outline"></i>
+    </button>
+  </div>
+</div>
+<nz-table
+  #rowSelectionTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="templateList"
+>
+  <thead>
+    <tr>
+      <th>{{ "business-dashboard.question.report.slno" | translate }}</th>
+      <th>
+        {{
+          "miscellaneous-business-file.templatecreate.templatename" | translate
+        }}
+      </th>
+      <th>
+        {{ "miscellaneous-business-file.templatelist.status" | translate }}
+      </th>
+      <th>
+        {{ "miscellaneous-business-file.templatelist.preview" | translate }}
+      </th>
+      <th>
+        {{ "miscellaneous-business-file.templatelist.delete" | translate }}
+      </th>
+      <th>{{ "miscellaneous-business-file.templatelist.edit" | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of rowSelectionTable.data; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>
+        {{ data.name }}
+      </td>
+      <td>
+        <nz-tag [nzColor]="'green'">{{
+          data.active ? "Active" : "Inactive"
+        }}</nz-tag>
+      </td>
+      <td>
+        <i
+          (click)="showPreviewModal(data.templateData)"
+          class="preview-icon"
+          nz-icon
+          nzType="file"
+          nzTheme="outline"
+        ></i>
+      </td>
+      <td>
+        <i
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to Delete?"
+          (nzOnConfirm)="deleteTemplate()"
+          class="preview-icon"
+          nz-icon
+          nzType="delete"
+          nzTheme="outline"
+        ></i>
+      </td>
+      <td>
+        <button
+          (click)="editTemp(data)"
+          style="float: centre"
+          nz-button
+          nzType="primary"
+          class="mrgL6"
+        >
+          {{ "Edit" | translate }}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- start priviewModal -->
+<nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="isVisible"
+  nzTitle="Preview"
+  nzWidth="1200"
+>
+  <div class="padding_25" style="background-color: white">
+    <ckeditor
+      [disabled]="true"
+      [editor]="Editor"
+      [(ngModel)]="viewContent"
+      [config]="ckeConfig"
+      debounce="500"
+    >
+    </ckeditor>
+  </div>
+</nz-modal>
+<!-- end previewModal -->
+<!-- startcreateModal -->
+<nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="isCreateModal"
+  nzTitle="Create Template"
+  nzWidth="1200"
+>
+  <div class="padding_25">
+    <form nz-form [formGroup]="templateForm" class="form">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label>{{ "Template Name" | translate }}</nz-form-label>
+
+                <nz-form-control
+                  nzErrorTip="{{ 'Templete is Required' | translate }}"
+                >
+                  <textarea
+                    rows="1"
+                    nz-input
+                    maxlength="254"
+                    formControlName="name"
+                    placeholder="{{ 'Template Name' | translate }}"
+                  ></textarea>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label>Template</nz-form-label>
+                <nz-form-control
+                  nzErrorTip="{{ 'Templete is Required' | translate }}"
+                >
+                  <div style="background-color: white">
+                    <ckeditor
+                      [disabled]="false"
+                      [editor]="Editor"
+                      formControlName="templateData"
+                      [config]="ckeConfig"
+                      debounce="500"
+                    >
+                    </ckeditor>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button
+                type="button"
+                nz-button
+                nzType="primary"
+                class="secondary-button button-font dark-border dark-font"
+                (click)="handleCancel()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                nz-button
+                nzType="primary"
+                nz-popconfirm
+                [nzPopconfirmTitle]="temp"
+                (nzOnConfirm)="createTemplate()"
+                class="btn btn-primary primary-button"
+                [disabled]="!this.templateForm.valid"
+              >
+                {{ submitText }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>
+<!-- end createModal -->

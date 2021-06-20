@@ -1,0 +1,321 @@
+<form [formGroup]="validateForm">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "cpl.actregistration.dash" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    <b>{{"cpl.correspondence.correspondence" | translate}}</b>
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-4 mrgT10 marginbtm-15">
+            <h6><b>{{"cpl.correspondence.correspondence" | translate}}</b></h6>
+        </div>
+        <div class="col-md-8 d-flex justify-content-between text-align-right">
+            <div class="d-flex justify-content-between">
+                <button class="secondary-button button-admin-radius button-font dark-border dark-font" nz-button nzType="default" (click)="goBack()">
+                    {{"cpl.docupload.back" | translate}}
+                </button>
+
+                <button class="mr-6" nz-button class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" *ngIf="
+              correspondenceData?.fromCode !== code &&
+              correspondenceData?.status === 'SENT' &&
+              correspondenceData?.businessCode !== 'CORRECTION_STATEMENT_REQUEST'
+            " (click)="replyLetter()">
+                    {{"cpl.correspondence.reply" | translate}}
+                </button>
+                <button *ngIf="
+              (!isEdit && status && user.userId === correspondenceData?.createdBy?.userId) ||
+              (!isEdit && status && editButton && user.userId === correspondenceData?.createdBy?.userId)
+            " class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" (click)="editCorrespondence()">
+                    {{"cpl.cplview.edit" | translate}}
+                </button>
+                <button class="secondary-button button-admin-radius button-font dark-border dark-font" nz-button nzType="default" *ngIf="
+            !isEdit" (click)="download()">
+                    {{"cpl.fileworkflow.print" | translate}}
+                </button>
+                <button *ngIf="isEdit" class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" (click)="updateCorrespondence()">
+                    {{"cpl.docupload.update" | translate}}
+                </button>
+                <button *ngIf="isEdit" class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" (click)="cancelUpdate()">
+                    {{"cpl.correspondencelist.cancel" | translate}}
+                </button>
+                <button *ngIf="
+              ((!isEdit &&
+                correspondenceData?.status === 'DRAFT' &&
+                user.userId === correspondenceData?.createdBy?.userId) ||
+              (!isEdit &&
+                correspondenceData?.status === 'DRAFT' &&
+                user.userId === correspondenceData?.createdBy?.userId &&
+                sendButton)) && correspondenceData?.businessCode !== 'REQUEST_PRIORITY_LIST' && correspondenceData?.businessCode !== 'COMMITEE_REQUEST_NOMINEES'
+                && correspondenceData?.businessCode !== 'COMMITTEE_MEETING_LETTER'&& correspondenceData?.businessCode !== 'COMMITTEE_MEETING_NOTICE' && correspondenceData?.businessCode !== 'COMMITTEE_MEETING_SUPPORTING_DOCUMENT_REQUEST'
+                && correspondenceData?.businessCode!== 'TABLE_GOVERNORS_ADDRESS_CORRESPONDANCE_COVERING_LETTER'
+                && correspondenceData?.businessCode !== 'TABLE_LETTER_WITH_COVERING_LETTER'&&
+                correspondenceData?.businessCode !== 'TABLE_CORRESPONDANCE_LAW_DEPT' &&
+                correspondenceData?.businessCode !== 'TABLE_OBITURY_FAMILY_LETTER' &&
+                correspondenceData?.businessCode !== 'BUDGET_AP_BILL_REQUEST' &&
+                correspondenceData?.businessCode !== 'VOA_AP_BILL_REQUEST' &&
+                correspondenceData?.businessCode !== 'SDG_AP_BILL_REQUEST' &&
+                correspondenceData?.businessCode !== 'ELECTION_PRO_TEM_SPEAKER_GOVERNORS_LETEER' &&
+                correspondenceData?.businessCode !== 'ELECTION_PRO_TEM_SPEAKER_INFORM_LETEER' &&
+                correspondenceData?.businessCode !== 'ELECTION_PRO_TEM_LETTER_TO_GAD'&&
+                correspondenceData?.businessCode !== 'ELECTION_PRO_TEM_LETTER_TO_TOURISM' &&
+                correspondenceData?.businessCode !== 'ELECTION_NOMINATION_LETTER_TO_MEMBER' &&
+                correspondenceData?.businessCode !== 'ELECTION_LETTER_TO_HOUSE_KEEPING'&&
+                correspondenceData?.businessCode !== 'PRIVATE_MEMBER_BILL_REJECTION_LETTER' &&
+                correspondenceData?.businessCode !== 'PRIVATE_MEMBER_BILL_WON_LETTER' &&
+                correspondenceData?.businessCode !== 'PM_BILL_SEND_TO_DEPARTMENT' &&
+                correspondenceData?.businessCode !== 'BUDGET_SDFG_LETTER' &&
+                correspondenceData?.businessCode !== 'BUDGET_SDG_EG_REQUEST_LETTER' &&
+                correspondenceData?.businessCode !== 'BUDGET_DOCUMENT_LETTER' &&
+                correspondenceData?.businessCode !== 'BUDGET_DOCUMENT_GRL_REQUEST_LETTER' &&
+                correspondenceData?.businessCode !== 'BILL_ERRATA_LETTER' &&
+                correspondenceData?.businessCode !== 'PM_RESOLUTION_LETTER_TO_DEPARTMENT'
+                " class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" nz-popconfirm nzPopconfirmTitle="Are you sure you want to Send?" (nzOnConfirm)="sendCorrespondence()" (nzOnCancel)="cancel()">
+                    {{"cpl.correspondence.send"|translate}}
+                </button>
+                <button class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" (click)="currespondenceDetailView()">
+                    {{"cpl.correspondence.detailedview" | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docupload.subject" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Subject required">
+                            <textarea rows="1" nz-input maxlength="254" formControlName="title" placeholder="Subject" *ngIf="isEdit; else viewtitle"></textarea>
+                        </nz-form-control>
+                        <ng-template #viewtitle>
+                            {{ correspondenceData?.title }}
+                        </ng-template>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docpreparion.date" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        {{ (correspondenceData?.versionOption)[0].createdDate | date: "dd-MM-yyyy hh:mm a" }}
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.from" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        {{ correspondenceData?.fromDisplayName }}
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.template" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        {{ correspondenceData?.template }}
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.to" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8" *ngIf="isEdit">
+                        <nz-select *ngIf="correspondenceData.businessCode !== 'TABLE_OBITURY_FAMILY_LETTER'" formControlName="toValue" (ngModelChange)="getToListData($event)" nzMode="multiple" [nzDisabled]="correspondenceData.businessCode === 'REQUEST_PRIORITY_LIST'">
+                            <nz-option *ngFor="let option of toTypeList" [nzLabel]="option.label" [nzValue]="option.value">
+                            </nz-option>
+                        </nz-select>
+                        <input *ngIf="correspondenceData.businessCode === 'TABLE_OBITURY_FAMILY_LETTER'" nz-input placeholder="Enter Addres here" formControlName="toValue" />
+                    </div>
+                    <div class="col-md-8" *ngIf="!isEdit">
+                        <ng-container *ngFor="let item of toValue; let i = index">
+                            <span *ngIf="i==0">{{ item }}</span>
+                            <span *ngIf="i>0">{{', ' + item}}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="correspondenceData?.masterLetter !== correspondenceData?.id">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        {{"cpl.correspondence.masterletter" | translate}}
+                    </div>
+                    <div class="col-md-8">
+                        <a href="javascript:;" (click)="viewMaster()">
+                            {{"cpl.docpreparion.view" | translate}}</a>
+                    </div>
+                    <!-- <div class="col-md-4">
+              {{ toLabelText }}
+            </div> -->
+                    <!-- <div class="col-md-8">
+              <nz-select
+                [(ngModel)]="toValue"
+                name="toValue"
+                [ngModelOptions]="{ standalone: true }"
+                nzMode="multiple"
+              >
+                <nz-option
+                  *ngFor="let option of toTypeList"
+                  [nzLabel]="option.label"
+                  [nzValue]="option.value"
+                >
+                </nz-option>
+              </nz-select> -->
+                    <!-- <nz-select  
+                                  nzMode="multiple"
+                                  *ngIf="isEdit; else viewto"
+                                  [(ngModel)]="mutivalue"
+                              >
+                                  <nz-option>
+  
+                                  </nz-option>
+                              </nz-select>
+                          <ng-template #viewto>
+                              {{ to.toCode }}
+                          </ng-template> -->
+                    <!-- </div> -->
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row" *ngIf="
+        correspondenceData?.businessReferId ||
+        correspondenceData?.fileNumber 
+      ">
+        <div class="col-md-6" *ngIf="correspondenceData?.businessReferId">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.cplview.refdocument" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <a href="javascript:;" (click)="showReference(correspondenceData.businessReferId)">{{ correspondenceData?.businessCode === 'AMENDMENT'?correspondenceData?.businessReferSubType:correspondenceData?.businessReferType }}</a>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="(correspondenceData?.fileNumber && user?.correspondenceCode?.type !== 'DEPARTMENT' && !user?.authorities.includes('MLA') )">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docamendments.fileno" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <a href="javascript:;" (click)="viewFile()">{{ correspondenceData?.fileNumber }}</a>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <nz-divider></nz-divider>
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-8">
+            <div class="row text-align-right" *ngIf="!isEdit && versionFlag">
+                <div class="col-md-1">
+                    <nz-form-label>{{"cpl.filelistflow.version" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                    <nz-select formControlName="currentVersion" (ngModelChange)="getVersion($event)">
+                        <nz-option *ngFor="
+                  let versions of correspondenceData?.versionOption;
+                  let i = index
+                " [nzValue]="i + 1" [nzLabel]="'Version ' + (i + 1) + ''">
+                        </nz-option>
+                    </nz-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="preview-main" *ngIf="!isEdit">
+                        <div class="mrgT20 preview-main-text">
+                            <h3>{{"cpl.docamendments.preview" | translate}}</h3>
+                            <div>
+                                <quill-view-html [content]="listOfData" *ngIf="listOfData">
+                                </quill-view-html>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-main" *ngIf="isEdit">
+                        <div class="form mrgT20">
+                            <div *ngIf="FinalcomponentArray?.length > 0">
+                                <app-dynamic-form [fields]="FinalcomponentArray" (changes)="showForm($event)" *ngIf="FinalcomponentArray?.length > 0">
+                                </app-dynamic-form>
+                            </div>
+                        </div>
+                        <div class="mrgT20 preview-main-text">
+                            <h3>{{"cpl.docamendments.preview" | translate}}</h3>
+                            <div>
+                                <quill-view-html [content]="viewContent" *ngIf="viewContent">
+                                </quill-view-html>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+                <b>{{"cpl.correspondence.attachments" | translate}}</b>
+            </div>
+            <div class="row" *ngIf="attachments">
+                <div class="col-md-12" *ngFor="let item of attachments">
+                    <a href="javascript:;" (click)="showAttachment(item.attachmentUrl)">{{ item.name }}
+                    </a>
+                    <i *ngIf="isEdit && attachments" nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete the Attachment?" nzPopconfirmPlacement="bottom" (nzOnConfirm)="deleteAttachment(item)" (nzOnCancel)="cancel()" nz-icon style="cursor:pointer" nzType="delete"
+                        nzTheme="outline"></i>
+                </div>
+
+                <div class="col-md-12 marginbtm-10" *ngIf="isEdit">
+                    <nz-upload nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/jpg" [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="attachments.length < 3 && attachments.length + fileList.length < 3"
+                        [nzShowUploadList]="showUploadList" (nzChange)="handleChange($event)">
+                        <button nz-button>
+                            <i nz-icon nzType="upload"></i>{{"cpl.correspondencelist.upload" | translate}}</button>
+                    </nz-upload>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <Correspondence-view-committee-response *ngIf="correspondenceData?.businessCode == 'COMMITTEE_NOMINEE_SUBMISSION' && correspondenceData.businessData && validateForm?.controls?.businessData" [businessData]="validateForm?.controls?.businessData" [correspondenceFormGrp]="validateForm"
+        [committeeResponse]="correspondenceData.businessData" [isEdit]="isEdit"
+        [businessReferId]="correspondenceData?.businessReferId"
+    >
+    </Correspondence-view-committee-response>
+    <Correspondence-ap-bill-on-budget-response *ngIf="correspondenceData?.businessCode == 'BUDGET_AP_BILL_RESPONSE' && correspondenceData.businessData && validateForm?.controls?.businessData" [businessData]="validateForm?.controls?.businessData" [correspondenceFormGrp]="validateForm"
+        [ApbillResponse]="correspondenceData.businessData" [isEdit]="isEdit">
+    </Correspondence-ap-bill-on-budget-response>
+</form>

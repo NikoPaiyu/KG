@@ -1,0 +1,30 @@
+.justify-content-end {
+  display: flex;
+  justify-content: flex-end;
+}
+.card-main {
+    &-box {
+      margin-bottom: 30px;
+      border: 1px solid #eee;
+      background: #f7f7f7;
+      padding: 15px;
+      line-height: 18px;
+      border-radius: 0px;
+  
+      h4 {
+        font-size: 19px;
+        margin-top: 10px;
+        font-weight: 500;
+        margin-bottom: 5px;
+      }
+  
+      p {
+        font-size: 14px;
+        line-height: 23px;
+        color: #717171;
+      }
+    }
+  }
+  .container {
+    padding: 50px 0px;
+  }

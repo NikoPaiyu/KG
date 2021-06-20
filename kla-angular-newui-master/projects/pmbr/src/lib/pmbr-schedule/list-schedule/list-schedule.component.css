@@ -1,0 +1,26 @@
+.mr-6 {
+  margin-right: 6px;
+}
+.viewlink {
+  color: blue;
+}
+
+.table-all tr td {
+  vertical-align: top !important;
+}
+.table-all tr td td {
+  background-color: #ccc0 !important;
+  padding-bottom: 0px !important;
+  padding-top: 5px !important;
+}
+
+.tb-data {
+  text-align: left !important;
+}
+
+.padding_25 {
+  padding: 25px;
+}
+.mrg_R10 {
+  margin-right: 10px;
+}

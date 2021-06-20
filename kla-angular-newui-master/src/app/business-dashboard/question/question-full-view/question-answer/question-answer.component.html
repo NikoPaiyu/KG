@@ -1,0 +1,546 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        ">
+                {{ "business-dashboard.question.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <a> {{ "business-dashboard.question.question" | translate }}</a>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">{{ "business-dashboard.question.question" | translate }}</h2>
+    </div>
+
+    <div class="col-md-6 d-flex justify-content-end pdzero">
+        <button *ngIf="
+    showBtns.ShowTransferMinister && !this._isWithdrawn(qDetail) && !this._isWithdrawl()
+      " class="mr-15" nz-popconfirm nzPopconfirmTitle="Are you sure you want to transfer minister?" nzCancelText="No" nzOkText="Yes" nz-button nzType="primary" (nzOnConfirm)="transferMinisterButtonClick()">
+      {{
+        "business-dashboard.question.questionans.transferminister" | translate
+      }}
+    </button>
+        <button *ngIf="qDetail.type === 'SHORT_NOTICE'" nz-button nzType="primary" (click)="createPreviewModal()" class="mr-6">
+      {{ "business-dashboard.question.preview" | translate }}
+    </button>
+        <button nz-button nzType="primary" (click)="onBack()" class="mr-6">
+      {{ "business-dashboard.question.questionview.back" | translate }}
+    </button>
+    </div>
+</div>
+
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="input-group">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.assembly" | translate }}: {{ qDetail.assemblyId }}
+                </div>
+                <div class="col-md-8">
+                    {{ "business-dashboard.question.session" | translate }}: {{ qDetail.sessionId }}
+                </div>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.mlaName" | translate }}:
+                </div>
+                <div class="pLR15">
+                    <div *ngFor="let data of qDetail.clubbingDetails" class="col border-style">
+                        {{ data.memberName }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="input-group" *ngIf="!isDepartment()">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.noticeno" | translate }}
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12" *ngFor="let noticeNo of qDetail.clubbingDetails">
+                            {{ noticeNo.noticeNumber }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="input-group" *ngIf="qDetail.questionNumber">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.questionlist.questionnumber" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.questionNumber }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.dateofreg" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.registrationDate | date: "dd-MM-yyyy" }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE'">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.qcategory" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.category }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE' && qDetail.priority">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.questionpriority" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.priority }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.ministersubject" | translate }}:
+                </div>
+                <div class="col-md-8" *ngIf="
+            ministerSubjects && showBtns.ShowTransferMinister && !this._isWithdrawn(qDetail) && !this._isWithdrawl()
+            else viewSubjects
+          ">
+                    <nz-select [(ngModel)]="selministerSubjectId" nzRequired nzPlaceHolder="Select Minister Subject">
+                        <nz-option *ngFor="let ministerSubjectsItems of ministerSubjects" [nzLabel]="ministerSubjectsItems.title" [nzValue]="ministerSubjectsItems.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <ng-template #viewSubjects>
+                    <span class="col-md-8" *ngIf="selministerSubject">
+            {{ selministerSubject.title }}</span>
+                </ng-template>
+            </div>
+        </div>
+
+        <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE' && qDetail.ministerSubSubjectName">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.ministersubsubject" | translate }} :
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.ministerSubSubjectName }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.questiondate" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.questionDate | date: "dd-MM-yyyy" }}
+                </div>
+            </div>
+        </div>
+        <div class="input-group" *ngIf="qDetail.correctionDate">
+            <div class="row">
+                <div class="col-md-4">
+                    {{ "business-dashboard.question.questionans.correctiondate" | translate }}:
+                </div>
+                <div class="col-md-8">
+                    {{ qDetail.correctionDate | date: "dd-MM-yyyy" }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="input-group">
+    <div class="row">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.portfolio" | translate }}:
+        </div>
+        <div class="col-md-4" *ngIf="
+        portfolio && showBtns.ShowTransferMinister && !this._isWithdrawn(qDetail) && !this._isWithdrawl()
+        else viewPortfolio
+      ">
+            <nz-select [(ngModel)]="selportFolioId" nzRequired nzPlaceHolder="Select Transferable Date" (ngModelChange)="getMinisterSubject($event)">
+                <nz-option *ngFor="let portfolioItems of portfolio" [nzLabel]="portfolioItems.name" [nzValue]="portfolioItems.id">
+                </nz-option>
+            </nz-select>
+        </div>
+        <ng-template #viewPortfolio>
+            <span class="margnlft-10" *ngIf="selportFolio">
+        {{ selportFolio.name }}</span>
+        </ng-template>
+    </div>
+</div>
+<div class="input-group">
+    <div class="row">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionlist.questionheading" | translate }}:
+        </div>
+        <div class="col-md-10">{{ qDetail.heading }}</div>
+    </div>
+</div>
+
+<div class="input-group" *ngIf="qDetail.type != 'SHORT_NOTICE'">
+    <div class="row" *ngIf="
+      !qDetail.dealayStatementUrl &&
+      (qDetail.delayStatementStatus == 'RETURNED' ||
+        (qDetail.status == 'WAITING_FOR_ANSWER' && this.getDateDiff()))
+    ">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.delaystmt" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <nz-upload nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png" [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 1" (nzChange)="handleChange($event)"
+                    [nzRemove]="handleRemove">
+                    <button nz-button>
+            <i nz-icon nzType="upload"></i>
+            {{
+              "business-dashboard.question.questionans.clcktosel" | translate
+            }}
+          </button>
+                </nz-upload>
+
+                <button *ngIf="!qDetail.dealayStatementUrl" nz-button [nzType]="'default'" (click)="uploadDelayStatement()" [disabled]="fileList.length == 0">
+          {{ "Upload" }}
+        </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="qDetail.dealayStatementUrl">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.delaystmt" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <a [href]="this.qDetail.dealayStatementUrl" target="_blank">
+        {{ "business-dashboard.question.questionans.delaystmt" | translate }}:
+      </a>
+            <button *ngIf="
+          qDetail.dealayStatementUrl &&
+          (qDetail.status == 'WAITING_FOR_ANSWER' ||
+            qDetail.delayStatementStatus == 'RETURNED')
+        " nz-button [nzType]="'default'" (click)="removeDelayStatement()">
+        {{ "Remove" }}
+      </button>
+        </div>
+    </div>
+</div>
+
+<div class="input-group">
+    <div class="row" *ngIf="qDetail && showAttachmentButton()">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.attachment" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <nz-upload nzAccept="application/pdf,image/png" [nzAction]="uploadURL" [(nzFileList)]="ansAttachment" [nzShowButton]="ansAttachment.length < 1" (nzChange)="addAnsAttchmemt($event, 'ANSWER')" [nzRemove]="handleRemove">
+                    <button nz-button>
+            <i nz-icon nzType="upload"></i>
+            {{
+              "business-dashboard.question.questionans.clcktosel" | translate
+            }}
+          </button>
+                </nz-upload>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="qDetail.answerAttachmentUrl">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.attachment" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <a [href]="qDetail.answerAttachmentUrl" target="_blank">
+        {{ "business-dashboard.question.questionview.ansattachment" | translate }}
+      </a>
+            <button *ngIf="qDetail.answerAttachmentUrl" nz-button (click)="DownloadFile(qDetail.answerAttachmentUrl)" [nzType]="'default'">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+            <button *ngIf="showdeletButton()" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to delete this attachment?" nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="uploadAttachment(false, 'ANSWER', null)" [nzType]="'default'">
+        <i nz-icon nzType="delete" nzTheme="outline"></i>
+      </button>
+        </div>
+    </div>
+</div>
+
+<div class="input-group">
+    <div class="row" *ngIf="
+      canAllowCoverLettrforCorrection() &&
+      !_isWithdrawn(qDetail) &&
+      !qDetail.correctionAttachmentUrl &&
+      showBtns.canShowCoverLetter
+    ">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.coverletter" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <div class="row">
+                <nz-upload nzAccept="application/pdf,image/png" [nzAction]="uploadURL" [(nzFileList)]="coverLetter" [nzShowButton]="coverLetter.length < 1" (nzChange)="addAnsAttchmemt($event, 'CORRECTION')" [nzRemove]="handleRemove">
+                    <button nz-button>
+            <i nz-icon nzType="upload"></i>
+            {{
+              "business-dashboard.question.questionans.attchcoverlettr"
+                | translate
+            }}
+          </button>
+                </nz-upload>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="qDetail.correctionAttachmentUrl">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.questionans.coverletter" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <a (click)="basicPopup()" style="color: #4597d8;">
+        {{
+          "business-dashboard.question.questionans.coverletter" | translate
+        }}</a>
+            <button *ngIf="qDetail.correctionAttachmentUrl" nz-button (click)="DownloadFile(qDetail.correctionAttachmentUrl)" [nzType]="'default'">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+            <button *ngIf="qDetail.correctionAttachmentUrl && canAllowCoverLettrforCorrection()" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to delete this attachment?" nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="uploadAttachment(false, 'CORRECTION', null)"
+                [nzType]="'default'">
+        <i nz-icon nzType="delete" nzTheme="outline"></i>
+      </button>
+        </div>
+    </div>
+</div>
+
+<div class="input-group" *ngIf="qDetail.tags && qDetail.tags.length > 0">
+    <div class="row">
+        <div class="col-md-2">
+            {{ "business-dashboard.question.tags" | translate }}:
+        </div>
+        <div class="col-md-10">
+            <nz-tag class="marginbtm-10" *ngFor="let tags of qDetail.tags; let i = index">
+                {{ tags.tag }}
+            </nz-tag>
+        </div>
+    </div>
+</div>
+<div class="input-group">
+    <div class="input-group">
+        <div class="row">
+            <div class="col-md-6"></div>
+            <div class="col-md-6"></div>
+        </div>
+    </div>
+    <div class="input-group">
+        <div class="row">
+            <div class="col-md-12">
+                <form nz-form [formGroup]="validateForm" class="answer-form">
+                    <div formArrayName="clauses">
+                        <div *ngFor="let d of qClause.controls; let i = index">
+                            <div class="input-group">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <nz-card>
+                                            <div [formGroupName]="i">
+                                                <div class="row marginbtm-15">
+                                                    <div class="col-md-2">
+                                                        {{ "business-dashboard.question.clause" | translate }} ({{ upper[i] }}):
+                                                    </div>
+                                                    <div class="col-md-10">
+                                                        <div class="word-break">
+                                                            {{ d.value.clause }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div formArrayName="answer">
+                                                    <div *ngFor="
+                              let ans of cAnswer(d).controls;
+                              let j = index
+                            " formGroupName="{{ j }}">
+                                                        <div *ngIf="ans.value.isEdit && !_isWithdrawn(qDetail)">
+                                                            <nz-form-item>
+                                                                <nz-form-control nzErrorTip="Enter Answer">
+                                                                    <div class="row marginbtm-15">
+                                                                        <div class="col-md-2">
+                                                                            <nz-form-label>
+                                                                                {{ "business-dashboard.question.versioning.answer" | translate }}
+                                                                            </nz-form-label>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <textarea nzRequired nz-input placeholder="" [nzAutosize]="{
+                                          minRows: 2,
+                                          maxRows: 6
+                                        }" formControlName="answer">
+                                      </textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </nz-form-control>
+                                                            </nz-form-item>
+                                                            <nz-form-item>
+                                                                <nz-form-control>
+                                                                    <div class="row marginbtm-15">
+                                                                        <div class="col-md-2">
+                                                                            <nz-form-label>
+                                                                                {{ "business-dashboard.question.questionans.attachment" | translate }}
+                                                                            </nz-form-label>
+                                                                        </div>
+                                                                        <div class="col-md-10" *ngIf="!ans.value.clauseAnswerUrl">
+                                                                            <nz-upload nzAccept="application/pdf,image/png" [nzAction]="uploadURL" [nzShowButton]="
+                                          !ans.value.clauseAnswerUrl
+                                        " (nzChange)="
+                                          addClauseAnsAttachment($event, i)
+                                        ">
+                                                                                <button nz-button>
+                                          <i nz-icon nzType="upload"></i>
+                                          {{
+                                            "business-dashboard.question.questionans.clcktosel"
+                                              | translate
+                                          }}
+                                        </button>
+                                                                            </nz-upload>
+                                                                        </div>
+                                                                        <div class="col-md-10" *ngIf="ans.value.clauseAnswerUrl">
+                                                                            <a [href]="ans.value.clauseAnswerUrl" target="_blank">
+                                        {{
+                                          "business-dashboard.question.questionview.attachment"
+                                            | translate
+                                        }}
+                                        ({{ upper[i] }})
+                                      </a>
+                                                                            <button nz-button nz-popconfirm nzPopconfirmTitle="Do you want to delete this attachment?" nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="
+                                          removeClauseAnsAttachment(i)
+                                        " nzPopconfirmPlacement="bottomLeft" [nzType]="'default'">
+                                        <i nz-icon nzType="delete" nzTheme="outline"></i>
+                                      </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </nz-form-control>
+                                                            </nz-form-item>
+                                                            <nz-form-item>
+                                                                <nz-form-control nzErrorTip="Select either Final or Interim">
+                                                                    <div class="row">
+                                                                        <div class="col-md-2">
+                                                                            <nz-form-label>{{ "business-dashboard.question.versioning.finalorInterim" | translate }}
+                                                                            </nz-form-label>
+                                                                        </div>
+                                                                        <div class="col-md-10">
+                                                                            <nz-radio-group nz-Input nzRequired name="type" formControlName="type">
+                                                                                <label nz-radio nzValue="FINAL">{{
+                                          "business-dashboard.question.questionans.final"
+                                            | translate
+                                        }}</label>
+                                                                                <!-- <label [nzDisabled]="ans.value.isCorrectn" nz-radio nzValue="INTERIM">{{ -->
+
+                                                                                <label nz-radio nzValue="INTERIM">{{
+                                          "business-dashboard.question.questionans.interim"
+                                              | translate
+                                          }}</label>
+                                                                            </nz-radio-group>
+                                                                        </div>
+                                                                    </div>
+                                                                </nz-form-control>
+                                                            </nz-form-item>
+
+                                                            <button *ngIf="ans.value.showAnsbtn" nz-button nzType="primary" (click)="saveClauseAnswer(i)">
+                                {{
+                                  "business-dashboard.question.questionans.saveans"
+                                    | translate
+                                }}
+                              </button>
+                            </div>
+                            <div *ngIf="!ans.value.isEdit">
+                              <div nz-row nzType="flex" nzJustify="end">
+                                <div *ngIf="
+                                    !_isWithdrawn(qDetail) && canEditAnswer(ans.value.changeInReply)
+                                  ">
+                                                                    <button nz-button nzType="default" (click)="editClauseAnswer(i)">
+                                    <i nz-icon nzType="edit" nzTheme="outline"></i>
+                                  </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row marginbtm-15">
+                                                                <div class="col-md-2">
+                                                                    {{ "business-dashboard.question.versioning.answer" | translate }}:
+                                                                </div>
+                                                                <div class="col-md-10 wordbreak">
+                                                                    {{ ans.value.answer }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="row marginbtm-15" *ngIf="ans.value.clauseAnswerUrl">
+                                                                <div class="col-md-2">
+                                                                    {{ "business-dashboard.question.questionans.attachment" | translate }}:
+                                                                </div>
+                                                                <div class="col-md-10 wordbreak">
+                                                                    <a [href]="ans.value.clauseAnswerUrl" target="_blank">
+                                    {{"business-dashboard.question.questionview.attachment" | translate}}
+                                    ({{ upper[i] }})
+                                  </a>
+                                                                    <button nz-button (click)="
+                                      DownloadFile(ans.value.clauseAnswerUrl)
+                                    " [nzType]="'default'">
+                                    <i nz-icon nzType="download" nzTheme="outline"></i>
+                                  </button>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row marginbtm-15">
+                                                                <div class="col-md-2">
+                                                                    {{ "business-dashboard.question.versioning.finalorInterim" | translate }}:
+                                                                </div>
+                                                                <div class="col-md-10 wordbreak">
+                                                                    {{ ans.value.type }}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </nz-card>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="width-100 d-flex"></div>
+                        <button *ngIf="showBtns.showchangeInreply" class="mr-6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle="Are you sure you want to apply for change in reply?" nz-button nzType="primary" (nzOnConfirm)="changeInReply()">
+              {{
+                "business-dashboard.question.questionans.changerply" | translate
+              }}
+            </button>
+                        <ng-container *ngIf="qDetail && canAllowReqCorrectionStmt() && !_isWithdrawn(qDetail)">
+                            <button class="mr-6" nz-button nzType="default" *ngIf="!showBtns.showcorrectionApplyBtn" (click)="reqCorrectionOfStatement(true)">
+                {{
+                correctionRequestBtnLabel
+              }}
+              </button>
+                            <button class="mr-6" nz-button nzType="primary" nz-popconfirm nzCancelText="No" nzOkText="Yes" [nzPopconfirmTitle]="cnfrmApplyBtnLabel" nz-button (nzOnConfirm)="aplyCorrectionOfStatement()" (nzOnCancel)="reqCorrectionOfStatement(false)" *ngIf="showBtns.showcorrectionApplyBtn">
+                {{
+              correctionApplyBtnLabel
+            }}
+              </button>
+                        </ng-container>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

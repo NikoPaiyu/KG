@@ -1,0 +1,19 @@
+.pdf-container {
+  height: 100%;
+  width: 100%;
+  z-index: 9;
+  overflow-y: auto;
+  background-image: none !important;
+}
+.live_start .enlage {
+}
+
+.abs-adj {
+  position: absolute;
+  z-index: 99;
+  right: 60px;
+  bottom: 40px;
+}
+.enlarge .abs-adj {bottom: 20px;}
+.greenbtn{background: #1db41d !important;color: #fff;}
+.redbtn{color: #fff !important;background: #f81f1f !important;}

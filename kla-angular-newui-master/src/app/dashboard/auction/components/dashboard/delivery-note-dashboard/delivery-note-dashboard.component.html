@@ -1,0 +1,61 @@
+<app-dashboard dashboardTitle="Delivery Note Dashboard" [dashboardBreadcums]="deliveryNoteBreadCums" [dashboardSearchPlaceholder]="'Search Request'" (dashboardSearchEvent)="onDashboardSearch($event)">
+    <div class="header-action">
+    </div>
+    <div class="grid-action-left">
+    <form [formGroup]="deliveryNoteFilterForm">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="filter d-flex flex-row justify-content-between align-items-center">
+                <div class="filter-datepicker mr-2 d-flex flex-row justify-content-between align-items-center flex-fill">
+                    <span class="filter-label">Auction Date</span>
+                    <nz-range-picker formControlName="date" [nzPlaceHolder]="['Auction Start Date','Auction End Date']"></nz-range-picker>
+                </div>
+                <div class="filter-status d-flex flex-row justify-content-between align-items-center flex-fill">
+                    <span class="filter-label">Status</span>
+                    <nz-select formControlName="status">
+                        <nz-option>Select Status</nz-option>
+                        <nz-option nzValue="{{status}}" nzLabel="{{status}}" *ngFor="let status of deliveryNoteStatusList"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="filter-reset">
+                    <button nz-button nzType="default"(click)="resetFilter()" class="ml-4">Clear Filter</button>
+                </div>
+        </div>  
+        </div>
+    </form>
+    </div>
+
+    <div class="grid-action-right">
+
+    </div>
+    <div class="grid-content">
+        <nz-table #basicTable [nzData]="deliveryNoteList$ | async" nzShowPagination
+        nzShowSizeChanger>
+            <thead>
+                <tr>
+                    <th>Auction File Number</th>
+                    <th>Auction Value</th>
+                    <th>Buyers Name</th>
+                    <th>Buyers Contact Number</th>
+                    <th>Auction Date</th>
+                    <th>Date of Issue</th>
+                    <th>Delivery Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let request of basicTable.data">
+                    <td>
+                        <span class="text-decoration-link" (click)="navigateToEditRequest(request)">{{request.auctionFileNumber}}</span>
+                    </td>
+                    <td>{{request.auctionValue}}</td>
+                    <td>{{request.buyersName}}</td>
+                    <td>{{request.contactNumber}}</td>
+                    <td>{{request.auctionDate | date: 'dd/MM/yyyy'}}</td>
+                    <td>{{request.issueDate | date: 'dd/MM/yyyy'}}</td>
+                    <td class="font-weight-bold" [ngStyle]="{'color': request.statusOfDisposal === 'Active' ? '#FF8000' : 'Blue' }">{{request.requestStatus | uppercase}}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>  
+
+
+</app-dashboard>

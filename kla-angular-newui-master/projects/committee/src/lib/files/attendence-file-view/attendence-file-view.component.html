@@ -1,0 +1,245 @@
+<div class="width-100">
+  <!-- <div class="row margnrtp-5" *ngIf="showEdit">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button class="ml-6 m-r5" nz-button nzType="default" (click)="editAttendence()" *ngIf="!attEdit">
+                Edit
+            </button>
+            <button class="ml-6 m-r5" nz-button nzType="default" (click)="cancelEditAttendence()" *ngIf="attEdit">
+                Cancel
+            </button>
+            <button class="ml-6 m-r5" nz-button nzType="primary" (click)="handleOk()" *ngIf="attEdit">
+                Update
+            </button>
+        </div>
+    </div> -->
+  <nz-tabset>
+    <nz-tab nzTitle="Commitee Members">
+      <div class="row margnrtp-5">
+        <div class="col-md-12">
+          <ng-container *ngFor="let item of meetingDetails.committee">
+            <h4>{{ item.name }}</h4>
+            <nz-table
+              #markAttendence
+              [nzData]="listOfDatas"
+              [nzShowPagination]="false"
+              [nzPageSize]="listOfDatas.length"
+            >
+              <thead>
+                <tr>
+                  <th>{{ "Attendance" | translate }}</th>
+                  <th>{{ "Name of the Person" | translate }}</th>
+                  <th>{{ "committee.list.distance" | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container
+                  *ngFor="let data of markAttendence.data; let i = index"
+                >
+                  <tr
+                    style="cursor: pointer"
+                    *ngIf="item.id === data.committeeId"
+                  >
+                    <td *ngIf="attEdit">
+                      <label nz-checkbox [(ngModel)]="data.present"></label>
+                    </td>
+                    <td *ngIf="!attEdit">
+                      <i
+                        nz-icon
+                        nzType="check-circle"
+                        nzTheme="outline"
+                        *ngIf="data.present"
+                      ></i>
+                      <i
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                        *ngIf="!data.present"
+                      ></i>
+                    </td>
+                    <td>
+                      <b>{{ data?.userName }}</b> -
+                      {{ data?.userRole?.split("_").join(" ") }}
+                      <span *ngIf="data?.commiteeName"
+                        >({{ data?.commiteeName }})</span
+                      >
+                    </td>
+                    <td *ngIf="attEdit">
+                      <input
+                        nz-input
+                        placeholder="Give KM"
+                        [(ngModel)]="data.distance"
+                        type="number"
+                      />
+                    </td>
+                    <td *ngIf="!attEdit">
+                      {{ data.distance ? data.distance : 0 }} Km
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </nz-table>
+          </ng-container>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Special Invitee">
+      <div class="row margnrtp-5">
+        <div class="col-md-12">
+          <nz-table
+            #markAttendenceSI
+            [nzData]="listOfDatas"
+            [nzScroll]="{ y: '350px' }"
+            [nzShowPagination]="false"
+            [nzPageSize]="listOfDatas.length"
+          >
+            <thead>
+              <tr>
+                <th>
+                  {{ "Attendance" | translate }}
+                </th>
+                <th>{{ "Name of Person" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                *ngFor="let data of markAttendenceSI.data; let i = index"
+              >
+                <tr
+                  style="cursor: pointer"
+                  *ngIf="data.userRole === 'SPECIAL_INVITIEE'"
+                >
+                  <td>
+                    <i
+                      nz-icon
+                      nzType="check-circle"
+                      nzTheme="outline"
+                      *ngIf="data.present"
+                    ></i>
+                    <i
+                      nz-icon
+                      nzType="close-circle"
+                      nzTheme="outline"
+                      *ngIf="!data.present"
+                    ></i>
+                  </td>
+                  <td>
+                    <b>{{ data?.userName }}</b> -
+                    {{ data?.userRole?.split("_").join(" ") }}
+                    <span *ngIf="data?.commiteeName"
+                      >({{ data?.commiteeName }})</span
+                    >
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Legistature secretariat staff">
+      <div class="row margnrtp-5">
+        <div class="col-md-12">
+          <nz-table
+            #markAttendenceLSStaff
+            [nzData]="listOfDatas"
+            [nzScroll]="{ y: '350px' }"
+            [nzShowPagination]="false"
+            [nzPageSize]="listOfDatas.length"
+          >
+            <thead>
+              <tr>
+                <th>
+                  {{ "Attendance" | translate }}
+                </th>
+                <th>{{ "Name of Person" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                *ngFor="let data of markAttendenceLSStaff.data; let i = index"
+              >
+                <tr style="cursor: pointer" *ngIf="data.userRole === 'SECTION'">
+                  <td>
+                    <i
+                      nz-icon
+                      nzType="check-circle"
+                      nzTheme="outline"
+                      *ngIf="data.present"
+                    ></i>
+                    <i
+                      nz-icon
+                      nzType="close-circle"
+                      nzTheme="outline"
+                      *ngIf="!data.present"
+                    ></i>
+                  </td>
+                  <td>
+                    <b>{{ data?.userName }}</b> -
+                    {{ data?.userRole?.split("_").join(" ") }}
+                    <span *ngIf="data?.commiteeName"
+                      >({{ data?.commiteeName }})</span
+                    >
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab nzTitle="Deprtment Staff ">
+      <div class="row margnrtp-5">
+        <div class="col-md-12">
+          <nz-table
+            #markAttendenceDStaff
+            [nzData]="listOfDatas"
+            [nzScroll]="{ y: '350px' }"
+            [nzShowPagination]="false"
+            [nzPageSize]="listOfDatas.length"
+          >
+            <thead>
+              <tr>
+                <th>
+                  {{ "Attendance" | translate }}
+                </th>
+                <th>{{ "Name of Person" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                *ngFor="let data of markAttendenceDStaff.data; let i = index"
+              >
+                <tr
+                  style="cursor: pointer"
+                  *ngIf="data.userRole === 'DEPARTMENT'"
+                >
+                  <td>
+                    <i
+                      nz-icon
+                      nzType="check-circle"
+                      nzTheme="outline"
+                      *ngIf="data.present"
+                    ></i>
+                    <i
+                      nz-icon
+                      nzType="close-circle"
+                      nzTheme="outline"
+                      *ngIf="!data.present"
+                    ></i>
+                  </td>
+                  <td>
+                    <b>{{ data?.userName }}</b> -
+                    {{ data?.userRole?.split("_").join(" ") }}
+                    <span *ngIf="data?.commiteeName"
+                      >({{ data?.commiteeName }})</span
+                    >
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</div>

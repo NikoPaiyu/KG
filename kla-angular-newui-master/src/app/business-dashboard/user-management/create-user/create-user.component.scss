@@ -1,0 +1,55 @@
+@import "~src/sass/utilities/variables";
+
+i[nz-icon] {
+	font-size: 32px;
+	color: #999;
+}
+.ant-upload-text {
+	margin-top: 8px;
+	color: #666;
+}
+.paddingT15 {
+	padding-top: 15px;
+}
+
+.justify-center {
+	justify-content: center;
+}
+.fingerprint-txt {
+	padding: 15px;
+
+	h4 {
+		padding: 20px;
+		font-size: 18px;
+		color: $mla-sub-tab-font;
+	}
+}
+
+.bg-blue {
+	background-color: $mla-bg;
+	border-radius: 20px;
+	padding: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: $mla-sub-tab-font;
+	font-size: 18px;
+	font-weight: 500;
+}
+.borderStyle {
+	border: 1px solid $border-1;
+	border-radius: 20px;
+	margin: 30px;
+}
+
+button.ant-btn.ng-star-inserted.ant-btn-primary {
+	background-color: $mla-font-color;
+}
+
+.mrg10
+{
+  margin: 10px 0;
+}
+
+.mrt-50{margin-top: 50px;}
+.rolehd{float: left;width:100%;font-weight: 600;font-size: 20px;}

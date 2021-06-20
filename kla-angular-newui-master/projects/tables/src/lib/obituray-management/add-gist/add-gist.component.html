@@ -1,0 +1,108 @@
+<form [formGroup]="newObituaryForm">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>{{ updateMode ?'Update Gist' : 'Add new'}}</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-3">{{"tables.obituary-management.name-of-member" | translate}}</div>
+          <div class="col-md-9">
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Please Enter Name">
+                <input nz-input placeholder="" formControlName="name" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-3">{{"tables.obituary-management.life" | translate}}</div>
+          <div class="col-md-9">
+            <!-- <nz-form-item>
+              <nz-form-control nzErrorTip="Please Select Life">
+                <nz-range-picker formControlName="lifeTime"></nz-range-picker>
+              </nz-form-control>
+            </nz-form-item> -->
+            <div class="row">
+              <div class="col-md-6">
+                <nz-form-item>
+                  <nz-form-control nzErrorTip="Please Select Birth Date">
+                    <nz-date-picker  [nzDisabledDate]="disabledStartDate"
+                    nzPlaceHolder='{{"tables.obituary-management.select-birth-date" | translate}}' nzFormat="dd-MM-yyyy" formControlName="birthDate" (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col-md-6">
+                <nz-form-item>
+                  <nz-form-control nzErrorTip="Please Select Death Date">
+                    <nz-date-picker [nzDisabledDate]="disabledEndDate "
+                    nzPlaceHolder='{{"tables.obituary-management.select-death-date" | translate}}' nzFormat="dd-MM-yyyy" formControlName="deathDate" (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>  
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-3">{{"tables.obituary-management.photo" | translate}}</div>
+          <div class="col-md-9">
+            <nz-form-item>
+              <nz-form-control>
+                <nz-upload
+                  nzAccept="image/png, image/jpeg"
+                  [nzAction]="uploadURL"
+                  [(nzFileList)]="fileList"
+                  [nzShowButton]="fileList.length < 1"
+                  [nzShowUploadList]="showUploadDocList"
+                  (nzChange)="handleFileChange($event)"
+                >
+                  <button nz-button>
+                    <i nz-icon nzType="upload"></i>{{"bill.createbill.uploadfile" | translate}}
+                  </button>
+                </nz-upload>
+                <div *ngIf="!newObituaryForm.controls.image.valid && addGist">
+                  <span class="text-danger">{{"tables.obituary-management.photo-is-required" | translate}}</span>
+                </div>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-3">{{"tables.obituary-management.bio" | translate}}</div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-10">
+            <nz-form-item>
+              <nz-form-control nzErrorTip="Please add bio">
+                <quill-editor formControlName="bio"> </quill-editor>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="cancelGist()"
+            >
+              {{"business-dashboard.forms.form-list.cancel" | translate}}
+            </button>
+
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="btn btn-primary primary-button"
+              (click)="addNew()"
+              [disabled]="newObituaryForm.invalid"
+            >
+              
+              {{ updateMode ?'Update' : 'Add'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

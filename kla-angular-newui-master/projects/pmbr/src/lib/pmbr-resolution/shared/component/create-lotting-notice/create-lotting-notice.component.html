@@ -1,0 +1,168 @@
+<form [formGroup]='createNoticeForm' class="width-100 pading-all">
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end"> <button  nz-button nzType="default" class='mrgR6' (click)='onCancel()'>
+            Cancel
+        </button>
+        <button nz-button nzType="primary"  nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete?"
+        (nzOnConfirm)="saveNotice()" (nzOnCancel)="cancel()" >
+            Save
+        </button></div>
+        <div class="col-md-6">
+            {{ "business-dashboard.question.questionlist.subject" | translate }}:
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "business-dashboard.pmbr.resolution-create-notice.inputcannotempty" | translate }}'>
+                    <input placeholder="Subject line goes here" nz-input maxlength="254" formControlName='subject' />
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6 mrg-top-10 d-flex justify-content-end">
+            <button nz-button nzType="default" class='mrgR6' (click)='onCancel()'>
+                {{ "cpl.correspondencelist.cancel" | translate }}
+            </button>
+            <button nz-button nzType="primary" [disabled]="!createNoticeForm.valid" nz-popconfirm nzPopconfirmTitle="Are you sure you want to save?"
+                (nzOnConfirm)="saveNotice()" (nzOnCancel)="cancel()">
+                {{ "bill.prioritylist.create.save" | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class=col-md-6>
+            {{ "business-dashboard.pmbr.resolution-ballot-list.presentationdate" | translate }}:
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "business-dashboard.pmbr.resolution-create-notice.inputcannotempty" | translate }}'>
+                    <nz-date-picker [nzFormat]="dateFormat" [nzAllowClear]="false" formControlName="resolutionDate"
+                        [nzDisabledDate]="presentationAllowedDates" (ngModelChange)='replaceNoticeDescription($event)'>
+                    </nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row padding-10" *ngIf="mla">
+        <div class=col-md-3>
+            {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}:
+        </div>
+        <div class="col-md-4">
+            {{this.currentUser.fullName}}
+        </div>
+    </div>
+    <div class="row padding-10">
+        <div class="col-md-8 mrg-top-10">
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "business-dashboard.pmbr.resolution-create-notice.inputcannotempty" | translate }}'>
+                    <quill-editor formControlName='description' #editor style="float: left;" html="html"
+                        [sanitize]="false">
+                    </quill-editor>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <!-- <div class="col-md-4 mrg-top-10">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{"cpl.correspondence.attachments" | translate}}</nz-form-label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span style="cursor: pointer;" nz-span nzType="primary" class="mrgL6" (click)="attachFiles()">
+                                <nz-upload
+                                    nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/jpg"
+                                    [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 3"
+                                    [nzShowUploadList]="showUploadList" [nzRemove]="true" (nzChange)="handleChange($event)">
+                                    <button nz-button><i nz-icon
+                                            nzType="upload"></i>{{"cpl.correspondencelist.upload" | translate}}</button>
+                                </nz-upload>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    <div class="row padding-10" *ngIf="addMemberDetails">
+        <div class="col-md-12">
+            <nz-table #filterTable [nzShowPagination]="false" [nzData]="listOfMembers">
+                <thead>
+                    <tr>
+                        <th>{{ "noticeprocessing.staff.personalregister.slno" | translate }}</th>
+                        <th>{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}</th>
+                        <th>{{ "business-dashboard.question.constituency" | translate }}</th>
+                        <th>{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.action" | translate }}</th>
+                    </tr>
+                </thead>
+                <tbody formArrayName="memberList">
+                    <ng-container *ngFor="let itemrow of createNoticeForm.get('memberList')['controls'] ;let i=index;"
+                        [formGroupName]="i">
+                        <tr *ngIf="itemrow.value.operationType!=='DELETE'">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{ "bill.bill-clause.list.selectmembers" | translate }}'
+                                    *ngIf="!memberIds[i]; else labelMemberName" formControlName="memberId">
+                                    <!-- !itemrow.value.memberId -->
+                                    <nz-option *ngFor="let data of filteredMembers" [nzLabel]="data.details.fullName"
+                                        [nzValue]="data">
+                                    </nz-option>
+                                </nz-select>
+                                <ng-template #labelMemberName>
+                                    {{itemrow?.value?.memberId?.details?.fullName}}
+                                    <!-- {{ memberName }} -->
+                                </ng-template>
+                            </td>
+                            <td>{{itemrow?.value?.memberId?.details?.keralaConstiturencyName}}</td>
+                            <!-- [disabled]="!itemrow?.value?.data.memberId?.id"  -->
+                            <td>
+                                <button nz-button nzType="default" *ngIf="!memberIds[i]; else deleteRowButton"
+                                    [disabled]="!itemrow?.value?.memberId?.userId" class="mr-6" nzTooltipTitle="Save"
+                                    (click)="saveMember(i, itemrow)">
+                                    {{ "bill.prioritylist.create.save" | translate }}
+                                </button>
+                                <ng-template #deleteRowButton>
+                                    <button nz-button nzType="default" class="mr-6" nzTooltipTitle="Delete"
+                                        nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.cpl.view.surewanttodelete" | translate }}'
+                                        (nzOnConfirm)="deleteMember(i, itemrow)" (nzOnCancel)="cancel()">
+                                        {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}
+                                    </button>
+                                </ng-template>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <tr>
+                        <td colSpan="5">
+                            <button nz-button nzType="primary" (click)="addMember()"
+                                [disabled]="createNoticeForm.get('memberList')['controls'].length !== memberIds.length">
+                                {{ "business-dashboard.pmbr.createlottingnotice.addnewmember" | translate }}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+    <!-- <div class= "row padding-20" *ngIf="mla">
+    <div class="col-md-12 text-align-center">
+        <div class="row" >
+            <div class="col-md-3">
+                Sl No
+            </div>
+            <div class="col-md-5">
+                Member Name
+            </div>
+            <div class="col-md-4">
+                Constituency
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                1
+            </div>
+            <div class="col-md-5">
+                {{currentUser.fullName}}
+            </div>
+            <div class="col-md-4">
+                Constituency
+            </div>
+        </div>
+    </div>
+</div> -->
+</form>

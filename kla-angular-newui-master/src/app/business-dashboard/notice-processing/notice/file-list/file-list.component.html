@@ -1,0 +1,191 @@
+<div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-4 d-flex align-items-center">
+          {{ "noticeprocessing.notice.listnotice.assembly" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            name="selectedValue"
+            [(ngModel)]="filter.assemblyId"
+            (ngModelChange)="filterFileAssembly()"
+          >
+            <nz-option
+              *ngFor="let item of assemblyList"
+              [nzLabel]="item.assemblyId"
+              [nzValue]="item.id"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center">
+          {{ "noticeprocessing.notice.listnotice.session" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            name="select"
+            [(ngModel)]="filter.sessionId"
+            (ngModelChange)="getAllFiles()"
+          >
+            <nz-option
+              *ngFor="let item of sessionList"
+              [nzLabel]="item.sessionId"
+              [nzValue]="item.id"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          <!-- <i nz-icon nzType="plus-circle" nzTheme="outline"></i> -->
+          <!-- <button nz-button [nzType]="'primary'" class="btn-style-flex">
+            <i nz-icon nzType="plus"></i>
+          </button> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="d-flex justify-content-end">
+        <!-- <button
+          class="margnrt-5"
+          nz-button
+          nzType="default"
+          (click)="resetFilter()"
+        >
+          {{
+            "noticeprocessing.noticetemplate.listtemplate.clearfilter"
+              | translate
+          }}
+        </button> -->
+
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            [(ngModel)]="searchPendingFilesParam"
+            (ngModelChange)="filterPendingFiles()"
+            placeholder="{{ 'Search File No/Subject' }}"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="rowd-flex justify-content-space-between">
+    <!-- <div class="col-md-6" *ngIf="false">
+      <span
+        nz-span
+        nzType="'primary'"
+        *ngIf="notice.doIHaveAnAccess('ASSIGN_TASK', 'READ')"
+        (click)="showTask()"
+        style="cursor: pointer;"
+      >
+        <b>Assign Task</b>
+      </span>
+    </div> -->
+    <div class="col-md-12 d-flex justify-content-end align-items-center" *ngIf="true">
+      <a
+        class="abs_btn"
+        nzType="default"
+        nz-dropdown
+        nzTrigger="click"
+        [nzDropdownMenu]="menu"
+      >
+        <i nz-icon nzType="layout" nzTheme="outline" class="mr-6"></i>
+        <span>cols</span>
+      </a>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div>
+          <ul
+            nz-menu
+            fileTable
+            
+          >
+            <li *ngFor="let box of checkboxes; let i = index"
+            class="checkbox-style">
+              <label nz-checkbox [(ngModel)]="box.check" name="i">{{
+                box.label
+              }}</label>
+            </li>
+          </ul>
+        </div>
+      </nz-dropdown-menu>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-table
+        #fileTable
+        [nzData]="pendingFileList"
+        nzShowPagination
+        nzShowSizeChanger
+      >
+        <thead>
+          <tr>
+            <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
+                            [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th> -->
+            <!-- <th nzShowCheckbox nzShowRowSelection></th> -->
+            <th nzShowSort nzSortKey="fileNo">
+              {{"noticeprocessing.staff.personalregister.fileno" | translate }}
+            </th>
+            <th
+              nzShowSort
+              nzSortKey="fileSubject"
+            >
+              {{"noticeprocessing.staff.personalregister.filesubject" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="priority">
+              {{"business-dashboard.question.questionlist.priority" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="Regdate">
+              {{"business-dashboard.question.questionlist.regdate" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="status">
+              {{"business-dashboard.question.questionlist.status" | translate}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- <tr
+        *ngFor="let data of filterTable.data"
+        routerLink="[
+          '/business-dashboard/notice/process',
+          data.notice.noticeId
+        ]"
+      >
+        <td nzShowCheckbox></td>
+        <td>{{ data.notice.noticeNumber }}</td>
+        <td>{{ data.notice.title }}</td>
+        <td>{{ data.title }}</td>
+        <td>{{ data.title }}</td>
+        <td>{{ data.title }}</td>
+      </tr> -->
+          <tr
+            style="cursor: pointer;"
+            *ngFor="let data of fileTable.data; let i = index"
+          >
+            <td>
+              <a
+                style="text-decoration: underline; color: blue;"
+                (click)="openFile(data.fileId)"
+                >{{ data.fileNumber }}</a
+              >
+            </td>
+            <td>{{ data.subject }}</td>
+            <td>{{ data.priority }}</td>
+            <td>{{ data.createdDate | date: 'dd-MM-yyyy'}}</td>
+            <td>
+              <nz-tag [nzColor]="'green'">
+                {{ data.status }}
+              </nz-tag>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>

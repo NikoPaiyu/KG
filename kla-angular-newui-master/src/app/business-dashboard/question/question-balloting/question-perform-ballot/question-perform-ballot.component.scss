@@ -1,0 +1,36 @@
+.td {
+  padding: 5px 0px;
+}
+th.bg-head {
+  min-width: 150px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.blthd {
+  font-weight: 600;
+  margin-bottom: 15px;
+  width: 100%;
+  float: left;
+}
+
+.bltth th {
+  background-color: #fff;
+  border-top: 1px solid #e8e8e8;
+  border-radius: 0px !important;
+}
+.ballot-nonruling td {
+  background-color: #f9e1ff;
+  border-bottom: #cf62e6 solid 1px;
+  border-top: #cf62e6 solid 1px;
+}
+.ballot-ruling td {
+  background-color: #e2dfff;
+  border-bottom: #7465e0 solid 1px;
+  border-top: #7465e0 solid 1px;
+}
+.overflow-blt {
+  max-height: 90vh;
+  overflow: auto;
+  width: 100%;
+}

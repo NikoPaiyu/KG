@@ -1,0 +1,275 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.bill-management.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "bill.prioritylist.listing.prioritylist" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-3">
+        <h2 class="admin-page-heading">
+            {{ listId ? ("business-dashboard.listprioritylist.prioritylist.priority" | translate) : ("bill.prioritylist.listing.createprioritylist" | translate) }}
+        </h2>
+    </div>
+    <div class="col-md-9 text-align-right">
+        <button nz-button nzType="default" class="mrgL6" (click)="viewCorrespondence()" *ngIf="priorityListResponse?.correspondenceId">
+            {{ "bill.prioritylist.create.viewCorrespondence" | translate }}
+          </button>
+        <button nz-button nzType="default" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle=' {{ "bill.bill-clause.list.douwanttogoback" | translate }}' (nzOnConfirm)="backToList()" nzPopconfirmPlacement="bottomRight">
+    <i nz-icon nzType="rollback" nzTheme="outline" class="baseline"></i>
+    {{ "bill.prioritylist.create.back" | translate }}
+  </button>
+        <!-- <button nz-button *ngIf="buttonControls.saveOrder" nzType="default" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "bill.bill-clause.list.doueanttoupdateorder" | translate }}' (nzOnConfirm)="savePrioriryList()" nzPopconfirmPlacement="bottomLeft">
+      <i nz-icon nzType="save" nzTheme="outline" class="baseline"></i>
+      {{ "bill.prioritylist.create.saveOrder" | translate }}
+    </button> -->
+
+        <!-- <button
+      nz-button
+      *ngIf="listId && buttonControls.delete && priorityListResponse.status === 'SAVED'"
+      nzType="default"
+      class="mrgL6"
+      nz-popconfirm
+      nzCancelText="No"
+      nzOkText="Yes"
+      nzPopconfirmTitle="Do you want to delete ?"
+      (nzOnConfirm)="deletePrioriryList()"
+      nzPopconfirmPlacement="bottomLeft"
+    >
+      <i nz-icon nzType="delete" nzTheme="outline" class="baseline"></i>
+      {{ "Delete" | translate }}
+    </button> -->
+
+        <button nz-button *ngIf="buttonControls.save" nzType="default" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "business-dashboard.question.doyouwanttosave" | translate }}' (nzOnConfirm)="savePrioriryList()" nzPopconfirmPlacement="bottomLeft">
+      <i nz-icon nzType="save" nzTheme="outline" class="baseline"></i>
+      {{ "bill.prioritylist.create.save" | translate }}
+    </button>
+
+        <button nz-button *ngIf="buttonControls.submit" [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "business-dashboard.question.doyouwanttosubmit" | translate }}' (nzOnConfirm)="submitPrioriryList()"
+            nzPopconfirmPlacement="bottomLeft">
+      <i nz-icon nzType="check-circle" class="baseline" nzTheme="outline"></i>
+      {{ "bill.prioritylist.create.submit" | translate }}
+    </button>
+
+        <!-- <button nz-button *ngIf="buttonControls.send && !priorityListResponse?.correspondenceId" [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "bill.bill-clause.list.douwanttosend" | translate }}' (nzOnConfirm)="sendPrioriryList(requestId, listId)"
+            nzPopconfirmPlacement="bottomLeft"> -->
+      <!-- <i nz-icon nzType="send" class="baseline" nzTheme="outline"></i> -->
+      <!-- {{ "Send" | translate }}
+    </button> -->
+
+    <button nz-button *ngIf="buttonControls.send && !priorityListResponse?.correspondenceId" [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "bill.bill-clause.list.douwanttocreateCorrespondence" | translate }}' (nzOnConfirm)="sendPrioriryList(requestId, listId)"
+            nzPopconfirmPlacement="bottomLeft">
+      {{"bill.bill-clause.list.createCorrespondence" | translate}}
+      </button>
+
+        <button nz-button [nzType]="'primary'" class="mrgL6" (click)="showInitialDaysModal(false)" *ngIf="
+        isAssistant() &&
+        priorityListResponse?.status === 'APPROVED' &&
+        priorityListResponse?.initaialDateStatus === 'PENDING' &&
+        priorityListResponse?.bulletinId
+      ">
+      {{ "Set up initial days" | translate }}
+    </button>
+        <button nz-button [nzType]="'primary'" class="mrgL6" (click)="showInitialDaysModal(true)" *ngIf="
+        priorityListResponse?.initaialDateStatus === 'SAVED' ||
+        priorityListResponse?.initaialDateStatus === 'SUBMITTED' ||
+        priorityListResponse?.initaialDateStatus === 'APPROVED'
+      ">
+      {{ "View Initial Days" | translate }}
+    </button>
+        <button nz-button [nzType]="'primary'" class="mrgL6" (click)="scheduleForBill()" *ngIf="
+      buttonControls.scheduleOfBills &&
+      priorityListResponse?.initaialDateStatus === 'APPROVED' && 
+      priorityListResponse?.initaialDateBulletinId
+    ">
+    {{ "Schedule of Bill" }}
+  </button>
+        <button nz-button [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle='{{ "bill.bill-clause.list.douwanttoresubmit" | translate }}' (nzOnConfirm)="resubmitFile('BILL_PRIORITY_LIST_INITAL_DATES', 'initialDateList')"
+            nzPopconfirmPlacement="bottomLeft" *ngIf="priorityListResponse?.initaialDateStatus === 'SAVED' && fileStatus === 'APPROVED' &&
+  buttonControls.createFile
+  ">
+  {{ "Resubmit File" | translate }}
+</button>
+
+        <button nz-button [nzType]="'primary'" class="mrgL6" (click)="createBulletinPart2()" *ngIf="!priorityListResponse?.bulletinId && priorityListResponse?.status === 'APPROVED' && 
+buttonControls.createBulletin">
+{{ "Create Bulletin Part 2" | translate }}
+</button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<form nz-form [formGroup]="billForm" class="form">
+    <div class="row">
+        <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+                {{ "bill.prioritylist.create.errortpl" | translate }}
+            </ng-container>
+        </ng-template>
+        <div class="col-md-4 mrgB20">
+            <nz-form-item>
+                <nz-form-label>{{ "bill.prioritylist.listing.assembly" | translate }}
+                </nz-form-label>
+                <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                    <nz-select [nzDisabled]="listId" nzShowSearch nzAllowClear formControlName="assemblyId">
+                        <nz-option *ngFor="let type of assemblies" [nzLabel]="type.assemblyId" [nzValue]="type.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div class="col-md-4 mrgB20">
+            <nz-form-item>
+                <nz-form-label>{{ "bill.prioritylist.listing.session" | translate }}
+                </nz-form-label>
+                <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                    <nz-select [nzDisabled]="listId" nzShowSearch nzAllowClear formControlName="sessionId">
+                        <nz-option *ngFor="let type of sessions" [nzLabel]="type.sessionId" [nzValue]="type.id"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- <div class="row">
+      <div class="col-md-12 mrgB20">
+        <strong>{{
+          "bill.prioritylist.create.list"
+            | translate
+        }}</strong>
+      </div>
+    </div> -->
+    <div class="row">
+        <div class="col-md-12 mrgB20" *ngIf="buttonControls.save || buttonControls.submit">
+            <nz-form-item class="border">
+                <nz-form-control [nzErrorTip]="errorTpl">
+                    <ckeditor [editor]="Editor" formControlName="header" name="myckeditor" [config]="ckeConfig" debounce="500">
+                    </ckeditor>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+
+        <div class="col-md-12 mrgB20" *ngIf="
+        !(buttonControls.save || buttonControls.submit) &&
+        billFormcontrol.header.value
+      ">
+            <nz-form-item class="border">
+                <nz-form-control [nzErrorTip]="errorTpl">
+                    <ckeditor [editor]="Editor" [disabled]="true" formControlName="header" name="myckeditor" [config]="ckeConfig" debounce="500">
+                    </ckeditor>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <ng-container *ngFor="let item of categorys;let i = index">
+        <!-- <ng-container *ngIf="item.priorityList && item.priorityList.length > 0"> -->
+        <div class="row mrgB20">
+            <div class="col-md-9">
+                <strong>{{ romanize(i + 1) }}{{ ". " }}{{ translate.getDefaultLang()=='mal' ? item.descriptionMal : item.description}}</strong>
+            </div>
+            <div class="col-md-3 text-align-right">
+                <button *ngIf="buttonControls.save || buttonControls.submit" nz-button nzSize="small" class="mrgL6" (click)="openBillSelection(item)">
+          {{ "bill.prioritylist.create.addbill" | translate }}
+        </button>
+                <button *ngIf="(buttonControls.save || buttonControls.submit) && item.id == 4" nz-button nzSize="small" class="mrgL6" (click)="openBillReference(item)">
+          {{ "bill.prioritylist.create.addbillref" | translate }}
+        </button>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-12">
+                <ngx-nestable id="{{ item.id }}" [(list)]="item.priorityList" [template]="itemTemplate">
+                </ngx-nestable>
+                <ng-template #itemTemplate let-row>
+                    <div class="col-md-12 border" id="{{ row.item.billId }}">
+                        <div class="row padding5">
+                            <div class="col-md-1">
+                                <i *ngIf="
+                    buttonControls.save ||
+                    buttonControls.submit ||
+                    buttonControls.saveOrder
+                  " nz-icon nzType="drag" class="baseline" nzTheme="outline" [ngxNestableDragHandle]="row"></i>
+                            </div>                             
+                            <div class="col-md-10">
+                                <span *ngIf="getIndex(item?.priorityList,row?.item?.billId)!==-1">
+                                    {{ getIndex(item?.priorityList,row?.item?.billId) + 1 }}{{ ".   " }}
+                                </span>
+                                <span class="mrgL6">{{
+                  row.item.billTitle ? row.item.billTitle : row.item.id
+                }}</span>
+                <span class="mrgL6" *ngIf="row?.item?.bill?.ordinance && item?.code == 'BILLS_TO_REPLACE_ORDINANCES'">({{
+                    row?.item?.bill?.ordinanceNumber ? row?.item?.bill?.ordinanceNumber : null
+                  }} {{"bill.prioritylist.create.ordinanceReplacement" | translate}})</span>
+                  <span class="mrgL6" *ngIf="row?.item?.bill?.billNumber">
+                      ({{"bill.prioritylist.create.billNo" | translate}}: {{
+                    row?.item?.bill?.billNumber ? row?.item?.bill?.billNumber : null
+                  }})</span>  
+                            </div>
+
+                            <div class="col-md-1">
+                                <button *ngIf="buttonControls.save || buttonControls.submit" nz-button nzSize="small" nzType="default" class="mrgL6" (click)="removeFromList(row.item, item)">
+                  <i
+                    nz-icon
+                    nzType="delete"
+                    nzTheme="outline"
+                    class="baseline"
+                  ></i>
+                </button>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <div class="col-md-12" *ngIf="item.priorityList && item.priorityList.length <= 0">
+                <div class="col-md-12 border empty">
+                    <div class="row padding5">
+                        <div class="col-md-12">
+                            <span>{{ "NIL" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </ng-container> -->
+    </ng-container>
+</form>
+
+<nz-modal [(nzVisible)]="showBillSelection" nzTitle="{{ 'bill.prioritylist.create.addbill' | translate }}" (nzOnCancel)="cancelBillSelection()" (nzOnOk)="addBillToList()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <input nz-input [(ngModel)]="billSearchParam" id="billSearchParam" name="billSearchParam" placeholder='{{ "bill.bill-clause.list.swearchbillhere" | translate }}' />
+        </div>
+        <div class="row">&nbsp;</div>
+        <nz-table #bills [nzData]="allBills | search: 'title':billSearchParam" [nzPageSize]="5">
+            <tbody>
+                <tr *ngFor="let data of bills.data">
+                    <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                    <td nzBreakWord>{{ data.title }}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="showAddBillReference" nzTitle=" {{ 'bill.prioritylist.create.addbillref' | translate }}" (nzOnCancel)="cancelAddBillReference()" [nzFooter]="null" nzWidth="600">
+    <lib-createbill-metaform [isBillRef]="true" (showCreate)="addBillReferenceToList($event)">
+    </lib-createbill-metaform>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="initialDaysModal" nzTitle=" {{ 'bill.bill-clause.list.setupintialdays' | translate }}" (nzOnCancel)="closeInitialDaysModal()" [nzFooter]="null" nzWidth="1000">
+    <div class="row padding_25">
+        <div class="col-md-12">
+            <lib-initial-days *ngIf="priorityListResponse" [isListView]="false"
+            [priorityListResponse]="priorityListResponse" [disableDates]="disableDates" [withCurrentUser]="withCurrentUser" (dateSuccess)="closeInitialDaysModal()">
+            </lib-initial-days>
+        </div>
+    </div>
+</nz-modal>
+
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle=" {{ 'bill.bill-clause.list.createbulletinpart2' | translate }}" (nzOnCancel)="cancelBulletin()">
+    <lib-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)"></lib-create-bulletin-form>
+</nz-modal>

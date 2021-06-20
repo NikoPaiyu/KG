@@ -1,0 +1,265 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.configuration.sessions.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b>{{"business-dashboard.configuration.sessions.assemblysessions" | translate}} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h4>{{"business-dashboard.configuration.sessions.assemblysessionsmngmnt" | translate}}</h4>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-between">
+            <div class="col-md-4">
+                {{"business-dashboard.configuration.sessions.assembly" | translate}}
+            </div>
+            <div class="col-md-4">
+            <nz-select nzAllowClear nzPlaceHolder="{{'business-dashboard.configuration.sessions.chooseassembly'| translate}}"
+           [(ngModel)]="allAssembly"  name="allAssembly"
+             (ngModelChange)="getSessionForAssembly()">
+          <nz-option *ngFor="let type of assemblyList" [nzValue]="type" [nzLabel]="type.assemblyId" >
+          </nz-option>
+        </nz-select>
+            </div>
+            <div class="col-md-4">
+              <button  nz-button [nzType]="'primary'"
+              (click)="showDissolveModal()"[disabled]="allAssembly?.status !== 'ACTIVE'" >
+               {{"business-dashboard.configuration.sessions.dissolve" | translate }}
+            </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-between">
+            <div class="col-md-3">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" [disabled] = "assemblyButton && !assemblyDissolved"  (click)="assemblyModel()">
+                    <i nz-icon nzType="plus"></i>{{"business-dashboard.configuration.sessions.assembly" | translate }}
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" [disabled]="(sessionButton && !assemblyDissolved) || allAssembly?.status !== 'ACTIVE'" (click)="creatSessionModel()">
+                    <i nz-icon nzType="plus"></i>{{"business-dashboard.configuration.sessions.session" | translate }}
+                </button>
+            </div>
+            <div class="col-md-6">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" name="search" [(ngModel)]="search" (ngModelChange)="onSearch()" nz-input
+                        placeholder="Search here" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+ <div class="col-md-12">
+  <div class="row marginbtm-15">
+     <nz-table #sessionsTable nzShowPagination nzShowSizeChanger [nzData]="selectedSessionList" class="table-all">
+        <thead>
+            <tr>
+             <th>
+               {{"business-dashboard.configuration.sessions.slno" | translate }}
+             </th>
+             <th>
+              {{"business-dashboard.configuration.sessions.session" | translate}}
+             </th>
+             <th>
+              {{"business-dashboard.configuration.sessions.active" | translate}}
+             </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of sessionsTable.data; let i = index">
+              <ng-container *ngIf="list.sessionId != 0">
+              <td>{{i+1}}</td>
+              <td>{{list.sessionId}}</td>
+              <td>
+                <nz-switch [(ngModel)]="list.checked" [nzControl]="true" 
+                nz-popconfirm
+                nzPopconfirmTitle="Do you want to make {{list.sessionId}} session active?"
+                nzPopconfirmPlacement="bottom"
+                (nzOnConfirm)="setCurrentAssemblyAndSession(list)"
+                [nzDisabled]="(list.sessionId < activeSession?.sessionValue && allAssembly?.assemblyId === activeSession?.assemblyValue) || allAssembly?.status === 'DISSOLVED'"></nz-switch>
+              </td>
+              </ng-container>
+            </tr>
+        </tbody>
+     </nz-table>
+   </div>
+  </div>
+</div>
+<!-- start assemblymodel -->
+<nz-modal
+  [(nzVisible)]="isAssemblyVisibleModal"
+  nzTitle="{{'business-dashboard.configuration.sessions.createassembly' | translate}}"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleCancel()"
+>
+ <div class="padding_25">
+   <div class="row">
+     <div class="col-md-6">
+        <p>{{"business-dashboard.configuration.sessions.newassembly" | translate}}:</p>
+     </div>
+     <div class="col-md-6">
+       {{newAssemblyValue}}
+     </div>
+   </div>
+   <div class="row">
+     <div class="col-md-12">
+       <div class="row margnrtp-15">
+        <div class="col-md-4">{{"business-dashboard.configuration.sessions.startdate" | translate }}</div>
+        <div class="col-md-8">
+          <nz-date-picker [(ngModel)]="astartDate" [nzFormat]="dateFormat" [nzDisabledDate]="disabledDate" ></nz-date-picker>
+        </div>
+       </div>
+     </div>
+   </div>
+   <div class="row mrt-50 margnrtp-15">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        class="secondary-button button-font dark-border dark-font"
+        (click)="handleCancel()"
+      >
+        {{"business-dashboard.configuration.sessions.cancel" | translate}}
+      </button>
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle="{{'business-dashboard.configuration.sessions.ayswcna' | translate}}"
+        (nzOnConfirm)="createAssembly()"
+        class="btn btn-primary primary-button"
+      >
+      {{"business-dashboard.configuration.sessions.createassembly" | translate}}
+      </button>
+    </div>
+  </div>
+ </div>
+</nz-modal>
+<!-- end assemblyModel -->
+<!-- start sessionModel -->
+<nz-modal
+  [(nzVisible)]="isSessionVisibleModal"
+  nzTitle="{{'business-dashboard.configuration.sessions.createsession' | translate}}"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleCancel()"
+>
+ <div class="padding_25">
+   <div class="row">
+     <div class="col-md-6">
+        <p>{{"business-dashboard.configuration.sessions.assembly" | translate}}:</p>
+     </div>
+     <div class="col-md-6">
+       {{allAssembly?.assemblyId}}
+     </div>
+   </div>
+   <div class="row">
+    <div class="col-md-4">
+       <p>{{"business-dashboard.configuration.sessions.session" | translate}}:</p>
+    </div>
+    <div class="col-md-8">
+      <nz-select nzAllowClear nzPlaceHolder="{{'business-dashboard.configuration.sessions.choosesession' | translate}}" [(ngModel)]="sessionId"  name="sessionId"
+      >
+   <nz-option *ngFor="let type of formSessionList" [nzValue]="type.id" [nzLabel]="type.sessionId" >
+   </nz-option>
+ </nz-select>
+    </div>
+  </div>
+   <div class="row">
+     <div class="col-md-12">
+       <div class="row margnrtp-15">
+        <div class="col-md-4">{{"business-dashboard.configuration.sessions.startdate" | translate}}</div>
+        <div class="col-md-8">
+          <nz-date-picker [(ngModel)]="sstartDate" [nzFormat]="dateFormat" [nzDisabledDate]="disabledDate" ></nz-date-picker>
+        </div>
+       </div>
+     </div>
+   </div>
+   <div class="row mrt-50 margnrtp-15">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        class="secondary-button button-font dark-border dark-font"
+        (click)="handleCancel()"
+      >
+      {{"business-dashboard.configuration.sessions.cancel" | translate}}
+      </button>
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle="{{'business-dashboard.configuration.sessions.ayswcns' | translate}}"
+        (nzOnConfirm)="createSession()"
+        class="btn btn-primary primary-button"
+      >
+        {{"business-dashboard.configuration.sessions.createsession" | translate}}
+      </button>
+    </div>
+  </div>
+ </div>
+</nz-modal>
+<!-- end sessionModel -->
+<nz-modal
+  [(nzVisible)]="isDissolveVisible"
+  nzTitle="Dissolve Assembly"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleDissolveCancel()"
+>
+ <div class="padding_25">
+   <div class="row">
+    <div class="col-md-12">
+      <div class="row margnrtp-15">
+       <div class="col-md-4">Start Date</div>
+       <div class="col-md-8">
+         <nz-date-picker [(ngModel)]="assemblyEndDate" [nzFormat]="'dd/MM/yyyy'" [nzDisabledDate]="disabledEndDate" ></nz-date-picker>
+       </div>
+      </div>
+    </div>
+    </div>
+  <div class="row mrt-50 margnrtp-15">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        class="secondary-button button-font dark-border dark-font"
+        (click)="handleDissolveCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle="Are you sure want to Dissolve Assembly?"
+        (nzOnConfirm)="dissolveAssembly()"
+        class="btn btn-primary primary-button"
+      >
+        Dissolve
+      </button>
+    </div>
+  </div>
+</div>
+</nz-modal>

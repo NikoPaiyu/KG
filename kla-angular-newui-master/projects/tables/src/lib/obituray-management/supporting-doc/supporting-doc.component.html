@@ -1,0 +1,154 @@
+<div class="padding_25">
+  <div class="row margnrtp-15" *ngIf="isFileView && currentAssignee">
+    <div class="col-md-4"></div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4 d-flex justify-content-end">
+      <button nz-button nzType="primary" type="button" 
+      nz-popconfirm
+      nzPopconfirmTitle="Do you want to update?"
+      (nzOnConfirm)="updateDocuments()">{{"cpl.docupload.update" | translate}}</button></div>
+  </div>
+  <div class="row margnrtp-15">
+    <ng-container *ngFor="let doc of documentList;index as i">
+    <div class="col-md-3" *ngIf="doc.delete == false">
+      <div class="row">
+        <div class="col-md-12">
+        <nz-avatar class="custom_icon_w" (click)="showPdfModal(doc)"
+          [nzShape]="'square'"
+          [nzIcon]="'user'"
+          nzSrc="{{ doc.attachmentUrl }}"
+        ></nz-avatar>
+        </div>
+      </div>
+      <div class="row margnrtp-15">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between">
+            <span class="mr-6">{{ doc.name }}</span>
+            <div *ngIf="!isFileView || (isFileView && currentAssignee)">
+              <i class="mr-6" nz-icon nzType="form" nzTheme="outline"
+              (click)="showAddDocPopup(i,doc)" [class.disabled]="fileStatus === 'SUBMITTED'"></i>
+              <i class="mr-6" nz-icon nzType="delete" nzTheme="outline"
+              [class.disabled]="fileStatus === 'SUBMITTED'"
+              nz-popconfirm
+              nzPopconfirmTitle="Do you want to delete ?"
+              (nzOnConfirm)="deleteDoc(i,doc)"></i>
+            </div>
+          </div>
+         </div>
+      </div>
+      <div class="row margnrtp-15" *ngIf="doc.updatedDate">
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between">
+            <span class="ft14">{{ doc?.user?.details?.fullName}}</span>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="d-flex justify-content-between">
+            <span class="ft14">{{ doc.updatedDate | date: 'dd/MM/yyyy hh:mm:ss a'}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-3">
+      <button *ngIf="!isFileView || (isFileView && currentAssignee)"
+        nz-button
+        nzType="primary"
+        [disabled]="fileStatus === 'SUBMITTED'"
+        class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+        (click)="showAddDocPopup(null,null)">
+        <i nz-icon nzType="plus"></i>
+        {{"tables.obituary-management.add-new" | translate}}
+      </button>
+    </div>
+  </div>
+</div>
+<!-- Start Add Document Model -->
+<nz-modal [(nzVisible)]="addDoc.showDoc" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>{{ addDoc.update ? 'Update Document':'Add New Document'}}</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"cpl.documents.documenttitle" | translate}}</div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="{{
+                'committee.committe-files.title.err' | translate
+              }}"
+              [(ngModel)]="addDoc.name"
+            />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"business-dashboard.agenda.create-item.doc" | translate}}</div>
+          <div class="col-md-8">
+
+            <nz-upload
+            nzAccept="image/png,image/jpeg"    
+            [nzAction]="uploadURL"
+            [(nzFileList)]="docFileList"
+            [nzShowButton]="docFileList.length < 1"
+            [nzShowUploadList]="showUploadDocList"
+            (nzChange)="handleFileChange($event)"
+          >
+            <button nz-button>
+              <i nz-icon nzType="upload"></i>{{"bill.createbill.uploadfile" | translate}}
+            </button>
+          </nz-upload>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="clearDocData()"
+            >
+              {{"business-dashboard.forms.form-list.cancel" | translate}}
+            </button>
+
+            <button
+              [disabled]="!addDoc.name || !addDoc.attachmentUrl"
+              type="button"
+              nz-button
+              nzType="primary"
+              class="btn btn-primary primary-button"
+              (click)="addDocument()"
+            >
+              {{ addDoc.update  ? 'Update': 'Upload'}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- End Add Document Model -->
+
+
+<!-- document viewer modal -->
+<nz-modal [nzVisible]="isPdfVisible" [nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="isPdfVisible = false">
+  <ng-template #modalContent>
+    <div class="width-100 pading-all">
+      <div class="row margnrtp-15 margnrgt-15">
+        <div class="col-md-12">
+          <b>{{viewTitle}}</b>
+        </div>
+      
+      </div>
+      <div class="row margnrtp-15 margnrgt-15">
+        <div class="col-md-12 align-items-center">
+          <img [src]="viewUrl" [ngStyle]="{ width: '100%' }" />
+        </div>
+      </div>
+    </div>
+   
+  </ng-template>
+</nz-modal>
+<!-- end of document viewer modal -->

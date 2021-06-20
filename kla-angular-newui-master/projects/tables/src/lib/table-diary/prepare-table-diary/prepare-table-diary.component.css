@@ -1,0 +1,46 @@
+.activeBusiess {
+  background: #defed0 !important;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 9;
+  height: 100%;
+}
+.activeChildBusiess {
+  background: #defed0 !important;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 9;
+  height: 100%;
+}
+.pos {
+  position: relative;
+  z-index: 99;
+}
+.padding_25 {
+  padding: 25px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.ml-6 {
+  margin-left: 6px;
+}
+.mr-tb-12 {
+  margin-top: 12px;
+  margin-bottom: 0px;
+}
+.myDiv .only-show-on-hover {
+  visibility: hidden;
+}
+.myDiv:hover .only-show-on-hover {
+  visibility: visible;
+}
+
+.mrbm-6 {
+  margin-bottom: 6px;
+}

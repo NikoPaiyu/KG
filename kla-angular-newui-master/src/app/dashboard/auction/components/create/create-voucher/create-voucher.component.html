@@ -1,0 +1,78 @@
+<app-create [createTitle]="(UIState$ | async) === 'EDIT' ? 'Edit Voucher Request' : 'New Voucher Request'" [createBreadCums]="BreadCums">
+    <div class="header-action" *ngIf="(UIState$ | async) === 'CREATE'">
+            <button nz-button nzType="primary" (click)="onSubmit('Draft')" class="mr-2" [disabled]="">Save as Draft</button>
+            <button nz-button nzType="primary" (click)="onSubmit()" class="mr-2" [disabled]="voucherFormGroup?.invalid" >Submit</button>
+            <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
+    </div>
+    <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">
+        <button nz-button nzType="primary" (click)="onEditState()" class="mr-2" >Edit</button>
+        <button nz-button nzType="primary" (click)="onEdit('Active')" class="mr-2" [disabled]="voucherFormGroup?.invalid || voucherStatus?.value !== 'Draft'">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
+</div>
+    <div class="header-action" *ngIf="(UIState$ | async) === 'EDIT'">
+        <button nz-button nzType="primary" (click)="onSubmit('Draft')" class="mr-2" [disabled]="voucherStatus?.value !== 'Draft'">Save as Draft</button>
+        <button nz-button nzType="primary" (click)="onEdit('Active')" class="mr-2" [disabled]="voucherFormGroup?.invalid">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
+    </div>
+
+    <div class="create-form">
+        <form [formGroup]="voucherFormGroup" *ngIf="voucherFormGroup; else loading">
+            <div class="row">
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Auction File Number</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="value" formControlName="auctionFileNumber" type="number" [disabled]="(UIState$ | async) === 'VIEW' || (UIState$ | async) === 'EDIT'"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Auction Value</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="value" formControlName="auctionValue" type="number" [disabled]="(UIState$ | async) === 'VIEW'"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="value" nzRequired>Buyers Name</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-select formControlName="buyersName" [nzDisabled]="(UIState$ | async) === 'VIEW'">
+                                <nz-option nzValue="{{status}}" nzLabel="{{status}}" *ngFor="let status of vendorList"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="method" nzRequired>Buyers Phone</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input id="method" type="number"  formControlName="buyersPhone" [disabled]="(UIState$ | async) === 'VIEW'"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="method" nzRequired>Buyers Address</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <textarea  nz-input formControlName="buyersAddress" style="min-height: 250px !important" [disabled]="(UIState$ | async) === 'VIEW'"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Date of Auction</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-date-picker id="disposed" formControlName="dateOfAuction" [nzDisabled]="(UIState$ | async) === 'VIEW'"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Payment Status</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input type="text" nz-input formControlName="paymentStatus" [disabled]="(UIState$ | async) === 'VIEW'">
+
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</app-create>
+
+<ng-template #loading>
+    Loading
+</ng-template>

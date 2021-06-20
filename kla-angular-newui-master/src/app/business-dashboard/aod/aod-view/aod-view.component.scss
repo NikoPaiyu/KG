@@ -1,0 +1,118 @@
+@import "~src/sass/utilities/variables";
+
+.button-cs {
+  display: block;
+  width: 70%;
+  margin: 2px;
+  text-align: center;
+}
+
+.button-hs {
+  text-align: center;
+  display: block;
+  width: 100%;
+  margin: 2px;
+}
+.p-r-25 {
+  padding-right: 25px;
+}
+
+.m-rl-5 {
+  margin: 0 5px;
+}
+.sitting-view-date {
+  // padding-top: 25px;
+  ul {
+    list-style: none;
+  }
+  li {
+    border: #dfe8ef solid 1px;
+    font-size: 15px;
+    padding: 5px 10px;
+    overflow: hidden;
+    margin-bottom: 6px;
+    text-align: center;
+    border-radius: 5px;
+  }
+}
+.sitting-view-details {
+  padding-left: 20px;
+  ul {
+    margin-bottom: 0px;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+  li {
+    font-size: 16px;
+    margin-bottom: 5px;
+    list-style: disc;
+    margin-left: 20px;
+  }
+  h3 {
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+.justify-content-end {
+  justify-content: flex-end;
+}
+
+.align-items {
+  align-items: flex-start;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+.col-div-subject {
+  padding-top: 0px;
+}
+.font-month {
+  font-size: 18px;
+}
+.block_aod {
+  margin-bottom: 15px;
+  border-bottom: #dfe8ef solid 1px;
+  float: left;
+  width: 100%;
+  padding-bottom: 25px;
+  padding-top: 10px;
+}
+.col-div-subject .ant-card-bordered {
+  border: none !important;
+}
+.sitting-view-details .ant-card-body {
+  border-radius: 5px !important;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+
+.min_list {
+  float: left;
+  width: 100%;
+  margin-bottom: 0px;
+}
+.min_list li {
+  float: left;
+  width: 100%;
+  list-style: none;
+  margin-bottom: 10px;
+}
+.block_min {
+  background-color: #f8fbfe;
+  border: 1px solid #cfe9fe;
+  border-radius: 5px;
+}
+.date_grp {
+  float: left;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  border: 1px solid #cfe9fe;
+  border-radius: 5px;
+  padding: 4px 15px;
+}

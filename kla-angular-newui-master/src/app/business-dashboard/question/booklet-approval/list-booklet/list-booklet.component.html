@@ -1,0 +1,167 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{"business-dashboard.viewbullettin.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b> Question booklet </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+      <h3>{{"business-dashboard.question.list-booklet.questionsbookletlist" | translate}}</h3>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  
+  <nz-tabset>
+    <nz-tab nzTitle='{{"business-dashboard.aod.aod-list.pendinglist" | translate}}'>
+      <div class="row">
+        <div class="col-md-4">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label> {{"cpl.docupload.assembly" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <nz-select [(ngModel)]="assemblyId" name= "currentAssembly" nzPlaceHolder='{{"cpl.docupload.assembly" | translate}}' (ngModelChange)="findSessionListByAssembly(assemblyId)">
+                    <nz-option *ngFor="let assemblyItems of assemblyList" [nzLabel]="assemblyItems.assemblyId"
+                    [nzValue]="assemblyItems.id"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-4">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"cpl.docupload.session" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <nz-select [(ngModel)]="sessionId" name= "currentSession" nzPlaceHolder='{{"cpl.docupload.session" | translate}}' (ngModelChange)="getPendingFile()">
+                    <nz-option *ngFor="let sessionItems of sessionList" [nzLabel]="sessionItems.sessionId"
+                      [nzValue]="sessionItems.id"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <nz-table #rowSelectionTable [nzData]="pendingBulletins">
+        <thead>
+          <tr>
+            <th nzShowSort nzSortKey="serialNo">
+              No
+            </th>
+            <th nzShowSort nzSortKey="fileNumber">
+              {{"cpl.docpreparion.date" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="subject">
+              {{"business-dashboard.question.questiontype" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="type">
+              {{"business-dashboard.question.questionlist.status" | translate}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let data of rowSelectionTable.data; let i = index">
+            <tr nz-popover nzType="primary" nzPopoverPlacement="left" [nzPopoverContent]="contentTemplate"
+              (click)="viewFile(data.id)" style="cursor: pointer;">
+              <ng-template #contentTemplate>
+                <div>
+                  <span style="cursor:pointer" class="sortable" (click)="viewFile(data.id)">{{"cpl.docpreparion.view" | translate}}</span>
+                </div>
+              </ng-template>
+              <td>{{i+1}}</td>
+              <td>{{data.questionDate | date: 'dd-MM-yyyy'}}</td>
+              <td>{{data.category}}</td>
+              <td>{{data.wfStatus}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle='{{"business-dashboard.question.list-booklet.alllist" | translate}}'>
+      <div class="row">
+        <div class="col-md-4">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label> {{"cpl.docupload.assembly" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <nz-select [(ngModel)]="assemblyId" name= "currentAssembly" nzPlaceHolder='{{"cpl.docupload.assembly" | translate}}'  (ngModelChange)="findSessionListByAssembly(assemblyId)">
+                    <nz-option *ngFor="let assemblyItems of assemblyList" [nzLabel]="assemblyItems.assemblyId"
+                    [nzValue]="assemblyItems.id"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-4">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"cpl.docupload.session" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <nz-select [(ngModel)]="sessionId" name= "currentSession" nzPlaceHolder='{{"cpl.docupload.session" | translate}}' (ngModelChange)="getAllFiles()">
+                    <nz-option *ngFor="let sessionItems of sessionList" [nzLabel]="sessionItems.sessionId"
+                      [nzValue]="sessionItems.id"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <nz-table #rowSelectionTable2 [nzData]="allBulletins">
+        <thead>
+            <tr>
+                <th nzShowSort nzSortKey="serialNo">
+                  No
+                </th>
+                <th nzShowSort nzSortKey="fileNumber">
+                  {{"cpl.docpreparion.date" | translate}}
+                </th>
+                <th nzShowSort nzSortKey="subject">
+                  {{"business-dashboard.question.questiontype" | translate}}
+                </th>
+                <th nzShowSort nzSortKey="type">
+                  {{"business-dashboard.question.questionlist.status" | translate}}
+                </th>
+              </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let data of rowSelectionTable2.data; let i = index">
+            <tr nz-popover nzType="primary" nzPopoverPlacement="left" [nzPopoverContent]="contentTemplate"
+              (click)="viewFile(data.id)" style="cursor:pointer">
+              <ng-template #contentTemplate>
+                <div>
+                  <span style="cursor:pointer" class="sortable" (click)="viewFile(data.id)">{{"cpl.docpreparion.view" | translate}}</span>
+                </div>
+              </ng-template>
+              <td>{{i+1}}</td>
+              <td>{{data.questionDate | date: 'dd-MM-yyyy'}}</td>
+              <td>{{data.category}}</td>
+              <td>{{data.wfStatus}}</td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </nz-tab>
+  </nz-tabset>

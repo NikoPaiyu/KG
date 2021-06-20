@@ -1,0 +1,16 @@
+.justify-content-space-between {
+    justify-content: space-between;
+  }
+  .justify-content-flex-end {
+    justify-content: flex-end;
+  }
+  .ml-6 {
+    margin-left: 6px;
+  }
+  .m-r5 {
+    margin-right: 5px;
+  }
+  .mrgL20 {
+    margin-right: 20px;
+  }
+  

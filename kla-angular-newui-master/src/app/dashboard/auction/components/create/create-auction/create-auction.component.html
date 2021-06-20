@@ -1,0 +1,76 @@
+<app-create [createTitle]="createTitle" [createStatus]="statusOfAuction.value" [createBreadCums]="auctionBreadCums">
+    <div class="header-action" *ngIf="(UIState$ | async) === 'CREATE'">
+            <button nz-button nzType="primary" (click)="onSubmit('Draft','create')" class="mr-2">Save as Draft</button>
+            <button nz-button nzType="primary" [disabled]="auctionFormGroup.invalid" (click)="onSubmit()" class="mr-2" >Submit</button>
+            <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
+    </div>
+    <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">
+        <button nz-button nz-type="primary" class="mr-2" (click)="viewBids()">View Bids</button>
+        <button nz-button nzType="primary" (click)="onEditState()" class="mr-2" *ngIf="statusOfAuction.value === 'Draft'">Edit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
+    </div>
+    <div class="header-action" *ngIf="(UIState$ | async) === 'EDIT'">
+        <button nz-button nz-type="primary" (click)="viewBids()" class="mr-2">View Bids</button>
+        <button nz-button nzType="primary"  (click)="onEdit('Draft')" class="mr-2" [disabled]="auctionFormGroup.invalid" [disabled]="statusOfAuction.value !== 'Draft'">Save as Draft</button>
+        <button nz-button nzType="primary" [disabled]="auctionFormGroup.invalid" (click)="onEdit('Active')" class="mr-2" [disabled]="statusOfAuction.value !== 'Draft'" >Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()">Discard</button>
+    </div>
+
+    <div class="create-form">
+        <form [formGroup]="auctionFormGroup" *ngIf="auctionFormGroup">
+            <div class="row">
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Asset Disposal Request No.</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="request" formControlName="disposalRequestId" [disabled]="true" type="text"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="date" nzRequired>Auction Date and time</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-date-picker id="date" formControlName="auctionDate" nzShowTime [nzDisabled]="(UIState$ | async) === 'VIEW'" nzFormat="yyyy-MM-dd HH:mm:ss"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="value" nzRequired>Place of Auction</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="value" formControlName="placeOfAuction" type="text" [disabled]="(UIState$ | async) === 'VIEW'" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="method" nzRequired>Deposit Amount</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input id="method" type="number" formControlName="depositAmount" [disabled]="(UIState$ | async) === 'VIEW'"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Bid Submission last date</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-date-picker id="disposed" formControlName="bidSubmissionDate" [nzDisabled]="(UIState$ | async) === 'VIEW'"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Attachments</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <app-file-list [type]="'Auction'" (fileListEvent)="fileListEvent($event)" [attachmentDisabled]="(UIState$ | async) === 'VIEW'"  [fileList]="auctionFormGroup?.get('attachments')?.value"></app-file-list>
+                        </nz-form-control>
+                    </nz-form-item> 
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Description</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <textarea rows="8" nz-input formControlName="description" style="min-height: 250px !important" [disabled]="(UIState$ | async) === 'VIEW'"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</app-create>

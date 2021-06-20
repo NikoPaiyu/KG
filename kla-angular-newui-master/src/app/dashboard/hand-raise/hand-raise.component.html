@@ -1,0 +1,58 @@
+<div>
+  <nz-list
+    *ngIf="handRiseRequestDetailList.length == 0"
+    [nzDataSource]="[]"
+  ></nz-list>
+
+  <button
+    *ngIf="handRiseRequestDetailList.length > 0"
+    (click)="clearAllHandRiseRequest()"
+    class="mla-button hand_btn"
+  >
+  {{"dashboard.handwriting.clear" | translate}}
+  </button>
+</div>
+
+<div class="overflw-hand">
+  <div
+    [ngClass]="
+      item.memberGroup == 'OPOSITION_PARTY'
+        ? 'opposition_party'
+        : 'ruling_party'
+    "
+    class="hand_block_mla brd-block"
+    *ngFor="let item of handRiseRequestDetailList; let i = index"
+  >
+    <div class="hand_mla_img">
+      <img
+        src="{{
+          item.ownerImage ? item.ownerImage : '../../assets/img/hand.svg'
+        }}"
+        alt=""
+      />
+    </div>
+
+    <div class="name_time">
+      <div class="mla_name_hand">
+        <h4>{{ item.ownerMalayalamName || item.ownerName }}</h4>
+      </div>
+      <div class="mla_time_hand">
+        {{ item.time | date: "hh:mm a" }}
+        <span
+          [ngClass]="
+            item.memberGroup == 'OPOSITION_PARTY'
+              ? 'opposition_party'
+              : 'ruling_party'
+          "
+          >{{
+            (item.memberGroup == "OPOSITION_PARTY" ? "dashboard.handraise.opposition" 
+            : "dashboard.handraise.ruling") | translate
+          }}</span
+        >
+      </div>
+    </div>
+    <!-- <div>
+    <button (click)="handRiseRequestAccept(item.requestId, i)">accept</button>
+  </div> -->
+  </div>
+</div>

@@ -1,0 +1,66 @@
+.overflow-blt {
+  max-height: 90vh;
+  overflow: auto;
+  width: 100%;
+}
+.brdr_nt {
+  border: #dfe8ef solid 1px;
+  padding: 10px;
+
+  border-radius: 5px;
+
+  margin-bottom: 10px;
+}
+.pl0 {
+  padding-left: 0px;
+}
+.btn-notes {
+  margin-top: 10px;
+  width: 100%;
+
+  display: flex;
+  justify-content: end;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.note_num {
+  float: right;
+  font-weight: bold;
+  color: #1890ff;
+  margin-top: 10px;
+}
+.bg_txtarea {
+  background-color: #f2f2f2;
+  margin: 0px 15px;
+}
+.textarea_nt {
+  width: 100%;
+  background-color: #fcfafa;
+  box-shadow: none;
+  border: none;
+  min-height: 80px;
+  padding: 5px 5px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.btn-notes .ylwbtn {
+  background-color: #feffa2;
+  border: #dfe8ef solid 1px;
+  border-radius: 5px 0px 0px 5px;
+  padding: 5px 10px;
+}
+.btn-notes .nrlbtn {
+  background-color: #f2f2f2;
+  border: #dfe8ef solid 1px;
+  border-radius: 0px 5px 5px 0px;
+  padding: 5px 10px;
+}
+.save_btn {
+  background-color: #fff;
+  border: #dfe8ef solid 1px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  float: right;
+  margin-top: 16px;
+}

@@ -1,0 +1,60 @@
+<div class='row padding-10'>
+    <!-- <div class="col-md-12">
+        <div class="col-md-4"></div>
+        <div class="col-md-4"></div>
+        <div class="col-md-4 d-flex justify-content-end">
+            <button class="ant-btn ant-btn-default" (click)="showAmendments()">Amendments</button>
+        </div>
+    </div> -->
+    <div class='col-md-12 padding-25'>
+        <div class='row'>
+            <div class="col-md-2">
+                <nz-form-label>{{'business-dashboard.question.questionlist.subject'|translate}}
+                </nz-form-label>
+            </div>
+            <div class="col-md-10">
+                {{noticeDetails.subject}}
+            </div>
+        </div>
+    </div>
+    
+    <!-- <div class='col-md-12'>
+        {{ "business-dashboard.pmbr.resolution-ballot-list.presentationdate" | translate }}: {{noticeData?.resolutionDate}}
+    </div> -->
+    <div class='col-md-12'>
+        <quill-view-html [content]="noticeDetails.htmlContent"></quill-view-html>
+    </div>
+    <div class='col-md-12 d-flex justify-content-end mrg-top-10' 
+        *ngIf='isMLA()&& memberList && memberList.length >0'>
+        {{memberList[0].details.fullName}}
+    </div>
+    <div class='col-md-12' *ngIf='!isMLA()'>
+        <nz-table #filterTable nzShowPagination [nzData]="memberList" >
+            <thead>
+                <tr>
+                    <th>{{ "noticeprocessing.staff.personalregister.slno" | translate }}</th>
+                        <th>{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}</th>
+                        <th>{{ "business-dashboard.question.constituency" | translate }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr *ngFor="let item of filterTable.data; let i =index">
+                        <td>{{i+1}}</td>
+                        <td>{{item.details.fullName}}</td>
+                        <td>{{item.details.keralaConstiturencyName}}</td>
+                    </tr>
+            </tbody>
+        </nz-table>
+    </div>
+    <div class="col-md-12 margnrtp-10 d-flex justify-content-end">
+        <button (click)='cancelClick()' nz-button nzType="default" class='mrgR6'>
+            {{ "cpl.correspondencelist.cancel" | translate }}
+        </button>&nbsp;
+        <button *ngIf="noticeData?.status === 'SAVED' && user.userId === noticeData.ownerId"
+        nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.pmbr.createlottingnotice.wanttosubmitnotice" | translate }}' 
+        (nzOnConfirm)="submitNotice()" (nzOnCancel)="cancelClick()" nz-button nzType="primary" class='mrgR6'>
+        {{ "business-dashboard.question.submit" | translate }}
+        </button>
+    </div>
+</div>
+</div>

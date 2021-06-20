@@ -1,0 +1,156 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.question.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"tables.assembly-election.assembly-election-view.assembly-election-view"|translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <h3>{{"tables.assembly-election.assembly-election-view.assembly-election-view"|translate}}</h3>
+    </div>
+    <div class="col-md-8 d-flex justify-content-end">
+        <button nzType="primary" class="ml-6" nz-button (click)="goBack()">
+            {{"business-dashboard.question.questionview.back"|translate}}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-6">
+        {{"business-dashboard.question.assembly" | translate}}: <strong>{{electionDetails?.assembly}}</strong>
+    </div>
+    <div class="col-md-6">
+        {{"business-dashboard.swearing-in.election-type"|translate}}: <strong>{{electionDetails?.type?.split('_').join(' ')}}</strong>
+    </div>
+</div>
+<div class="row mr-tp">
+    <div class="col-md-6">
+        {{"business-dashboard.swearing-in.election-subject"|translate}}: <strong>{{electionDetails?.subject}}</strong>
+    </div>
+    <div class="col-md-6">
+        {{"business-dashboard.swearing-in.year"|translate}}: <strong>{{electionDetails?.year}}</strong>
+    </div>
+</div>
+<div class="row mr-tp">
+    <div class="col-md-6">
+        {{"business-dashboard.swearing-in.election-description"|translate}}: <strong>{{electionDetails?.description}}</strong>
+    </div>
+    <div class="col-md-6">
+        {{"business-dashboard.question.questionlist.status"|translate}}: <nz-tag><strong>{{electionDetails?.status}}</strong></nz-tag>
+    </div>
+</div>
+<div class="row mr-tp">
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                <button nzType="primary" class="ml-6" nz-button (click)="showAddModal()"
+                    *ngIf="!editMode && electionDetails?.status !== 'COMPLETED'">
+                    {{"tables.assembly-election.assembly-election-view.add-constituency"|translate}}
+                </button>
+                <button nzType="primary" class="ml-6" nz-button (click)="enableEdit()"
+                    *ngIf="!editMode && electionDetails?.status !== 'COMPLETED'">
+                    {{"noticeprocessing.noticeprocess.edit"|translate}}
+                </button>
+                <button nzType="primary" class="ml-6" nz-button (click)="cancelEdit()" *ngIf="editMode">
+                    {{"business-dashboard.question.cancel"|translate}}
+                </button>
+                <button nzType="primary" class="ml-6" nz-button (click)="updateDetails()" *ngIf="editMode">
+                    {{"cpl.docupload.update"|translate}}
+                </button>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="search" name="search" nz-input placeholder="{{'business-dashboard.question.questionmlalisting.searchhere'| translate}}"
+                        (ngModelChange)="searchList()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row marginbtm-15">
+    <nz-table #constituencyTable nzShowPagination nzShowSizeChanger [nzData]="details" class="table-all">
+        <thead>
+            <tr>
+                <th>
+                    {{"business-dashboard.question.slno"|translate}}
+                </th>
+                <th>
+                    {{"business-dashboard.swearing-in.constituency"|translate}}
+                </th>
+                <th>
+                    {{"business-dashboard.election-management.speaker-election-list.election-date"|translate}}
+                </th>
+                <th>
+                    {{"tables.assembly-election.assembly-election-view.result-date"|translate}}
+                </th>
+                <th  *ngIf="!editMode">
+                    {{"tables.assembly-election.assembly-election-view.candidates"|translate}}
+                </th>
+                <th></th>
+                <th>
+                    {{"tables.assembly-election.assembly-election-view.elected"|translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of constituencyTable.data; let i=index">
+                <td (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{i+1}}</td>
+                <td (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+            <tr>{{list.constituency}}</tr>
+            <tr *ngIf="list.viewLinks">
+                <td>
+                    <a class="viewlink" (click)="deleteConstituency(list)" *ngIf="list.status === 'SAVED'">
+                        {{"miscellaneous-business-file.templatelist.delete"|translate}}
+                    </a>
+                </td>
+            </tr>
+            </td>
+            <td>
+                <nz-date-picker [(ngModel)]="list.electionDate" [nzFormat]="'dd-MM-yyyy'" (nzOnOpenChange)="electionDateValidation(list.resultDate)"
+                    [nzDisabled]="!editMode || list.winnerName" [nzDisabledDate]="disabledElectionDate"></nz-date-picker>
+            </td>
+            <td>
+                <nz-date-picker (nzOnOpenChange)="resultDateValidation(list.electionDate)" [(ngModel)]="list.resultDate"
+                    [nzFormat]="'dd-MM-yyyy'" [nzDisabledDate]="disabledResultDate"
+                    [nzDisabled]="!editMode || list.winnerName || !list.electionDate"></nz-date-picker>
+            </td>
+            <td  *ngIf="!editMode">
+                <button nzType="primary" class="ml-6" nz-button (click)="showCandidatePopup(list)"
+                    *ngIf="!list?.winnerName">
+                    {{"tables.assembly-election.assembly-election-view.add-view-candidates"|translate}}
+                </button>
+                <button nzType="primary" class="ml-6" nz-button (click)="showCandidatePopup(list)"
+                    *ngIf="list?.winnerName">
+                    {{"tables.assembly-election.assembly-election-view.view-candidates"|translate}}
+                </button>
+            <td>
+            <td>{{list.winnerName}}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+
+<!-- modal to add constituency -->
+<nz-modal [(nzVisible)]="addConstituencyModal" [nzFooter]="null" nzWidth="550" [nzClosable]="false"
+    nzTitle="{{'tables.assembly-election.assembly-election-view.add-constituency'|translate}}">
+    <tables-add-constituency *ngIf="addConstituencyModal" [electionDetails]="electionDetails"
+        (hidePopup)="cancelModal()" (electionCreated)="getElectionById()"></tables-add-constituency>
+</nz-modal>
+<!-- end of modal to add constituency -->
+
+<!-- modal to add candidates -->
+<nz-modal [(nzVisible)]="candidateVisible" [nzFooter]="null" nzWidth="800"  [nzClosable]="false"
+    nzTitle="{{'tables.assembly-election.assembly-election-view.candidates'|translate}}">
+    <tables-add-candidates *ngIf="candidateVisible" [candidateList]="candidateList" [electionDetails]="electionDetails"
+        (candidateAdded)="getElectionById()" (closePopup)="cancelCandidatePopup()"></tables-add-candidates>
+</nz-modal>
+<!-- end of modal to add candidates -->

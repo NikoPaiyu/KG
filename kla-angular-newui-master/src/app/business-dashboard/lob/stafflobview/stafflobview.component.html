@@ -1,0 +1,51 @@
+<div class="lob-container">
+  <div class="row marginbtm-25 mrgin-adjust">
+    <div class="col-md-6">
+      <div class="mrg0">
+        <div class="col-md-6 padding0">
+          <nz-form-label [nzSm]="8" [nzXs]="24">
+            {{"lobview.view.lobdate" | translate}}
+          </nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker
+              [(ngModel)]="date"
+              [nzDisabledDate]="disabledDate"
+              (ngModelChange)="getLobListOnlyByDate($event)"
+              nzFormat="dd-MM-yyyy"
+            >
+            </nz-date-picker>
+          </nz-form-control>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let item of currentDayList" nz-row>
+    <div nz-col nzSpan="24">
+      <nz-collapse nzAccordion="true">
+        <nz-collapse-panel [nzHeader]="item.businessName">
+          <nz-collapse
+            *ngFor="let subMenu of item.businessLines"
+            nzAccordion="true"
+          >
+            <nz-collapse-panel nzHeader="{{ subMenu.title }}">
+              <p>
+                <span class="lobview-span"
+                  >{{"cpl.amendmentview.membername" | translate}} : {{ subMenu.primaryMemberName }}
+                  <span *ngIf="subMenu.primaryMemberDesignation">
+                    {{
+                      "( " +
+                        subMenu.primaryMemberDesignation.designationName +
+                        " )"
+                    }}
+                  </span>
+                </span>
+
+                {{ subMenu.description }}
+              </p>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </div>
+</div>

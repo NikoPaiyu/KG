@@ -1,0 +1,34 @@
+<div class="padding_25">
+
+    <div class="row margnrtp-15">
+        <div class="col-md-4">
+            Assembly :
+            {{currentAssemblySession?.assemblyValue}}
+        </div>
+        Session :
+        <div class="col-md-4">
+            {{currentAssemblySession?.sessionValue}}
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-3">
+            Select Date :
+        </div>
+        <div class="col-md-5">
+            <nz-date-picker [nzShowToday]='false' [(ngModel)]="dateSelected" [nzDisabledDate]="disabledCosDates"
+                nzFormat="dd/MM/yyyy">
+            </nz-date-picker>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+
+        <div class="col-md-12 align-right">
+            <button class="mr-6" nz-button (click)="onCancelClick()">
+                Cancel
+            </button>
+            <button [disabled]="!dateSelected" nz-button (click)="onSubmitClick()">
+                Create
+            </button>
+        </div>
+    </div>
+</div>

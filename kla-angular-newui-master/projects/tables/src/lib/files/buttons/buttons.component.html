@@ -1,0 +1,167 @@
+<div class="d-flex justify-content-between">
+  <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="goBack()">
+    {{"cpl.docupload.back" | translate}}
+  </button>
+  <button *ngIf="fileResponse?.governorsAddress && fileResponse?.governorsAddress.length > 0 && fileResponse?.governorsAddress[0]?.stage === 'READY_FOR_MEMBER_TA_LOB'" class="ml-6 m-r5" nz-button
+    [nzType]="'default'"  (click)="setTAToLOB()">
+    {{"business-dashboard.question.settolob" | translate}}
+  </button>
+  <button *ngIf="fileResponse?.governorsAddress && fileResponse?.governorsAddress.length > 0 && fileResponse?.governorsAddress[0]?.stage === 'GOVERNORS_SPEECH_ATTACHED'" class="ml-6 m-r5" nz-button
+    [nzType]="'default'" (click)="speakerNoteObj['showPopUp'] = true">
+    {{"business-dashboard.tables-files.buttons.add-speaker-note" | translate}}
+  </button>
+  <button *ngIf="fileResponse?.governorsAddress && fileResponse?.governorsAddress.length > 0 && fileResponse?.governorsAddress[0]?.stage === 'SPEAKER_NOTE_ADDDED'" class="ml-6 m-r5" nz-button
+    [nzType]="'default'" (click)="setSpeakerNoteToLOB()">
+    {{"business-dashboard.question.settolob" | translate}}
+  </button>
+  <button class="ml-6" nz-button [nzType]="'primary'" nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to request Closure?" nzCancelText="Cancel" nzOkText="Request Closure"
+    (nzOnConfirm)="fileClosure()" (nzOnCancel)="cancel()" *ngIf="canShowFileClosure()">
+    {{"cpl.fileworkflow.fileclosure" | translate}}
+  </button>
+  <button class="ml-6" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Are you sure you want to pull?"
+    (nzOnConfirm)="showPullpopup()" (nzOnCancel)="cancel()" *ngIf="pullButton &&
+          canPull &&
+          fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+          currentPool !== currentPoolUser">
+    {{"cpl.fileworkflow.pull" | translate}}
+  </button>
+  <button class="m-r5" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Are you sure you want to Approve?"
+    (nzOnConfirm)="approveFile()" (nzOnCancel)="cancel()" *ngIf="notesInfo.status == 'SUBMITTED' && 
+           canApproveFile() && 
+          assignee == auth.getCurrentUser().userId && 
+          !ratificationApprove">
+    {{"noticeprocessing.noticeprocess.approve" | translate}}
+  </button>
+  <button class="ml-6" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Approve with ratification?"
+    nzCancelText="Approve" nzOkText="Approve subjected to ratification"
+    (nzOnConfirm)="ratificationApproveFile(fileResponse?.fileResponse.fileId)" (nzOnCancel)="approveFile()" *ngIf="canApprove &&
+          assignee == user.userId &&
+          commonService.doIHaveAnAccess('FILE_RATIFICATION', 'APPROVE') &&
+          fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+          ratificationApprove">
+      {{"noticeprocessing.noticeprocess.approve" | translate}}
+  </button>&nbsp;
+  <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+    nzPopconfirmTitle='{{"business-dashboard.correspondence.approveclosure" | translate }}' nzCancelText="Cancel"
+    nzOkText="Approve" (nzOnConfirm)="approveClosure()" (nzOnCancel)="cancel()" *ngIf="commonService.doIHaveAnAccess('FILE', 'APPROVE') && 
+        fileResponse?.fileResponse?.status === 'CLOSURE_PENDING'">
+    {{"cpl.fileworkflow.approvefileclosure" | translate}}
+  </button>&nbsp;
+  <nz-select style="width: 280px" name="selectedRole" [(ngModel)]="selectedRole" placeholder="Select to forward"
+    nzAllowClear (ngModelChange)="forwardOrReturn()"
+    *ngIf="workflowUsers.length > 0 && notesInfo.status === 'SUBMITTED' &&  assignee == auth.getCurrentUser().userId && showForward">
+    <ng-container *ngFor="let role of workflowUsers">
+      <nz-option *ngIf="role.code !== currentPoolUser" nzValue="{{
+            role.userId + '-' + role.actionRow + '-' + role.actionGroup
+          }}" nzLabel="{{ role.fullName + ' - ' + role.actionName }}"></nz-option>
+    </ng-container>
+  </nz-select>
+  <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to  {{ forwardReturnButton }} ?" [disabled]="!selectedRole"
+    (nzOnCancel)="cancel()"
+    *ngIf="workflowUsers.length > 0 && notesInfo.status === 'SUBMITTED' && assignee == auth.getCurrentUser().userId && showForward"
+    (nzOnConfirm)="forwardFile(notesInfo.fileId)">
+    {{ forwardReturnButton }}
+  </button>
+  <nz-alert nzType="warning" nzMessage="Please Attach Correspondence for each Obituary Gist to Continue" *ngIf="!showForward && assignee == auth.getCurrentUser().userId"></nz-alert>
+  <!-- <nz-alert nzType="warning" nzMessage="Please Attach Correspondence To Continue" *ngIf="assignee == auth.getCurrentUser().userId"></nz-alert> -->
+</div>
+<nz-modal [(nzVisible)]="showSkipModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        {{"business-dashboard.notice-proc.reasontoskip" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea nz-input placeholder='{{"business-dashboard.notice-proc.reasontoskip" | translate}}' [nzAutosize]="{ minRows: 2, maxRows: 6 }" maxlength="256"
+          [(ngModel)]="reason" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button type="button" nz-button nzType="default" (click)="handleCancel()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font">
+          {{"business-dashboard.forms.form-list.cancel" | translate}}
+        </button>
+        <button type="button" [disabled]="reason === ''" nz-button nzType="primary" nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to skip user and forward?"
+          (nzOnConfirm)="skip = false; forwardFile(notesInfo.fileId)" (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font">
+          {{"noticeprocessing.noticeprocess.forward" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        {{"cpl.fileworkflow.reasontopull" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea nz-input placeholder='{{"cpl.fileworkflow.reasontopull" | translate}}' [nzAutosize]="{ minRows: 2, maxRows: 6 }" maxlength="256"
+          [(ngModel)]="pullRemark" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button type="button" nz-button nzType="default" (click)="cancelPull()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font">
+          {{"business-dashboard.forms.form-list.cancel" | translate}}
+        </button>
+        <button type="button" [disabled]="!pullRemark" nz-button nzType="primary" nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to pull?" (nzOnConfirm)="pullFile()" (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font">
+          {{"cpl.fileworkflow.pullfile" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="speakerNoteObj['showPopUp']" nzTitle="Add Speaker Note" [nzClosable]="false"
+  [nzFooter]="null">
+  <div class="width-100  pading-all">
+    <form [formGroup]="addSpeakerNoteForm">
+      <div class="row margnrtp-5">
+        <div class="col-md-12 margnrtp-15 ">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">{{"business-dashboard.tables-files.buttons.amendment-date" | translate}}</nz-form-label>
+            <nz-form-control [nzSpan]="18" nzErrorTip="Select Date">
+              <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="motAmendmentDate" [nzDisabledDate]="disabledDate">
+              </nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12 margnrtp-15 ">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="6">{{"business-dashboard.tables-files.buttons.amendment-last-date" | translate}}</nz-form-label>
+            <nz-form-control [nzSpan]="18" nzErrorTip="Select Date">
+              <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="motAmendmentLastDate" [nzDisabledDate]="disabledDate">
+              </nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button type="button" nz-button nzType="default" class="margnlt-5"
+            (click)="speakerNoteObj['showPopUp'] = false">
+            {{"business-dashboard.forms.form-list.cancel" | translate}}
+          </button>
+          <button type="button" nz-button nzType="primary" (click)="addtospeakernote()" class="margnlt-5"
+            [disabled]="!addSpeakerNoteForm.valid">
+            {{"business-dashboard.question.submit" | translate}}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>

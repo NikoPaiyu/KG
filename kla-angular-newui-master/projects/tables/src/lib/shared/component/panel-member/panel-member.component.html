@@ -1,0 +1,55 @@
+<div class="row">
+    <div class="col-md-6">
+<button class="ml-6 m-r5" nz-button nzType="default" *ngIf="fileResponse?.status === 'SUBMITTED' && rbsPermission.edit"
+ (click)="editable()">
+  {{"business-dashboard.tables.poc.edit" | translate}}
+ </button>
+</div>
+<div class="col-md-6 text-align-right">
+  <button class="ml-6" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Are you sure want to Save POC?"
+  (nzOnConfirm)="savePanelOfChairman()" [disabled]="hide">
+  {{"business-dashboard.tables.poc.save" | translate}}
+</button>
+</div>
+</div>
+   <div class="row">
+    <div class="col-md-12">
+    <nz-table #memberListTable nzShowPagination nzShowSizeChanger [nzData]="membersDtoList" class="table-all">
+        <thead>
+            <tr>
+            <th>
+              {{"business-dashboard.tables.poc.membername" | translate}}
+            </th>
+            <th>
+               {{"business-dashboard.tables.poc.party" | translate}}
+            </th>
+            <th>
+              {{"business-dashboard.tables.poc.kla" | translate}}
+            </th>
+            <th>
+                {{"business-dashboard.tables.poc.sessions" | translate}}
+            </th>
+            <th *ngIf="fileResponse?.status ==='SUBMITTED'">
+               {{"business-dashboard.tables.poc.marktopoc" | translate}} 
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let list of memberListTable.data; let i=index">
+              <td>{{list?.users?.details?.fullName}}</td>
+              <td>{{list?.users?.details?.keralaPolicticalPartyName}}</td>
+              <td>{{list?.assemblyValue}}</td>
+              <td>
+                <nz-tag [nzColor]="'green'">{{list?.session[0]?.sessionId}}</nz-tag>
+                <nz-divider nzType="vertical"></nz-divider>
+                <nz-tag [nzColor]="'green'">{{list?.session[1]?.sessionId}}</nz-tag>
+              </td>
+              <td *ngIf="fileResponse?.status ==='SUBMITTED'">
+                <nz-switch [(ngModel)]="checked.marked"  (click)="markToPoc(list)" 
+                    [disabled]="hide"></nz-switch>
+              </td>
+          </tr>
+        </tbody>
+    </nz-table>
+</div>
+</div>

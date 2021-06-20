@@ -1,0 +1,34 @@
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+.mrgT10 {
+  margin-top: 10px;
+}
+
+.text-align-center {
+  text-align: center;
+}
+.mrgL6 {
+  margin-left: 6px;
+}
+
+.mrgB20 {
+  margin-bottom: 20px;
+}
+.baseline {
+  vertical-align: baseline;
+}
+.form {
+  width: 100%;
+}
+
+.left-border {
+  border-left: 1px solid #ccc;
+}
+
+.d-grid {
+  display: grid;
+}

@@ -1,0 +1,245 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "bill-amendments.bill.balloting" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h2 class="admin-page-heading">
+          {{ "bill-amendments.bill.ballotingfor" | translate }} {{ urlParams?.name }}
+        </h2>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button (click)="goToPrevpage()" nzType="secondary">
+          {{ "business-dashboard.question.questionview.back" | translate }}
+        </button>
+        <!-- file creation -->
+        <!-- <button nz-button (click)="attachBallotingtoFile()" nzType="secondary">
+         Attach to file
+        </button> -->
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row margnrtp-15">
+  <!-- left side -->
+  <div class="col-md-6">
+    <div class="row margnrtp-15">
+      <div class="col-md-8">
+        <h5>
+          {{ "bill-amendments.bill.noticesubmittedmembers" | translate }}
+        </h5>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <button nz-button nzType="primary" *ngIf="!showperformballot && (rbsPermission.create)" (click)="perform_lot()">
+          {{ "bill.performballo.performlot" | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-table #basicTable  [nzData]="listOfData">
+          <thead>
+            <tr>
+              <th> {{ "business-dashboard.question.report.slno" | translate }}</th>
+              <th> {{ "noticeprocessing.notice.listnotice.noticeno" | translate }}</th>
+              <th>{{ "business-dashboard.question.member" | translate }}</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of basicTable.data; let i = index">
+              <td>{{ i+1 }}</td>
+              <td>{{ data.noticeNumber }}</td>
+              <td>{{ data.member }}</td>
+
+            </tr>
+          </tbody>
+        </nz-table>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- cliks perform ballot -->
+
+  <!-- <div *ngIf="balloting_flag" class="col-md-6">
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-6">
+            <h5>
+              Ballot result
+            </h5>
+          </div>
+          <div class="col-md-6 d-flex justify-content-end">
+            <button nz-button nzType="default" class="mr-6" (click)="
+            _balloting()">cancel</button>
+            <button nz-button nzType="primary" (click)="confirm_balloting()">
+              confirm
+            </button>
+          </div>
+
+        </div>
+
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-table #basicTable [nzData]="listballotData">
+              <thead>
+                <tr>
+                  <th>Sl</th>
+                  <th>Notice No</th>
+                  <th>Member</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of basicTable.data; let i = index">
+                  <td>{{ i+1 }}</td>
+                  <td>{{ data.noticeNumber }}</td>
+                  <td>{{ data.member }}</td>
+
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div> -->
+
+  <!-- when balloting status is draft -->
+  <div class="col-md-6" *ngIf="showperformballot">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-4">
+            <h5>
+              {{ "bill.performballo.ballotresult" | translate }}
+            </h5>
+          </div>
+          <div class="col-md-8 d-flex justify-content-end align-items-center">
+            <ng-container *ngIf="ballotStatus=='DRAFT' && rbsPermission.create">
+            <button nz-button nzType="default" class="mr-6" (click)="cancel_balloting()"> {{ "cpl.correspondencelist.cancel" | translate }}</button>
+            <button nz-button nzType="primary" class="mr-6" (click)="confirm_balloting()">
+              {{ "bill.performballo.conform" | translate }}
+            </button>
+           </ng-container>
+           <button  class="mr-6" nz-button (click)="viewFile(billFileId)" nzType="secondary"
+           *ngIf="ballotResponse.fileId">
+           {{ "bill.performballo.viewfile" | translate }}
+           </button>
+            <!-- <a class="viewlink margnrgt-15" *ngIf="listOfData.fileId" 
+            (click)="viewFile(billFileId)">View File</a> -->
+            <button  class="mr-6" nz-button (click)="attachBallotingtoFile()" nzType="secondary"
+            *ngIf="ballotStatus=='SAVED' && (rbsPermission.reSubmitFile)">
+            {{ "bill.performballo.attachtofile" | translate }}
+            </button>
+            <button nz-button class="mr-6" (click)="createBulletinPart2()" nzType="secondary"
+            *ngIf="billFileNumber && ballotStatus=='APPROVED' && rbsPermission.createBulletin
+             && !ballotResponse.bulletinId && title==='ORDINANCE_DISAPPROVAL'">
+             {{ "bill.performballo.createbullentinpart2" | translate }}
+            </button>
+            <button nz-button (click)="viewBallotList()" nzType="secondary"
+            *ngIf="(ballotStatus=='SAVED'||ballotStatus=='SUBMITTED'||ballotStatus=='APPROVED'
+            || ballotStatus=='PUBLISHED')
+            && title !=='ORDINANCE_DISAPPROVAL'">
+            {{ "bill.performballot.viewlist" | translate }}
+            </button>
+          </div>
+        </div>
+
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-table #basicTable  nzShowPagination [nzData]="listballotData">
+              <thead>
+                <tr>
+                  <th> {{ "business-dashboard.question.report.slno" | translate }}</th>
+              <th> {{ "noticeprocessing.notice.listnotice.noticeno" | translate }}</th>
+              <th>{{ "business-dashboard.question.member" | translate }}</th>
+
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of basicTable.data; let i = index">
+                  <td>{{ i+1 }}</td>
+                  <td>{{ data.noticeNumber }}</td>
+                  <td>{{ data.member }}</td>
+
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  
+</div>
+
+<nz-modal
+  [nzFooter]="null"
+  [(nzVisible)]="showBulletinPart2Popup"
+  nzTitle="Create Bulletin Part 2"
+  (nzOnCancel)="cancelBulletin()"
+>
+  <lib-create-bulletin-form
+    [bulletinData]="bulletinData"
+    (afterCreate)="afterCreateBulletin($event)"
+  ></lib-create-bulletin-form>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="showBallotList"
+  nzTitle="Amendment List"
+  (nzOnCancel)="closeBallotList()"
+  [nzFooter]="null"
+  nzWidth="1000"
+>
+<div class="row padding_25">
+  <div class="col-md-12 d-flex justify-content-end align-items-center">
+    <nz-tag [nzColor]="'red'" class="mr-6 mt-6">
+      {{ ballotStatus }}
+    </nz-tag>
+      <button nz-button class="mr-6 mt-6" (click)="publishList()" nzType="primary"
+          *ngIf="ballotStatus=='APPROVED' && rbsPermission.publish">
+          {{ "bill.performballot.publish" | translate }}
+      </button>
+    </div>
+</div>
+<div class="row padding_25">
+  <div class="col-md-12">
+    <lib-ballot-list-view
+    *ngIf="ballotedList"
+      [assembly]="ballotResponse?.assemblyValue"
+      [session]="ballotResponse?.sessionValue"
+      [billTitle]="ballotResponse?.title"
+      [ballotList]="ballotedList"
+      [showHeader]="true">
+    </lib-ballot-list-view>
+  </div>
+</div>
+</nz-modal>

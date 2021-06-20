@@ -1,0 +1,49 @@
+.white_pd {
+  background-color: #fff;
+  padding: 20px;
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+ul {
+  li {
+    list-style: none;
+  }
+}
+
+.label-cos {
+  border: solid 1px;
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  color: #585858;
+  border: #dfe8ef solid 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  label {
+    margin-bottom: 0px;
+  }
+  i {
+    margin-left: 10px;
+  }
+}
+
+.data_lis {
+  margin-bottom: 0px;
+}
+.data_lis li {
+  list-style: none;
+  float: left;
+  clear: both;
+}
+.data_lis p {
+  float: left;
+  width: 100%;
+  margin-top: 10px;
+  margin-bottom: 3px;
+}

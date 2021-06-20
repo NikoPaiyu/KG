@@ -1,0 +1,15 @@
+<nz-table #basicTable [nzData]="['']" nzShowPagination
+nzShowSizeChanger>
+    <thead>
+        <tr *ngFor="let header of tableHeaders">
+            <th>{{header}}</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let content of tableContent | search : tableSearchText : tableSearchProp">
+            <td *ngFor="let prop of tableDataProp">
+                <span [ngClass]="{'' : tableLinkProp === prop}" (click)="onTableAction(content,prop)">{{content[prop]}}</span>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>

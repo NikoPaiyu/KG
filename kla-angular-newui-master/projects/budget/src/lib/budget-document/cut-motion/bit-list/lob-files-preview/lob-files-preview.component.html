@@ -1,0 +1,16 @@
+<div class="mrgT20">
+    <div class="col-md-12">
+        <div class="row">Choose Date</div>
+        <div class="row">
+            <div class="col-md-10">
+                <nz-select nzShowSearch nzPlaceHolder="--select one--" [(ngModel)]="cosDate" [ngModelOptions]="{standalone: true}" (ngModelChange)="showPdf($event)">
+                    <nz-option *ngFor="let date of bitListdates" [nzLabel]="date.value | date: 'dd/MM/yyyy'" [nzValue]="date"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mrgT20" *ngIf="showPDF">
+    <iframe [src]="docUrl" style="width: 100vw;height: 100vh;" allowfullscreen></iframe>
+    <!-- <iframe [src]="docUrl" style="width: 100%;height: 600px;overflow: auto;"></iframe> -->
+</div>

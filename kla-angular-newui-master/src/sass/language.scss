@@ -1,0 +1,164 @@
+/*File: language.scss*/
+@import "utilities/variables";
+@import "utilities/layout";
+@import "utilities/mixin";
+@import "utilities/function";
+@import "utilities/ant-style";
+
+:lang(en) {
+  font-family: "Roboto", sans-serif !important;
+}
+:lang(ml) {
+  font-family: "Rachana" !important;
+  font-size: 17px;
+}
+.dashico_fnt:lang(ml){font-size: 22px !important;}
+.fc-icon:lang(ml) {font-family: "fcicons" !important;}
+.fc-icon:lang(en) {font-family: "fcicons" !important;}
+.secondary-button:lang(ml) {
+  font-size: 17px;
+  padding-bottom: 2px !important;
+}
+.primary-button:lang(ml) {
+  font-size: 17px;
+  padding-bottom: 2px !important;
+}
+.ant-btn:lang(ml) {
+  padding-top: 6px !important;
+}
+.ant-tag:lang(ml) {
+  font-size: 14px !important;
+  padding-top: 6px;
+  line-height: 16px;
+}
+.bg-blue-Q1 h4:lang(ml) {
+  font-size: 68px !important;
+}
+.bg-blue-Q1 p:lang(ml) {
+  font-size: 17px !important;
+}
+
+.button_grp .green_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .green_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .red_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .red_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .yellow_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .yellow_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .orange_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .orange_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .blue_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .blue_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .lblue_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .lblue_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+.button_grp .violet_btn:lang(ml) {
+  padding-bottom: 0px !important;
+}
+.button_grp .violet_btn a:lang(ml) {
+  font-size: 14px !important;
+}
+
+.ant-form-item label:lang(ml) {
+  font-size: 17px;
+}
+
+.font-rachana:lang(en) {
+  font-family: "Rachana" !important;
+}
+
+.login-user label:lang(en) {
+  font-size: 14px !important;
+}
+.forgot-pwd:lang(en) {
+  font-size: 14px !important;
+}
+.login-user input:lang(en) {
+  font-size: 14px !important;
+}
+//  English font size and custom styles
+
+.mla-button:lang(en) {
+  font-size: 14px !important;
+}
+.three_blocks span:lang(en) {
+  font-size: 14px !important;
+}
+.three_blocks h2:lang(en) {
+  font-size: 16px !important;
+}
+.mla-font-ml:lang(en) {
+  font-size: 14px !important;
+}
+.kla-name:lang(en) {
+  font-size: 16px !important;
+}
+.folder-list-view li span:lang(en) {
+  font-size: 14px !important;
+}
+
+//  Malayalam font size and custom styles
+.mla-font-ml:lang(ml) {
+  font-size: 18px !important;
+}
+.template_btn:lang(ml) {
+  font-size: 18px !important;
+}
+.chat-list .msg_imp_btn:lang(ml) {
+  font-size: 18px !important;
+}
+.chat-list .input_msg_write textarea:lang(ml) {
+  font-size: 18px !important;
+}
+.chat-list-header-input:lang(ml) {
+  padding: 8px 12px 2px 0px !important;
+  font-size: 18px !important;
+}
+.chat-list-text .heading-3:lang(ml) {
+  font-size: 18px !important;
+}
+.chat-list .user_info span:lang(ml) {
+  font-size: 18px !important;
+}
+
+.ant-menu-inline .ant-menu-item:lang(ml) {
+  font-size: 17px !important;
+}
+.sidebar-admin
+  .ant-menu-inline
+  .ant-menu-submenu
+  .ant-menu-submenu-title:lang(ml) {
+  font-size: 17px !important;
+}
+.kiosk-menu .ant-menu-item:lang(ml) {
+  font-size: 18px !important;
+}
+.kiosk-menu li span:lang(ml) {
+  font-size: 18px !important;
+}
+
+.kiosk-menu .ant-menu-submenu .ant-menu-submenu-title:lang(ml) {
+  font-size: 18px !important;
+}

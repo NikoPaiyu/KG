@@ -1,0 +1,115 @@
+<div class="row padding_25">
+    <div class="col-md-12">
+        <div class = "row d-flex justify-content-end">
+            <div class="col-md-10 d-flex justify-content-end" 
+                *ngIf="listOfData?.billFileId">
+                <button nz-button nzType="secondary" class ="mrgR_10" 
+                    *ngIf="!listOfData.speakerNoteId && user.authorities.includes('assistant')"
+                    (click)="generateSpeakerNote()">
+                    {{ "cpl.fileworkflow.speakernote" | translate }}
+                </button>
+                <button nz-button nzType="secondary" class ="mrgR_10"
+                    *ngIf="listOfData.speakerNoteId"(click)="viewSpeakerNote(listOfData?.speakerNoteId)">
+                    {{ "pmbr.lists.viewspeakernote" | translate }}
+                </button>
+                <!-- <button nz-button nzType="secondary" class ="mrgR_10"
+                    *ngIf="!listOfData?.memberReadingId && user.authorities.includes('assistant')"
+                    (click)="generateMemberReading()">
+                    {{ "business-dashboard.pmbr.ballotview.creatememberreading" | translate }}
+                </button> -->
+                <!-- <button nz-button class ="mrgR_10" nzType="secondary" 
+                *ngIf="listOfData?.memberReadingId"
+                    (click)="viewMemberReading(listOfData?.memberReadingId)">
+                    {{ "business-dashboard.pmbr.ballotview.viewmemberreading" | translate }}
+                </button> -->
+                <button nz-button nzType="default" class ="mrgR_10"
+                    *ngIf="!listOfData?.correspondenceId"
+                    (click)="getDepartmentCode(listOfData.billId)">
+                    {{ "bill.bill-clause.list.createCorrespondence" | translate }}
+                </button>
+                <button nz-button nzType="default" class ="mrgR_10"
+                    *ngIf="listOfData?.correspondenceId"
+                    (click)="viewCorrespondence(listOfData.correspondenceId)">
+                    {{ "bill.bill-clause.list.viewCorrespondence" | translate }}
+                </button>
+                <button [disabled]="!lobDate" nz-button nzType="secondary" class ="mrgR_10"
+                    *ngIf="listOfData?.billStage ==='PMBR_FINAL_APPROVED'|| 
+                    listOfData?.billStage ==='STAKE_HOLDER_LETTER_PENDING'||
+                    listOfData?.billStage ==='STAKE_HOLDER_LETTER_APPROVED'" 
+                    (click)="addToLob()">
+                    {{ "pmbr.resolutionBallotView.addToLob" | translate }}
+                </button>
+            </div>
+            <div class="col-md-2">
+                <button nz-button nzType="default" class ="mrgR_10" (click)="backToList()">
+                    {{ "business-dashboard.bill-management.billCreate.back" | translate }}
+                </button>
+            </div>
+        </div>
+        <nz-divider></nz-divider>
+        <div class="row padding-10  d-flex justify-content-end"  
+            *ngIf="listOfData?.billStage ==='PMBR_FINAL_APPROVED'|| 
+            listOfData?.billStage ==='STAKE_HOLDER_LETTER_PENDING'||
+            listOfData?.billStage === 'STAKE_HOLDER_LETTER_APPROVED'">
+            {{ "pmbr.amendmentlistview.lobDate" | translate }}:
+            <div class=col-md-4>
+                <nz-date-picker [nzFormat]="dateFormat" [nzAllowClear]="true"  
+                    [nzDisabled]="!listOfData?.speakerNoteId"
+                    [(ngModel)]="lobDate"[nzDisabledDate]="presentationAllowedDates">
+                </nz-date-picker>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" *ngIf="listOfData">
+                <lib-bill-clause-list-view
+                    *ngIf="listOfData?.bilClauseAmendmentResponse"
+                    [billTitle]="listOfData?.billTitle" 
+                    [list]="'List'"
+                    [assemblyValue]="listOfData?.assemblyValue"
+                    [sessionValue]="listOfData?.sessionValue"
+                    [bilClauseAmendmentResponse]="listOfData?.bilClauseAmendmentResponse">
+                </lib-bill-clause-list-view>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-modal [(nzVisible)]="readingPreview" nzTitle='{{"cpl.fileworkflow.speakernote" | translate}}' [nzFooter]="null"
+    nzWidth="1050" (nzOnCancel)="hidePreview()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+                    *ngIf="permission.createFile && speakerNote?.status === 'SAVED'"
+                    nzPopconfirmTitle='{{"Do you want to attach to file?" | translate}}'
+                    (nzOnConfirm)="attachSpeakerNoteToFile()" nzPopconfirmPlacement="leftTop">
+                    {{"Attach to File" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p [innerHtml]="speakerNote?.reportData | safeHtml"></p>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="memberReading" nzTitle='{{"business-dashboard.pmbr.ballotview.memberreading" | translate}}'
+    [nzFooter]="null" nzWidth="1050" (nzOnCancel)="hidePreview()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+                    *ngIf="permission.createFile && memberReading?.status === 'SAVED'"
+                    nzPopconfirmTitle='{{"Do you want to attach to file?" | translate}}'
+                    (nzOnConfirm)="attachToFile()" nzPopconfirmPlacement="leftTop">
+                    {{"Attach to File" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p [innerHtml]="memberReading?.reportData | safeHtml"></p>
+            </div>
+        </div>
+    </div>
+</nz-modal>

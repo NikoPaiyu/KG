@@ -1,0 +1,154 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="handleUpload(validateForm.value)">
+
+    <div class="row">
+    <div class="col-md-8 marginbtm-25">
+        <nz-form-item>
+            <nz-form-control nzErrorTip="Pick any file type!">
+                <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired>Choose file type</nz-form-label>
+                <nz-select (ngModelChange)="selectedOption($event)" formControlName="fileType" required
+                    nzPlaceHolder="Choose file type">
+                    <nz-option *ngFor="let option of listOfFileTypes" [nzLabel]="option.label" [nzValue]="option.value">
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+
+
+    <div *ngIf="!isRules ">
+        <div class="row marginbtm-25">
+            <div class="col-md-2">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Pick any assembly!">
+                        <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="date">Assembly</nz-form-label>
+                        <nz-select nzAllowClear formControlName="pickAssembly" (ngModelChange)="changeAssembly()">
+                            <nz-option *ngFor="let assembly of assemblys" [nzLabel]="assembly.assemblyId"
+                                [nzValue]="assembly.id">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-2">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Pick any session!">
+                        <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="date">Session</nz-form-label>
+                        <nz-select nzAllowClear formControlName="pickSession" (ngModelChange)="changeSession()">
+                            <nz-option *ngFor="let session of sessions" [nzLabel]="session.sessionId"
+                                [nzValue]="session.id">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-4">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Pick any date!">
+                        <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="date">Date</nz-form-label>
+                        <nz-select nzShowSearch required [nzDropdownRender]="render" formControlName="pickdate"
+                            (ngModelChange)="existingDate($event)" required>
+                            <nz-option *ngFor="let date of chosenDates" [nzLabel]="date.label" [nzValue]="date.value">
+                            </nz-option>
+                        </nz-select>
+                        <ng-template #render>
+                            <nz-divider></nz-divider>
+                            <div>
+                                <nz-date-picker [nzFormat]="dateFormat" formControlName="pickNewDate"
+                                    (ngModelChange)="newDate($event)">
+                                </nz-date-picker>
+                            </div>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-4">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Pick any folder name!">
+                        <nz-form-label [nzSm]="24" [nzXs]="24" nzRequired nzFor="date">Folder Name</nz-form-label>
+                        <nz-select id="pickFName" nzShowSearch [nzDropdownRender]="render1" formControlName="pickFName"
+                            (ngModelChange)="selectedFile($event)" [nzDisabled]="isCover">
+                            <nz-option *ngFor="let date of chosenFolderNames" [nzLabel]="date.label"
+                                [nzValue]="date.id">
+                            </nz-option>
+                        </nz-select>
+                        <ng-template #render1>
+                            <!-- <nz-divider></nz-divider> -->
+                            <div class="add-item plus-sign">
+                                <input formControlName="pickNewFName" class="plusinput"
+                                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                                    pattern="[a-zA-Z0-9]*" nz-input placeholder="Add new item" />
+                                <i nz-icon nzType="plus" (click)="addFile()"></i>
+                            </div>
+                        </ng-template>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <nz-upload nzType="drag" [nzMultiple]="true" [(nzFileList)]="fileList" [nzBeforeUpload]="beforeUpload"
+            nzRequired>
+            <p class="ant-upload-drag-icon">
+                <i nz-icon nzType="inbox"></i>
+            </p>
+            <p class="ant-upload-text">Click or drag file to this area to upload</p>
+            <p class="ant-upload-hint">
+                Support for a single or bulk upload. Strictly prohibit from uploading company data or other band files
+            </p>
+        </nz-upload>
+
+        <button nz-button nzType="'primary'" nz-button class="btn-align ant-btn ant-btn-primary marginbtm-10 margnrtp-10"
+            (click)="uploadOnClick()">
+            Upload
+        </button>
+
+        <nz-table #rowSelectionTable nzShowPagination nzShowSizeChanger [nzShowQuickJumper]
+            [nzData]="FileUploadDetails">
+            <thead>
+                <tr>
+                    <th class="bg-head">Sl. No.</th>
+                    <th class="bg-head">Name</th>
+                    <th class="bg-head">Date</th>
+                    <th class="bg-head">Delete</th>
+                    <th class="bg-head">Preview</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of rowSelectionTable.data; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td *ngIf="(oldData && withFolderId) || !oldData">{{ item.name }}</td>
+                    <td *ngIf="oldData && !withFolderId">{{ item.label }}</td>
+                    <td>
+                        {{ item.createdAt | date: "dd-MM-yyyy" }}
+                    </td>
+                    <td *ngIf="(oldData && withFolderId) || !oldData">
+                        <button class="btn btn-default" mwlConfirmationPopover [popoverMessage]="popoverMessage"
+                            placement="left" (confirm)="deleteFileUpload(item)">
+                            Delete
+                        </button>
+                    </td>
+                    <td *ngIf="oldData && !withFolderId">
+                        <button class="btn btn-default" mwlConfirmationPopover [popoverMessage]="popoverMessage"
+                            placement="left" (confirm)="deleteFileUplaod(item)">
+                            Delete
+                        </button>
+                    </td>
+                    <td>
+                        <button *ngIf="item.secondaryFileUrl!=null" nz-button nzType="default"
+                            (click)="openFilePDF(item.secondaryFileUrl)" class="margnrgt-15">
+                            <i nz-icon nzType="eye" nzTheme="outline"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+
+
+    </div>
+
+
+</form>
+
+<div *ngIf="isRules">
+    <app-rules-and-procedure></app-rules-and-procedure>
+</div>

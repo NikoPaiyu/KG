@@ -1,0 +1,46 @@
+input {
+  width: 100%;
+}
+.input-group {
+  margin-bottom: 15px;
+}
+.star {
+  visibility: hidden;
+  font-size: 30px;
+  cursor: pointer;
+  margin-bottom: 30px;
+}
+.star:before {
+  content: "\2605";
+  position: absolute;
+  visibility: visible;
+}
+.star:checked:before {
+  content: "\2606";
+  position: absolute;
+}
+
+.arrow {
+  height: 20px;
+  transform: rotate(90deg);
+}
+
+.ant-form-item-label {
+  text-align: left;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+
+.txt-align-R {
+  text-align: right;
+}
+.width-50 {
+  width: 50px;
+}

@@ -1,0 +1,112 @@
+<form nz-form>
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item>
+            Dashboard
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            <a> Question </a>
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+    </div>
+      <div class="row">
+        <div class="col-md-6">
+            <b>Notices</b>
+        </div>
+        <div class="col-md-3">
+      </div>
+      <div class="col-md-3">
+          <button nz-button nzType="default">...</button>
+           <button nz-button nzType="default">Create Notice</button>
+      </div>
+    </div>
+    <nz-divider></nz-divider>
+    
+            <div class="row d-flex justify-content-flex-start">
+              <div class="col-md-3">
+                Assembly
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="14" name="selectedValue"
+                  style="width: 50px;">
+                  <nz-option nzLabel="14" nzValue="14"></nz-option>
+                  <nz-option nzLabel="15" nzValue="15"></nz-option>
+                  <nz-option nzLabel="16" nzValue="16"></nz-option>
+                </nz-select>
+                <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+              </div>
+    
+              <div class="col-md-3">
+                Session
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="18"  name="select"
+                  style="width: 50px;">
+                  <nz-option nzLabel="17" nzValue="17"></nz-option>
+                  <nz-option nzLabel="18" nzValue="18"></nz-option>
+                  <nz-option nzLabel="19" nzValue="19"></nz-option>
+                </nz-select>&nbsp;
+                <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+                
+                </div>
+                <div class="col-md-3">
+                    <button nz-button [nzType]="'primary'" ><i nz-icon nzType="plus"></i></button>
+                </div>
+
+                <div class="col-md-3">
+                        <div class="col-md-6">
+                            <button nz-button nzType="default">Clear Filter</button>
+                        </div>
+                        <div class="col-md-6">
+                            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                                <input
+                                  type="text"
+                                   name="search"
+                                  nz-input
+                                  placeholder="Search Here....."
+                                  
+                                />
+                              </nz-input-group>
+                            <ng-template #suffixIconSearch>
+                                <i nz-icon nzType="search"></i>
+                            </ng-template>
+                        </div>
+                    </div>
+                   
+                
+                <nz-table #filterTable >
+                    <thead>
+                        <tr>
+                            <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
+                            [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th> -->
+                            <th nzShowCheckbox nzShowRowSelection ></th>
+                            <th>NoticeNo</th>
+            
+                            <th nzShowSort nzSortKey="name">
+                                Notice Heading
+                            </th>
+                            <th nzShowSort nzSortKey="constituency">
+                                Notice Type
+                            </th>
+            
+                            <th nzShowSort nzSortKey="party">
+                                RegDate
+                            </th>
+            
+                            <th nzShowSort nzSortKey="partySide">
+                                Status
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td nzShowCheckbox></td>
+                            <td>hydnew</td>
+                            <td> errth</td>
+                            <td>sdffdgb</td>
+                            <td>sfdgf</td>
+                            <td>erghf</td>
+                           
+                            
+                            
+                        </tr>
+                    </tbody>
+                </nz-table>

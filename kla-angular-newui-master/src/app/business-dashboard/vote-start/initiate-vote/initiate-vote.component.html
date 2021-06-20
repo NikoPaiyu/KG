@@ -1,0 +1,50 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="startVoting()">
+
+  <div style="padding: 50px;">
+    <nz-row [nzGutter]="16">
+      <nz-col [nzSpan]="24">
+        <nz-card>
+          <nz-countdown nzSize="large" [nzValue]="deadline" [nzTitle]="'Countdown'"
+            (nzCountdownFinish)="onCounterFinish()"></nz-countdown>
+        </nz-card>
+      </nz-col>
+
+
+      <div class="col-md-8 marginbtm-25">
+        <nz-form-item class="businessName">
+          <nz-form-control nzErrorTip="Pick any businessName!">
+            <nz-form-label [nzSm]="12" [nzXs]="12" nzRequired>{{"business-dashboard.vote.initiate-vote.ChoosebusinessName" | translate}}</nz-form-label>
+            <nz-select (ngModelChange)="selectedOption($event)" formControlName="businessName"
+              nzPlaceHolder='{{"business-dashboard.vote.initiate-vote.ChoosebusinessName" | translate}}'>
+              <nz-option *ngFor="let item of currentDayList" [nzLabel]="item.businessName" [nzValue]="item.id">
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <textarea placeholder="text" nz-input (change)="inputChange()"
+        formControlName="inputValue">{{inputValue}}</textarea>
+
+      <nz-col [nzSpan]="24">
+        <nz-card id="startVote">
+          <button nz-button nzType="primary" [disabled]="!validateForm.valid" class="margnrtp-15">
+            {{"business-dashboard.vote.initiate-vote.StartVote" | translate}}
+          </button>
+        </nz-card>
+        <!-- <nz-card id="startVote">
+        <button nz-button (click)="startVoting()">
+          Start Vote
+        </button>
+      </nz-card> -->
+
+
+        <nz-card id="voteComplete" class="displayhide">
+          <span>{{"business-dashboard.vote.initiate-vote.votingTimeOverReswillpubin" | translate}}</span>
+          <nz-countdown nzSize="large" [nzValue]="resultDeadline" (nzCountdownFinish)="onResultCounterFinish()">
+          </nz-countdown>
+        </nz-card>
+      </nz-col>
+    </nz-row>
+  </div>
+</form>

@@ -1,0 +1,59 @@
+<app-dashboard dashboardTitle="Auction Register Dashboard" [dashboardBreadcums]="['Auction','Auction Register']" [isDashboardSearch]="false">
+    <div class="header-action">
+        <button nz-button nzType="primary" (click)="createRequest()">Create Request</button>
+    </div>
+    <div class="grid-content">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="2">
+                        Book Value
+                    </th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                    <th colspan="1"></th>
+                </tr>
+                <tr>
+                    <th>Register Id</th>
+                    <th>Name of the article</th>
+                    <th>Quantity</th>
+                    <th>Rate Rs</th>
+                    <th>Amount Rs</th>
+                    <th>Storage Changes Rs.</th>
+                    <th>Auction Commission Rs</th>
+                    <th>Amount Realised Rs</th>
+                    <th>Loss(If any) Rs</th>
+                    <th>To whom and when sold</th>
+                    <th>Classification of Receipt</th>
+                    <th>Remittance Challan</th>
+                    <th>Entry Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let register of (registerList$ | async)">
+                    <td>{{register.id}}</td>
+                    <td>{{register.articleName}}</td>
+                    <td>{{register.quantity}}</td>
+                    <td>{{register.bookRateRs}}</td>
+                    <td>{{register.bookAmountRs}}</td>
+                    <td>{{register.storageChangeRs}}</td>
+                    <td>{{register.commissionRs}}</td>
+                    <td>{{register.amountRealisedRs}}</td>
+                    <td>{{register.lossRs}}</td>
+                    <td>{{register.soldToAndWhen}}</td>
+                    <td>{{register.receiptClass}}</td>
+                    <td>{{register.remittanceChallan}}</td>
+                    <td>{{register.entryStatus}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</app-dashboard>

@@ -1,0 +1,174 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "dashboard.attendance.attendance-title" | translate}}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"
+>{{ "dashboard.attendance.attendance-title" | translate}}</h2>
+    </div>
+
+    <div class="col-md-6 text-align-right">
+      <button nz-button nzType="primary" class="mrgL6" (click)="showMarkAttendence()">
+        {{ "committee.list.markattendence" | translate}}
+      </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  
+  <div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-6">
+    </div>
+      <!-- <div class="col-md-6"> -->
+        <div class="col-md-1">
+         <p> {{ "noticeprocessing.staff.personalregister.addfilter" | translate}}</p>
+        </div>
+         <div class="col-md-3"> 
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input type="text" name="search" nz-input  [(ngModel)]="searchFilter"
+          (ngModelChange)="filterList()"
+            placeholder="" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    <!-- </div> -->
+         <div class="col-md-2" *ngIf="true"> 
+         <a class="abs_btn" nzType="default" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+           <i nz-icon nzType="layout" nzTheme="outline"></i>
+             <span> {{ "committee.attendence.attendencelist.cols" | translate}} </span>
+         </a>
+         <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul
+              nz-menu
+              fileTable
+              *ngFor="let box of checkboxes; let i = index"
+              class="checkbox-style"
+            >
+              <li>
+                <label nz-checkbox [(ngModel)]="box.check" name="i">{{
+                  box.label
+                }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+         </div>
+      </div>
+  <!-- </div> -->
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-table #attendanceTable [nzData]="listOfData" nzShowPagination nzShowSizeChanger>
+        <thead>
+          <tr> 
+            <th nzShowCheckbox class="tablechk"></th>
+            <th *ngIf="checkboxes[0].check">{{ "committee.list.meetingdate" | translate}}</th>
+            <th *ngIf="checkboxes[1].check">{{ "committee.list.meetingtitle" | translate}}</th>
+            <th *ngIf="checkboxes[2].check">{{ "dashboard.attendance.attendance-title" | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style="cursor: pointer;"
+            *ngFor="let data of attendanceTable.data; let i = index"
+          >
+          <td nzShowCheckbox class="tablechk"></td>
+          <td  *ngIf="checkboxes[0].check">{{data.md}}
+            <tr>
+              <a  href="javascript:;" (click)="showModal()">View</a>
+          </tr>
+          </td>
+          <td *ngIf="checkboxes[1].check">{{data.mt}}</td>
+          <td *ngIf="checkboxes[2].check">{{data.atten}}</td>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <nz-modal
+  [(nzVisible)]="isVisible"
+  nzTitle="Mark Attendance"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isOkLoading"
+>
+<div class="col-md-6">
+  <h6>{{ "committee.list.meetingvenuedate" | translate}}</h6>   
+</div>
+<div class="row">
+  <nz-table #markAttendence [nzData]="listOfDatas">
+    <thead>
+      <tr> 
+        <th></th>
+        <th *ngIf="checkboxes[0].check">{{ "committee.list.nameofmeeting" | translate}}</th>
+        <th *ngIf="checkboxes[1].check">{{ "committee.list.distance" | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        style="cursor: pointer;"
+        *ngFor="let data of markAttendence.data; let i = index"
+      >
+      <td nzShowCheckbox class="tablechk"></td>
+      <td  *ngIf="checkboxes[0].check">{{data.nameofmeeting}}
+      </td>
+      <td *ngIf="checkboxes[1].check">{{data.distance}}</td>
+    
+    </tbody>
+  </nz-table>
+</div>
+</nz-modal>
+<nz-modal
+[(nzVisible)]="markattendence"
+nzTitle='{{ "committee.list.markattendence" | translate}}'
+(nzOnCancel)="handleCancel()"
+(nzOnOk)="handleOk()"
+>
+<p> {{ "committee.minute.chosemeeting" | translate}}</p>
+<nz-select>
+    <nz-option   nzLabel="Meeting Tittle-12/10/20" nzValue="Meeting Tittle-12/10/20"></nz-option>
+    <nz-option   nzLabel="Meeting Tittle-13/10/20" nzValue="Meeting Tittle-13/10/20"></nz-option>
+  </nz-select>
+<div class="col-md-6">
+<h6>{{ "committee.list.meetingvenuedate" | translate}}</h6>   
+</div>
+<div class="row">
+<nz-table #markAttendence [nzData]="listOfDatas">
+  <thead>
+    <tr> 
+      <th></th>
+      <th *ngIf="checkboxes[0].check">{{ "committee.list.nameofmeeting" | translate}}</th>
+      <th *ngIf="checkboxes[1].check">{{ "committee.list.distance" | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      style="cursor: pointer;"
+      *ngFor="let data of markAttendence.data; let i = index"
+    >
+    <td nzShowCheckbox class="tablechk"></td>
+    <td  *ngIf="checkboxes[0].check">{{data.nameofmeeting}}
+    </td>
+    <td *ngIf="checkboxes[1].check">{{data.distance}}</td>
+  
+  </tbody>
+</nz-table>
+<div class="col-md-6 text-align-right">
+  <button nz-button nzType="primary" class="mrgL6" (click)="showMarkAttendence()">
+    {{ "committee.list.markattendence" | translate}}
+  </button>
+</div>
+</div>
+</nz-modal>

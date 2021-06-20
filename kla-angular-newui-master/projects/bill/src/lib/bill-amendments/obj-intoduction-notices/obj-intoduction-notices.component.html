@@ -1,0 +1,566 @@
+<div class="row d-flex jusleify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "bill.bill-clause.list.objectiontointroduction" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h2 class="admin-page-heading">{{ "bill.bill-clause.list.objectiontointroduction" | translate }}</h2>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end"></div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-6">
+    <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+      {{ "business-dashboard.bill-management.billlist.addFilter" | translate }}
+    </button>
+    <button *ngIf="checkedFilters.length > 0" type="button" class="ant-btn" (click)="clearFilter()">
+      {{
+        "business-dashboard.bill-management.billlist.clearFilter" | translate
+      }}
+    </button>
+  </div>
+  <div class="col-md-6">
+    <div class="row d-flex justify-content-end">
+      <div class="col-md-6">
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchParam"
+            name="search"
+            nz-input
+            placeholder= '{{ "cpl.documents.search" | translate }}'
+            (ngModelChange)="searchBill()"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+
+      <div class="col-md-3 d-flex align-items-center justify-content-end">
+        <button
+          type="button"
+          class="ant-btn"
+          nz-dropdown
+          nzTrigger="click"
+          [nzDropdownMenu]="menu"
+        >
+          <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+        </button>
+      </div>
+
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div>
+          <ul nz-menu fileTable class="checkbox-style">
+            <li class="pdm" *ngFor="let box of colCheckboxes; let i = index">
+              <label
+                nz-checkbox
+                [nzDisabled]="box.disable"
+                [(ngModel)]="box.check"
+                name="i"
+                (ngModelChange)="disableCheckBox()"
+                >{{ box.label }}</label
+              >
+            </li>
+          </ul>
+        </div>
+      </nz-dropdown-menu>
+    </div>
+  </div>
+</div>
+<div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+  <div class="col-md-4" *ngFor="let filter of checkedFilters">
+    <div class="row align-items-center">
+      <div class="col-md-4 wordbreak">
+        {{ filter.label }}
+      </div>
+      <div class="col-md-7">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filter.selValue"
+          name="{{ filter.label }}"
+          (ngModelChange)="searchCol()"
+        >
+          <nz-option
+            *ngFor="let data of filter.data"
+            [nzLabel]="data"
+            [nzValue]="data"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(filter)"
+        ></i>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-tabset>
+ 
+  <nz-tab
+    nzTitle='{{ "bill.bill-clause.list.objectionforaction" | translate }}'
+    *ngIf="permissions.pendingObjection"
+    (nzClick)="getObjectionForAction()"
+  >
+    <ng-template [ngTemplateOutlet]="objectionforAction"></ng-template>
+  </nz-tab>
+  <nz-tab
+  nzTitle='{{ "bill.bill-clause.list.allobjection" | translate }}'
+  *ngIf="permissions.pendingObjection"
+  (nzClick)="getAllObjections()"
+>
+  <ng-template [ngTemplateOutlet]="allObjectiontable"></ng-template>
+</nz-tab>
+ 
+  <nz-tab
+    nzTitle='{{ "bill.bill-clause.list.approvedobjection" | translate }}'
+    *ngIf="permissions.approvedObjection"
+    (nzClick)="getApprovedObjection()"
+  >
+    <ng-template [ngTemplateOutlet]="approvedObjectionTable"></ng-template>
+  </nz-tab>
+  <nz-tab
+  nzTitle='{{ "bill.bill-clause.list.sharedobjection" | translate }}'
+  *ngIf="permissions.publishedObjection"
+  (nzClick)="getPublishedObjections()"
+>
+  <ng-template [ngTemplateOutlet]="publishedObjections"></ng-template>
+</nz-tab>
+</nz-tabset>
+<!-- ----------------- objection Table starts here .------------------------ ----------->
+<ng-template #approvedObjectionTable>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="noticeNumber">
+          {{ "business-dashboard.question.questionlist.noticenumber" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="memberName">
+          {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="createdDate">
+          {{ "business-dashboard.responses.ordapprove.submitteddate" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="billNumber">
+          {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="billTitle">
+          {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="billMinisterName">
+          {{ "bill.bill-clause.list.billowner" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[6].check">{{ "bill.bill-clause.list.noticecontent" | translate }}</th>
+        <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.question.questionlist.status" | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td *ngIf="colCheckboxes[0].check">{{ list.noticeNumber }}</td>
+        <td *ngIf="colCheckboxes[1].check">{{ list.memberName }}</td>
+        <td *ngIf="colCheckboxes[2].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="colCheckboxes[3].check">
+          {{ list.billNumber }}           
+        </td>
+        <td
+          *ngIf="colCheckboxes[4].check"
+          (mouseover)="showLinks(list.id, list.status)"
+        >
+          <tr>
+            <td class="titlestyle">
+              {{ list.billTitle }}
+            </td>
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td>
+                <a class="viewlink" (click)="bill_full_View(list.billId)"
+                  >{{ "bill.bill-clause.list.viewbill" | translate }}
+                </a>
+              </td>
+              <td>
+                <a class="viewlink" (click)="confrmattachToFile(list)"
+                  >{{ "bill.bill-clause.list.attachnoticetofile" | translate }}
+                </a>
+              </td>
+            </div>
+          </tr>
+        </td>
+        <td *ngIf="colCheckboxes[5].check">
+          {{ list.billMinisterName }}
+        </td>
+        <td *ngIf="colCheckboxes[6].check">
+          <a class="viewlink" (click)="viewNoticeModal(list, true)"
+            >{{ "bill.bill-clause.list.viewnotice" | translate }}
+          </a>
+        </td>
+        <td *ngIf="colCheckboxes[7].check">
+          <nz-tag *ngIf="list.status">
+            {{ list?.status?.split("_").join(" ") }}</nz-tag
+          >
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+<!-- ----------------- objection Table ends here .------------------------ ----------->
+<!-- ----------------- ALL objection Table starts here .------------------------ ----------->
+<ng-template #allObjectiontable>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="noticeNumber">
+          {{ "business-dashboard.question.questionlist.noticenumber" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="memberName">
+          {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="createdDate">
+          {{ "business-dashboard.responses.ordapprove.submitteddate" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="billNumber">
+          {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="billTitle">
+          {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="billMinisterName">
+          {{ "bill.bill-clause.list.billowner" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[6].check">{{ "bill.bill-clause.list.noticecontent" | translate }}</th>
+        <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.question.questionlist.status" | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td *ngIf="colCheckboxes[0].check">{{ list.noticeNumber }}</td>
+        <td *ngIf="colCheckboxes[1].check">{{ list.memberName }}</td>
+        <td *ngIf="colCheckboxes[2].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="colCheckboxes[3].check">
+          {{ list.billNumber }}
+        </td>
+        <td
+          *ngIf="colCheckboxes[4].check"
+          (mouseover)="showLinks(list.id, list.status)"
+        >
+          <tr>
+            <td class="titlestyle">
+              {{ list.billTitle }}
+            </td>
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td>
+                <a class="viewlink" (click)="bill_full_View(list.billId)"
+                  >{{ "bill.bill-clause.list.viewbill" | translate }}
+                </a>
+              </td>
+            </div>
+          </tr>
+        </td>
+        <td *ngIf="colCheckboxes[5].check">
+          {{ list.billMinisterName }}
+        </td>
+        <td *ngIf="colCheckboxes[6].check">
+          <a class="viewlink" (click)="noticeView(list.id)">{{ "bill.bill-clause.list.viewnotice" | translate }} </a>
+        </td>
+        <td *ngIf="colCheckboxes[7].check">
+          <nz-tag *ngIf="list.status">
+            {{ list?.status?.split("_").join(" ") }}</nz-tag
+          >
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+<!-- ----------------- ALL objection Table ends here .------------------------ ----------->
+<!-- ----------------- objection for Action Table Starts here .------------------------ -->
+<ng-template #objectionforAction>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="noticeNumber">
+          {{ "business-dashboard.question.questionlist.noticenumber" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="memberName">
+          {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="createdDate">
+          {{ "business-dashboard.responses.ordapprove.submitteddate" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="billNumber">
+          {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="billTitle">
+          {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="billMinisterName">
+          {{ "bill.bill-clause.list.billowner" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[6].check">{{ "bill.bill-clause.list.noticecontent" | translate }}</th>
+        <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.question.questionlist.status" | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td *ngIf="colCheckboxes[0].check">{{ list.noticeNumber }}</td>
+        <td *ngIf="colCheckboxes[1].check">{{ list.memberName }}</td>
+        <td *ngIf="colCheckboxes[2].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="colCheckboxes[3].check">
+          {{ list.billNumber }}
+        </td>
+        <td
+          *ngIf="colCheckboxes[4].check"
+          (mouseover)="showLinks(list.id, list.status)"
+        >
+          <tr>
+            <td class="titlestyle">
+              {{ list.billTitle }}
+            </td>
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td>
+                <a class="viewlink" (click)="bill_full_View(list.billId)"
+                  >{{ "bill.bill-clause.list.viewbill" | translate }}
+                </a>
+              </td>
+            </div>
+          </tr>
+        </td>
+        <td *ngIf="colCheckboxes[5].check">
+          {{ list.billMinisterName }}
+        </td>
+        <td *ngIf="colCheckboxes[6].check">
+          <a class="viewlink" (click)="noticeView(list.id)">{{ "bill.bill-clause.list.viewnotice" | translate }} </a>
+        </td>
+        <td *ngIf="colCheckboxes[7].check">
+          <nz-tag *ngIf="list.status">
+            {{ list?.status?.split("_").join(" ") }}</nz-tag
+          >
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+<!-- ----------------- objection for Action Table ends here .------------------------ -->
+<!-- ----------------- objection for Action Table Starts here .------------------------ -->
+<ng-template #publishedObjections>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="noticeNumber">
+          {{ "business-dashboard.question.questionlist.noticenumber" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="memberName">
+          {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="createdDate">
+          {{ "business-dashboard.responses.ordapprove.submitteddate" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="billNumber">
+          {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="billTitle">
+          {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="billMinisterName">
+          {{ "bill.bill-clause.list.billowner" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[6].check">{{ "bill.bill-clause.list.noticecontent" | translate }}</th>
+        <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.question.questionlist.status" | translate }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td *ngIf="colCheckboxes[0].check">{{ list.noticeNumber }}</td>
+        <td *ngIf="colCheckboxes[1].check">{{ list.memberName }}</td>
+        <td *ngIf="colCheckboxes[2].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="colCheckboxes[3].check">
+          {{ list.billNumber }}
+        </td>
+        <td
+          *ngIf="colCheckboxes[4].check"
+          (mouseover)="showLinks(list.id, list.status)"
+        >
+          <tr>
+            <td class="titlestyle">
+              {{ list.billTitle }}
+            </td>
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td>
+                <a class="viewlink" (click)="bill_full_View(list.billId)"
+                  >{{ "bill.bill-clause.list.viewbill" | translate }}
+                </a>
+              </td>
+            </div>
+          </tr>
+        </td>
+        <td *ngIf="colCheckboxes[5].check">
+          {{ list.billMinisterName}}
+        </td>
+        <td *ngIf="colCheckboxes[6].check">
+          <a class="viewlink" (click)="viewNoticeModal(list, false)"
+            >{{ "bill.bill-clause.list.viewnotice" | translate }}
+          </a>
+        </td>
+        <td *ngIf="colCheckboxes[7].check">
+          <nz-tag *ngIf="list.status">
+            {{ list?.status?.split("_").join(" ") }}</nz-tag
+          >
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</ng-template>
+<!-- ----------------- objection for Action Table ends here .------------------------ -->
+
+<div class="row margnrtp-15">
+  <div class="col-md-4">
+    <ng-container>
+      <div></div>
+    </ng-container>
+  </div>
+</div>
+
+<!-- Starting Filter popup -->
+<nz-modal
+  [(nzVisible)]="filtrParams.rowFilter || filtrParams.colFilter"
+  nzTitle=""
+  (nzOnCancel)="showFilter(null)"
+  (nzOnOk)="_confrmFilter()"
+>
+  <div class="padding_15">
+    <p *ngFor="let box of filtrParams.tableDto; let i = index">
+      <label
+        nz-checkbox
+        name="checkbox{{ i }}"
+        (ngModelChange)="_chooseFilter(box)"
+        [(ngModel)]="box.checked"
+        >{{ box.label }}</label
+      >
+    </p>
+  </div>
+</nz-modal>
+<!-- Ending filter popup -->
+<nz-modal
+  [(nzVisible)]="viewContentModel"
+  nzTitle='{{ "noticeprocessing.notice.selectnoticetype.notice" | translate }}'
+  [nzFooter]="null"
+  nzWidth="800"
+  (nzOnCancel)="cancelContentModal()"
+>
+  <div class="padding_15">
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-right">
+        <button (click)="confrmattachToFile(noticeDetails)" *ngIf="isFileAttach" class="m-r5" nz-button nzType="primary">
+          {{ "cpl.documents.attachtofile" | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="margnrtp-15">
+    <lib-obj-intoduction-view
+      *ngIf="noticeDetails && noticeDetails.content"
+      [noticeDetails]="noticeDetails"
+    ></lib-obj-intoduction-view>
+    </div>
+    <div
+      class="row margnrtp-15"
+      *ngIf="!isFileAttach && noticeDetails?.ministerResponse.length != 0 && noticeDetails?.billMinisterId == user.userId"
+    >
+      &nbsp;&nbsp;<b>{{ "bill.bill-clause.list.responsetoobjection" | translate }} :-</b>
+      <div
+        class="col-md-10"
+        *ngFor="let res of noticeDetails?.ministerResponse; let i = index"
+      >
+        <nz-card class="margnrtp-15">
+          <div class="row margnrtp-10">
+            <b>{{ res.response }}</b>
+          </div>
+          <div class="row margnrtp-10 align-right">
+            <div class="col-md-12 align-right">
+              {{ res.ministerName }}
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+    <div class="row margnrtp-15" *ngIf="!isFileAttach && responsePermission">
+      <div class="col-md-10">
+        <textarea
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+          class="textarea_nt"
+          placeholder='{{ "bill.bill-clause.list.enterresponsehere" | translate }}'
+          nz-input
+          [(ngModel)]="response"
+        ></textarea>
+        <button
+          [disabled]="!response"
+          class="m-r5 margnrtp-10"
+          nz-button
+          nzType="primary"
+          (click)="addResponse()"
+        >
+        {{ "bill.bill-clause.list.addresponse" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

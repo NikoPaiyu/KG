@@ -1,0 +1,17 @@
+.file-list-wrapper {
+    .file-list-list {
+        .file-list-item {
+              gap : 10px;
+              padding-bottom: 10px;
+              padding-top: 10px;
+              border-bottom: 2px solid #eee;  
+              cursor: pointer;
+
+              .file-list-item-content {
+                  color: blue;
+                  text-decoration: underline;
+                  gap:10px;
+              }
+            }
+        }
+    }

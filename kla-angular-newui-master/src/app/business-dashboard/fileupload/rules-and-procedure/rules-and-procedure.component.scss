@@ -1,0 +1,18 @@
+.btn-align {
+  display: block;
+  margin: 15px 0;
+  margin-left: auto;
+}
+
+.ant-table-thead > tr,
+th {
+  border-bottom: #dfe8ef 1px solid !important;
+  border-top: #dfe8ef 1px solid !important;
+  // padding: 10px 16px !important;
+  font-weight: normal !important;
+  background-color: white !important;
+}
+
+.ant-table-tbody > tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}

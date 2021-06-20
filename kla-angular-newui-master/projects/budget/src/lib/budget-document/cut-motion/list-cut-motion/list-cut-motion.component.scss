@@ -1,0 +1,55 @@
+.list-cm {
+    border-bottom: 2px;
+}
+
+.title-cm {
+    background-color: #919191;
+    width: 100%;
+    justify-content: center;
+    display: flex;
+    min-height: 50px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    align-items: center;
+}
+
+.listbd {
+    list-style-type: none;
+    padding: 0;
+    border-bottom: 1px solid #ddd;
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.listbd li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.listbd li:last-child {
+    border-bottom: none
+}
+
+.list-data {
+    padding: 15px;
+    border: 1px solid #ddd;
+    margin-bottom: 5px;
+    border-radius: 5px;
+}
+
+.ml-6 {
+    margin-left: 6px;
+}
+
+.list_data {
+    width: 100%;
+}
+
+.list_data li {
+    list-style: decimal;
+    width: 100%;
+}
+
+.selRow {
+    background-color: #ece4e4;
+}

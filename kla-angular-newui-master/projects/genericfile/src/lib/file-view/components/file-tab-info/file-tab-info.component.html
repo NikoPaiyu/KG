@@ -1,0 +1,174 @@
+<div class="row mrB20">
+  <div class="col-md-3">
+    <span class="workflowhd">Workflows</span>
+  </div>
+  <div class="col-md-8">
+    <nz-select nzShowSearch nzAllowClear [(ngModel)]="workflowId"
+      name="workflowId" (ngModelChange)="getWorkflowStatus()">
+    <nz-option *ngFor="let workflow of fileDetails?.workflowIds; let i = index"
+     nzLabel="Workflow {{i+1}} - {{workflow}}" [nzValue]="workflow"></nz-option>
+</nz-select>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <span class="workflowhd">{{
+      "cpl.filelistflow.fileworkflow" | translate
+    }}</span>
+  </div>
+  <div class="col-md-9">
+    <div class="overflownote">
+      <nz-steps nzSize="small" [nzDirection]="'vertical'">
+        <nz-step
+          *ngFor="let status of stepStatusDetail"
+          [nzStatus]="getStatusByReason(status.reason)"
+          [nzTitle]="returnOwner(status)"
+          [nzDescription]="status.reason"
+        ></nz-step>
+      </nz-steps>
+    </div>
+  </div>
+</div>
+<div class="row" *ngIf="fileDetails?.currentUser">
+    <div class="col-md-12">
+      <strong>Current User</strong>
+    </div>
+  </div>
+  <div class="row flex-end mrB10">
+    <div class="blthd col-md-6">
+      {{fileDetails?.currentUser?.details?.fullName}}
+    </div>
+    <div class="blthd col-md-6">
+      <ng-container *ngFor="let role of fileDetails?.currentUser?.roles; let i = index">
+        {{role.roleName}}<ng-container *ngIf="i < fileDetails?.currentUser?.roles.length - 1">/</ng-container>
+      </ng-container>
+    </div>
+</div>
+<div class="row bg_block">
+  <div class="col-md-12">
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "business-dashboard.cpl.view.filesubject" | translate }}:
+      </div>
+      <div class="blthd col-md-6" style="word-wrap: break-word">
+        {{ fileDetails?.subject }}
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "business-dashboard.cpl.view.filesdescription" | translate }}:
+      </div>
+      <div class="blthd col-md-6" style="word-wrap: break-word">
+        {{ fileDetails?.description }}
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "business-dashboard.question.questionlist.createdat" | translate }}:
+      </div>
+      <div class="blthd col-md-6">
+        {{ fileDetails?.createdDate | date: "dd/MM/yyyy" }}
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "cpl.docamendments.filepriority" | translate }}:
+      </div>
+      <div class="blthd col-md-6" *ngIf="!isEditPrio">
+        <nz-tag [nzColor]="'red'">
+          {{ fileDetails?.priority }}
+        </nz-tag>
+      </div>
+    </div>
+    <div class="row flex-end mrB10" *ngIf="isEditPrio">
+      <div class="col-md-6"></div>
+      <div class="blthd col-md-6">
+        <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+          <label nz-radio nzValue="URGENT">{{
+            "cpl.docamendments.urgent" | translate
+          }}</label>
+          <label nz-radio nzValue="NORMAL">{{
+            "cpl.docamendments.normal" | translate
+          }}</label>
+          <label nz-radio nzValue="ACTION_TODAY">{{
+            "cpl.docamendments.actiontoday" | translate
+          }}</label>
+          <label nz-radio nzValue="ASSEMBLY_URGENT">{{
+            "cpl.docamendments.assemblyurgent" | translate
+          }}</label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "noticeprocessing.staff.personalregister.section" | translate }}:
+      </div>
+      <div class="blthd col-md-6">
+        {{ fileDetails?.type }}
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">{{ "cpl.fileworkflow.filetype" | translate }}:</div>
+      <div class="blthd col-md-6">
+        <nz-tag>
+          {{ fileDetails?.type }}
+        </nz-tag>
+      </div>
+    </div>
+    <div class="row flex-end mrB10">
+      <div class="col-md-6">
+        {{ "cpl.fileworkflow.filestatus" | translate }}:
+      </div>
+      <div class="blthd col-md-6">
+        <nz-tag [nzColor]="'red'">
+          {{ fileDetails?.status }}
+        </nz-tag>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row text-align-right" *ngIf="fileDetails.currentAssignee">
+  <div class="col-md-12">
+    <button nz-button class="abs_btn" (click)="editFile()" *ngIf="!isEditPrio">
+      {{ "noticeprocessing.noticeprocess.edit" | translate }}
+    </button>
+    <button nz-button class="abs_btn" (click)="updateFile()" *ngIf="isEditPrio">
+      {{ "cpl.docupload.update" | translate }}
+    </button>
+    <button nz-button class="abs_btn" (click)="onCancel()" *ngIf="isEditPrio">
+      Cancel
+    </button>
+  </div>
+</div>
+<ng-container *ngIf="fileDetails?.masterFile !== null">
+  <div class="row">
+    <div class="col-md-12">
+      <strong>Master File</strong>
+    </div>
+  </div>
+    <div class="row flex-end mrB10">
+      <div class="blthd col-md-6">
+        {{fileDetails?.masterFile?.subject}}
+      </div>
+      <div class="blthd col-md-6">
+        <a href="javascript:;" (click)="viewFile(fileDetails?.masterFile?.fileId, fileDetails?.masterFile?.filType)">
+          {{fileDetails?.masterFile?.fileNumber}}</a>
+      </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="fileDetails?.subFile && fileDetails?.subFile.length > 0">
+  <div class="row">
+    <div class="col-md-12">
+      <strong>Sub-Files</strong>
+    </div>
+  </div>
+  <div class="row flex-end mrB10" *ngFor="let file of fileDetails?.subFile; let i=index">
+    <div class="blthd col-md-6">
+      {{i+1}}.{{file?.subject}}
+    </div>
+    <div class="blthd col-md-6">
+      <a href="javascript:;" (click)="viewFile(file?.fileId, file?.filType)">
+        {{file?.fileNumber}}</a>
+    </div>
+  </div>
+</ng-container>

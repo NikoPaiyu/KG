@@ -1,0 +1,58 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          <a>Dashboard</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          Notice Templates
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-10">
+      <h3>Notice Template</h3>
+    </div>
+    <div class="col-md-2">
+      <button nz-button nzType="default">Create Template</button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label [nzSpan]="3" nzOffset="16" nzFor="filter"
+        >Clear Filter</nz-form-label
+      >
+      <nz-form-control [nzSpan]="4">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" nz-input placeholder="input search text" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </nz-form-control>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-table #rowSelectionTable nzShowPagination nzShowSizeChanger>
+        <thead>
+          <tr>
+            <th nzShowCheckbox></th>
+            <th>Notice Name</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of rowSelectionTable.data">
+            <td nzShowCheckbox [nzDisabled]="data.disabled"></td>
+            <td>{{ data.name }}</td>
+            <td>{{ data.age }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

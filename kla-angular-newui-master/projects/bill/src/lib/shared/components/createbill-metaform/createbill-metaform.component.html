@@ -1,0 +1,298 @@
+<form nz-form [formGroup]="billForm" class="form">
+    <div class="padding_25">
+        <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+                {{ "business-dashboard.bill-management.billCreate.errortpl" | translate }}
+            </ng-container>
+        </ng-template>
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="Select bill nature">
+                        <nz-form-label class="mr-tb-12">{{ "business-dashboard.bill-management.billCreate.billNature" | translate }}</nz-form-label>
+                        {{ "bill.bill-clause.list.government" | translate }}
+                        <!-- <nz-radio-group formControlName="natureOfBill">
+                            <label nz-radio nzValue="GOVERNMENT">Government</label>
+                            <label nz-radio nzValue="PRIVATE">Private</label>
+                        </nz-radio-group> -->
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Enter bill title">
+                        <input style="cursor: default;" placeholder="  {{
+                'business-dashboard.bill-management.billCreate.billtitleplaceholder'
+                  | translate
+              }}" nz-input
+              [disabled]="lateDocSubmission"
+              formControlName="title" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15">
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.billtype" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select type of bill">
+                        <nz-select nzShowSearch nzAllowClear formControlName="type" [nzDisabled]="viewOnly || lateDocSubmission" (ngModelChange)="billTypeChange($event)">
+                            <nz-option *ngFor="let type of billTypes" [nzLabel]="type.name" [nzValue]="type.code"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.language" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select original language">
+                        <nz-select nzShowSearch [nzDisabled]="viewOnly || lateDocSubmission" nzAllowClear formControlName="language">
+                            <nz-option *ngFor="let type of billLanguages" [nzLabel]="type.label" [nzValue]="type.value"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15"*ngIf="showActRef">
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>
+                        {{ "business-dashboard.bill-management.billCreate.actRef" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Please select act reference or give old act refernce number">
+                        <nz-select nzShowSearch nzAllowClear formControlName="actReference" nzMode="multiple" [nzDisabled]="viewOnly || lateDocSubmission">
+                            <nz-option *ngFor="let type of actReferences" [nzLabel]="type.name" [nzValue]="type.number"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6 align-items-center">
+               
+                    <nz-form-label>
+                        {{ "business-dashboard.bill-management.billCreate.OldactRef" | translate }}
+                    </nz-form-label>
+                    
+                        <!-- <nz-select nzShowSearch nzAllowClear formControlName="oldactReference" nzMode="multiple" [nzDisabled]="viewOnly">
+                            <nz-option *ngFor="let type of oldActReferences" [nzLabel]="type" [nzValue]="type"></nz-option>
+                        </nz-select> -->
+                        <div formArrayName="oldactReference">
+                            <div *ngFor="let d of oldRef.controls; let i = index">
+                              <div [formGroupName]="i">         
+                               <nz-form-item>  
+                                <nz-form-control nzErrorTip="Enter Old act reference number">  
+                                <div class="row margnbtm-15">
+                                <div class="col-md-10">
+                                <input placeholder="Old act reference number" nz-input formControlName="oldRef" 
+                                oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';" maxlength="250" />            
+                                </div>
+                                <div class="col-md-1">
+                                    <button
+                                    [disabled]="lateDocSubmission"
+                                    nz-button
+                                    nzType="default"
+                                    nz-popconfirm
+                                    nzPopconfirmTitle="Do you want to delete this?"
+                                    (nzOnConfirm)="deleteOldRef(i)"
+                                    nzPopconfirmPlacement="bottomLeft"
+                                  >
+                                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                                  </button>
+                                </div>
+                                </div>
+                            </nz-form-control>
+                </nz-form-item>
+                </div>
+                </div>
+                </div>
+                 <div class="row align-items-right">
+                    <div class="col-md-10 ">
+                    <button 
+                    nz-button
+                    nzType="dashed"
+                    (click)="addnewOldRef()"
+                    [disabled]="lateDocSubmission"
+                  >
+                    <i nz-icon nzType="plus"></i>
+                    {{ "bill.bill-clause.list.add" | translate }}
+                  </button>
+                    </div>
+                 </div>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15">
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>
+                        {{ "bill.bill-clause.list.ordinancereplacmentbill" | translate }}?
+                    </nz-form-label>
+                    <label [nzDisabled]="viewOnly || lateDocSubmission" formControlName="ordinance" nz-checkbox (ngModelChange)="ordinanceChange($event)"></label>
+                    <br />{{ "business-dashboard.bill-management.billCreate.uploadstmt" | translate }}
+
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                        <!-- <div *ngIf="!billForm.controls.ordinanceFile.valid && onCreate">
+                            <span class="text-danger">File is required</span>
+                        </div> -->
+                        <nz-upload nzAccept="application/pdf" 
+                            [nzDisabled]="ordinanceValidator" 
+                            [nzBeforeUpload]="beforeUpload" 
+                            [nzAction]="uploadOrdinanaceURL" 
+                            [(nzFileList)]="OrdinancefileList" 
+                            [nzShowButton]="OrdinancefileList.length < 1"
+                            [nzShowUploadList]="showUploadList" 
+                            [nzRemove]="handleRemoveOrdiFIle" 
+                            (nzChange)="handleOrdiFileChange($event)">
+                            <button [disabled]="ordinanceValidator" nz-button>
+                                <i nz-icon nzType="upload"></i>
+                                {{"bill.createbill.uploadfile" | translate }}
+                            </button>
+                        </nz-upload>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15" *ngIf="billForm.controls.ordinance.value">
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>
+                        {{ "business-dashboard.bill-management.billCreate.ordRef" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select ordinance reference">
+                        <nz-select [nzDisabled]="viewOnly || lateDocSubmission" nzShowSearch nzAllowClear formControlName="ordinanceReference" (ngModelChange)="onChangeOrdReference($event)">
+                            <nz-option *ngFor="let type of ordinanceReferences" [nzLabel]="type.label" [nzValue]="type.label"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6 align-items-center">
+                <nz-form-item>
+                    <nz-form-label>
+                        {{ "business-dashboard.bill-management.billCreate.OldOrdRef" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzErrorTip="Enter old ordinance reference number">
+                        <input (keydown)="onKeydown($event)" [disabled]="disbleOldOrdiRef || lateDocSubmission" placeholder="Old Ordinance Reference Number" nz-input formControlName="oldOrdinanceReference" oninput="javascript: if (this.value.length=='1' && this.value==' ') this.value = '';" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.minister" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select minister">
+                        <nz-select [nzDisabled]="viewOnly || lateDocSubmission" (ngModelChange)="getDepartments($event)" nzShowSearch nzAllowClear formControlName="ministerId">
+                            <nz-option *ngFor="let type of ministers" [nzLabel]="type.name" [nzValue]="type.ministerId"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.department" | translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select department">
+                        <nz-select [nzDisabled]="viewOnly || lateDocSubmission" (ngModelChange)="getSubjects($event)" nzShowSearch nzAllowClear formControlName="departmentId">
+                            <nz-option *ngFor="let type of departments" [nzLabel]="type.departmentName" [nzValue]="type.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>
+                        {{ "business-dashboard.question.ministersubject"| translate }}
+                    </nz-form-label>
+                    <nz-form-control nzHasFeedback nzErrorTip="Select  minister subject">
+                        <nz-select [nzDisabled]="viewOnly || lateDocSubmission" nzShowSearch nzAllowClear formControlName="subjectId">
+                            <nz-option *ngFor="let type of subjects" [nzLabel]="type.title" [nzValue]="type.id"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.govrecomd" | translate }}
+                    </nz-form-label>
+                    <label [nzDisabled]="viewOnly || lateDocSubmission" formControlName="govrecommendation" nz-checkbox (ngModelChange)="govRecChange($event)"></label>
+                    <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                        <div *ngIf="!billForm.controls.govrecommendationFile.valid && onCreate">
+                            <span class="text-danger">{{"bill.createbill.filerequired" | translate }}</span>
+                        </div>
+                        <nz-upload nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png" 
+                            [nzDisabled]="govRecValidator || lateDocSubmission" 
+                            [nzAction]="uploadGovRecURL" 
+                            [(nzFileList)]="govRecFileList" 
+                            [nzShowButton]="govRecFileList.length < 1"
+                            [nzShowUploadList]="showUploadList" 
+                            [nzRemove]="handleRemoveGovRecFile" 
+                            (nzChange)="handleGovRecFileChange($event)">
+                            <button [disabled]="govRecValidator" nz-button>
+                                <i nz-icon nzType="upload"></i>
+                                {{"bill.createbill.uploadfile" | translate }}
+                            </button>
+                        </nz-upload>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.bill-management.billCreate.article" | translate }}
+                    </nz-form-label>
+                    <nz-form-control  nzErrorTip="Enter article no">
+                        <input [disabled]="govRecValidator || lateDocSubmission"
+                        (keydown)="onArticleKeydown($event)"
+                        placeholder="" nz-input formControlName="article" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';" maxlength="250" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <button class="mr-6" nz-button (click)="cancelBill()">
+         
+          {{
+            "business-dashboard.bill-management.billCreate.cancelBill" | translate
+          }}
+        </button>
+                <button *ngIf="!viewOnly && !lateDocSubmission" nz-button (click)="createBill()">
+          {{createButtonLabel}}
+        </button>
+        
+        <button *ngIf="!viewOnly && lateDocSubmission  && allowBillUpdate" nz-button (click)="updateAndResubmitFile()">
+            {{"business-dashboard.bill-management.billlist.updatebill" | translate}}
+        </button>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+                <ng-container *ngIf="!allowBillUpdate && !isLoading">
+                    <nz-alert nzType="warning" 
+                    nzMessage="Cannot update bill when the assossiated file is in approval flow" nzShowIcon></nz-alert>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</form>

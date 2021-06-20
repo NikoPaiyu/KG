@@ -1,0 +1,606 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "committee.subjectcommittee.addsuggestions" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-4">
+    <h2 class="admin-page-heading">{{ "committee.subjectcommittee.addsuggestions" | translate }}</h2>
+  </div>
+  <div class="col-md-8 justify-content-end">
+    <button *ngIf="rbsPermission.dissentnote && reportDto && checkForAddDissentNote() && memberResponse" class="ml-6 m-r5" nz-button nzType="default" (click)="showDissentNote('Add Dissent Note')">
+      {{ "committee.subjectcommittee.adddissentnote" | translate }}
+    </button>
+    <button *ngIf="rbsPermission.dissentnote && reportDto && reportDto?.dissentNotes?.length != 0" class="ml-6 m-r5" nz-button nzType="default" (click)="showDissentNote('View Dissent Note')">
+      {{ "committee.subjectcommittee.viewalldissentnotes" | translate }}
+    </button>
+    <button *ngIf="rbsPermission.markAsTaken && subagenda.forwardedBusiness.status !='COMPLETED'" class="ml-6 m-r5" nz-button nzType="primary"
+      (click)="showMarkPOPup(true)">
+      {{ "committee.subjectcommittee.markastaken" | translate }}
+    </button>
+    <ng-container *ngIf="subagenda?.forwardedBusiness?.status =='COMPLETED'">
+    <button *ngIf="rbsPermission.addDescription && reportDto && reportDto?.description.length == 0" class="ml-6 m-r5" nz-button nzType="primary"
+      (click)="showDescriptionPopup(true)">
+      {{ "committee.subjectcommittee.adddescription" | translate }}
+    </button>
+    <button *ngIf="rbsPermission.addDescription && reportDto && reportDto?.description.length != 0" class="ml-6 m-r5" nz-button nzType="default"
+      (click)="showDescriptionPopup(true)">
+      {{ "committee.subjectcommittee.viewdescription" | translate }}
+    </button>
+    <button *ngIf="reportDto?.description.length != 0" class="mr-6  m-r5" nzType="primary" nz-button (click)="showReportPreview(true)">
+      {{ "committee.subjectcommittee.reportpreview" | translate }}
+    </button>
+    <button *ngIf="rbsPermission.attachToFile && reportDto && reportDto?.reportData != null && !reportDto?.fileId" class="mr-6" nzType="primary" nz-button (click)="showFileCreate(true)">
+      {{ "cpl.documents.attachtofile" | translate }}
+    </button>
+    <button  class="mr-6" nzType="primary" nz-button (click)="showMinisterReading()"
+    *ngIf="reportDto && reportDto?.reportData != null && reportDto?.fileId && (reportDto.ministerReadingDto||rbsPermission.attachToFile)">
+    {{ "committee.subjectcommittee.ministerreadingpreview" | translate }}
+    </button>
+    </ng-container>
+    <button nz-button nzType="primary" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+      nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttosubmitamendemnet" | translate }}' (nzOnConfirm)="submitAmendments()"
+      nzPopconfirmPlacement="bottomRight" [disabled]="disableActions" *ngIf="rbsPermission.submission && !isView">
+      {{ "Submit" | translate }}
+    </button>
+    &nbsp;
+    <button nz-button nzType="default" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+      nzPopconfirmTitle='{{ "bill.bill-clause.list.douwanttogoback" | translate }}' (nzOnConfirm)="backToList()" *ngIf="!isView"
+      nzPopconfirmPlacement="bottomRight">
+      <i nz-icon nzType="rollback" nzTheme="outline" class="baseline"></i>
+      {{ "Back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+
+</div>
+
+<nz-modal [(nzVisible)]="markPopup" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>{{ "bill.performballo.conform" | translate }}</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-2">{{ "bill.bills.markas" | translate }}</div>
+          <div class="col-md-8">
+            <nz-radio-group [(ngModel)]="takenStatus">
+              <label nz-radio nzValue="COMPLETED" [class.disabled]="checkForUnactedSuggestions()">{{ "committee.addclause.fullytaken" | translate }}</label>
+              <label nz-radio nzValue="PARTIAL">{{ "committee.addclause.partiallytaken" | translate }}</label>
+              <!-- <label nz-radio nzValue="PENDING">Not Taken</label> -->
+            </nz-radio-group>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font"
+              (click)="showMarkPOPup(false)">
+              {{"committee.committe-files.cancel" | translate}}
+            </button>
+            <button [disabled]="!takenStatus" type="button" nz-button nzType="primary" nz-popconfirm
+              nzPopconfirmTitle='{{"committee.addclause.areusurewantconformstatus" | translate}}' (nzOnConfirm)="confirmTaken()"
+              class="btn btn-primary primary-button">
+              {{"bill.performballo.conform" | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+<!-- Generate Report popup -->
+<nz-modal [(nzVisible)]="reportGen" nzTitle='{{"committee.addclause.reportdescription" | translate}}' (nzOnCancel)="reportGen = false" [nzFooter]="null" nzWidth="800">
+  <committee-generate-meeting-report [subagenda]="subagenda" (cancelReportGen)="showDescriptionPopup($event)"
+    *ngIf="reportGen" [reportDto]="reportDto" [meetingInfo]="meetingInfo"></committee-generate-meeting-report>
+</nz-modal>
+<!-- Preview popup -->
+<nz-modal [(nzVisible)]="showpreview" nzTitle='{{"committee.addclause.meetingreportpreview" | translate}}' (nzOnCancel)="showpreview = false" [nzFooter]="null"
+  nzWidth="1100">
+  <committee-meeting-report-preview [subagenda]="subagenda" *ngIf="showpreview" [reportDto]="reportDto"
+    (cancelReportPreview)="showReportPreview($event)"></committee-meeting-report-preview>
+</nz-modal>
+<!-- Preview Report popup -->
+<!-- Dissent note popup -->
+<nz-modal [(nzVisible)]="dissentNote.showpopup" [nzTitle]="dissentNote.purpose" (nzOnCancel)="dissentNote.showpopup = false" [nzFooter]="null"
+  nzWidth="800">
+  <committee-objection-note [subagenda]="dissentNote.subagenda" [meetingInfo]="meetingInfo" [reportDto]="reportDto" (cancelnote)="cancelnote($event)"
+    *ngIf="dissentNote.showpopup" [purpose]="dissentNote.purpose">
+  </committee-objection-note>
+</nz-modal>
+<!-- Dissent note popup -->
+<!-- Attach to file popup -->
+<nz-modal [nzFooter]="null" [(nzVisible)]="attachToFile.showpopup" nzClosable="false" [nzFooter]="null">
+  <committee-file-popup *ngIf="attachToFile.showpopup" [subagenda]="subagenda" [purpose]="attachToFile.purpose"
+    (closePopup)="onCancelFileCreate($event)" (showCreateModal)="onCancelFileCreate($event)"></committee-file-popup>
+</nz-modal>
+<!-- Attach to file popup -->
+<!-- Generate Report popup -->
+<nz-divider></nz-divider>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-4" *ngIf="isPPO()">
+    <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{"bill.bills.selectmla" | translate}}' [(ngModel)]="primaryMemberId">
+      <nz-option *ngFor="let data of mlaList" [nzValue]="data.userId" [nzLabel]="data.details.fullName"></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-8" *ngIf="isPPO()"></div>
+  <div class="col-md-9">
+    <nz-tabset>
+      <nz-tab nzTitle='{{"business-dashboard.bill-fulview.billview.bill" | translate}}' *ngIf="billDetails">
+        <!-- <div class="rotateButton">
+          <label>Preview</label>
+          <nz-switch [(ngModel)]="showPreview"></nz-switch>
+        </div> -->
+        <ng-container *ngFor="let block of billDetails?.blocks; let i = index">
+          <div class="row" *ngIf="block.content">
+            <div class="col number">
+              {{ block.indexValue }}
+            </div>
+            <div class="col">
+              <div class="row showDiv">
+                <div class="col-md-12" *ngIf="showTitle(block.type.code)">
+                  <h4 class="align-center">{{block.type.name}}</h4>
+                </div>
+                <div class="col-md-12">
+                  <div id="{{ block.id }}" (mouseup)="onSelectText(block)" class="bill_div"
+                    [class.bold-text]="block.type.bold == true" [class.underline-text]="block.type.underline == true"
+                    [class.italic-text]="block.type.italic == true" [style.fontSize]="block.type.fontSize + 'px'">
+                    <div *ngIf="!showPreview" [innerHtml]="getContent(block)"></div>
+                    <div *ngIf="showPreview" [innerHtml]="block.AmendmentView"></div>
+                  </div>
+                </div>
+                <div class="col-md-12 showOnHover"
+                  *ngIf="!showPreview && ((isPPO() && primaryMemberId) || (!isPPO() && currentUser.userId)) && checkForAddSuggetsions() && memberResponse">
+                  <nz-tag *ngFor="let tags of blockService.listOfHoverButton(block.type.code, billDetails.type)"
+                    (click)="insertblockAmendment(block.index, tags.id, tags.code,block, block, tags)"
+                    [nzColor]="tags.color">{{ tags.title }}</nz-tag>
+                  <button style="margin-left: 2px;" *ngIf="blockService.isDeletAllowed(block.type.code)" nz-button
+                    nzSize="small" (click)="deleteAmendment(block.id)">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}</button>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngFor="let suBlock1 of block.subBlockDto; let j = index">
+            <div class="row marginbtm-15 indent-10 showDiv" *ngIf="suBlock1.content">
+              <div class="col number">
+                {{ suBlock1.indexValue }}
+              </div>
+              <div class="col">
+                <div class="row marginbtm-10">
+                  <div class="col-md-12">
+                    <div id="{{ suBlock1.id }}" (mouseup)="onSelectText(suBlock1)" class="bill_div"
+                      [class.bold-text]="suBlock1.type.bold == true"
+                      [class.underline-text]="suBlock1.type.underline == true"
+                      [class.italic-text]="suBlock1.type.italic == true" [style.fontSize]="block.type.fontSize + 'px'">
+                      <div *ngIf="!showPreview" [innerHtml]="getContent(suBlock1)"></div>
+                      <div *ngIf="showPreview" [innerHtml]="suBlock1.AmendmentView"></div>
+                    </div>
+                  </div>
+                  <div class="col-md-12 showOnHover"
+                    *ngIf="!showPreview && ((isPPO() && primaryMemberId) || (!isPPO() && currentUser.userId)) &&!isView  && checkForAddSuggetsions() && memberResponse">
+                    <nz-tag *ngFor="let tags of blockService.listOfHoverButton(block.type.code, billDetails.type)"
+                      (click)="insertblockAmendment(suBlock1.index, tags.id, tags.code,block, suBlock1, tags)"
+                      [nzColor]="tags.color">{{ tags.title }}</nz-tag> &nbsp;
+                    <button *ngIf="blockService.isDeletAllowed(suBlock1.type.code)" nz-button nzSize="small"
+                      (click)="deleteAmendment(suBlock1.id)">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <ng-container *ngFor="let suBlock2 of suBlock1.subBlockDto; let k = index">
+              <div class="row marginbtm-15 indent-20 showDiv" *ngIf="suBlock2.content">
+                <div class="col number">
+                  {{ suBlock2.indexValue }}
+                </div>
+                <div class="col">
+                  <div class="row marginbtm-10">
+                    <div class="col-md-12">
+                      <div id="{{ suBlock2.id }}" (mouseup)="onSelectText(suBlock2)" class="bill_div"
+                        [class.bold-text]="suBlock2.type.bold == true"
+                        [class.underline-text]="suBlock2.type.underline == true"
+                        [class.italic-text]="suBlock2.type.italic == true"
+                        [style.fontSize]="block.type.fontSize + 'px'">
+                        <div *ngIf="!showPreview" [innerHtml]="getContent(suBlock2)"></div>
+                        <div *ngIf="showPreview" [innerHtml]="suBlock2.AmendmentView"></div>
+                      </div>
+                    </div>
+                    <div class="col-md-12 showOnHover"
+                      *ngIf="!showPreview && ((isPPO() && primaryMemberId) || (!isPPO() && currentUser.userId)) && checkForAddSuggetsions() && memberResponse">
+                      <nz-tag *ngFor="let tags of blockService.listOfHoverButton(block.type.code, billDetails.type)"
+                        (click)="insertblockAmendment(suBlock2.index, tags.id, tags.code,suBlock1, suBlock2, tags)"
+                        [nzColor]="tags.color">{{ tags.title }}</nz-tag> &nbsp;
+                      <button *ngIf="blockService.isDeletAllowed(suBlock2.type.code)" nz-button nzSize="small"
+                        (click)="deleteAmendment(suBlock2.id)">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-container *ngFor="let suBlock3 of suBlock2.subBlockDto; let l = index">
+                <div class="row marginbtm-15 indent-30 showDiv" *ngIf="suBlock3.content">
+                  <div class="col number">{{ suBlock3.indexValue }}</div>
+                  <div class="col">
+                    <div class="row marginbtm-10">
+                      <div class="col-md-12">
+                        <div id="{{ suBlock3.id }}" (mouseup)="onSelectText(suBlock3)" class="bill_div"
+                          [class.bold-text]="suBlock3.type.bold == true" [class.underline-text]="
+                            suBlock3.type.underline == true
+                          " [class.italic-text]="suBlock3.type.italic == true"
+                          [style.fontSize]="block.type.fontSize + 'px'">
+                          <div *ngIf="!showPreview" [innerHtml]="getContent(suBlock3)"></div>
+                          <div *ngIf="showPreview" [innerHtml]="suBlock3.AmendmentView"></div>
+                        </div>
+                      </div>
+                      <div class="col-md-12 showOnHover"
+                        *ngIf="!showPreview && ((isPPO() && primaryMemberId) || (!isPPO() && currentUser.userId)) && !isView && checkForAddSuggetsions() && memberResponse">
+                        <nz-tag *ngFor="let tags of blockService.listOfHoverButton(block.type.code, billDetails.type)"
+                          (click)="insertblockAmendment(suBlock3.index, tags.id, tags.code,suBlock2, suBlock3, tags)"
+                          [nzColor]="tags.color">{{ tags.title }}</nz-tag> &nbsp;
+                        <button *ngIf="blockService.isDeletAllowed(suBlock3.type.code)" nz-button nzSize="small"
+                          (click)="deleteAmendment(suBlock3.id)">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <ng-container *ngFor="let suBlock4 of suBlock3.subBlockDto; let m = index">
+                  <div class="row marginbtm-15 indent-40 showDiv" *ngIf="suBlock4.content">
+                    <div class="col number">{{ suBlock4.indexValue }}</div>
+                    <div class="col">
+                      <div class="row marginbtm-10">
+                        <div class="col-md-12">
+                          <div id="{{ suBlock4.id }}" (mouseup)="onSelectText(suBlock4)" class="bill_div"
+                            [class.bold-text]="suBlock4.type.bold == true" [class.underline-text]="
+                              suBlock4.type.underline == true
+                            " [class.italic-text]="suBlock4.type.italic == true"
+                            [style.fontSize]="block.type.fontSize + 'px'">
+                            <div *ngIf="!showPreview" [innerHtml]="getContent(suBlock4)"></div>
+                            <div *ngIf="showPreview" [innerHtml]="suBlock4.AmendmentView"></div>
+                          </div>
+                        </div>
+                        <div class="col-md-12 showOnHover"
+                          *ngIf="!showPreview && ((isPPO() && primaryMemberId) || (!isPPO() && currentUser.userId))&& !isView && checkForAddSuggetsions() && memberResponse">
+                          <nz-tag *ngFor="let tags of blockService.listOfHoverButton(block.type.code, billDetails.type)"
+                            (click)="insertblockAmendment(suBlock4.index, tags.id, tags.code,suBlock3, suBlock4, tags)"
+                            [nzColor]="tags.color">{{ tags.title }}</nz-tag>
+                          <button nz-button nzSize="small" *ngIf="blockService.isDeletAllowed(suBlock4.type.code)"
+                            (click)="deleteAmendment(suBlock4.id)">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div class="col-md-3">
+    <nz-tabset>
+      <nz-tab [nzTitle]="suggestionsTitle" (nzClick)="getAmendmentsOfBill(billId)">
+        <ng-container *ngFor="let group of amendmentGroup">
+          <div class="row">
+            <div class="col-md-12 align-center">
+              <h4>{{group?.blockTypeCode?.split('_').join(' ')}}</h4>
+            </div>
+          </div>  
+        <ng-container *ngFor="let item of amendments">
+          <ng-container *ngIf="item?.blockTypeCode == group?.blockTypeCode">
+            <div class="row">
+              <div class="col-md-6">
+                {{item.noticeNumber}}
+              </div>
+              <div class="col-md-6"></div>
+              <div class="col-md-6"></div>
+              <div class="col-md-6 d-flex justify-content-end">
+                <!-- {{item.blockTypeCode + ' ' +(item.clauseNumber > 0 ? item.clauseNumber: '')}} -->
+              </div>
+            </div>
+            <nz-card *ngIf="item.content" class="mrgB20">
+              <div class="row">
+                <div class="col-md-12 align-right">
+                  <span *ngIf="item.memberName || item.assignedToMemberName">From <b><i>{{ item.memberName ? item.memberName : item.assignedToMemberName  }}</i></b></span>
+                  <!-- <span *ngIf="item.assignedToMemberName">From <b><i>{{ item.assignedToMemberName }}</i></b></span> -->
+                </div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-12">
+                  <span>{{ item.content }}</span>
+                </div>
+                <div class="col-md-12" *ngIf="item.edit">
+                  <textarea [(ngModel)]="editedWord" class="amendcontent"></textarea>
+                </div>
+              </div>
+              <div class="row d-flex justify-content-end">
+                <span>{{ item.status }}</span>
+              </div>
+              <div class="row">
+                <div class="col-md-1 pointer" *ngIf="!item.edit && isEditable(item) && !disableActions && !item.applied && item.status === 'SAVED'"
+                  (click)="editAmendment(item)" [class.disabled]="item.applied">{{"noticeprocessing.noticeprocess.edit" | translate}}</div>
+                <div class="col-md-2 pointer m-r5" *ngIf="item.edit && !disableActions" (click)="updateAmendment(item.id)">
+                  <span>Update</span></div> &nbsp;
+                <div class="col-md-1 pointer" *ngIf="item.edit && !disableActions" (click)="cancelEdit()">
+                  <span>{{"committee.committe-files.cancel" | translate}}</span></div>
+                <div class="col-md-11 d-flex justify-content-end" *ngIf="!disableActions">
+                  <span *ngIf="rbsPermission.validation">Mark as</span> &nbsp;
+                  <button nz-button [nzSize]="'small'" *ngIf="!(item.status === 'INVALID')  && !isView && rbsPermission.validateSuggestion" nzType="default"
+                    (click)="updateStatus('INVALID', item.id)" [disabled]="item.applied">{{"bill.bills.invalid" | translate}}</button> &nbsp;
+                  <button nz-button [nzSize]="'small'" *ngIf="!(item.status === 'VALID')  && !isView && rbsPermission.validateSuggestion" nzType="primary"
+                    (click)="updateStatus('VALID', item.id)" [disabled]="item.applied">{{"bill.bills.valid" | translate}}</button> &nbsp;&nbsp;
+                  <button nz-button [nzSize]="'small'" nz-popconfirm *ngIf="rbsPermission.deleteSuggestion"
+                    nzPopconfirmTitle='{{"bill.bill-clause.list.wanttodeleteamendement" | translate}}'
+                    nzType="primary" (nzOnConfirm)="deleteAmendments(item.id)" [disabled]="item.applied">{{"noticeprocessing.noticeprocess.delete" | translate}}</button>
+                </div>
+              </div>
+            </nz-card>
+        </ng-container>
+        </ng-container>
+      </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+
+<nz-modal nzMaskClosable="false" (nzOnCancel)="onCancelAmendModal()" nzClosable="true" nzTitle="" [nzFooter]="null"
+  [(nzVisible)]="amendModalVisible">
+  <div class="padding_15">
+    <ng-container *ngIf="!amendment.operation">
+      <div class="row">
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('INSERTBEFORE')" *ngIf="!isView">
+            {{ "Insert" }}
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('REPLACE')" *ngIf="!isView">
+            {{ "Substitute" }}
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('DELETE')" *ngIf="!isView">
+            {{ "Delete" }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="
+        amendment.operation == 'INSERTBEFORE' ||
+        amendment.operation == 'INSERTAFTER'
+      ">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+        </div>
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-2"><label for="">{{"bill.bill-clause.list.insert" | translate}}</label></div>
+        <div class="col-md-6">
+          <nz-radio-group [(ngModel)]="amendment.operation">
+            <label nz-radio nzValue="INSERTBEFORE">{{"bill.bill-clause.list.before" | translate}}</label>
+            <label nz-radio nzValue="INSERTAFTER">{{"bill.bill-clause.list.after" | translate}}</label>
+          </nz-radio-group>
+        </div>
+        <div class="col-md-3 text-align-right">
+          <button nz-button [disabled]="!amendment.insertedWord" (click)="saveAmendment()" *ngIf="!isView">
+            {{"bill.bill-clause.list.insert" | translate}}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <textarea name="insertedWord" id="insertedWord" cols="25" rows="5" placeholder='{{"bill.bill-clause.list.enterhere" | translate}}'
+            [(ngModel)]="amendment.insertedWord">
+          </textarea>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'REPLACE' || amendment.operation == 'RECAST'">
+      <div class="row mrgB20">
+        <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-6"><label for="">{{"bill.bill-clause.list.substitutewith" | translate}}</label></div>
+
+        <div class="col-md-5 text-align-right">
+          <button nz-button [disabled]="!amendment.insertedWord" (click)="saveAmendment()" *ngIf="!isView">
+            Substitute
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <textarea name="insertedWord" id="insertedWord" cols="25" rows="5" placeholder='{{"bill.bill-clause.list.enterhere" | translate}}'
+            [(ngModel)]="amendment.insertedWord">
+          </textarea>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'DELETE'">
+      <div class="row mrgB20">
+        <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">{{"bill.bill-clause.list.areusuredanttodeleteslectedtext" | translate}}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()" *ngIf="!isView">{{"business-dashboard.question.questionrequestconsent.no" | translate}}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button (click)="saveAmendment()" *ngIf="!isView">{{"business-dashboard.question.questionrequestconsent.yes" | translate}}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'WHOLE_DELETE'">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">{{"bill.bill-clause.list.areusuredanttodeleteslectedblock" | translate}}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()" *ngIf="!isView">{{"business-dashboard.question.questionrequestconsent.no" | translate}}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button (click)="saveAmendment()" *ngIf="!isView">{{"business-dashboard.question.questionrequestconsent.yes" | translate}}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation === 'WHOLE_INSERT'">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">Content</label>
+          <textarea [(ngModel)]="amendment.insertedWord"></textarea>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()" *ngIf="!isView">{{"committee.committe-files.cancel" | translate}}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button (click)="saveAmendment()" *ngIf="!isView">{{ "cpl.docupload.submit" | translate }}</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showRowColumnCountModel" [nzFooter]="null" nzWidth="500"
+  (nzOnCancel)="showRowColumnCountModel = false" [nzMaskClosable]="false">
+  <div class="padding-50 width-100 word-break ">
+    <form nz-form [formGroup]="validateForm">
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    {{ "bill.bills.numberofrows" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfRows" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    {{ "bill.bills.numberofcoloumns" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfColumns" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-9 d-flex justify-content-end" style="margin-top: 14px;">
+          <button nz-button (click)="showRowColumnCountModel = false" class="mr6" nzType="default">
+            {{ "cpl.correspondencelist.cancel" | translate }}
+          </button>
+          <button (click)="createTable()" nz-button nzType="primary">
+            {{ "business-dashboard.question.questioncreate.ok" | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showApprovedBillModel" [nzFooter]="null" [nzClosable]="false" nzWidth="1000"
+  [nzMaskClosable]="false">
+  <div class="pd">
+    <div class="row">
+      <div class="col-md-12 text-align-center">
+        <h4>{{ "bill.bills.searchandselectact" | translate }}</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 marginbtm-15">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input type="text" (keyup)="searchApprovedBillList($event.target.value)" nz-input
+            placeholder="act title/bill no" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table #rowSelectionTable1 nzShowPagination nzShowSizeChanger [nzData]="approvedBillList">
+      <thead>
+        <tr>
+          <th></th>
+          <th>
+            {{
+              "business-dashboard.bill-management.billCreate.billtitle"
+                | translate
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable1.data; let i = index">
+          <td>
+            <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="uncheckOtherCheckBox(data.billId)"></label>
+          </td>
+          <td>{{ data.title }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button nz-button class="mr6" nzType="default" (click)="showApprovedBillModel = false">
+          {{ "cpl.correspondencelist.cancel" | translate }}
+        </button>
+        <button nz-button nzType="primary" (click)="continueAndSelectSection()">
+          {{
+            "business-dashboard.bill-management.billCreate.continueandselect"
+              | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showApprovedBillSelectModel" [nzFooter]="null" nzWidth="1000"
+  (nzOnCancel)="showApprovedBillSelectModel = false" [nzMaskClosable]="false">
+  <div class="pading-all width-100 word-break">
+    <div class="col-md-12">
+      <committee-create-bill-content-select [billDetails]="approvedBillContent" (isImported)="importOrCancel($event)">
+      </committee-create-bill-content-select>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showMinisterReadingPopup" [nzFooter]="null"
+  (nzOnCancel)="showMinisterReading()">
+  <div class="pading-all width-100 word-break">
+    <div class="col-md-12">
+      <committee-minister-reading *ngIf="showMinisterReadingPopup" [memberList]="memberResponse.members"
+      [meetingDetails]="meetingInfo" [subAgenda]="subagenda" [reportDto]="reportDto" (cancelPopup)="showMinisterReading()">
+      </committee-minister-reading>
+    </div>
+  </div>
+</nz-modal>

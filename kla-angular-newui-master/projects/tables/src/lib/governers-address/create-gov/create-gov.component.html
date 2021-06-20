@@ -1,0 +1,74 @@
+    <div class="width-100  pading-all">
+        <form [formGroup]="createAddressForm">
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">{{"table.listga.assembly" |translate}}:</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Assembly">
+                            {{ findAssembly(assemblySession["assembly"]?.currentassembly)}}
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">{{"table.listga.session" |translate}}</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Session">
+                            {{findSession(assemblySession["session"]?.currentsession)}}
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-12 margnrtp-15 ">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6">{{"table.listga.date" |translate}}</nz-form-label>
+                        <nz-form-control [nzSpan]="18" nzErrorTip="Select Date">
+                            <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="Date" [nzDisabledDate]="disabledDate">
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-12 margnrtp-15 ">
+                    <nz-form-item>
+                        <nz-form-label  [nzSpan]="6">{{ "Note" |translate}}</nz-form-label>
+                            <nz-form-control nzErrorTip="Enter Note" [nzSpan]="18" >
+                                <textarea nz-input [nzAutosize]="{ minRows: 3, maxRows: 6 }" maxlength="255"
+                                    formControlName="note" nzRequired nzRequired oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+                                </textarea>
+                            </nz-form-control>
+                    </nz-form-item>
+                    </div>
+                    <div class="col-md-12 margnrtp-15 ">
+                        <nz-form-item>
+                            <nz-form-label  [nzSpan]="6">{{ "Attach COS" |translate}}</nz-form-label>
+                                <nz-form-control nzErrorTip="attach cos" [nzSpan]="18" >
+                                    <nz-upload
+                                    nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                                    [nzAction]="uploadURL"
+                                    [(nzFileList)]="fileLists"
+                                    [nzShowUploadList]="showUploadList"
+                                    (nzChange)="handleChange($event)"
+                                    [nzMultiple]="true"
+                                    [nzPreview]="handlePreview"
+                                  >
+                                    <button nz-button>
+                                      <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                                    </button>
+                                  </nz-upload>
+                                </nz-form-control>
+                        </nz-form-item>
+                        </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="button" nz-button nzType="default" class="margnlt-5">
+                        {{"table.listga.cancel" |translate}}
+                    </button>
+                    <button [disabled]="govStatus !== 'SAVED'" type="button" nz-button nzType="primary" (click)="saveGovernerAddress('SAVE')" class="margnlt-5">
+                        {{"table.listga.save" |translate}}
+                    </button>
+                    <button nz-popconfirm nzPopconfirmTitle="Are you sure you want to Submit?" (nzOnConfirm)="saveGovernerAddress('SUBMIT')"  nz-button nzType="primary" class="margnlt-5" [disabled]="!createAddressForm.valid || govStatus !== 'SAVED'">
+                    {{"table.listga.submit" |translate}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>

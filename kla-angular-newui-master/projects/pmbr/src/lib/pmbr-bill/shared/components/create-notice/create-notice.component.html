@@ -1,0 +1,60 @@
+<form [formGroup]='createNoticeForm'>
+    <div *ngIf='isEditMode' class="row padding-10">
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Input cannot empty">
+                    <input placeholder="Subject line goes here" nz-input maxlength="254" formControlName='subject' />
+                </nz-form-control>
+            </nz-form-item>
+
+        </div>
+        <div class="col-md-12 mrg-top-10">
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Input cannot empty">
+                    <quill-editor formControlName='description' #editor style="float: left;" html="html"
+                        [sanitize]="false">
+                    </quill-editor>
+                </nz-form-control>
+            </nz-form-item>
+
+        </div>
+
+        <div class="col-md-12 mrg-top-10 d-flex justify-content-end">
+            <button (click)='saveOrCancel(false)' nz-button nzType="default" class='mrgR6'>
+                Cancel
+            </button>
+            <button (click)='saveOrCancel(true)' nz-button nzType="primary">
+                {{noticeDetails.noticeId>0?'Update':'Save'}}
+            </button>
+        </div>
+    </div>
+
+    <div *ngIf='!isEditMode' class='row padding-10'>
+        <div class='col-md-12 padding-25'>
+            <div class='row'>
+                <div class="col-md-2">
+                    <nz-form-label>{{'business-dashboard.question.questionlist.subject'|translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-9">
+                    {{createNoticeForm.value.subject}}
+                </div>
+
+                <div *ngIf='noticeDetails.billStatus=="SAVED"||noticeDetails.billStatus=="REJECTED"' class='col-md-1'>
+                    <button (click)='isEditMode=true' nz-button nzType="default">
+                        <i nz-icon nzType="edit" nzTheme="outline"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class='col-md-12'>
+            <quill-view-html [content]="createNoticeForm.value.description"></quill-view-html>
+        </div>
+        <div class="col-md-12 mrg-top-10 d-flex justify-content-end">
+            <button (click)='saveOrCancel(false)' nz-button nzType="default" class='mrgR6'>
+                Cancel
+            </button>
+        </div>
+    </div>
+
+</form>

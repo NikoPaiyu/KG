@@ -1,0 +1,79 @@
+<div *ngIf="ddsListById">
+    <table cellpadding="0" cellspacing="0" class="table">
+        <tr>
+            <td class="tc pt">
+                <strong>14 -ാം കേരള നിയമസഭ</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="tc pt">
+                <strong>20 -ാം സമ്മേളനം</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="tc pt">
+                <strong>ബുള്ളറ്റിൻ - ഭാഗം 2</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="tc pt">
+                <strong>
+                    {{ddsListById.approved ? ddsListById.approved : ''}}</strong>
+            </td>
+        </tr>
+        <tr>
+            <td> <strong> നമ്പര്‍ : {{ddsListById.bulletinNo ? ddsListById.bulletinNo : ''}}</strong></td>
+        </tr>
+        <tr>
+            <td class="tc pt" style="line-height: 29px;padding-bottom: 15px;">
+                <strong>
+                 <u>ധനാഭ്യര്‍ത്ഥന പ്രമേയങ്ങള്‍ അവതരിപ്പിക്കുന്നതിനുള്ള ടൈംടേബിള്‍ </u>
+                </strong>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p> {{ddsListById.financialYear ? ddsListById.financialYear : ''}} സാമ്പത്തികവര്‍ഷത്തേക്കുള്ള ബഡ്ജറ്റിലെ ധനാഭ്യര്‍ത്ഥനകളെ സംബന്ധിക്കുന്ന പ്രമേയങ്ങള്‍ അവതരിപ്പിക്കുന്നതിന്റെ മുന്‍ഗണനാക്രമവും ഓരോ ധനാഭ്യര്‍ത്ഥനയെയും സംബന്ധിക്കുന്ന ഖണ്ഡനോപക്ഷേപങ്ങള്‍ക്ക്
+                    നോട്ടീസ് നല്‍കുന്നതിനുള്ള തീയതിയും സമയവും കാണിക്കുന്ന ടൈംടേബിള്‍ സാമാജികരുടെ അറിവിനായി ചുവടെ ചേര്‍ക്കുന്നു.
+                </p>
+            </td>
+        </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" class="table border" *ngIf="ddsListById.demandDraftDTOList && ddsListById.demandDraftDTOList.length > 0">
+        <tr>
+            <td class="tc" colspan="2">ധനാഭ്യർത്ഥനയുടെ നമ്പറും പേരും </td>
+            <td class="tc">ധനാഭ്യർത്ഥനക്കുള്ള പ്രമേയം അവതരിപ്പിക്കുന്ന തിയതി </td>
+            <td class="tc">അനുവദിച്ച സമയം </td>
+            <td class="tc">ഖണ്ഡനോപക്ഷേപങ്ങൾക്ക് നോട്ടീസ് നൽകാനുള്ള തിയതിയും സമയവും </td>
+        </tr>
+        <tr>
+            <td class="tc" colspan="2">(1)</td>
+            <td class="tc">(2)</td>
+            <td class="tc">(3)</td>
+            <td class="tc">(4)</td>
+        </tr>
+        <ng-container *ngFor="let DTOList of ddsListById.demandDraftDTOList">
+            <tr *ngFor="let draftLines of DTOList.draftLines; let i = index">
+                <td>{{draftLines.demandNumber ? draftLines.demandNumber: ''}}</td>
+                <td>{{draftLines.demandNameMal ? draftLines.demandNameMal : ''}}</td>
+                <td *ngIf="i==0" [attr.rowSpan]="DTOList.draftLines.length">{{DTOList.cosDate| date: 'dd-MM-yyyy'}}</td>
+                <td *ngIf="i==0" [attr.rowSpan]="DTOList.draftLines.length">{{draftLines.fromTime ? findTime(draftLines.fromTime): ''}} മുതല്‍ {{draftLines.toTime ? findTime(draftLines.toTime): ''}} വരെ</td>
+                <td *ngIf="i==0" [attr.rowSpan]="DTOList.draftLines.length">
+                    {{draftLines.cutmotionDeadlineTime | date: 'dd-MM-yyyy'}} - {{draftLines.cutmotionDeadlineTime ? findTime(draftLines.cutmotionDeadlineTime): ''}}
+                </td>
+            </tr>
+        </ng-container>
+    </table>
+    <table cellpadding="0" cellspacing="0" class="table">
+        <!-- <tr>
+            <td class="tr">
+                <strong> വി. ലേ. ബാബുപ്രോശസെലക്ട്,</strong>
+            </td>
+        </tr> -->
+        <tr>
+            <td class="tr">
+                സെക്രട്ടറി,
+            </td>
+        </tr>
+    </table>
+</div>

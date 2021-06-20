@@ -1,0 +1,40 @@
+
+<h6>Reply:</h6>
+<div [formGroup]="businessData">
+  <nz-card style="width: 700px">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="9">For Budget</nz-form-label>
+            <nz-form-control [nzSpan]="15">
+                <label [nzDisabled]="true" formControlName="forBudget" nz-checkbox></label>
+            </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+              <nz-form-label [nzSpan]="9">For VOA or SDFG</nz-form-label>
+              <nz-form-control [nzSpan]="15">
+                  <label formControlName="forVoa" nz-checkbox></label>
+              </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+              <nz-form-label [nzSpan]="9">Content</nz-form-label>
+              <nz-form-control [nzSpan]="15">
+                <textarea nz-input formControlName="content" [nzAutosize]="{ minRows: 3, maxRows: 6 }" maxlength="255" nzRequired>
+                </textarea>  
+                <div *ngIf="businessData?.value?.content == null && isSubmit">
+                  <span class="text-danger">Content is required</span>
+              </div>          
+              </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-card> 
+</div>     

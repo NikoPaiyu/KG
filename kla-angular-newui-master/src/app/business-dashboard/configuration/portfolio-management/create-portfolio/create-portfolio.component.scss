@@ -1,0 +1,53 @@
+nz-select {
+    width: 200px;
+  }
+  p {
+    line-height: 22px;
+  }
+  p:hover {
+    color: mediumblue;
+    cursor: pointer;
+  }
+  .portfolio_blk {
+    overflow: auto;
+    height: 300px;
+    border: #dfe8ef 1px solid;
+  }
+  .btn_cm i {
+    border: #dfe8ef 1px solid;
+    padding: 7px;
+    border-radius: 5px;
+  }
+  .port_hd {
+    width: 100%;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  .add_port {
+    border: #dfe8ef 1px solid;
+    border-top: none;
+  }
+  .add_port button {
+    background: #dfe8ef;
+    border: #dfe8ef 1px solid;
+    display: flex;
+    align-items: center;
+  }
+  .selItem {
+    background: #dfe8ef;
+  }
+  .portfolio_blk p {
+    margin-bottom: 0px !important;
+    padding: 5px;
+  }
+  
+  .fullwidth {
+    width: -webkit-fill-available;
+    width: -moz-available;
+  }
+  .paddingT5 {
+    padding-top: 5px;
+  }
+  .padding_25 {
+    padding: 25px;
+  }

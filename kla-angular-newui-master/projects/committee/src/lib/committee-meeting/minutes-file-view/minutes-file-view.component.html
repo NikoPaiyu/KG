@@ -1,0 +1,410 @@
+<div class="row" *ngIf="!isPreview">
+  <div class="col-md-12 col-sm-12 mb-2" *ngIf="!isFileView && !isPreview">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "committee.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b>
+          {{ "committee.committe-mgmnt" | translate }}
+        </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12" *ngIf="!isPreview">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h3 *ngIf="!isFileView && minutes?.title">Minutes</h3>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button
+          class="ml-6 m-r5"
+          style="margin: 5px"
+          nz-button
+          [nzType]="'default'"
+          (click)="showEdit()"
+          *ngIf="
+            !editMode &&
+            minutes?.status !== 'APPROVED' &&
+            user?.userId == assignee
+          "
+        >
+          Edit
+        </button>
+        <button
+          class="ml-6 m-r5"
+          style="margin: 5px"
+          nz-button
+          [nzType]="'default'"
+          (click)="cancelEdit()"
+          *ngIf="editMode"
+        >
+          Cancel
+        </button>
+        <button
+          class="ml-6 m-r5"
+          style="margin: 5px"
+          nz-button
+          [nzType]="'default'"
+          (click)="updateMinutes()"
+          *ngIf="editMode"
+        >
+          Update
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider *ngIf="!isFileView && !isPreview"></nz-divider>
+</div>
+<form nz-form [formGroup]="minuteBodyForm">
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-center">
+      <p [innerHTML]="minutes?.title"></p>
+    </div>
+  </div>
+  <div class="row" *ngIf="!editMode">
+    <div class="col-md-12 d-flex justify-content-center">
+      <p [innerHTML]="minutes?.subtitle"></p>
+    </div>
+  </div>
+  <div class="row" *ngIf="editMode">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control nzErrorTip="This field is required">
+          <div class="row">
+            <div class="col-md-12">
+              <textarea
+                nz-input
+                placeholder="Enter description here..."
+                formControlName="subtitle"
+                [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+              ></textarea>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row" *ngIf="minutes?.attendees">
+    <div class="col-md-12">
+      <nz-card>
+        <div class="row">
+          <div class="col-md-12">
+            <strong>ഹാജരായ അംഗങ്ങൾ</strong>
+          </div>
+        </div>
+        <nz-tabset>
+          <nz-tab nzTitle="Committee Members">
+            <ng-container
+              *ngFor="let commitee of minutes?.meetingMemberDto; let i = index"
+            >
+              <ng-container *ngIf="commitee?.committeeId">
+                <div class="row mrg-tp-10">
+                  <div class="col-md-8 align-center">
+                    <h6>
+                      <b>{{ commitee?.committeeName }} </b>
+                    </h6>
+                  </div>
+                </div>
+                <ng-container
+                  *ngIf="
+                    committeWiseAttendance[commitee.committeeId]['CHAIRMAN'] &&
+                    committeWiseAttendance[commitee.committeeId]?.CHAIRMAN
+                      ?.length !== 0
+                  "
+                >
+                  <div class="row mrg-tp-10">
+                    <div class="col-md-11">
+                      <h6><u> Chairman </u></h6>
+                    </div>
+                  </div>
+                  <div
+                    class="row"
+                    *ngFor="
+                      let member of committeWiseAttendance[
+                        commitee.committeeId
+                      ]['CHAIRMAN'];
+                      let c = index
+                    "
+                  >
+                    <div class="col-md-10">{{ member?.userName }}</div>
+                  </div>
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    committeWiseAttendance[commitee.committeeId][
+                      'EX-OFFICIO'
+                    ] &&
+                    committeWiseAttendance[commitee.committeeId]['EX-OFFICIO']
+                      ?.length !== 0
+                  "
+                >
+                  <div class="row mrg-tp-10">
+                    <div class="col-md-11">
+                      <h6><u> Ex-officio </u></h6>
+                    </div>
+                  </div>
+                  <div
+                    class="row"
+                    *ngFor="
+                      let member of committeWiseAttendance[
+                        commitee.committeeId
+                      ]['EX-OFFICIO'];
+                      let ex = index
+                    "
+                  >
+                    <div class="col-md-10">
+                      {{ ex + 1 }}. {{ member?.userName }}
+                    </div>
+                  </div>
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    committeWiseAttendance[commitee.committeeId]['MEMBER'] &&
+                    committeWiseAttendance[commitee.committeeId]['MEMBER']
+                      ?.length !== 0
+                  "
+                >
+                  <div class="row mrg-tp-10">
+                    <div class="col-md-11">
+                      <h6><u> Members </u></h6>
+                    </div>
+                  </div>
+                  <div
+                    class="row"
+                    *ngFor="
+                      let member of committeWiseAttendance[
+                        commitee.committeeId
+                      ]['MEMBER'];
+                      let m = index
+                    "
+                  >
+                    <div class="col-md-10">
+                      {{ m + 1 }}. {{ member?.userName }}
+                    </div>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <!-- <ng-template [ngTemplateOutlet]="billsForactionTable"></ng-template> -->
+          </nz-tab>
+          <nz-tab
+            nzTitle="Special Invitee"
+            *ngIf="attendanceDetails['SPECIAL_INVITIEE']?.length !== 0"
+          >
+            <ng-container>
+              <div
+                class="row mrg-tp-10"
+                *ngFor="
+                  let special of attendanceDetails['SPECIAL_INVITIEE'];
+                  let sp = index
+                "
+              >
+                <div class="col-md-10">
+                  {{ sp + 1 }}. {{ special?.userName }}
+                </div>
+              </div>
+            </ng-container>
+          </nz-tab>
+          <nz-tab
+            nzTitle="Legislature Section Staff"
+            *ngIf="attendanceDetails['SECTION']?.length !== 0"
+          >
+            <ng-container>
+              <div
+                class="row mrg-tp-10"
+                *ngFor="
+                  let section of attendanceDetails['SECTION'];
+                  let sc = index
+                "
+              >
+                <div class="col-md-10">
+                  {{ sc + 1 }}. {{ section?.userName }} -
+                  {{ section?.designation?.split("_").join(" ") | titlecase }}
+                </div>
+              </div>
+            </ng-container>
+          </nz-tab>
+          <nz-tab
+            nzTitle="Department Staff"
+            *ngIf="attendanceDetails['DEPARTMENT']?.length !== 0"
+          >
+            <ng-container>
+              <div
+                class="row mrg-tp-10"
+                *ngFor="
+                  let dept of attendanceDetails['DEPARTMENT'];
+                  let dp = index
+                "
+              >
+                <div class="col-md-10">
+                  {{ dp + 1 }}. {{ dept?.userName }} - {{ dept?.designation }}
+                </div>
+              </div>
+            </ng-container>
+          </nz-tab>
+        </nz-tabset>
+        <!-- <nz-table #attendeesTable [nzData]="minutes?.attendees" [nzShowPagination]="false">
+                    <tbody>
+                        <tr *ngFor="let data of attendeesTable.data; let i = index">
+                            <td class="td-style">{{ i+1 }}</td>
+                            <td class="td-style">{{data.userName}}</td>
+                        </tr>
+                    </tbody>
+                </nz-table> -->
+      </nz-card>
+    </div>
+  </div>
+  <div class="row mrg-tp-10" *ngIf="minutes?.deapartmentStaff">
+    <div class="col-md-12">
+      <strong>Department Staff</strong>
+    </div>
+  </div>
+  <div class="row mrg-tp-10" *ngIf="!editMode && minutes?.deapartmentStaff">
+    <div class="col-md-12">
+      <nz-table
+        #deptTable
+        [nzData]="minutes?.deapartmentStaff"
+        [nzShowPagination]="false"
+      >
+        <tbody>
+          <tr *ngFor="let data of deptTable.data; let i = index">
+            <ng-container *ngIf="data">
+              <td class="td-style">{{ i + 1 }}</td>
+              <td class="td-style">{{ data }}</td>
+            </ng-container>
+            <ng-container *ngIf="!data">
+              <nz-empty></nz-empty>
+            </ng-container>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <ng-container *ngIf="editMode">
+    <!-- <div class="row mrg-tp-10">
+            <div class="col-md-6">
+                <div formArrayName="staffArray">
+                    <div *ngFor="let staff of formArr.controls; let i=index">
+                        <div class="row" [formGroupName]="i">
+                            <div class="col-md-10">
+                                <nz-form-item>
+                                    <nz-form-control nzErrorTip="Input a staff name">
+                                        <input nz-input placeholder="Enter here..." formControlName="staffDetail" />
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                            <div class="col-md-2 d-flex justify-content-end">
+                                <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="i>0"
+                                    (click)="removeStaff(i)"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+    <!-- <div class="row mrg-tp-10">
+            <div class="col-md-6">
+                <button nz-button nzType="dashed" class="add-button" (click)="addStaff()">
+                    <i nz-icon nzType="plus"></i>
+                    Add New Staff
+                </button>
+            </div>
+        </div> -->
+  </ng-container>
+  <div class="row mrg-tp-10" *ngIf="minutes?.minutesDeatilResponse">
+    <div class="col-md-12">
+      <div formArrayName="agenda">
+        <div *ngFor="let agenda of agendaArray.controls; let i = index">
+          <div [formGroupName]="i">
+            <nz-card>
+              <div class="row mrg-tp-10">
+                <div class="col-md-12">
+                  <strong>{{ agenda.value.agendaType }}</strong>
+                </div>
+              </div>
+              <div formArrayName="subagenda">
+                <div
+                  *ngFor="
+                    let subagenda of agenda.get('subagenda')['controls'];
+                    let j = index
+                  "
+                >
+                  <div [formGroupName]="j">
+                    <div class="row mrg-tp-10">
+                      <div class="col-md-12">
+                        <strong>{{ j + 1 }}.Title:</strong
+                        >{{ subagenda.value.title }}
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10">
+                      <div class="col-md-12">
+                        <strong>Suggestions:</strong>
+                      </div>
+                    </div>
+                    <ng-container
+                      *ngFor="
+                        let s of subagenda.value.suggestions;
+                        let k = index
+                      "
+                    >
+                      <div class="row mrg-tp-10">
+                        <div class="col-md-12">
+                          {{ k + 1 }}.
+                          <ng-container *ngIf="s.memberName">
+                            {{ s.memberName }} suggested that
+                          </ng-container>
+                          {{ s.content }}
+                        </div>
+                      </div>
+                    </ng-container>
+                    <div class="row mrg-tp-10">
+                      <div class="col-md-12">
+                        <strong>Description:</strong>
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10" *ngIf="editMode">
+                      <div class="col-md-12">
+                        <textarea
+                          nz-input
+                          placeholder="Enter description here..."
+                          formControlName="description"
+                          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10" *ngIf="!editMode">
+                      <div class="col-md-12">
+                        {{ subagenda.value.description }}
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10">
+                      <div class="col-md-12">
+                        <strong>File Number:</strong>
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10" *ngIf="editMode">
+                      <div class="col-md-12">
+                        <input
+                          nz-input
+                          placeholder="Enter file number here..."
+                          formControlName="fileNumber"
+                        />
+                      </div>
+                    </div>
+                    <div class="row mrg-tp-10" *ngIf="!editMode">
+                      <div class="col-md-12">
+                        {{ subagenda.value.fileNumber }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

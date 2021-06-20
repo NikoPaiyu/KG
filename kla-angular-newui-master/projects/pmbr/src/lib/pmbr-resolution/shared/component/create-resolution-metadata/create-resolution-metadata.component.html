@@ -1,0 +1,85 @@
+<form nz-form [formGroup]="resolutionForm" class="form padding_25">
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label>{{ "business-dashboard.bill-management.billCreate.language" | translate }}
+                </nz-form-label>
+                <nz-form-control nzErrorTip='{{ "business-dashboard.pmbr.create-resolution-metedata.resolutionlanguage" | translate }}'>
+                    <nz-select formControlName="language">
+                        <nz-option *ngFor="let languages of resolutionLanguages" [nzValue]="languages.value"
+                            [nzLabel]="languages.label"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <nz-form-label>{{ "resolution-title" | translate }}
+                </nz-form-label>
+                <nz-form-control nzErrorTip='{{ "business-dashboard.pmbr.create-resolution-metedata.resolutiontitle" | translate }}'>
+                    <textarea nz-input formControlName="title" placeholder=" {{'resolution-title'| translate}}"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- its show when its login as a assistant -->
+    <ng-container *ngIf="currentUser.authorities.includes('assistant')">
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.question.portfolio" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="designationId" (ngModelChange)="getDepartments($event)"
+                            nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let minister of ministerDesignationList" [nzValue]="minister.id"
+                                [nzLabel]="minister.name"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "cpl.cplview.dep" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="departmentId" (ngModelChange)="getSubjects($event)"
+                            nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let dept of departmentList" [nzValue]="dept.id"
+                                [nzLabel]="dept.departmentName"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.question.ministersubject" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="subjectId" nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let subject of subjectList" [nzValue]="subject.id"
+                                [nzLabel]="subject.title">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </ng-container>
+    <!--end its show when its login as a assistant -->
+    <div class="row margnrtp-15">
+        <div class="col-md-12 align-right">
+            <button class="mr-6" nz-button (click)="cancelResolution()">
+                {{"business-dashboard.bill-management.billCreate.cancelBill" | translate }}
+            </button>
+            <button nz-button (click)="createResolutionMetadata()">
+                <!-- {{"create-resolution"|translate}} -->
+                {{resolutionId==null?'Create Resolution':'Update Resolution'}}
+            </button>
+        </div>
+    </div>
+</form>

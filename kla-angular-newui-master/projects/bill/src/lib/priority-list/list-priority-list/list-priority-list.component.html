@@ -1,0 +1,197 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.bill-management.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{
+          "business-dashboard.listprioritylist.prioritylist.priority"
+            | translate
+        }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row d-flex justify-content-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">
+      {{
+        "business-dashboard.listprioritylist.prioritylist.prioritylist"
+          | translate
+      }}
+    </h2>
+  </div>
+  <div class="col-md-6 d-flex justify-content-between">
+    <div></div>
+    <div class="d-flex justify-content-between">
+      <button
+        class="d-flex align-items-center mr-6"
+        nz-button
+        nzType="default"
+        *ngIf="buttonControls.create"
+        (click)="createPrioritylist()"
+      >
+        {{
+          "business-dashboard.listprioritylist.prioritylist.createpriority"
+            | translate
+        }}
+      </button>
+      <button
+        class="d-flex align-items-center mr-6"
+        nz-button
+        nzType="default"
+        *ngIf="buttonControls.request"
+        (click)="showRequestModal()"
+      >
+        {{
+          "business-dashboard.listprioritylist.prioritylist.requestpriority"
+            | translate
+        }}
+      </button>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<nz-tabset>
+  <nz-tab nzTitle="Priority List" *ngIf="buttonControls.priorityList" (nzClick)="getList()">
+    <ng-template nz-tab>
+      <lib-priority-list-lists
+        [isCreator]="buttonControls.create"
+      ></lib-priority-list-lists>
+    </ng-template>
+  </nz-tab>
+  <nz-tab nzTitle="List Requests" *ngIf="buttonControls.requestList" (nzClick)="getRequest()">
+    <ng-template nz-tab>
+      <lib-priority-list-requests
+        [isCreator]="buttonControls.request"
+      ></lib-priority-list-requests>
+    </ng-template>
+  </nz-tab>
+</nz-tabset>
+
+<nz-modal
+  [(nzVisible)]="isRequestModalVisible"
+  nzTitle="Request Priority List"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleCancel()"
+>
+<!-- [nzFooter]="this.cosId !== 0 ? null : true"
+(nzOnOk)="this.cosId === 0 ? getCOSId() : requestPriorityList()"
+nzOkText="Attach COS" -->
+  <div class="padding_25">
+    <form nz-form [formGroup]="billForm" class="form">
+      <div class="row">
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{ "bill.prioritylist.create.errortpl" | translate }}
+          </ng-container>
+        </ng-template>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-label>{{
+              "bill.prioritylist.listing.assembly" | translate
+            }}</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+              <nz-select nzShowSearch nzAllowClear formControlName="assemblyId" [nzDisabled]="this.cosId !== 0">
+                <nz-option
+                  *ngFor="let type of assemblies"
+                  [nzLabel]="type.assemblyId"
+                  [nzValue]="type.id"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-label>{{
+              "bill.prioritylist.listing.session" | translate
+            }}</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+              <nz-select nzShowSearch nzAllowClear formControlName="sessionId" [nzDisabled]="this.cosId !== 0">
+                <nz-option
+                  *ngFor="let type of sessions"
+                  [nzLabel]="type.sessionId"
+                  [nzValue]="type.id"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+    <!-- <div class="row margnrtp-15" *ngIf="this.cosId !== 0">
+      <div class="col-md-12">
+        <nz-alert nzType="success" nzMessage="COS Attached. Please create file"></nz-alert>
+      </div>
+    </div> -->
+    <!-- <div class="row" *ngIf="this.cosId !== 0"> -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-4">File Subject</div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="File subject"
+              [(ngModel)]="file.subject"
+            />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">Priority</div>
+          <div class="col-md-8">
+            <nz-radio-group [(ngModel)]="file.priority">
+              <label nz-radio nzValue="URGENT">Urgent</label>
+              <label nz-radio nzValue="NORMAL">Normal</label>
+              <label nz-radio nzValue="ACTION_TODAY"> Action Today</label>
+              <label nz-radio nzValue="ASSEMBLY_URGENT">Assembly Urgent</label>
+            </nz-radio-group>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">Description</div>
+          <div class="col-md-8">
+            <textarea
+              nz-input
+              rows="2"
+              placeholder="File description"
+              [(ngModel)]="file.description"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="handleCancel()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to create file?"
+              (nzOnConfirm)="requestPriorityList()"
+              class="btn btn-primary primary-button"
+              [disabled]="file.subject === '' || file.priority === null || !this.billForm.valid"
+            >
+              Create File
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

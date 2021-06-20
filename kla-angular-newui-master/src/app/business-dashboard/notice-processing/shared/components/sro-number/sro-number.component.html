@@ -1,0 +1,35 @@
+<div class='demo-full-width margin-top' [formGroup]='group'>
+    <div class="row">
+        <div class="col-md-10">
+            <nz-select nzAllowClear nzShowSearch [nzMode]="field.mode?field.mode:'default'"
+                (ngModelChange)="getUrl($event)" [formControlName]='field.name' [nzPlaceHolder]="label"  
+                [nzDisabled]="canEditSRO">
+                <nz-option *ngFor='let item of field.options' [nzValue]='field.mode?item.id:item'
+                    [nzLabel]='item.label'></nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-2">
+            <button nz-button nzType="primary" class="mrgL6" [disabled]="isurl" (click)="onView()">View
+            </button>
+        </div>
+    </div>
+</div>
+<nz-modal [(nzVisible)]="showPdfModal" [nzFooter]="null" (nzOnCancel)="hideModal()" nzWidth="800">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12">
+                <ngx-doc-viewer [url]="Url" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+                <br>
+                <div class="demo-full-width">
+                    <quill-editor [(ngModel)]="textdata"></quill-editor>
+                </div>
+            </div>
+        </div>
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 text-align-right">
+                <button nz-button nzType="primary" class="mrgL6" [disabled]="isurl" (click)="onAddData()">Add
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

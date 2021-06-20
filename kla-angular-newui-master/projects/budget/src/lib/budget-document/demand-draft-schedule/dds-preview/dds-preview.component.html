@@ -1,0 +1,37 @@
+<div class="width-100" style="    overflow: auto;
+max-height: 90vh;
+overflow-x: hidden;">
+    <ng-container *ngFor="let dds of ddsMainDto.ddsList; index as i">
+        <div class="row mrgT20">
+            <div class="col-md-12">
+                <nz-card>
+                    <div class="row mrgT20">
+                        <div class="col-md-12">
+                            <div class="chose-date">
+                                COS Date: {{dds.cosDate ? (dds.cosDate | date: 'dd-MM-yyyy') : ''}}
+                            </div>
+                            <nz-table #borderedTable nzBordered [nzData]="dds.ddsLines" [nzShowPagination]="false" nzTitle="Demand Draft Schedule -  Day {{i+1}}">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-head">{{"Sl No." | translate}}</th>
+                                        <th class="bg-head">{{"Head No." | translate}}</th>
+                                        <th class="bg-head">{{"Date" | translate}} </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of dds.ddsLines; index as j">
+                                        <td> {{j+1 }}</td>
+                                        <td>{{item.demandNameEng}} </td>
+                                        <td>
+                                            <span> {{item.cosDate ? (item.cosDate | date: 'dd-MM-yyyy'): ''}}</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
+                </nz-card>
+            </div>
+        </div>
+    </ng-container>
+</div>

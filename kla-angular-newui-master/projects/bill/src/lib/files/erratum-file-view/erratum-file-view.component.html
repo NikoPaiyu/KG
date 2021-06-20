@@ -1,0 +1,30 @@
+<nz-collapse class="erratum-collapse">
+  <nz-collapse-panel
+    *ngFor="let panel of erratumData"
+    [nzActive]="panel.status == 'SUBMITTED'"
+    [nzExtra]="extraTpl"
+    [nzHeader]="panel.createdDate | date: 'dd/MM/yyyy'"
+    [nzDisabled]="panel.disabled"
+  >
+    <div [innerHtml]="panel.content"></div>
+    <button nz-button nzType="default" 
+      *ngIf="panel.correspondenceId"
+      (click)="viewCorrespondance(panel.correspondenceId)">
+      {{ "business-dashboard.bill-management.erratalist.viewletter" | translate }}
+    </button>
+    <ng-template #extraTpl>
+      <nz-tag [ngClass]="{'bold' : panel.status === 'SUBMITTED'}">{{panel.status.split('_').join(' ')}}</nz-tag>
+    </ng-template>
+  </nz-collapse-panel>
+</nz-collapse>
+<!-- <nz-modal
+  [nzFooter]="null"
+  [(nzVisible)]="showBulletinPart2Popup"
+  nzTitle="Create Bulletin Part 2"
+  (nzOnCancel)="cancelBulletin()"
+>
+  <lib-create-bulletin-form
+    [bulletinData]="bulletinData"
+    (afterCreate)="afterCreateBulletin($event)"
+  ></lib-create-bulletin-form>
+</nz-modal> -->

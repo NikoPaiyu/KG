@@ -1,0 +1,163 @@
+<app-create [createTitle]="'Bid Name/No'" [createBreadCums]="['Auction','Store Department','Bid Name','No.']">
+
+    <div class="header-action">
+        <button nz-button nzType="primary" class="mr-2"  [disabled]="finalised">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToAuction()" >Discard</button>
+    </div>
+
+<div class="create-form">
+
+    <div class="bid-details mb-4">
+
+        <div class="row">
+
+            <div class="col-2">
+                <span class="font-weight-bold">Auction File Number</span>
+            </div>
+
+            <div class="col-10">
+                <span>#{{auctionFileNumber}}</span>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="bid-grid">
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Bids Id</th>
+                    <th>Vendor</th>
+                    <th>Submission Date</th>
+                    <th>Challan No</th>
+                    <th>Challan Date</th>
+                    <th>Challan Amount</th>
+                    <th>Documents Link</th>
+                    <th>Bid Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let bid of BidList;let i = index" >
+                    <td>
+                        <label nz-checkbox [(ngModel)]="bid.isChecked" [nzDisabled]="finalised">Edit</label>
+                    </td>
+                    <td>{{bid.id}}</td>
+                    <td>
+                        <span *ngIf="!bid.isChecked">{{bid.vendor}}</span>
+                        <input *ngIf="bid.isChecked" nz-input  id="request" [(ngModel)]="bid.vendor" type="text"/>
+
+                    </td>
+                    <td>
+                        <span *ngIf="!bid.isChecked">{{bid.submissionDate | date: 'dd/MM/yyyy'}}</span>
+                        <nz-date-picker *ngIf="bid.isChecked" [(ngModel)]="bid.submissionDate"></nz-date-picker>
+                    </td>
+                    <td>
+                        <span *ngIf="!bid.isChecked">{{bid.challanNo}}</span>
+                        <input *ngIf="bid.isChecked" nz-input  id="request" [(ngModel)]="bid.challanNo" type="text"/>
+                    </td>
+                    <td>
+                        <span *ngIf="!bid.isChecked">{{bid.challanDate | date: 'dd/MM/yyyy'}}</span>
+                        <nz-date-picker *ngIf="bid.isChecked" [(ngModel)]="bid.challanDate"></nz-date-picker>
+                    </td>
+                    <td>
+                        <span *ngIf="!bid.isChecked">{{bid.challanAmount}}</span>
+                        <input *ngIf="bid.isChecked" nz-input  id="request" [(ngModel)]="bid.challanAmount" type="text"/>
+                    </td>
+                    <td>
+                        <app-file-list [fileList]="bid.attachments" (fileListEvent)="onFileEvent($event,bid)" [attachmentDisabled]="finalised" type="Bid"></app-file-list>
+                    </td>
+                    <td><span class="font-weight-bold" style="color : #155724">{{bid.statusOfBid | uppercase}}</span></td>
+                    <td>
+                        <button *ngIf="bid.isChecked" nz-button nzType="primary" class="mr-2" (click)="save(bid)" [hidden]="finalised">Save</button>
+                        <button nz-button nzType="primary" class="mr-2" (click)="delete(i)" *ngIf="!finalised">Cancel</button>
+                        <button nz-button nzType="primary" class="mr-2" (click)="duplicate(index,bid)" *ngIf="!finalised">Duplicate</button>
+                        <button nz-button nzType="primary" class="mr-2" (click)="finalise(bid)" *ngIf="!finalised">Finalise</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button nz-button nzType="primary" class="mt-2" (click)="addBid()" *ngIf="!finalised">Add New Bid</button>
+    </div>
+
+    <div class="bid-details mt-4">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label font-weight-bold">Quote Amount</label>
+                    <div class="col-sm-8">
+                          <span >5000</span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Challan Number</label>
+                    <div class="col-sm-8">
+                      <span>50</span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                      <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Payment Status</label>
+                      <div class="col-sm-8">
+                        <span>50</span>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Date of Entrustment of Property</label>
+                      <div class="col-sm-8">
+                        <span>50</span>
+                      </div>
+                    </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row">
+                    <label for="staticEmail" class="col-sm-4 col-form-label font-weight-bold">Challan Date</label>
+                    <div class="col-sm-8">
+                          <span >5000</span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Auction Date</label>
+                    <div class="col-sm-8">
+                      <span>50</span>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                      <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Challan Copy</label>
+                      <div class="col-sm-8">
+                        <span>50</span>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="inputPassword" class="col-sm-4 col-form-label font-weight-bold">Date of Removal of Property from Auction Site</label>
+                      <div class="col-sm-8">
+                        <span>50</span>
+                      </div>
+                    </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+</app-create>
+<!-- 
+<div class="col-4">
+    <span class="font-weight-bold">Challan Number</span>
+</div>
+
+<div class="col-4">
+    <span class="font-weight-bold">Payment Status</span>
+</div>
+
+<div class="col-4">
+    <span class="font-weight-bold">Date of Entrustment oF Property</span>
+</div>
+
+<div class="col-4">
+    <span class="font-weight-bold">Date of Entrustment oF Property</span>
+</div> -->

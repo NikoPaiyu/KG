@@ -1,0 +1,196 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.election-management.protem-speaker-list" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading">Protem Speaker List</h2>
+=======
+        <h3>{{ "business-dashboard.election-management.protem-speaker-list" | translate }}</h3>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <button nzType="primary"  nz-button class="ml-6" (click)="showProtemPopup()"
+        *ngIf="permission.createProtemSpeaker">
+            {{ "business-dashboard.election-management.view-registered-document.create-protem-speaker" | translate }}
+        </button>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-4">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                {{ "business-dashboard.forms.form-list.status" | translate }}:
+            </div>
+            <div class="col-md-6">
+                <nz-select [(ngModel)]="protemStatus" (ngModelChange)="getProtemList()" name="protemStatus">
+                    <nz-option *ngFor="let type of protemStatusList" [nzLabel]="type" [nzValue]="type"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input type="text" [(ngModel)]="search" name="search" nz-input 
+            placeholder= '{{ "business-dashboard.forms.form-list.search-here" | translate }}'
+              (ngModelChange)="searchProtemList()" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+            {{"business-dashboard.election-management.protem-speaker-auth-list.cols" | translate}}
+          </button>
+        </div>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+              <li>
+                <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                  (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+<!-- <div class="row">
+    <div class="col-md-6">
+    <div class="col-md-1">
+        {{ "Status" | translate }}:
+    </div>
+    <div class="col-md-3">
+        <nz-select [(ngModel)]="protemStatus" (ngModelChange)="getProtemList()" name="protemStatus">
+            <nz-option *ngFor="let type of protemStatusList" [nzLabel]="type" [nzValue]="type"></nz-option>
+        </nz-select>
+    </div>
+</div>
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-3">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchList" (ngModelChange)="searchProtemList()" name="search" nz-input
+                        placeholder="Search Here..." />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              Cols
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+    </div>
+</div> -->
+<div class="row marginbtm-15">
+    <nz-table #pendingTable nzShowPagination nzShowSizeChanger [nzData]="listOfDocs" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check">
+                    {{"business-dashboard.forms.form-list.sl-no" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="proTemSpeakerName">
+                    {{ "business-dashboard.election-management.protem-speaker-list.protem-speaker-name" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="fileNumber">
+                    {{"business-dashboard.election-management.protem-speaker-auth-list.file-number" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="status">
+                    {{"business-dashboard.forms.form-list.status" | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of pendingTable.data; let i = index">
+                <td *ngIf="colCheckboxes[0].check">{{ i+1 }}</td>
+                <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                    <tr>{{ list.proTemSpeakerName }}</tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td>
+                                <a class="viewlink" (click)="showCreateFileModal(list)" *ngIf="!list.fileId && permission.createFile">
+                                    {{"business-dashboard.election-management.protem-speaker-list.create-file" | translate}}
+                                </a>
+                                <a class="viewlink" (click)="showProtemView(list.id)">
+                                    {{"business-dashboard.swearing-in.view" | translate}}
+                                </a>
+                            </td>
+                        </div>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[2].check"><a class="viewlink" (click)="viewFile(list.fileId)">{{ list.fileNumber }}</a></td>
+                <td *ngIf="colCheckboxes[3].check">
+                    <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+<nz-modal [(nzVisible)]="showFileModal" [nzFooter]="null" nzWidth="550" [nzClosable]="false">
+            <tables-attach-to-file *ngIf="protemDetails" [typeOfFile]="'PROTEM_SPEAKER'" 
+            [electionDetails]="protemDetails"
+     (closePopup)="getProtemList();hideFileModal()"></tables-attach-to-file>
+</nz-modal>
+<!-- create protem speaker modal -->
+<nz-modal [(nzVisible)]="isProtemVisible" [nzFooter]="null" nzWidth="500" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ "business-dashboard.election-management.view-registered-document.protem-speaker-name" | translate }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <nz-select [(ngModel)]="protemSpeaker" name="protemSpeaker" nzAllowClear nzShowSearch nzPlaceHolder="Select Protem Speaker">
+                            <nz-option *ngFor="let member of memberList" [nzLabel]="member.details.fullName" [nzValue]="member.userId"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button nzType="default" nz-button (click)="hideProtemModal()">
+                            {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                        </button>
+                        <button nzType="primary" class="ml-6" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to create protem speaker?"
+                            (nzOnConfirm)="createProtemSpeaker()" [disabled]="!protemSpeaker">
+                            {{ "business-dashboard.election-management.view-registered-document.create-protem-speaker" | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of create protem speaker modal -->

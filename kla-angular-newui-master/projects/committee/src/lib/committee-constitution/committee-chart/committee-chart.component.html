@@ -1,0 +1,618 @@
+
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "committee.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "committee.committe-mgmnt" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">
+            {{ "committee.committe-files" | translate}}
+        </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="printableScreen()">
+              {{ "committee.list.viewchart" | translate}}
+            </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default">
+              {{ "cpl.uploadedlist.return" | translate}}
+             </button>
+             <button class="d-flex align-items-center mr-6" nz-button nzType="primary">
+              {{ "bill.prioritylist.create.submit" | translate}}
+              </button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-15 ">
+    <div class="col-md-6">
+ <nz-card class="text-align-left committee_title" nzTitle="Subject Committee-I(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b> {{ "committee.view.chairman" | translate}}</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+            <div>Sri Anil kumar,Minister of Agriculture</div>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>{{ "committee.view.ecofficomembers" | translate}}</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>{{ "noticeprocessing.noticeprocess.member" | translate}}</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                    <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                    <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>{{ "committee.view.officers" | translate}}</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                    <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+        <br/>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>{{ "committee.view.contact" | translate}}</b></nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>
+                        <h6 class="ql-align-center"> 89464736582</h6>
+                        <h6 class="ql-align-center"> ults@.c.in</h6>
+                    </div>
+                   
+            </nz-form-control>
+          </nz-form-item>
+       
+        <br/>
+       
+    </nz-card>
+</div>
+<div class="col-md-6">
+    <nz-card class="text-align-right" nzTitle="Subject Committee-II(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+        <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+               <div>Sri Anil kumar,Minister of Agriculture</div>
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                       <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                       <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                       <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+           <br/>
+           <nz-form-item>
+               <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+               <nz-form-control [nzSm]="18" [nzXs]="24">
+                       <div>
+                           <h6 class="ql-align-center"> 89464736582</h6>
+                           <h6 class="ql-align-center"> ults@.c.in</h6>
+                       </div>
+                      
+               </nz-form-control>
+             </nz-form-item>
+          
+           <br/>
+          
+       </nz-card>
+   </div>
+</div>
+<div class="row marginbtm-15 ">
+    <div class="col-md-6">
+ <nz-card class="text-align-left committee_title" nzTitle="Subject Committee-III(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+            <div>Sri Anil kumar,Minister of Agriculture</div>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                    <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                    <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                    <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+        <br/>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>
+                        <h6 class="ql-align-center"> 89464736582</h6>
+                        <h6 class="ql-align-center"> ults@.c.in</h6>
+                    </div>
+                   
+            </nz-form-control>
+          </nz-form-item>
+       
+        <br/>
+       
+    </nz-card>
+</div>
+<div class="col-md-6">
+    <nz-card class="text-align-right" nzTitle="Subject Committee-VI(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+        <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+               <div>Sri Anil kumar,Minister of Agriculture</div>
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                       <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                       <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                       <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+           <br/>
+           <nz-form-item>
+               <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+               <nz-form-control [nzSm]="18" [nzXs]="24">
+                       <div>
+                           <h6 class="ql-align-center"> 89464736582</h6>
+                           <h6 class="ql-align-center"> ults@.c.in</h6>
+                       </div>
+                      
+               </nz-form-control>
+             </nz-form-item>
+          
+           <br/>
+          
+       </nz-card>
+   </div>
+</div>
+<nz-modal
+    [(nzVisible)]="printable"
+    class="text-align-center" 
+    nzTitle=" Fourteen Legistative Assembly Subject Committee-I(2019-2020)"
+    nzOkText="Print"
+    nzCancelText="Cancel"
+    (nzOnOk)="openPDF()"
+    (nzOnCancel)="cancelPrint()"
+    nzWidth="1300"
+    
+  >
+<div id="htmlData" #htmlData>
+ <div class="width-100 pd20">
+  <div class="row marginbtm-15 ">
+    <div class="col-md-6">
+ <nz-card class="text-align-left committee_title" nzTitle="Subject Committee-I(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+            <div>Sri Anil kumar,Minister of Agriculture</div>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                    <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                    <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                    <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+        <br/>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>
+                        <h6 class="ql-align-center"> 89464736582</h6>
+                        <h6 class="ql-align-center"> ults@.c.in</h6>
+                    </div>
+                   
+            </nz-form-control>
+          </nz-form-item>
+       
+        <br/>
+       
+    </nz-card>
+</div>
+<div class="col-md-6">
+    <nz-card class="text-align-right" nzTitle="Subject Committee-II(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+        <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+               <div>Sri Anil kumar,Minister of Agriculture</div>
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                       <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                       <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                       <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+           <br/>
+           <nz-form-item>
+               <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+               <nz-form-control [nzSm]="18" [nzXs]="24">
+                       <div>
+                           <h6 class="ql-align-center"> 89464736582</h6>
+                           <h6 class="ql-align-center"> ults@.c.in</h6>
+                       </div>
+                      
+               </nz-form-control>
+             </nz-form-item>
+          
+           <br/>
+          
+       </nz-card>
+   </div>
+</div>
+<div class="row marginbtm-15 ">
+    <div class="col-md-6">
+ <nz-card class="text-align-left committee_title" nzTitle="Subject Committee-III(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+            <div>Sri Anil kumar,Minister of Agriculture</div>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                    <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                    <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                    <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                    <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+        <br/>
+        <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>
+                        <h6 class="ql-align-center"> 89464736582</h6>
+                        <h6 class="ql-align-center"> ults@.c.in</h6>
+                    </div>
+                   
+            </nz-form-control>
+          </nz-form-item>
+       
+        <br/>
+       
+    </nz-card>
+</div>
+<div class="col-md-6">
+    <nz-card class="text-align-right" nzTitle="Subject Committee-VI(2019-2020) Agriculture ,Animal Husbandry and Fisheries">
+        <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+               <div>Sri Anil kumar,Minister of Agriculture</div>
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Member</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar</h6>
+                       <h6 class="ql-align-center"> Shri Anil kumar</h6>
+                       <h6 class="ql-align-center"> Shri kuamr kumar</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+         <br/>
+         <nz-form-item>
+           <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+           <nz-form-control [nzSm]="18" [nzXs]="24">
+                   <div>
+                       <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                       <h6 class="ql-align-center"> Shri V.S kumar,Misterof water</h6>
+                       <h6 class="ql-align-center"> Shri V.S.vijay,Misterof histroy</h6>
+                   </div>
+                  
+           </nz-form-control>
+         </nz-form-item>
+           <br/>
+           <nz-form-item>
+               <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+               <nz-form-control [nzSm]="18" [nzXs]="24">
+                       <div>
+                           <h6 class="ql-align-center"> 89464736582</h6>
+                           <h6 class="ql-align-center"> ults@.c.in</h6>
+                       </div>
+                      
+               </nz-form-control>
+             </nz-form-item>
+          
+           <br/>
+          
+       </nz-card>
+
+       
+   </div>
+   
+</div>
+<h6 style="font-size:20px; text-align:center"> Officers Realted to subject committee</h6>
+       <div style="background: #ECECEC;padding:30px;">
+        <div nz-row [nzGutter]="8">
+          <div nz-col [nzSpan]="8">
+            <nz-card nzTitle="Subject Committee-VI">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>Sri Anil kumar,Minister of Agriculture</div>
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                        <div>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                        </div>
+                       
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-card nzTitle="Subject Committee-VI">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>Sri Anil kumar,Minister of Agriculture</div>
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                        <div>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                        </div>
+                       
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+            </nz-card>
+          </div>
+          <div nz-col [nzSpan]="8">
+            <nz-card nzTitle="Subject Committee-VI">
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                    <div>Sri Anil kumar,Minister of Agriculture</div>
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+              <nz-form-item>
+                <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Ex-offico Member</b></nz-form-label>
+                <nz-form-control [nzSm]="18" [nzXs]="24">
+                        <div>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Farm</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof Electricity</h6>
+                            <h6 class="ql-align-center"> Shri V.S.Sunil kumar,Misterof power</h6>
+                        </div>
+                       
+                </nz-form-control>
+              </nz-form-item>
+              <br/>
+            </nz-card>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
+  </nz-modal> 

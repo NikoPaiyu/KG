@@ -1,0 +1,667 @@
+<form [formGroup]="validateForm">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "business-dashboard.viewbullettin.dashboard" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{ "business-dashboard.bill-management" | translate }}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-2">
+            <h3>{{ "business-dashboard.billregister.billregisterlist.billreg" | translate }}</h3>
+        </div>
+        <div class="col-md-10 d-flex align-items-center justify-content-end">
+            <button nz-button nzType="default" class="mrgL6" (click)="backToList()">
+                <span>{{ "business-dashboard.question.questionview.back" | translate }}</span>
+            </button>
+            <button nz-button nzType="default" class="mrgL6" (click)="updateBill()" *ngIf="isEditEnable">
+                <i nz-icon nzType="save" nzTheme="outline"></i><span>{{ "business-dashboard.question.save" | translate }}</span>
+            </button>
+            <button nz-button nzType="default" class="mrgL6" (click)="editBill()" *ngIf="!isEditEnable">
+                <i nz-icon nzType="edit" nzTheme="outline"></i><span>{{ "noticeprocessing.noticeprocess.edit" | translate }}</span>
+            </button>
+            <!-- <button nz-button nzType="default" class="mrgL6" (click)="generateSpekerNote()" *ngIf="!isEditEnable">
+                <i nz-icon nzType="edit" nzTheme="outline"></i><span>Generate Speaker Note</span>
+            </button> -->
+            <button *ngIf="!isEditEnable && billDetails" [disabled]="isBillPassable()" nz-button nzType="default" class="mrgL6" 
+                nz-popconfirm nzPopconfirmTitle='Do you want to pass the bill ?' (nzOnConfirm)="passBill()">
+                <span>{{ "bill.addtobillregister.markaspassed" | translate }}</span>
+            </button>
+            <button nz-button nzType="default" class="mrgL6" (click)="viewBill()">
+                <i nz-icon nzType="eye" nzTheme="outline"></i><span>{{ "bill.bill-clause.list.viewbill" | translate }}</span>
+            </button>
+            <button nz-button nzType="default" class="mrgL6" *ngIf="this.billDetails?.status !== 'ACT' && this.billDetails?.stage == 'VETTING_COMPLETE'"
+                nz-popconfirm nzPopconfirmTitle='Do you want to send the bill for Governer Recommendation?' 
+                (nzOnConfirm)="sendForGovernersRecommendation()">
+                {{ "bill.addtobillregister.gevernersrecomendation" | translate }}
+            </button>
+            <button nz-button nzType="default" class="mrgL6" *ngIf="this.billDetails?.stage === 'VETTING_COMPLETE'" 
+                (click)="viewGovernerResponseModel()">
+                <span>{{ "bill.addtobillregister.gevernersresponse" | translate }}</span>
+            </button>
+            <a nz-button class="mr-6" nzType="default" nz-dropdown class="dropdown" nzTrigger="hover" 
+                [nzDropdownMenu]="menu" *ngIf="!billDetails?.sendToCommittee" [nzDisabled]="!billDetails?.ministerMotion || !isBillIntroDateOver() || billDetails.status!='APPROVED'" 
+                >
+                {{ "bill.bill-clause.list.forwardcommittee" | translate }}
+            </a>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu>
+                    <li nz-menu-item>
+                        <a nz-button nzType="link" (click)="subjectCommittee()">{{ "bill.bill-clause.list.subjectcommittee" | translate }}</a>
+                    </li>
+                    <li nz-menu-item>
+                        <a nz-button nzType="link" (click)="showSelectCommitee()">{{ "bill.bill-clause.list.selectcommittee" | translate }}</a>
+                    </li>
+                </ul>
+            </nz-dropdown-menu>
+            <!-- <button nz-button nzType="default" class="mrgL6">
+                <span>Generate Speaker Note</span>
+            </button>
+            <button nz-button nzType="default" class="mrgL6">
+                <span>Forward To Committe</span>
+            </button> -->
+            <!-- <button nz-button nzType="primary" class="mrgL6">
+                <span>Submit</span>
+            </button> -->
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row mrg10">
+        <div class="col-md-4">
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    {{ "bill.addtobillregister.nameofbill" | translate }}
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12  word-brk">
+                    <p class="mrgL6">{{billDetails?.title}}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    {{ "bill.bill-clause.list.nameofbillinsecondary" | translate }} :
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12  word-brk">
+                    <p class="mrgL6"*ngIf="billDetails?.billTranslation.length!=0">
+                        {{billDetails?.billTranslation[0]?.title}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    {{ "table.listga.filenumber" | translate }}
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12 word-brk">
+                    <p class="mrgL6">{{billDetails?.fileNumber}}</p> 
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mrgT10">
+        <div class="col-md-8">
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12  word-brk">
+                            <p class="mrgL6">{{billDetails?.billNumber}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "business-dashboard.question.ministersubject" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12  word-brk">
+                            <p class="mrgL6">{{billDetails?.subject}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "bill.addtobillregister.billnature" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "bill.bill-clause.list.government" | translate }}
+                            <!-- <nz-radio-group [nzDisabled]="disabled" formControlName="billNature">
+                                <label nz-radio nzValue="GOVERNMENT">{{ "bill.bill-clause.list.government" | translate }}</label>
+                                <label nz-radio nzValue="PRIVATE">{{ "bill.bill-clause.list.private" | translate }}</label>
+                            </nz-radio-group> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "bill.bill-clause.list.typeofbill" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12 word-brk">
+                           <p class="mrgL6">{{billDetails?.type?.split('_').join(' ')}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "bill.bill-clause.list.ministerincharge" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12 word-brk">
+                        <p class="mrgL6">{{billDetails?.minister}}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12 word-brk">
+                            <p class="mrgL6">{{billDetails?.department}}</p> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.addtobillregister.dateofmotion" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.motionForLeaveTointroductionOfBill | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="motionForLeaveTointroductionOfBill">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.addtobillregister.dateofpub69" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.publicationUserRule69 | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="publicationUserRule69">>
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.bill-clause.list.dateofdispatchtomembers" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.copiesToMember | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="copiesToMember">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.bill-clause.list.dateofintroduction" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.firstReading | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="firstReading">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.addtobillregister.dateofcirculation" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.circulationOfOpinion | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="circulationOfOpinion">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.bill-clause.list.dateofmeetings" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.meetingOfCommittee |date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10"*ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="meetingOfCommittee">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "business-dashboard.question.questionlist.status" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            <p class="mrgL6">
+                                {{ billDetails?.status == 'ADMIT'? 'SENT TO LEGISLATION' : billDetails?.status?.split("_").join(" ") }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "bill.addtobillregister.billreference" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12" >
+                            <span *ngFor="let reference of billDetails?.referenceAct">
+                                <p class="mrgL6">{{reference}}</p>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "business-dashboard.bill-management.billCreate.language" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            <p class="mrgL6">{{billDetails?.language}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            {{ "business-dashboard.bill-management.billCreate.publicationdate" | translate }}
+                        </div>
+                    </div>
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            <p class="mrgL6">{{billDetails?.publicationUserRule69 | date:'dd/MM/yyyy' }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.addtobillregister.dateofpub72" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.publicationUserRule72 | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10" *ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="publicationUserRule72">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.bill-clause.list.dateofreferringthebill" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.referingBillToCommittee | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10"*ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="referingBillToCommittee">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ "bill.bill-clause.list.dateofpublishing" | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                {{billDetails?.reportPublicationOfCommitteReport | date:'dd/MM/yyyy' }}
+                            </div>
+                            <div class="col-md-10"*ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                        formControlName="reportPublicationOfCommitteReport">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    <nz-form-item>
+                        <div class="row mrgT10">
+                            <div class="col-md-10 word-brk">
+                                {{ 'Clause by Clause on Bill Instead of Committe Report' | translate }}
+                            </div>
+                        </div>
+                        <div class="row mrgT10">
+                            <div class="col-md-10" *ngIf='!isEditEnable'>
+                                <span *ngIf="billDetails?.directClauseByClause; else nospan">Yes</span>
+                                <ng-template #nospan>
+                                    <span>No</span>
+                                </ng-template>
+                            </div>
+                            <div class="col-md-10"*ngIf='isEditEnable'>
+                                <nz-form-control>
+                                    <label nz-checkbox formControlName="directClauseByClause" name="i">{{ 'Clause by Clause on Bill Instead of Committe Report' }}</label>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nz-divider></nz-divider>
+
+    <div class="row mrgT10">
+        <!-- <div class="col-md-4"> -->
+            <!-- <div class="row mrgT10">
+                <div class="col-md-10">
+                    {{ "bill.bill-clause.list.nameofbillinsecondary" | translate }} :
+                </div>
+            </div>
+            <div class="row mrgT10">
+                <div class="col-md-10" *ngIf="billDetails?.billTranslation.length!=0">
+                    {{billDetails?.billTranslation[0]?.language}}
+                </div>
+                <div class="col-md-5" *ngIf='isEditEnable'>
+                    {{billDetails.nameOfBillInSecondaryLan}}
+                    <input nz-input
+                        formControlName="nameOfBillInSecondaryLan"
+                    />
+                </div>
+            </div> -->
+            <!-- <div class="row mrgT10">
+                <div class="col-md-6 mrgT10">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            bill presentation on behalf
+                        </div>
+                    </div>
+                    <div class="row mrgT10"></div>
+                </div>
+                <div class="col-md-6 mrgT10">
+                    <div class="row mrgT10">
+                        <div class="col-md-12">
+                            here goes remaining bill register fields
+                        </div>
+                    </div>
+                    <div class="row mrgT10"></div>
+                </div>
+            </div> -->
+        <!-- </div> -->
+
+        <!-- <div class="col-md-4"> -->
+                <!-- <div class="row mrgT10">
+                    <div class="col-md-10">
+                        Subject
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10" *ngIf='!isEditEnable'>
+                        {{billDetails?.subject}}
+                    </div>
+                </div> -->
+            <!-- <div class="row mrgT10">
+                <div class="col-md-12">
+                    Minister Amendment
+                </div>
+            </div> -->
+        <!-- </div> -->
+        <div class="col-md-4" *ngIf="billDetails?.billTranslation.length!=0">
+            <div class="row mrgT10">
+                <div class="col-md-10">
+                    Translations:
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-10" *ngFor="let trans of billDetails?.billTranslation">
+                    <div>
+                        <span *ngIf="trans?.language"
+                        > 
+                       {{ trans?.language}} 
+                       <button  class="mrgL6" nz-button nzType="default" (click)="showTranslate(trans)"> 
+                        View</button>
+
+                        </span
+                      > 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="col-md-4">
+            <nz-form-item>
+                <div class="row mrgT10">
+                    <div class="col-md-10">
+                        {{ "bill.bill-clause.list.nameofbillinsecondary" | translate }}
+                        Date of publication of bill in secondary language under Rule 69(1):
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-10" *ngIf='!isEditEnable'>
+                        {{billDetails?.secondaryLanguagePublication | date:'MM/dd/yyyy' }}
+
+                    </div>
+                    <div class="col-md-10" *ngIf='isEditEnable'>
+                        <nz-form-control>
+                            <nz-date-picker [nzFormat]="'dd-MM-yyyy'"
+                                formControlName="secondaryLanguagePublication">
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+            <div class="row mrgT10">
+                <div class="col-md-12">
+                    Minister Amendment
+                </div>
+            </div>
+        </div> -->
+        <!-- <div class="col-md-12 mrgT10">
+            clause by clause on bill instead of committe report
+        </div> -->
+    </div>
+</form>
+<nz-modal [(nzVisible)]="showSubjectCommittee"
+    nzTitle='{{ "bill.bill-clause.list.forwardsubjectcommittee" | translate }}' (nzOnCancel)="subjectCommitteeCancel()"
+    (nzOnOk)="subjectCommitteeOk()" nzOkText="Forward">
+    <form [formGroup]="committeeForm">
+        <nz-form-item>
+            <div class="col-md-12">
+                <nz-form-label>{{ "Main" }}</nz-form-label>
+            </div>
+            <div class="col-md-12">
+                <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectmaincommittee" | translate }}'>
+                    <nz-select formControlName="parentCommittee"
+                        nzPlaceHolder='{{ "bill.bill-clause.list.maincommittee" | translate }}'
+                        (ngModelChange)="filtersubjectData()" nzAllowClear nzShowSearch>
+                        <ng-container *ngFor="let committee of tempSubjectData">
+                            <nz-option [nzValue]="committee.id" [nzLabel]="committee.subjectName" 
+                            nzAllowClear
+                            *ngIf="!checkedCommIds.has(committee.id)">
+                            </nz-option>
+                        </ng-container>
+                    </nz-select>
+                </nz-form-control>
+            </div>
+        </nz-form-item>
+        <div class="col-md-12">
+            {{ "bill.bill-clause.list.jointreference" | translate }}
+        </div>
+        <div class="col-md-12">
+            <nz-table [nzData]="subjectData" nzShowPagination #subjectTable nzPageSize="5">
+                <tbody>
+                    <tr *ngFor="let list of subjectTable.data">
+                        <td nzShowCheckbox [nzChecked]="checkedCommIds.has(list.id)"
+                            (nzCheckedChange)="onCommChecked(list.id, $event)"></td>
+                        <td>{{ list.subjectName }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+        <nz-form-item>
+            <div class="col-md-12">
+                <nz-form-label>{{ "Forwarded Date" | translate  }}</nz-form-label>
+            </div>
+            <div class="col-md-12">
+                <nz-form-control nzErrorTip='{{ "Select Forwarded Date" | translate }}'>
+                    <nz-date-picker [nzFormat]="'dd-MM-yyyy'" formControlName="forwardDate"
+                    [nzDisabledDate]="disabledDate">
+                    </nz-date-picker>
+                </nz-form-control>
+            </div>
+        </nz-form-item>
+    </form>
+</nz-modal>
+
+<!-- translation view Starts here -->
+<nz-modal [(nzVisible)]="translation.showpopUp" [nzClosable]="true"(nzOnCancel)="cancelTranslation()" [nzFooter]="null" nzWidth="1000" >
+    <lib-translation-view *ngIf="translation.showpopUp && translation.transData" [transData]="translation.transData"
+    [billDetails]="billDetails" (cancelTranslation)="cancelTranslation()"
+    ></lib-translation-view>
+  </nz-modal>
+  <!-- translation view Ends here -->
+<!-- Forward to Select Commitee starts here -->
+<nz-modal [(nzVisible)]="selectCommitee.showpopUp" [nzClosable]="true" (nzOnCancel)="cancelSelectCommitee()" [nzFooter]="null" nzWidth="800" >
+    <bill-forwardto-select-committee *ngIf="selectCommitee.showpopUp && billDetails"
+    [billDetails]="billDetails" (hideCreateModel)="cancelSelectCommitee()"
+    >
+    </bill-forwardto-select-committee>
+  </nz-modal>
+<!-- Forward to select commitee Ends here -->

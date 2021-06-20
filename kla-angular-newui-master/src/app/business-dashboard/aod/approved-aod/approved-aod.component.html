@@ -1,0 +1,100 @@
+<form nz-form [nzLayout]="'inline'">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item [routerLink]="
+              isMLA()
+                ? ['/business-dashboard/question/question-dashboard']
+                : ['/business-dashboard/question/question-dept-dashboard']
+            ">
+            {{ "business-dashboard.question.dashboard" | translate }}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            {{"business-dashboard.approvedaod.approvedaod" | translate}}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+    </div>
+    <div class="sticky_action_bar">
+
+    <div class="row d-flex align-items-center">
+      <div class="col-md-6">
+        <h2 class="admin-page-heading">
+         {{"business-dashboard.approvedaod.approvedaod" | translate}}
+        </h2>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <!-- <button (click)="refresh()" nz-button nzType="primary" class="mr-6">
+          Refresh
+        </button>
+        <button nz-button  [nzType]="'default'" class="secondary-button button-admin-radius button-font dark-border dark-font"  nz-popconfirm nzPopconfirmTitle="Do you want to Submit the AOD or Not?" (nzOnConfirm)="submit()"  
+        (nzOnCancel)="cancel()"
+        *ngIf = "allMinisterGroup.fileStatus !=='APPROVED'"
+        >
+          Submit AOD
+        </button> -->
+      </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row">
+      <div class="col-md-4 d-flex align-items-center marginbtm-15" *ngIf="assemblySession['assembly']">
+        {{ "business-dashboard.question.assembly" | translate }}
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="assemblyId" [disabled]="fileDetail.returnUrl"
+          [(ngModel)]="assemblySession['assembly'].currentassembly" (ngModelChange)="filterSession()">
+          <nz-option *ngFor="let assembly of assemblySession['assembly']" [nzLabel]="assembly.assemblyId"
+            [nzValue]="assembly.id">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-4 d-flex align-items-center marginbtm-15" *ngIf="assemblySession['session']">
+        {{ "business-dashboard.question.questionlist.session" | translate }}
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="sessionId" [disabled]="fileDetail.returnUrl"
+          [(ngModel)]="assemblySession['session'].currentsession" (ngModelChange)="getAoDList()">
+          <nz-option *ngFor="let session of assemblySession['session']" [nzLabel]="session.sessionId"
+            [nzValue]="session.id">
+          </nz-option>
+        </nz-select>
+      </div>
+      <div
+      class="col-md-4 d-flex align-items-center marginbtm-15"
+      *ngIf="rbsService.doIHaveAnAccess('TRANSFER_DATE', 'UPDATE') && this.allMinisterGroup.fileStatus == 'APPROVED'"
+    >
+      <button
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttosend" | translate}}'
+        (nzOnConfirm)="sendTOMembers()"
+        nzPopconfirmPlacement="bottomLeft"
+        class="mr-6"
+        *ngIf="allMinisterGroup.bulletin.fileStatus === 'APPROVED'"
+      >
+        {{"business-dashboard.approvedaod.sendreport" | translate}}
+      </button>
+    </div>
+    </div>
+    <nz-divider class="marginbtm-25"></nz-divider>
+    <div class="row">
+      <div class="col-md-6"><h6>{{"business-dashboard.approvedaod.aodministergroup" | translate}}</h6></div>
+      <div class="col-md-6"><h6>{{"business-dashboard.aod.aodcreate.alloteddays" | translate}}</h6></div>
+    </div>
+  
+    <div class="row" *ngFor="let data of allMinisterGroup.aodDetail;">
+      <div class="col-md-6">
+        <nz-card class="block_min">
+          <ul class="min_list" *ngFor="let value of data.portfolios">
+            <li>{{value.name}}</li>
+          </ul>
+        </nz-card>
+      </div>
+      <div class="col-md-6">
+        <nz-card>
+          <div class="width-100">
+              <span  class="date_grp" *ngFor="let obj of data.allottedDates">{{obj.date | date: 'dd-MM-yyyy'}}</span>
+          </div>
+        </nz-card>
+      </div>
+      <div class="col-md-12">  <nz-divider class="marginbtm-25"></nz-divider></div>
+    </div>
+  </form>

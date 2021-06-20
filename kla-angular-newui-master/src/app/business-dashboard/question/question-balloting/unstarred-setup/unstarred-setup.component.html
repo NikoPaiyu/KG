@@ -1,0 +1,499 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        "
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.notice" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{ "business-dashboard.question.unstarredquestions" | translate }}</h2>
+  </div>
+  <div
+    class="col-md-6 d-flex justify-content-end"
+    *ngIf="questionDate && ballotingLines.length > 0"
+  >
+    <button nz-button nzType="default" (click)="getPreviewData()">
+      {{ "business-dashboard.question.preview" | translate }}
+    </button>
+    &nbsp;
+    <button nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.douwantassignthebooklet" | translate}}' 
+    nz-button nzType="primary" (nzOnConfirm)="assignData()">
+      {{ "Assign" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-2 d-flex align-items-center whitespace">
+    {{ "business-dashboard.question.assembly" | translate }} :
+    {{
+      assemblySession["assembly"]
+        ? assemblySession["assembly"].currentassemblyLabel
+        : ""
+    }}
+  </div>
+  <div class="col-md-2 d-flex align-items-center whitespace">
+    {{ "business-dashboard.question.questionlist.session" | translate }} :
+    {{
+      assemblySession["session"]
+        ? assemblySession["session"].currentsessionLabel
+        : ""
+    }}
+  </div>
+  <div class="col-md-5">
+    <div class="row align-items-center">
+      <div class="col-md-4 wordbreak">{{ "business-dashboard.question.questiondate" | translate }} :</div>
+      <div class="col-md-8">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+            <nz-select
+              nzRequired
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="{{
+                'business-dashboard.question.questioncreate.placehldqdate'
+                  | translate
+              }}"
+              [(ngModel)]="questionDate"
+              (ngModelChange)="getBallotDetailedView()"
+            >
+              <nz-option
+                *ngFor="let item of questionDates"
+                nzLabel="{{ item | date: 'dd/MM/yyyy' }}"
+                nzValue="{{ item }}"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-table
+  #members
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="ballotingLines"
+  class="margntp-25"
+>
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th>{{"business-dashboard.question.questionlist.questionnumber" | translate }}</th>
+      <th class="bg-head1">{{"business-dashboard.question.questionlist.subject" | translate }}</th>
+      <th class="bg-head" nzShowSort nzSortKey="primaryMemberName">
+        {{"business-dashboard.question.primarymember" | translate }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let details of members.data; let mainIndex = index">
+      <td>{{ details.questionNumber }}</td>
+      <td class="bg-head2">
+        <a href="javascript:void(0);" (click)="showVersionModal(details.id)">
+          {{ details.heading }}</a
+        >
+      </td>
+
+      <td>
+        <ng-container
+          *ngIf="
+            details.clubbingDetails && details.clubbingDetails.length > 1;
+            else noClubbing
+          "
+        >
+          <a
+            nz-popover
+            [nzPopoverContent]="contentTemplate"
+            nzPopoverTrigger="click"
+            (click)="_showClubbedMembers(details)"
+            href="javascript:void(0);"
+            ><img src="../../assets/img/club_q_active.svg" alt="" /></a
+        ></ng-container>
+        {{ details.primaryMemberName }}
+      </td>
+      <ng-template #noClubbing>
+        <img src="../../assets/img/club_q.svg" alt="" />
+      </ng-template>
+    </tr>
+  </tbody>
+</nz-table>
+<ng-template #contentTemplate>
+  <div *ngIf="ClubbedMembers.data && ClubbedMembers.data['clubbingDetails']">
+    <nz-table
+      #rowTable
+      [nzData]="ClubbedMembers.data['clubbingDetails']"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+      [nzBordered]="false"
+    >
+      <thead></thead>
+      <tbody>
+        <tr *ngFor="let clubb of rowTable.data; let i = index">
+          <td>{{ clubb.noticeNumber }}:</td>
+          <td>
+            {{ clubb.memberName }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</ng-template>
+
+<nz-modal
+  [nzTitle]="null"
+  [(nzVisible)]="showPendingModal"
+  (nzOnCancel)="cancelPendingModal()"
+  nzClassName="pdngs"
+  [nzFooter]="null"
+  [nzWidth]="'800'"
+>
+  <div class="width-100">
+    <div class="col-md-12" *ngIf="pendingData.length > 0">
+      <div class="row">
+        <div class="col-md-12">
+          <h5>
+            <strong>
+              {{ sumofPendingData(pendingData) }}
+              {{
+                sumofPendingData(pendingData) > 1
+                  ? "Unstarred Question is pending to be disposed."
+                  : "Unstarred Questions pending to be disposed"
+              }}
+            </strong>
+          </h5>
+        </div>
+      </div>
+      <ng-container *ngFor="let item of pendingData">
+        <div class="row paddingT20">
+          <div class="col-md-6">
+            <h6 class="mb0">
+              <strong>{{ item.owner }}</strong>
+            </h6>
+          </div>
+          <div class="col-md-6 d-flex justify-content-end">
+            <h6 class="mb0">
+              <strong>{{
+                item.pendingCount > 1
+                  ? item.pendingCount + " Notices"
+                  : item.pendingCount + " Notice"
+              }}</strong>
+            </h6>
+          </div>
+          <!-- <div class="col-md-3">
+                <button nz-button nzType="primary" (click)="notifyStaff()">
+                  Notify
+                </button>
+              </div> -->
+        </div>
+        <div class="row">
+          <div class="col-md-12"><nz-divider class="divider"></nz-divider></div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table-all mt0">
+              <tr *ngFor="let data of item.questions; let i = index">
+                <td width="70%">{{ data.heading }}</td>
+                <td width="20%">{{ data.claimedBy }}</td>
+                <td width="10%">
+                  <span
+                    *ngFor="let noticeno of data.noticeNumbers"
+                    class="width-100 flt"
+                  >
+                    {{ noticeno }}
+                  </span>
+                </td>
+              </tr>
+            </table>
+            <!-- <ul class="paddingL15">
+                <li
+                  [ngClass]="{ paddingT15: i != 0 }"
+                  *ngFor="let data of item.questions; let i = index"
+                >
+                  {{ data.heading  }}
+                  <ul class="list" *ngFor="let noticeno of data.noticeNumbers">
+                    <li>{{noticeno}}</li>
+                  </ul>
+                </li>
+              </ul> -->
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</nz-modal>
+
+<nz-modal
+  [nzTitle]="versionModalTitle"
+  [(nzVisible)]="showVersion"
+  (nzOnCancel)="cancelVersion()"
+  nzClassName="pdngs"
+  [nzFooter]="null"
+  [nzWidth]="'800'"
+>
+  <div class="pading-all width-100">
+    <div class="padding-15">
+      <div class="col-md-12" *ngIf="questionVersion">
+        <div
+          class="row paddingT15"
+          *ngIf="questionVersion.assemblyId && questionVersion.sessionId"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.assembly" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblyV1">
+            <span>{{ questionVersion.assemblyId }}</span>
+          </div>
+          <div class="col-md-4">
+            {{ "business-dashboard.question.session" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblySessionV1">
+            <span>{{ questionVersion.sessionId }}</span>
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="
+            questionVersion.clubbingDetails &&
+            questionVersion.clubbingDetails.length > 0
+          "
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.mlaName" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div
+              class="row input-style"
+              *ngFor="let ma of questionVersion.clubbingDetails; let i = index"
+            >
+              <span>{{ ma.memberName }}</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="
+            questionVersion.clubbingDetails &&
+            questionVersion.clubbingDetails.length > 0
+          "
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeno" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div
+              *ngFor="let ma of questionVersion.clubbingDetails; let i = index"
+            >
+              <span>{{ ma.noticeNumber }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.registrationDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.dateofreg" | translate }} :
+          </div>
+          <div class="col-md-8" id="regDateV1">
+            <span>{{ questionVersion.registrationDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.questionDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questiondate" | translate }} :
+          </div>
+          <div class="col-md-8" id="questionDateV1">
+            <span>{{ questionVersion.questionDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.category">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ncategory" | translate }}:
+          </div>
+          <div class="col-md-8">
+            <span>{{ questionVersion.category }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.priority">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticepriority" | translate }} :
+          </div>
+          <div class="col-md-8" id="priorityV1">
+            <span>{{ questionVersion.priority }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.subjectName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ministersubject" | translate }} :
+          </div>
+          <div class="col-md-8" id="ministerSubjectV1">
+            <span>{{ questionVersion.subjectName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.portfolioName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.portfolio" | translate }}
+            :
+          </div>
+          <div class="col-md-8" id="ministerV1">
+            <span>{{ questionVersion.portfolioName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeheading" | translate }} :
+          </div>
+          <div class="col-md-8" id="noticeHeadingV1">
+            <span *ngIf="!editable" class="word-break">{{
+              questionVersion.heading
+            }}</span>
+            <input
+              type="text"
+              *ngIf="editable"
+              nz-input
+              [(ngModel)]="questionVersion.heading"
+              name="heading"
+              id="heading"
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+            />
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="questionVersion.tags && questionVersion.tags.length > 0"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.versioning.tags" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div
+                class="col-auto tag-style"
+                *ngFor="let tag of questionVersion.tags; let i = index"
+              >
+                <span>{{ tag.tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="paddingT15"
+          *ngIf="questionVersion.clauses && questionVersion.clauses.length > 0"
+        >
+          <div class="col-md-12 clause-style">
+            <ng-container
+              *ngFor="let clause of questionVersion.clauses; let i = index"
+            >
+              <div class="row paddingT15">
+                <div class="col-md-2">{{ "Clause " + clauseNo[i] }} :</div>
+
+                <div class="col-md-10">
+                  <div id="clauseV1">
+                    <textarea
+                      *ngIf="editable"
+                      nz-input
+                      [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                      [(ngModel)]="clause.clause"
+                      [name]="clause.clause"
+                      [ngModelOptions]="{ standalone: true }"
+                      nzRequired
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    >
+                    </textarea>
+                    <span *ngIf="!editable" class="word-break">{{
+                      clause.clause
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row paddingT15" *ngIf="clause.answerText">
+                <div class="col-md-4">
+                  {{
+                    "business-dashboard.question.versioning.answer" | translate
+                  }}:
+                </div>
+                <div class="col-md-8">
+                  <div class="row" id="answerV1">
+                    <span class="word-break">{{ clause.answerText }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #versionModalTitle>
+    <div class="row paddingT15">
+      <div class="col-md-6">
+        <nz-select
+          (ngModelChange)="getVersionDetailsById($event)"
+          [(ngModel)]="selectedVersion"
+        >
+          <ng-container *ngFor="let version of versionsCombo">
+            <nz-option
+              nzCustomContent
+              nzLabel="{{ version.ROLE }}"
+              [nzValue]="version.id"
+            >
+              <div class="row dropdown-option">
+                <div class="col-md-12">
+                  <div class="row">
+                    <strong>{{ version.ROLE }}</strong>
+                  </div>
+                  <div class="row">
+                    {{ version.cretationDate | date: "dd-MM-yyyy hh:mm a" }}
+                  </div>
+                </div>
+              </div>
+            </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <div class="col-md-6">
+        <button
+          *ngIf="!editable && selectedVersion == currentVersion"
+          nz-button
+          nzType="primary"
+          (click)="onEditNotice(questionVersion)"
+          style="margin-left: 6px;"
+        >
+          {{"business-dashboard.question.edit" | translate}}
+        </button>
+
+        <button
+          *ngIf="editable"
+          nz-button
+          nzType="primary"
+          (click)="onSaveEditedNotice(questionVersion)"
+          style="margin-left: 6px;"
+        >
+        {{"business-dashboard.question.save" | translate}}
+        </button>
+
+        <button
+          *ngIf="editable"
+          nz-button
+          nzType="primary"
+          (click)="onCancelEditNotice()"
+          style="margin-left: 6px;"
+        >
+        {{"business-dashboard.question.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>

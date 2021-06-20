@@ -1,0 +1,130 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.question.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{"business-dashboard.running-note.create.RunningNote" | translate}}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.soa.soa-list.list" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12 justify-content-between d-flex">
+  <div class="col-md-8 paddingL0">
+    <fieldset disabled="true">
+      <h4>{{"business-dashboard.running-note.create.RunningNote" | translate}}</h4>
+    </fieldset>
+  </div>
+  <div class="col-md-3 text-alignR">
+    <button nz-button nzType="primary" (click)="gotToCreateRunningNotePage()">
+      {{"business-dashboard.agenda.agenda-create.create" | translate}}
+    </button>
+  </div>
+</div>
+</div>
+<hr />
+<div class="row">
+  <div class="col-md-5">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label [nzSm]="8" [nzXs]="24">{{"cpl.docupload.assembly" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}' [nzSm]="16" [nzXs]="24">
+          <nz-select
+            class="select"
+            nzPlaceHolder='{{"cpl.docupload.assembly" | translate}}'
+            [(ngModel)]="selectedAssemblyId"
+            (ngModelChange)="getRunningNoteList()"
+          >
+            <ng-container *ngFor="let assembly of assemblyList">
+              <nz-option
+                [nzLabel]="assembly.assemblyId"
+                [nzValue]="assembly.id"
+              ></nz-option
+            ></ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label nzRequired [nzSm]="8" [nzXs]="24">{{"cpl.docupload.session" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip='{{"business-dashboard.question.selectassemblysession" | translate}}' [nzSm]="16" [nzXs]="24">
+          <nz-select
+            class="select"
+            nzPlaceHolder='{{"cpl.docupload.session" | translate}}'
+            [(ngModel)]="selectedSessionId"
+            (ngModelChange)="getRunningNoteList()"
+          >
+            <ng-container *ngFor="let session of sessionList">
+              <nz-option
+                [nzLabel]="session.sessionId"
+                [nzValue]="session.id"
+              ></nz-option
+            ></ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+<nz-table
+  #rowSelectionTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="runningNoteList"
+  class="m-t-30"
+>
+  <thead>
+    <tr>
+      <th class="bg-head">{{"cpl.registration.Date" | translate}}</th>
+      <th class="bg-head">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.action" | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of rowSelectionTable.data">
+      <td>
+        <a href="javascript:;">{{ data.date | date: "dd-MM-yyyy" }}</a>
+      </td>
+      <td>
+        <!-- <button nz-button class="margnrgt-15" nzType="default">Delete</button> -->
+        <button
+          nz-button
+          class="margnrgt-15"
+          (click)="onEditRunningNote(data)"
+          nzType="default"
+        >
+          {{"noticeprocessing.noticeprocess.edit" | translate}}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- <table class="table-all">
+  <tr>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Delete/Update</th>
+  </tr>
+
+  <tr>
+    <td>18/12/2019</td>
+    <td>Pending</td>
+    <td>
+      <button nz-button class="margnrgt-15" nzType="default">Delete</button>
+      <button nz-button class="margnrgt-15" nzType="default">Edit</button>
+    </td>
+  </tr>
+  <tr>
+    <td>19/12/2019</td>
+    <td>Pending</td>
+    <td>
+      <button nz-button class="margnrgt-15" nzType="default">Delete</button>
+      <button nz-button class="margnrgt-15" nzType="default">Edit</button>
+    </td>
+  </tr>
+</table> -->

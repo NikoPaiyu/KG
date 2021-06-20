@@ -1,0 +1,811 @@
+<div class="row">
+  <div class="col-md-12">
+    <nz-tabset [nzType]="'card'">
+      <nz-tab nzTitle="Heading Matches">
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Keywords to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of headingkeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeHeadingKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container
+                *ngFor="let keys of headingKeyCombos; let z = index"
+              >
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'hcombs' + z }}"
+                        name="{{ 'hcombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentHeadingKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentHeadingKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div> </nz-list-item
+              ></ng-container>
+
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                      <input
+                        type="text"
+                        [(ngModel)]="newHeadingKeyWord"
+                        nz-input
+                        placeholder="Input Keyword Here..."
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addHeadingKeyWord(newHeadingKeyWord)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchHeadingKeyWord()"
+                        nzSearch
+                      >
+                        Search
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to reset heading?"
+                        (nzOnConfirm)="resetHeading()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container
+          *ngFor="let item of headingMatchData.matches; let j = index"
+        >
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span
+                  innerHTML="{{
+                    highlight(item.heading, headingMatchData.keywords)
+                  }}"
+                ></span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title="View All Details"
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && headingid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleHeadingPanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleHeadingPanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && headingid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ " Question Date" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Name of MLA(s)" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    Tags:
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      {{ tgs.tag }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Minister Sub Subject" | translate }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span class="word-break">{{ clause.clause }}</span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !headingMatchData ||
+            !headingMatchData.matches ||
+            !(headingMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Clause Matches">
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Keywords to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of clausekeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeClauseKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container *ngFor="let keys of clauseKeyCombos; let z = index">
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'ccombs' + z }}"
+                        name="{{ 'ccombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentClauseKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentClauseKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div>
+                </nz-list-item>
+              </ng-container>
+
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                      <input
+                        type="text"
+                        [(ngModel)]="newClauseKeyWord"
+                        nz-input
+                        placeholder="Input Keyword Here..."
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addClauseKeyWord(newClauseKeyWord)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchClauseKeyWord()"
+                        nzSearch
+                      >
+                        Search
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to reset clauses?"
+                        (nzOnConfirm)="resetClause()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container
+          *ngFor="let item of clauseMatchData.matches; let j = index"
+        >
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span>{{ item.heading }}</span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title="View All Details"
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && clauseid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleClausePanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleClausePanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && clauseid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ " Question Date" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Name of MLA(s)" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    Tags:
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      {{ tgs.tag }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Minister Sub Subject" | translate }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span
+                        class="word-break"
+                        innerHTML="{{
+                          highlight(clause.clause, clauseMatchData.keywords)
+                        }}"
+                      ></span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !clauseMatchData ||
+            !clauseMatchData.matches ||
+            !(clauseMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Tag Matches">
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Tags to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of tagkeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeTagKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container *ngFor="let keys of tagKeyCombos; let z = index">
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'tcombs' + z }}"
+                        name="{{ 'tcombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentTagKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentTagKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div> </nz-list-item
+              ></ng-container>
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group
+                      nzSearch
+                      [nzAddOnAfter]="suffixIconTagButton"
+                    >
+                      <input
+                        type="text"
+                        [(ngModel)]="selectedTags"
+                        nz-input
+                        placeholder="Input Tag Here..."
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixIconTagButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addTagKeyWord(selectedTags)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchTagKeyWord()"
+                        nzSearch
+                      >
+                        Search
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to reset tags?"
+                        (nzOnConfirm)="resetTags()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container *ngFor="let item of tagMatchData.matches; let j = index">
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span>{{ item.heading }}</span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title="View All Details"
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && tagid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleTagPanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleTagPanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && tagid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ " Question Date" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Name of MLA(s)" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    Tags:
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      <span
+                        innerHTML="{{
+                          highlight(tgs.tag, tagMatchData.keywords)
+                        }}"
+                      ></span>
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "Minister Sub Subject" | translate }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span class="word-break">{{ clause.clause }}</span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !tagMatchData ||
+            !tagMatchData.matches ||
+            !(tagMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>

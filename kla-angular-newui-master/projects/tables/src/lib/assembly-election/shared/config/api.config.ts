@@ -1,0 +1,26 @@
+
+export const ApiConfig = {
+  createElection: '/v1/users/election',
+  getAllData: '/getAllData',
+  candidates: '/v1/users/election/details/candidate',
+  getAllContactType: '/v1/users/election/getAllContactType',
+  getAllRelationType: '/v1/users/election/getAllRelationType',
+  getDetails: '/v1/users/election/details',
+  markWinner: '/details/markWinner',
+  userManagementversion2:'/v2/users',
+  userManagementversion1:'/v1/users',
+  profile :'/v2/users/profile',
+  getMemberDesignations: '/getMemberDesignationList',
+  getRoles: '/v1/users/role/getSpecificRoles/MEMBER',
+  addAllRole: '/v2/users/update/all/role',
+  getRbsRoles: '/rbs/role/getAll',
+  getAllPortfolios: 'mock/subject/getAllMinistryMasterData',
+  getDraftPortfolios: 'kla/service/v1/portfolio/getAllDraft',
+  markDeceased: '/v2/users/markDeceased',
+  getElectionType : '/v1/users/election/getElectionType',
+  getActiveElection:'/v1/users/election/getAllByStatus',
+  getCountryData: '/address/getAllcountryDeatils',
+  getAddressType: '/election/getAllAddressType',
+  deleteCandidate: '/election/deleteCandidateById',
+  deleteConstituency: '/election/deleteConstituencyById'
+};

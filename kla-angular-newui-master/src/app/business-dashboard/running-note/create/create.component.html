@@ -1,0 +1,228 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.question.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{"business-dashboard.running-note.create.RunningNote" | translate}}</a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.agenda.agenda-create.create" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-3">
+    <fieldset disabled="true">
+      <h4>{{"business-dashboard.running-note.create.RunningNote" | translate}}</h4>
+    </fieldset>
+  </div>
+
+  <div class="col-md-3 text-align-right">
+    <div class="row">
+      <div class="col-md-6">
+        <button *ngIf="isOrderChanged" type="button" (click)="updateRunningLineOrder()" class="btn btn-primary">
+          {{"business-dashboard.agenda.agenda-create.saveorder" | translate}}
+        </button>
+      </div>
+      <div class="col-md-6">
+        <button type="button" (click)="goToListRunningNotePage()" class="btn btn-primary">
+          {{"business-dashboard.agenda.agenda-create.goback" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<hr />
+<div class="row marginbtm-25">
+  <div class="col-md-5">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label nzRequired>{{"business-dashboard.agenda.agenda-create.date" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+          <input type="date" nz-input [(ngModel)]="runnigNote.date" keydown="return false;"
+            [disabled]="routerDeta && routerDeta.date" (change)="onDateChange()" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+<form nz-form>
+  <div class="row marginbtm-25">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label nzRequired>{{"business-dashboard.running-note.create.LOBItems" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+          <nz-form-control>
+            <nz-select class="select" name="lob" [(ngModel)]="selectedLob">
+              <ng-container *ngFor="let lob of lobDatas">
+                <nz-option [nzLabel]="lob.title" [nzValue]="lob"></nz-option>
+              </ng-container>
+            </nz-select>
+            <!-- <nz-select class="select" nzPlaceHolder="LOB Items">
+            <nz-option nzLabel="Option1" nzValue="Option1"></nz-option>
+            <nz-option-group nzLabel="Option2">
+              <nz-option nzValue="Option2.1" nzLabel="Option2.1"></nz-option>
+              <nz-option nzValue="Option2.2" nzLabel="Option2.2"></nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Option3">
+              <nz-option nzValue="Option3.1" nzLabel="Option3.1"></nz-option>
+            </nz-option-group>
+          </nz-select> -->
+          </nz-form-control>
+        </div>
+        <div class="col-md-1">
+          <button nz-button nzType="primary" (click)="addNewRunnigNoteLine(selectedLob)">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label nzRequired>{{"business-dashboard.agenda.agenda-create.detailedagenda" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+          <nz-form-control>
+            <nz-select class="select" name="agenda" [(ngModel)]="selectedAgenda">
+              <ng-container *ngFor="let agenda of agendaDatas">
+                <nz-option [nzLabel]="agenda.title" [nzValue]="agenda"></nz-option>
+              </ng-container>
+            </nz-select>
+            <!-- <nz-select class="select" nzPlaceHolder="Detailed Agenda">
+            <nz-option nzLabel="Option1" nzValue="Option1"></nz-option>
+            <nz-option-group nzLabel="Option2">
+              <nz-option nzValue="Option2.1" nzLabel="Option2.1"></nz-option>
+              <nz-option nzValue="Option2.2" nzLabel="Option2.2"></nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Option3">
+              <nz-option nzValue="Option3.1" nzLabel="Option3.1"></nz-option>
+            </nz-option-group>
+          </nz-select> -->
+          </nz-form-control>
+        </div>
+        <div class="col-md-1">
+          <button nz-button nzType="primary" (click)="addNewRunnigNoteLine(selectedAgenda)">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<ngx-sortable [items]="runnigNote.runningNoteLines" [name]="'List'" (listSorted)="listSorted($event)">
+  <ng-template let-item>
+    <table class="running-table table-all">
+      <tbody>
+        <tr>
+          <th class="bg-head">{{"business-dashboard.running-note.create.ItemTitle" | translate}}</th>
+          <th class="bg-head">{{"business-dashboard.running-note.create.Business/Agenda" | translate}}</th>
+          <th class="bg-head">{{"business-dashboard.question.member" | translate}}</th>
+          <th class="bg-head">{{"noticeprocessing.noticeprocess.time" | translate}}</th>
+          <th class="bg-head">{{"bussiness-dashboard.user-managemnet.biometric-enrollment.action" | translate}}</th>
+        </tr>
+        <tr>
+          <td width="300px">{{ item.lobAgendaLine.title }}</td>
+          <td>{{ item.lobAgendaLine.businessName }}</td>
+          <td>{{ item.lobAgendaLine.primaryMemberName }}</td>
+          <td>{{ item.lobAgendaLine.allotedTime }} m</td>
+          <td>
+            <div class="row">
+              <div class="col-md-5">
+                <button nz-button nzType="default" class="margnrgt-15" title="Remove" mwlConfirmationPopover
+                  (confirm)="deleteRunningNoteLine(item.id)" popoverTitle="Delete Confirmation"
+                  popoverMessage='{{"business-dashboard.lob.lob-create.areusureuwantdelete" | translate}}' appendToBody="true">
+                  <i nz-icon nzType="delete" nzTheme="outline"></i>
+                </button>
+                <button *ngIf="item.lobAgendaLine.speakerNoteUrl" nz-button nzType="default" title="View Speaker Note"
+                  (click)="openFiePDF(item.lobAgendaLine.speakerNoteUrl)" class="margnrgt-15">
+                  <i nz-icon nzType="eye" nzTheme="outline"></i>
+                </button>
+              </div>
+              <div class="col-md-7 end-align">
+                <a href="javascript:;" (click)="onEditSpeakerNoteClick(item.lobAgendaLine)">{{"business-dashboard.running-note.create.EditSpeakerNote" | translate}}</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </ng-template>
+
+  <!-- <tr *ngFor="let data of runnigNote.runningNoteLines">
+      <td>{{ data.lobAgendaLine.title }}</td>
+      <td>{{ data.lobAgendaLine.businessName }}</td>
+      <td>{{ data.lobAgendaLine.primaryMemberName }}</td>
+      <td>{{ data.lobAgendaLine.allotedTime }} m</td>
+      <td>
+        <div class="row">
+          <div class="col-md-5">
+            <button
+              nz-button
+              nzType="default"
+              class="margnrgt-15"
+              title="Remove"
+              mwlConfirmationPopover
+              (confirm)="deleteRunningNoteLine(data.id)"
+              popoverTitle="Delete Confirmation"
+              popoverMessage="Are you sure you want to delete?"
+              appendToBody="true"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+            <button
+              *ngIf="data.lobAgendaLine.speakerNoteUrl"
+              nz-button
+              nzType="default"
+              title="View Speaker Note"
+              (click)="openFiePDF(data.lobAgendaLine.speakerNoteUrl)"
+              class="margnrgt-15"
+            >
+              <i nz-icon nzType="eye" nzTheme="outline"></i>
+            </button>
+          </div>
+          <div class="col-md-7 end-align">
+            <a
+              href="javascript:;"
+              (click)="onEditSpeakerNoteClick(data.lobAgendaLine)"
+              >Edit Speaker Note</a
+            >
+          </div>
+        </div>
+      </td>
+    </tr> -->
+</ngx-sortable>
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter"
+  nzMaskClosable="false" (nzOnCancel)="handleCancel()">
+  <ng-template #modalTitle>
+    {{"business-dashboard.running-note.create.EditSpeakerNote" | translate}}
+  </ng-template>
+
+  <ng-template #modalContent>
+    <form nz-form>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="8">{{"business-dashboard.agenda.create-item.speakernote" | translate}}</nz-form-label>
+        <nz-form-control [nzSpan]="14">
+          <nz-upload [(nzFileList)]="speaketNoteFileList" [nzShowButton]="speaketNoteFileList.length < 1"
+            [nzBeforeUpload]="beforeUploadSpeakerNote">
+            <button nz-button type="button">
+              <i nz-icon nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+            </button>
+          </nz-upload>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <button nz-button nzType="default" (click)="handleCancel()">
+      {{"business-dashboard.question.cancel" | translate}}
+    </button>
+    <button nz-button nzType="primary" (click)="handleOk()">
+      {{"cpl.docupload.submit" | translate}}
+    </button>
+  </ng-template>
+</nz-modal>

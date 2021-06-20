@@ -1,0 +1,218 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.General-Amendment" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.General-Amendment.dashboard" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">
+            {{ "business-dashboard.General-Amendment" | translate }}
+          </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button nz-button nzType="default" class="mr-6">...</button>
+          <button nz-button nzType="default" class="mr-6">Balloting</button>
+            {{ "business-dashboard.General-Amendment.Balloting.create" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+  <div class="row">
+    <div class="col-md-6">
+      <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+        {{ "bill.bill-clause.list.bill" | translate }}
+      </button>
+      <button type="button" class="ant-btn" (click)="clearFilter()">
+        {{ "bill.bill-clause.list.amdover" | translate }}
+      </button>
+      <button
+            *ngIf="showButton()"
+            nz-button
+            nzSize="small"
+            class="mrgL6"
+            (click)="openAmdOverReference()"
+          >
+            {{
+              "bill.billlist.listing.addbillref"
+                | translate
+            }}
+          </button>
+    </div>
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              [(ngModel)]="searchParam"
+              name="search"
+              nz-input
+              placeholder="Search"
+              (ngModelChange)="searchBill()"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" 
+              nz-dropdown
+              nzTrigger="click"
+              [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+          </button>
+        </div>
+      
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul
+                  nz-menu
+                  fileTable
+                  *ngFor="let box of colCheckboxes; let i = index"
+                  class="checkbox-style"
+                >
+                  <li>
+                    <label nz-checkbox 
+                    [nzDisabled]="box.disable" 
+                    [(ngModel)]="box.check" name="i" 
+                    (ngModelChange)="disableCheckBox()">{{
+                      box.label
+                    }}</label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of filtrParams.tableDto">
+      <div class="row align-items-center" *ngIf="filter.filtersel">
+        <div class="col-md-4 wordbreak">
+          {{ filter.label }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filter.selValue"
+            name="{{ filter.label }}"
+            (ngModelChange)="searchCol()"
+          >
+            <nz-option
+              *ngFor="let data of filter.data"
+              [nzLabel]="data"
+              [nzValue]="data"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(filter)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      
+      <tr>
+        <th
+          nzShowCheckbox
+          [(nzChecked)]="checkbxParams.allDtCheckd"
+          (nzCheckedChange)="_checkAllRows($event)"
+        ></th>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="No">
+          {{ "business-dashboard.General-Amendment.serialNo" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="billNo">
+          {{ "business-dashboard.General_Amendment.billNo" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="membername">
+            {{ "business-dashboard.General_Amendment.membername" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="publicopinion">
+            {{ "business-dashboard.General_Amendment.publicopinion" | translate }}
+          </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="committee">
+          {{ "business-dashboard.General_Amendment.committee" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="amendmentover">
+          {{ "business-dashboard.General_Amendment.amendmentover" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="ballotpriority">
+          {{ "business-dashboard.General_Amendment.ballotpriority" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.General_Amendment.status" | translate }}
+        </th>
+          <showing {{ paginationParams.pageIndex  }} to
+            {{ paginationParams.numberOfItem }} of
+            {{ paginationParams.total }} entries --></showing>
+        </div>
+      </ng-container>
+    </div>
+    <div class="col-md-8 d-flex justify-content-end"> 
+      <nz-pagination
+      [nzPageIndex]="paginationParams.pageIndex"
+      [nzPageSize]="paginationParams.numberOfItem"
+      [nzTotal]="paginationParams.total"
+      (nzPageIndexChange)="pageIndexChange($event)"
+      nzShowSizeChanger
+      (nzPageSizeChange)="pageSizeChange($event)"
+      [nzShowTotal]="rangeTemplate"
+    ></nz-pagination>
+  </div>
+  </div>
+<nz-modal>
+  <div>
+    <h2 md-dialog-title>{{ "bill-amendments.general-amendment.general-amendments" | translate }}</h2>
+    <div mat-dialog-content>
+    <mat-form-field>
+     <input matInput [(ngModel)]="data.membername">
+    <mat-form-field appearance="fill">
+      <mat-label>{{ "bill.bill-clause.list.aelictngopinion" | translate }}
+    <p>{{ "bill.bill-clause.list.upto" | translate }}</p></mat-label>
+      <input matInput [matDatepicker]="picker">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    <mat-radio-group aria-label="B. Refer to Committee">
+      <mat-radio-button value="1">{{ "bill.bill-clause.list.subjectcommittee" | translate }}</mat-radio-button>
+      <mat-radio-button value="2">{{ "bill.bill-clause.list.selectcommittee" | translate }}</mat-radio-button>
+    </mat-radio-group>
+    </mat-form-field>
+    </div>
+    <div mat-dialog-actions>
+        <button md-raised-button (click)="onCloseUpdate()">{{ "cpl.docupload.update" | translate }}</button>&nbsp;
+        <button md-raised-button (click)="onCloseCancel()">{{ "cpl.correspondencelist.cancel" | translate }}</button>
+    </div> 
+  </nz-modal>

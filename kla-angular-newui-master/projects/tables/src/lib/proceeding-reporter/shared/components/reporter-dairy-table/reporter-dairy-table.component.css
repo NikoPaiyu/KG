@@ -1,0 +1,18 @@
+.viewlink {
+  color: blue;
+}
+.myDiv .only-show-on-hover {
+  visibility: hidden;
+}
+.myDiv:hover .only-show-on-hover {
+  visibility: visible;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.approve-btn {
+  background-color: #4cdf4c;
+}
+.mrgtop10 {
+  margin-top: 10px;
+}

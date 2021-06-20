@@ -1,0 +1,1576 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        Dashboard
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> Files </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-4">
+    <h2 class="admin-page-heading">
+      {{ fileDetails.fileResponse.fileNumber }}
+    </h2>
+  </div>
+  <div class="col-md-8 d-flex justify-content-flex-end">
+    <button
+      class="ml-6"
+      nz-button
+      nzType="primary"
+      nz-popconfirm
+      nzPopconfirmTitle="Are you sure you want to pull?"
+      (nzOnConfirm)="showPullpopup()"
+      (nzOnCancel)="cancel()"
+      *ngIf="
+        canPull &&
+        fileDetails?.fileResponse?.status !== 'APPROVED' &&
+        pullGroup !== currentUserActionRow.userId
+      "
+    >
+      Pull
+    </button>
+    <!-- container for MISCELLANEOUS_BUSINESS_FILE -->
+    <ng-container *ngIf="fileDetails?.fileResponse?.subtype === 'MISCELLANEOUS_BUSINESS_FILE'
+    && fileDetails?.fileResponse?.currentAssignee">
+      <!-- <nz-radio-group
+      [(ngModel)]="departmentOrSection"
+      (ngModelChange)="PopulateSectionOrDepartmenttSelect()"
+    >
+      <label nz-radio nzValue="S">Section</label>
+      <label nz-radio nzValue="D">Department</label>
+    </nz-radio-group>
+    <nz-select
+      nzShowSearch="true"
+      [(ngModel)]="selectedDepartmentORSection"
+      class="ml-6 m-r5 file-flow-select"
+      [nzPlaceHolder]="selectedDepartmentORSectionPH"
+      (ngModelChange)="PopulateUserWithDesignationSelect($event)"
+    >
+      <ng-container *ngFor="let element of deparmentOrSectionList">
+        <nz-option
+          nzValue="{{ element.klaSectionId }}"
+          nzLabel="{{ element.klaSectionName }}"
+        ></nz-option>
+      </ng-container>
+    </nz-select>
+    <nz-select
+      [(ngModel)]="userId"
+      class="ml-6 m-r5 file-flow-select"
+      nzPlaceHolder="Designation"
+      (ngModelChange)="ForwardOrReturnEnable($event)"
+    >
+      <ng-container *ngFor="let item of userList">
+        <nz-option
+          nzValue="{{ item.userId }}"
+          nzLabel="{{ item.details?.firstName }}-{{ item.roles[0]?.roleName }}"
+        ></nz-option>
+      </ng-container>
+    </nz-select>  -->
+    <div class="col-md-4">
+      <nz-cascader
+        [nzPlaceHolder]="'Select Designation'"
+        [(ngModel)]="cascaderValues"
+        [nzLoadData]="loadData"
+        (ngModelChange)="onChanges($event)"
+        class="user-cascade"
+      >
+      </nz-cascader>
+    </div>
+    <div class="col-md-4">
+      <nz-select
+        nzShowSearch="true"
+        [(ngModel)]="userId"
+        class="ml-6 m-r5 file-flow-select"
+        [nzPlaceHolder]="'Select User'"
+        (ngModelChange)="ForwardOrReturnEnable($event)"
+      >
+        <ng-container *ngFor="let item of userList">
+          <nz-option
+            nzValue="{{ item.value }}"
+            nzLabel="{{ item.label }}"
+          ></nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+    <button
+    nz-button
+    [nzType]="'default'"
+    class=" mrgL5 ant-btn ant-btn-default"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to  {{ getCurrentAction() }} ?"
+    (nzOnConfirm)="forwardFile(fileId)"
+    (nzOnCancel)="cancel()"
+    [disabled]="!userId"
+    *ngIf="fileDetails.fileResponse.status === 'SUBMITTED'"
+  >
+    {{ getCurrentAction() }}
+  </button>
+  <button
+        nz-button
+        [nzType]="'default'"
+        nz-popconfirm
+        class="ml-6 ant-btn ant-btn-default"
+        nzPopconfirmTitle="Do you want to approve?"
+        (nzOnConfirm)="onApproveButtonClick()"
+        (nzOnCancel)="cancel()"
+        *ngIf="fileDetails.fileResponse.status === 'SUBMITTED' && !currentUser.authorities.includes('assistant')
+        && !currentUser.authorities.includes('sectionOfficer')"
+      >
+        Approve
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        *ngIf="fileDetails.fileResponse.status === 'SUBMITTED' && !currentUser.authorities.includes('assistant')
+        && !currentUser.authorities.includes('sectionOfficer')"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to disallow?"
+        (nzOnConfirm)="disallowFile()"
+        (nzOnCancel)="cancel()"
+      >
+        Disallow
+      </button>
+    </ng-container>
+     <!-- end of container for MISCELLANEOUS_BUSINESS_FILE -->
+    <ng-container
+      *ngIf="currentUserActionRow && pullGroup == currentUserActionRow.userId"
+    >
+      <div class="col-md-5 m-r20">
+        <nz-select
+          style="width: 260px;"
+          placeholder="Select to forward"
+          nzAllowClear
+          [(ngModel)]="userId"
+          *ngIf="workFlowActionUsers.length > 0 && fileDetails.fileResponse.status === 'SUBMITTED'
+          && fileDetails?.fileResponse?.subtype !== 'MISCELLANEOUS_BUSINESS_FILE'"
+        >
+          <ng-container *ngFor="let role of workFlowActionUsers">
+            <nz-option
+              nzValue="{{
+                role.userId + '-' + role.actionRow + '-' + role.actionGroup
+              }}"
+              nzLabel="{{ role.fullName + ' - ' + role.actionName }}"
+            ></nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class=" mrgL5 ant-btn ant-btn-default"
+        nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to  {{ getCurrentAction() }} ?"
+        (nzOnConfirm)="forwardFile(fileId)"
+        (nzOnCancel)="cancel()"
+        [disabled]="!userId"
+        *ngIf="workFlowActionUsers.length > 0 && fileDetails.fileResponse.status === 'SUBMITTED'"
+      >
+        {{ getCurrentAction() }}
+      </button>
+
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to Add?"
+        *ngIf="hideFlag"
+      >
+        Add to bulletin
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="ml-6 ant-btn ant-btn-default"
+        *ngIf="false"
+        class="mrgL6"
+        (click)="showModel()"
+      >
+        Attach to file
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        nz-popconfirm
+        class="ml-6 ant-btn ant-btn-default"
+        nzPopconfirmTitle="Do you want to forward to the minister?"
+        (nzOnConfirm)="sendMinisterConvenience()"
+        (nzOnCancel)="cancel()"
+        *ngIf="
+          fileButtons.Approve &&
+          fileDetails.fileResponse.subtype === 'NOTICE_SHORT_NOTICE_QUESTION'
+        "
+      >
+        Minister Concent
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        nz-popconfirm
+        class="ml-6 ant-btn ant-btn-default"
+        nzPopconfirmTitle="Do you want to approve?"
+        (nzOnConfirm)="onApproveButtonClick()"
+        (nzOnCancel)="cancel()"
+        *ngIf="fileButtons.Approve && fileDetails.fileResponse.status === 'SUBMITTED'"
+      >
+        Approve
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        *ngIf="fileButtons.Disallow && fileDetails.fileResponse.status === 'SUBMITTED'"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to disallow?"
+        (nzOnConfirm)="disallowFile()"
+        (nzOnCancel)="cancel()"
+      >
+        Disallow
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to Add?"
+        *ngIf="hideFlag"
+      >
+        Add to bulletin
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="ml-6 ant-btn ant-btn-default"
+        *ngIf="false"
+        class="mrgL6"
+        (click)="showModel()"
+      >
+        Attach to file
+      </button>
+    </ng-container>
+    <button
+      nz-button
+      [nzType]="'default'"
+      class="ml-6 ant-btn ant-btn-default"
+      (click)="goToList()"
+    >
+      Back
+    </button>
+
+    <!--class="secondary-button button-admin-radius button-font dark-border dark-font"-->
+  </div>
+</div>
+
+<nz-divider> </nz-divider>
+</div>
+<nz-modal
+  [(nzVisible)]="isVisible1"
+  nzTitle="Notices List"
+  (nzOnCancel)="handleCancel1()"
+  [nzFooter]="null"
+>
+  <form [formGroup]="userDataForm">
+    <nz-form-item>
+      <nz-form-control>
+        <nz-card
+          class="marginbtm-15"
+          style="
+            width: 100%;
+            align-self: center;
+            height: 300px;
+            overflow-y: scroll;
+          "
+        >
+          <div>
+            <nz-radio-group nzName="radiogroup" formControlName="userId">
+              <ng-container *ngFor="let item of getUserData.data">
+                <label nz-radio [nzValue]="item.userId">{{
+                  item.details.fullName
+                }}</label>
+              </ng-container>
+            </nz-radio-group>
+          </div>
+        </nz-card>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+  <div class="width-100">
+    <div class="d-flex justify-content-space-end text-align-right">
+      <button nz-button [nzType]="'primary'" (click)="assignFile()">
+        <span>Attach To File</span>
+      </button>
+    </div>
+  </div>
+</nz-modal>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-6">
+    <nz-tabset [nzType]="'card'" [nzTabBarExtraContent]="extraTemplate">
+      <nz-tab
+        *ngFor="let item of noticeDetails; index as i"
+        [nzTitle]="item?.notice?.noticeNumber"
+        (nzClick)="getAllNote(item?.notice?.noticeId); setLatestVersion(i)"
+      >
+        <nz-tabset>
+          <nz-tab nzTitle="Notice">
+            <div class="row d-flex justify-content-end">
+              <div class="col-md-2">Versions</div>
+              <div class="col-md-6">
+                <nz-select [(ngModel)]="selectedVersion">
+                  <ng-container *ngFor="let version of item.versionOptions">
+                    <nz-option
+                      nzCustomContent
+                      [nzLabel]="getRoles(version.roles)"
+                      [nzValue]="version.version"
+                    >
+                      <div class="row dropdown-option">
+                        <table style="width: -webkit-fill-available;">
+                          <tr>
+                            <td>
+                              <strong>{{ getRoles(version.roles) }}</strong>
+                            </td>
+                          </tr>
+
+                          <tr>
+                            {{
+                              version.versionOwnerName
+                            }}
+                          </tr>
+                          <tr>
+                            {{
+                              version.createdDate | date: "dd-MM-yyyy hh:mm a"
+                            }}
+                          </tr>
+                        </table>
+                      </div>
+                    </nz-option>
+                  </ng-container>
+                </nz-select>
+              </div>
+              <div class="col-md-3">
+                <button
+                  nz-button
+                  nzType="default"
+                  (click)="noticeProcess(item.notice.noticeId)"
+                  *ngIf="
+                    this.notice.doIHaveAnAccess('NOTICE_EDIT', 'READ') &&
+                    ((fileDetails?.fileResponse?.status === 'SUBMITTED' &&
+                    fileDetails.fileResponse.currentAssignee) 
+                    || (fileDetails?.fileResponse?.status === 'APPROVED' && item.notice.workflowCode === 'NOTICE_RULE_275'))
+                  "
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+            <quill-view-html
+              [content]="item.versions[selectedVersion]"
+            ></quill-view-html>
+          </nz-tab>
+          <nz-tab nzTitle="Attachments" *ngIf="item?.notice?.attachments?.length > 0">
+            <div class="row" *ngFor="let attachment of item?.notice?.attachments; let i = index">
+              <div class="col-md-12">
+                {{i+1}}.   <a
+                href="javascript:;"
+                (click)="showAttachment(attachment.url)"
+                >{{ attachment.name }}
+              </a>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Bulletin Content" (nzClick)="setBulletinData(item.notice.bulletinContent, item.notice)"
+          *ngIf="item?.notice?.bulletinNeeded">
+            <div class="row">
+              <div class="col-md-12 d-flex justify-content-end">
+                <nz-tag [nzColor]="'green'" class="mrgL5" *ngIf="item.notice.bulletinStatus">
+                  {{  item.notice.bulletinStatus }}
+                </nz-tag>
+                <button
+                nz-button
+                nzType="primary"
+                class="mrgL5"
+                (click)="editBulletin( item.notice.bulletinContent)"
+                *ngIf="
+                  fileDetails.fileResponse.currentAssignee && !bulletinEditMode
+                  && item.notice.status === 'SUBMITTED'
+                "
+              >
+                Edit
+              </button>
+              <button
+              nz-button
+              nzType="default"
+              class="mrgL5"
+              (click)="cancelEditBulletin(item.notice.noticeId)"
+              *ngIf="
+                fileDetails.fileResponse.currentAssignee && bulletinEditMode
+              "
+            >
+              Cancel
+            </button>
+            <button
+              nz-button
+              nzType="primary"
+              class="mrgL5"
+              (click)="updateBulletin(item.notice.noticeId)"
+              *ngIf="
+                fileDetails.fileResponse.currentAssignee && bulletinEditMode
+              "
+            >
+              Update
+            </button>
+            <button
+            nz-button
+            nzType="primary"
+            class="mrgL5"
+            (click)="publishBulletin(item.notice.noticeId)"
+            *ngIf="
+              item.notice.bulletinStatus === 'APPROVED' && notice.doIHaveAnAccess('PUBLISH_BULLETIN', 'READ')
+              "
+          >
+            Publish
+          </button>
+            <button
+            nz-button
+            nzType="default"
+            class="mrgL5"
+            (click)="showPreview(item.notice.noticeId, bulletinContent)"
+            *ngIf="
+              bulletinContent  && item.notice.status === 'SUBMITTED'
+            "
+          >
+            Preview
+          </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <quill-editor 
+                *ngIf="bulletinEditMode"
+                [(ngModel)]="bulletinContent"
+                [styles]="{ height: '250px'}"
+                html="html"
+                ></quill-editor>
+                <quill-view-html 
+                *ngIf="!bulletinEditMode"
+                [content]="bulletinContent"
+                ></quill-view-html>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab
+            *ngIf="
+              notice.doIHaveAnAccess('NOTE', 'TEMPORARY') ||
+              notice.doIHaveAnAccess('NOTE', 'PERMANENT')
+            "
+            (nzClick)="getAllNote(item?.notice?.noticeId)"
+            nzTitle="Notes"
+          >
+            <div
+              class="chat-main-body"
+              #scrollme
+              [scrollTop]="scrollme.scrollHeight"
+            >
+              <nz-card
+                class="margin-10 notesp"
+                *ngFor="let data of notesData; let index; of: i"
+              >
+                <div class="row">
+                  <div class="col-md-7">
+                    <h6>{{ data.note }}</h6>
+                    <p>{{ data?.owner?.userName }}</p>
+                    <p *ngFor="let role of data?.owner?.roles; index as i">
+                      <span *ngIf="i === 0">{{
+                        getRoles(data.owner.roles)
+                      }}</span>
+                    </p>
+                  </div>
+                  <div class="col-md-5 d-flex justify-content-flex-end">
+                    <p>{{ data.createdDate | date: "hh:mm a | dd/MM/yyyy" }}</p>
+                    <!-- <br>
+                      <p>{{data.createdDate |  date: "dd/MM/yyyy"}}</p> -->
+                  </div>
+                </div>
+              </nz-card>
+            </div>
+            <div class="footer-chat">
+              <form
+                [formGroup]="createNoticeNoteForm"
+                (ngSubmit)="createNoticeNote(item?.notice?.noticeId)"
+              >
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-10">
+                      <nz-form-item>
+                        <nz-form-control>
+                          <textarea
+                            rows="2"
+                            nz-input
+                            placeholder="Type a message"
+                            name="note"
+                            [disabled]="
+                              !fileDetails.fileResponse.currentAssignee
+                            "
+                            formControlName="Note"
+                          ></textarea>
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                    <div class="col-md-2 d-flex justify-content-end">
+                      <button
+                        type="submit"
+                        nz-button
+                        nzType="primary"
+                        [disabled]="!fileDetails.fileResponse.currentAssignee"
+                        class="send-btn-style p-R15"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </nz-tab>
+          <nz-tab
+            *ngIf="
+              isSpeaker() &&
+              fileDetails.fileResponse.subtype == 'NOTICE_SHORT_NOTICE_QUESTION'
+            "
+            nzTitle="Concent"
+            (nzClick)="viewMinisterConvenience(item?.notice?.noticeId)"
+          >
+            <div class="row">
+              <div class="col-md-12">
+                <label *ngFor="let item of ministerConvenience">{{
+                  item.note
+                }}</label>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab
+            nzTitle="Duplicates"
+            *ngIf="
+              fileDetails.fileResponse.subtype ==
+              'NOTICE_SHORT_NOTICE_QUESTION'
+            "
+          >
+            <app-duplicate-check-questions
+              [notice]="item?.notice"
+            ></app-duplicate-check-questions>
+          </nz-tab>
+        </nz-tabset>
+      </nz-tab>
+    </nz-tabset>
+    <ng-template #extraTemplate>
+      <button
+        nz-button
+        [nzType]="'primary'"
+        *ngIf="notice.doIHaveAnAccess('FILE_DOCUMENT', 'CREATE')"
+        (click)="showDocument()"
+      >
+        <span>New Document</span>
+      </button>
+      <nz-modal
+        [(nzVisible)]="viewDocument"
+        [nzOkDisabled]="true"
+        (nzOnCancel)="handleCancel()"
+        [nzFooter]="null"
+      >
+        <form [formGroup]="createDocumentForm" class="p-20">
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label>
+                  Document Title
+                </nz-form-label>
+                <nz-form-control>
+                  <input
+                    nz-input
+                    placeholder="FileDescription goes here"
+                    formControlName="documentFile"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label>
+                  Document Template
+                </nz-form-label>
+                <nz-form-control>
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    name="No"
+                    formControlName="letter"
+                  >
+                    <nz-option [nzLabel]="1" [nzValue]="1"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-6"></div>
+              <div class="col-md-6 d-flex">
+                <button
+                  nz-button
+                  [nzType]="'primary'"
+                  style="margin-right: 16px;"
+                  (click)="handleCancel()"
+                >
+                  <span>Cancel</span>
+                </button>
+                <button
+                  nz-button
+                  [nzType]="'primary'"
+                  style="margin-right: 16px;"
+                  (click)="createDocument()"
+                >
+                  <span>Create</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+    </ng-template>
+  </div>
+  <div class="col-md-6">
+    <nz-tabset>
+      <nz-tab
+        *ngIf="
+          notice.doIHaveAnAccess('FILE_NOTE', 'TEMPORARY') ||
+          notice.doIHaveAnAccess('FILE_NOTE', 'PERMANENT')
+        "
+        nzTitle="Notes"
+      >
+        <div
+          class="chat-main-body"
+          #scrollme
+          [scrollTop]="scrollme.scrollHeight"
+        >
+          <nz-card
+            class="margin-10 notesp"
+            *ngFor="let data of notesList; index as i"
+            [ngClass]="data.temporary == true ? 'temporary' : 'normal'"
+          >
+            <div class="row">
+              <div class="col-md-7">
+                <p>
+                  <b>{{ data?.user?.details?.fullName }}</b>
+                </p>
+                <small *ngFor="let role of data?.user?.roles; index as i">
+                  <span *ngIf="i === 0">{{ getRoles(data.user.roles) }}</span>
+                </small>
+              </div>
+              <div class="col-md-5 d-flex justify-content-flex-end">
+                <p>{{ data.updatedDate | date: "hh:mm a | dd/MM/yyyy" }}</p>
+                <!-- <br>
+            <p>{{data.createdDate |  date: "dd/MM/yyyy"}}</p> -->
+                <!-- <p *ngIf ="data.updatedDate">{{data.updatedDate | date:"hh:mm a | dd/MM/yyyy"}}</p> -->
+              </div>
+            </div>
+            <div class="row">&nbsp;</div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ data.note }}
+              </div>
+            </div>
+            <div class="row">&nbsp;</div>
+            <div class="row">
+              <div class="col-md-9">
+                <button
+                  nz-button
+                  nzType="default"
+                  class="m-r5"
+                  *ngIf="
+                    data.userId === currentUserID &&
+                    data.noteId === latest.noteId &&
+                    fileButtons.Note && fileDetails.fileResponse.currentAssignee
+                  "
+                  (click)="editNote(data)"
+                >
+                  Edit
+                </button>
+                <button
+                  nz-button
+                  nzType="default"
+                  class="m-r5"
+                  nzType="info"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Do you want to delete?"
+                  (nzOnConfirm)="deleteNote(data.noteId)"
+                  (nzOnCancel)="cancel()"
+                  *ngIf="
+                    data.userId === currentUserID &&
+                    data.noteId === latest.noteId &&
+                    fileButtons.Note && fileDetails.fileResponse.currentAssignee
+                  "
+                >
+                  Delete
+                </button>
+                <button
+                  nz-button
+                  nzType="default"
+                  class="m-r5"
+                  nzType="info"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Do you want to convert this note  to normal note?"
+                  (nzOnConfirm)="convertTONormal(data.noteId)"
+                  (nzOnCancel)="cancel()"
+                  *ngIf="data.temporary == true"
+                >
+                  Convert to Normal
+                </button>
+              </div>
+              <div class="col-md-3">
+                <span class="note_num">{{ data.noteNumber }}</span>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+        <div class="row">
+          <form [formGroup]="createNoteForm" class="width-100">
+            <!-- <div class="width-100 d-flex bg_txtarea  "> -->
+            <div class="txt-area-main" *ngIf="fileButtons.Note">
+              <div
+                class="col"
+                *ngIf="
+                  fileDetails.fileResponse.subtype !=
+                  'NOTICE_HALF_AN_HOUR_DISCUSSION'
+                "
+              >
+                <ng-container>
+                  <strong>Quick options: </strong>
+                  <nz-tag
+                    *ngFor="let tag of quickOptions; let i = index"
+                    nzMode="checkable"
+                    [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+                    (nzCheckedChange)="CheckforRules($event, tag, i)"
+                  >
+                    <div>
+                      {{ tag.label }}
+                    </div>
+                  </nz-tag>
+                </ng-container>
+              </div>
+            </div>
+            <div class="footer-chat" *ngIf="fileButtons.Note">
+              <div class="col-md-12 d-flex">
+                <div class="col-md-8">
+                  <textarea
+                    rows="2"
+                    nz-input
+                    placeholder="Type a message"
+                    name="note"
+                    formControlName="note"
+                    [disabled]="!fileDetails.fileResponse.currentAssignee"
+                  ></textarea>
+                </div>
+                <div class="col-md-4 justify-content-end pl0">
+                  <!-- <div class="row">
+            <div class="col-md-6"> -->
+                  <nz-form-item>
+                    <nz-form-control>
+                      <nz-radio-group
+                        formControlName="tempFlag"
+                        nzName="radiogroup"
+                        nzButtonStyle="solid"
+                      >
+                        <label nz-radio-button nzValue="true">Yellow</label>
+                        <label
+                          nz-radio-button
+                          nzValue="false"
+                          [nzDisabled]="!hideNormal"
+                          >Normal</label
+                        >
+                      </nz-radio-group>
+                    </nz-form-control>
+                  </nz-form-item>
+                  <div class="width-100">
+                    <button
+                      *ngIf="!editMode"
+                      type="submit"
+                      nz-button
+                      nzType="primary"
+                      (click)="createNote()"
+                      [disabled]="!fileDetails.fileResponse.currentAssignee"
+                      class="send-btn-style p-R15"
+                    >
+                      Save
+                    </button>
+                    <button
+                      *ngIf="editMode"
+                      nz-button
+                      nzType="primary"
+                      class="send-btn-style p-R15"
+                      (click)="updateNote()"
+                      [disabled]="!fileDetails.fileResponse.currentAssignee"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="">
+              <nz-modal
+                [(nzVisible)]="ShowRules"
+                nzTitle="Rules And Directions"
+                (nzOnCancel)="cancelRuleSelection()"
+                (nzOnOk)="applyRule()"
+              >
+              <div class="width-100 pading-all">
+                <p>Search Rule</p>
+                <div class="row">
+                  <div class="col-md-6">
+                    <nz-form-item>
+                      <nz-form-control>
+                        <input type="text" name="search" nz-input formControlName="searchParam"
+                        (ngModelChange)="searchRules()">
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </div>
+                <div class="width-100 pading-all">
+                  <nz-table #rulesForNotes [nzData]="rulesList" [nzPageSize]="5">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Rule No</th>
+                        <th>Description</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of rulesForNotes.data">
+                        <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                        <td>{{ data.code }}</td>
+                        <td>{{ data.englishDescription }}</td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </div>
+              </nz-modal>
+            </div>
+          </form>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Logs">
+        <ng-container *ngFor="let log of logDetails.slice(); index as i">
+          <div class="row" *ngIf="log.action">
+            <div class="col-md-12">
+              <div class="bg_block">
+                <div class="col-md-7 pdzero">
+                  <div class="width-100 d-flex marginbtm-15">
+                    <div class="overflow-blt">
+                      {{ 1 + i + "." + log.action | titlecase }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        &nbsp;&nbsp;
+      </nz-tab>
+
+      <nz-tab nzTitle="File Info">
+        <ng-container>
+          <div class="row">
+            <div class="col-md-3">
+              <span class="workflowhd">File Workflow</span>
+            </div>
+            <div class="col-md-9">
+              <div class="overflownote">
+                <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                  <nz-step
+                    *ngFor="let status of stepStatusDetail"
+                    [nzStatus]="getStatusByReason(status.reason)"
+                    [nzTitle]="status.taskDefinitionKey"
+                    [nzDescription]="status.reason"
+                  ></nz-step>
+                </nz-steps>
+              </div>
+            </div>
+          </div>
+          <div class="row bg_block">
+            <div class="col-md-12">
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "business-dashboard.cpl.view.filesubject" | translate }}:</div>
+                    <div class="blthd col-md-6" style="word-wrap: break-word;">
+                        {{ fileDetails?.fileResponse?.subject }}
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "business-dashboard.cpl.view.filesdescription" | translate }}:
+                    </div>
+                    <div class="blthd col-md-6" style="word-wrap: break-word;">
+                        {{ fileDetails?.fileResponse?.description }}
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "business-dashboard.question.questionlist.createdat" | translate
+                        }}:</div>
+                    <div class="blthd col-md-6">
+                        {{
+                        fileDetails?.fileResponse?.createdDate | date: "dd/MM/yyyy"
+                        }}
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "cpl.docamendments.filepriority" | translate }}:</div>
+                    <div class="blthd col-md-6" *ngIf='!isEditPrio'>
+                        <nz-tag [nzColor]="'red'">
+                            {{ fileDetails?.fileResponse?.priority.split('_').join(' ') }}
+                        </nz-tag>
+                    </div>
+                </div>
+                <div class="row flex-end mrB10" *ngIf='isEditPrio'>
+                    <div class="col-md-6"></div>
+                    <div class="blthd col-md-6">
+                        <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+                            <label nz-radio nzValue="URGENT">{{ "cpl.docamendments.urgent" | translate
+                                }}</label>
+                            <label nz-radio nzValue="NORMAL">{{ "cpl.docamendments.normal" | translate
+                                }}</label>
+                            <label nz-radio nzValue="ACTION_TODAY">{{ "cpl.docamendments.actiontoday" |
+                                translate }}</label>
+                            <label nz-radio nzValue="ASSEMBLY_URGENT">{{ "cpl.docamendments.assemblyurgent" |
+                                translate }}</label>
+                        </nz-radio-group>
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "noticeprocessing.staff.personalregister.section" | translate }}:
+                    </div>
+                    <div class="blthd col-md-6">
+                        {{ fileDetails?.fileResponse?.type }}
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "cpl.fileworkflow.filetype" | translate }}:</div>
+                    <div class="blthd col-md-6">
+                        <nz-tag>
+                            {{ fileDetails?.fileResponse?.type }}
+                        </nz-tag>
+                    </div>
+                </div>
+                <div class="row flex-end mrB10">
+                    <div class="col-md-6">{{ "cpl.fileworkflow.filestatus" | translate }}:</div>
+                    <div class="blthd col-md-6">
+                        <nz-tag [nzColor]="'red'">
+                            {{ fileDetails?.fileResponse?.status.split('_').join(' ') }}
+                        </nz-tag>
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="row text-align-right ">
+            <div class="col-md-12">
+              <button nz-button class="abs_btn" (click)="editFilePriority()" *ngIf="!isEditPrio">
+                  {{ "noticeprocessing.noticeprocess.edit" | translate }}
+              </button>
+              <button nz-button class="abs_btn" (click)="updateFilePriority()" *ngIf="isEditPrio">
+                  {{ "cpl.docupload.update" | translate }}
+              </button>&nbsp;&nbsp;
+              <button nz-button class="abs_btn" (click)="_cancel()" *ngIf="isEditPrio">
+                {{ "cpl.correspondencelist.cancel" | translate }}
+              </button>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col-md-12">
+              <button
+                nz-button
+                nzType="default"
+                [hidden]="true"
+                (click)="showFileDetail()"
+              >
+                File Details
+              </button>
+            </div>
+          </div> -->
+          <!-- <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="bg_block">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">File Subject:</div>
+                        <span class="blthd col-md-9">{{
+                          fileDetails.fileResponse.subject
+                        }}</span>
+                      </div>
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">Created Date:</div>
+                        <span class="blthd col-md-9">{{
+                          fileDetails.fileResponse.createdDate
+                            | date: "dd/MM/yyyy"
+                        }}</span>
+                      </div>
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">File Priority:</div>
+                        <span class="blthd col-md-9">
+                          <nz-tag [nzColor]="'red'">
+                            {{ fileDetails.fileResponse.priority }}
+                          </nz-tag></span
+                        >
+                      </div>
+                      <div class="row">
+                        <div class="overflow-blt col-md-3">Section:</div>
+                        <span class="blthd col-md-9">Table</span>
+                      </div>
+
+                      <nz-modal
+                        [(nzVisible)]="isVisible"
+                        nzTitle="File Info"
+                        (nzOnCancel)="handleCancel()"
+                        [nzOkLoading]="isOkLoading"
+                        [nzFooter]="null"
+                      >
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>File No</p>
+                              </div>
+                              <div class="col-md-6">
+                                {{ fileDetails.fileResponse.fileNumber }}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6"></div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>File Subject</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>{{ fileDetails.fileResponse.subject }}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>File Priority</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>{{ fileDetails.fileResponse.priority }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>Created date</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>From Whom</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>Section</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>Back File</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>Description</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>
+                                  {{ fileDetails.fileResponse.description }}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </nz-modal>
+                    </div>
+                  </div>
+                </div>
+              </div> 
+            </div>
+          </div> -->
+          <!-- <div class="row text-align-right ">
+            <div class= "col-md-12">
+              <button
+                nz-button
+                class="abs_btn"
+                (click)="showFilePopup()"
+                *ngIf="fileDetails.fileResponse.currentAssignee"
+              >
+                Update
+              </button>
+            </div>
+          </div> -->
+        </ng-container>
+        &nbsp;&nbsp;
+        <ng-container *ngIf="fileDetails?.fileResponse?.subFile && fileDetails?.fileResponse?.subFile.length > 0">
+          <div class="row">
+            <div class="col-md-12">
+              <strong>Sub-Files</strong>
+            </div>
+          </div>
+          <div class="row flex-end mrB10" *ngFor="let file of fileDetails?.fileResponse?.subFile; let i=index">
+            <div class="blthd col-md-6">
+              {{i+1}}.{{file?.subject}}
+            </div>
+            <div class="blthd col-md-6">
+              <a href="javascript:;" (click)="viewFile(file?.fileId, file?.filType)">
+                {{file?.fileNumber}}</a>
+            </div>
+          </div>
+      </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisibleApprovalForm"
+  nzTitle="Approve Notice"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancelApprovalForm()"
+>
+  <div class="lob_form">
+    <form nz-form [formGroup]="approvalForm" class="p-20">
+      <ng-template #errorTpl let-control>
+        <ng-container *ngIf="control.hasError('required')">
+          {{
+            "noticeprocessing.noticetemplate.createtemplate.input" | translate
+          }}
+        </ng-container>
+      </ng-template>
+      <nz-form-item class="width-100 pading-all" *ngIf="lobView.bac">
+        <nz-form-control [nzSpan]="24">
+          <label nz-checkbox formControlName="checked" #checkbox
+            >Forward to BAC</label
+          >
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="width-100 pading-all" *ngIf="lobView.lob">
+        <nz-form-label [nzSpan]="10" nzRequired>Scheduled Date</nz-form-label>
+        <nz-form-control [nzSpan]="24">
+          <nz-date-picker
+            #datepicker
+            [nzDisabledDate]="disabledDate"
+            nzFormat="dd-MM-yyyy"
+            formControlName="date"
+          >
+          </nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item
+        class="width-100 pading-all"
+        *ngIf="lobView.ministerConveniencePending"
+      >
+        <nz-alert nzType="warning" nzMessage="Minister concent Pending">
+        </nz-alert>
+      </nz-form-item>
+    </form>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-8">
+        <button
+          nz-button
+          nzType="primary"
+          class="margnrtp-15"
+          [disabled]="approvalForm.invalid"
+          (click)="approveFile()"
+        >
+          Submit
+        </button>
+        &nbsp;
+        <button
+          nz-button
+          type="button"
+          (click)="handleCancelApprovalForm()"
+          class="margnrtp-15"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="showDetails"
+  nzTitle="File Details"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+>
+  <div class="file_form">
+    <form nz-form [formGroup]="fileForm" class="p-20">
+      <div class="row">
+        <div class="bg_block">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row marginbtm-15">
+                <div class="overflow-blt col-md-3">File Number:</div>
+                <span *ngIf="isFileEdit" class="blthd col-md-9">
+                  {{ fileDetails.fileResponse.fileNumber }}
+                </span>
+                <div *ngIf="!isFileEdit">
+                  <input
+                    nz-input
+                    formControlName="fileNumber"
+                    name="fileNumber"
+                  />
+                </div>
+              </div>
+              <div class="row marginbtm-15">
+                <div class="overflow-blt col-md-3">File Subject:</div>
+                <span *ngIf="isFileEdit" class="blthd col-md-9">
+                  {{ fileDetails.fileResponse.subject }}
+                </span>
+                <div *ngIf="!isFileEdit">
+                  <input
+                    nz-input
+                    formControlName="fileSubject"
+                    name="fileSubject"
+                  />
+                </div>
+              </div>
+              <div class="row marginbtm-15">
+                <div class="overflow-blt col-md-3">Created Date:</div>
+                <span *ngIf="isFileEdit" class="blthd col-md-9">
+                  {{
+                    fileDetails.fileResponse.createdDate | date: "dd/MM/yyyy"
+                  }}
+                </span>
+                <div *ngIf="!isFileEdit">
+                  <input
+                    nz-input
+                    formControlName="createdDate"
+                    name="createdDate"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row marginbtm-15">
+            <div class="overflow-blt col-md-3">File Priority:</div>
+            <span *ngIf="isFileEdit" class="blthd col-md-9">
+              <nz-tag [nzColor]="'red'">
+                {{ fileDetails.fileResponse.priority }}
+              </nz-tag>
+            </span>
+            <div *ngIf="!isFileEdit">
+              <input
+                nz-input
+                formControlName="filePriority"
+                name="filePriority"
+              />
+              <!-- <nz-form-control>
+              <nz-radio-group
+                formControlName="filePriority"
+                name="radiogroup"
+              >
+                <label nz-radio nzValue="URGENT">Urgent</label>
+                <label nz-radio nzValue="NORMAL">Normal</label>
+                <label nz-radio nzValue="ACTION_TODAY"
+                  >Action Today</label
+                >
+                <label nz-radio nzValue="ASSEMBLY_URGENT"
+                  >Assembly Urgent</label
+                >
+              </nz-radio-group>
+            </nz-form-control> -->
+            </div>
+          </div>
+          <div class="row">
+            <div class="overflow-blt col-md-3">Section:</div>
+            <span class="blthd col-md-9">Table</span>
+          </div>
+          <div class="row marginbtm-15">
+            <div class="overflow-blt col-md-3">Description:</div>
+            <span *ngIf="isFileEdit" class="blthd col-md-9">
+              {{ fileDetails.fileResponse.description }}
+            </span>
+            <div *ngIf="!isFileEdit">
+              <input
+                nz-input
+                formControlName="fileDescription"
+                name="fileDescription"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-8">
+              <button
+                nz-button
+                nzType="primary"
+                class="margnrtp-15"
+                *ngIf="isFileEdit"
+                (click)="editFile(fileDetails.fileResponse)"
+              >
+                Edit
+              </button>
+              &nbsp;
+              <button
+                nz-button
+                nzType="primary"
+                *ngIf="!isFileEdit"
+                (click)="updateFile()"
+                class="margnrtp-15"
+              >
+                Update
+              </button>
+              &nbsp;
+              <button
+                nz-button
+                type="button"
+                (click)="onCancel()"
+                class="margnrtp-15"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        Reason to pull
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea
+          nz-input
+          placeholder="Reason to pull"
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="256"
+          [(ngModel)]="pullRemark"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="cancelPull()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          [disabled]="!pullRemark"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to pull?"
+          (nzOnConfirm)="pullFile()"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+          Pull File
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="showFileDetails"
+  nzTitle="File info"
+  (nzOnCancel)="handleCancel()"
+  [nzOkLoading]="isOkLoading"
+  [nzFooter]="null"
+>
+  <form [formGroup]="createFileForm" class="pading-all">
+    <div class="row marginbtm-15">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="24">
+            File Subject
+          </nz-form-label>
+          <nz-form-control [nzSpan]="24">
+            <input
+              nz-input
+              placeholder="FileSubject goes here"
+              formControlName="subject"
+            />
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-12">
+        <div class="row">
+          <nz-form-item>
+            <div class="col-md-12">
+              <nz-form-label>
+                File Priority
+              </nz-form-label>
+            </div>
+            <div class="col-md-12">
+              <nz-form-control>
+                <nz-radio-group formControlName="priority" nzName="radiogroup">
+                  <label nz-radio nzValue="URGENT">Urgent</label>
+                  <label nz-radio nzValue="NORMAL">Normal</label>
+                  <label nz-radio nzValue="ACTION_TODAY">Action Today</label>
+                  <label nz-radio nzValue="ASSEMBLY_URGENT"
+                    >Assembly Urgent</label
+                  >
+                </nz-radio-group>
+              </nz-form-control>
+            </div>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="row">
+        <div class="overflow-blt col-md-3">Section:</div>
+        <span class="blthd col-md-9">Question</span>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button
+                nz-button
+                [nzType]="'primary'"
+                style="margin-right: 6px;"
+                (click)="handleCancel()"
+              >
+                <span>Cancel</span>
+              </button>
+              <button
+                nz-button
+                [nzType]="'primary'"
+                [disabled]="createFileForm.invalid"
+                *ngIf="false"
+              >
+                <span>Update</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="showSkipModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        {{"cpl.fileworkflow.userskip" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea
+          nz-input
+          placeholder='{{"business-dashboard.notice-proc.reasontoskip" | translate }}'
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="256"
+          [(ngModel)]="reason"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="cancelSkip()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+        {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+        <button
+          type="button"
+          [disabled]="reason === ''"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle='{{"business-dashboard.correspondence.skiporforward" | translate }}'
+          (nzOnConfirm)="skip=false;forwardFile(fileId)"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+          {{"cpl.filelistflow.forward" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="showBulletinPreview"
+  nzTitle="Bulletin Preview"
+  (nzOnCancel)="cancelPreview()"
+  [nzFooter]="null"
+  nzWidth="800"
+>
+<quill-view-html 
+*ngIf="previewContent"
+[content]="previewContent"
+></quill-view-html>
+</nz-modal>

@@ -1,0 +1,282 @@
+@import "~src/sass/utilities/variables";
+
+.row {
+  width: -webkit-fill-available;
+  width: -moz-available;
+}
+input {
+  width: 100%;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.mr-15 {
+  margin-right: 15px;
+}
+.mt-20 {
+  margin-top: 20px;
+}
+.ant-tag .anticon-close {
+  color: $color-red-close !important;
+}
+
+.ant-tag {
+  // background: $white;
+  padding: 3px 7px;
+}
+.nz-close-style {
+  color: $color-red-close;
+  cursor: pointer;
+}
+
+.ant-input-group-addon {
+  background-color: #eee !important;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.ant-drawer-body {
+  background-color: #fff !important;
+}
+.ant-drawer-wrapper-body {
+  background: #fff !important;
+}
+
+.ant-tag-checkable-checked {
+  background: transparent !important;
+}
+.ant-tag-checkable:active,
+.ant-tag-checkable-checked {
+  color: #1890ff !important;
+}
+
+.txt-alignR {
+  text-align: right;
+}
+.padding0 {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.border-style {
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.pLR15 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.ant-card-body {
+  padding: 15px;
+  zoom: 1;
+}
+
+.txt-area-main {
+  margin-top: auto;
+}
+.ant-tag {
+  padding: 3px 7px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 3px;
+}
+.ant-input {
+  background-color: #eee;
+}
+.ant-input-group-wrapper {
+  background-color: #eee;
+  padding: 8px;
+  margin: 20px 0;
+}
+
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+
+.align-self-end {
+  align-self: flex-end;
+}
+.pr0 {
+  padding-right: 0px;
+}
+.pl0 {
+  padding-left: 0px;
+}
+
+.chat-footer {
+  margin-top: auto;
+  position: fixed;
+  bottom: 0px;
+  z-index: 99;
+  padding-top: 20px;
+  background: #fff;
+}
+.chat-main-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 245px);
+}
+.first {
+  position: relative;
+}
+.first::after {
+  position: absolute;
+  content: "1st";
+  right: -25px;
+  color: #689fcb;
+  font-size: 14px;
+}
+.font-w {
+  font-weight: 600;
+}
+
+.mrgL-A {
+  margin-left: auto;
+}
+.mb-15 {
+  margin: 15px;
+}
+.padding-15{padding: 15px;}
+.text-left{text-align: left !important;}
+
+.td {
+  padding: 5px 0px;
+}
+th.bg-head {
+  min-width: 120px;
+}
+.bg-head1 {
+  min-width: 350px !important;
+}
+.bg-head2 {
+  width: 285px !important;
+}
+.td-width td {
+  width: 99px;
+  padding: 16px 16px;
+}
+.pdng-td {
+  padding: 16px 0px 16px 0px;
+}
+.disablerow {
+  background-color: #e8e8e8;
+  border-bottom: #7465e0 solid 1px;
+  border-top: #7465e0 solid 1px;
+}
+.paddingT15 {
+  padding-top: 15px;
+}
+
+.paddingL15 {
+  padding-left: 15px;
+}
+
+.paddingT20 {
+  padding-top: 20px;
+}
+
+.paddingR15 {
+  padding-right: 15px;
+}
+.vertical-line {
+  height: auto;
+}
+
+.border-right {
+  border-right: inset;
+}
+
+.color {
+  color: red;
+}
+
+.selection-vrsn {
+  padding: 10px 0px;
+  background: #eee;
+  display: flex;
+  margin: 0 0px;
+  align-items: center;
+}
+.width-auto {
+  width: auto;
+}
+
+.input-style {
+  border: 1px solid black;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  margin: 0 5px 10px;
+}
+.tag-style {
+  border: 1px solid black;
+  padding: 6px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+.paddingL0 {
+  padding-left: 0px !important;
+}
+
+.answer {
+  background: #eee;
+  margin-top: 5px;
+}
+
+.clause-style {
+  border: 1px solid black;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.back-color {
+  background: #f3f371;
+}
+
+.dropdown-option {
+  margin: 0;
+}
+.word-break {
+  word-break: break-word;
+  font-family: rachana;
+  font-size: 18px;
+}
+.plr {
+  padding-right: 25px;
+}
+
+.divider {
+  border-bottom: 1px solid black;
+}
+
+.align-center {
+  text-align: center;
+}
+
+td {
+  border: 0;
+}
+
+.detail-table {
+  padding-left: 10%;
+  padding-right: 10%;
+}
+
+.count-column {
+  width: 10%;
+  float: left;
+}
+
+.data-column {
+  width: 90%;
+  float: left;
+}
+.width550{width: 550px;}

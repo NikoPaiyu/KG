@@ -1,0 +1,317 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.viewbullettin.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{"business-dashboard.live-business.BusinessManagement" | translate}} </a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.live-business.Live" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-3">
+    <fieldset disabled="true">
+      <div class="width-100">
+      <h4>{{"business-dashboard.live-business.BusinessManagement" | translate}}</h4>
+    </div>
+    <div class="width-100">
+      <span  *ngIf="currentActiveBusinessLine" class="bs-name">
+        {{"business-dashboard.live-business.CurrentlyActive" | translate}} : {{ currentActiveBusinessLine.businessName
+        }} -->
+        {{ currentActiveBusinessLine.title }}</span>
+      </div>
+    </fieldset>
+  </div>
+
+  <div class="col-md-2">
+      <h1 class="font-timer">
+        <countup-timer *ngIf="runningLines && runningLines.length > 0" [countUpTimerConfig]="timerConfig">
+        </countup-timer>
+      </h1>
+  </div>
+
+  <div class="col-md-7 text-align-right">
+    <button mwlConfirmationPopover [popoverMessage]="'Are you sure you want to publish questions?'" placement="top" (confirm)="publishQuestions()"
+      nz-button nzType="primary" *ngIf="canPublishQuestions">
+      {{"business-dashboard.live-business.publishQuestions" | translate}}
+    </button>
+    &nbsp;
+    <button mwlConfirmationPopover [popoverMessage]="popoverTitle" placement="top" (confirm)="stopTodaysBusiness()"
+      nz-button nzType="primary" *ngIf="runningLines && runningLines.length > 0">
+      {{"business-dashboard.live-business.stopToday'sBusiness" | translate}}
+    </button>
+    &nbsp;
+    <button *ngIf="runningLines && runningLines.length > 0" [disabled]="
+        currentActiveBusinessLine && currentActiveBusinessLine.speakerNotebtn
+      " nz-button (click)="onMemberSwitchClick()" nzType="primary">
+      {{"business-dashboard.live-business.Who'sonmic" | translate}}
+    </button>
+    &nbsp;
+    <button *ngIf="isLobChanged" (click)="refreshButtonClick()" nz-button nzType="primary">
+      <i nz-icon nzType="reload" nzTheme="outline"></i>
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div *ngIf="!runningLines || runningLines.length == 0">
+  <nz-empty [nzNotFoundContent]="contentTpl">
+    <ng-template #contentTpl>
+      <span> {{"business-dashboard.live-business.NoBusinessesAvailable" | translate}} </span>
+    </ng-template>
+  </nz-empty>
+</div>
+<div class="row" *ngIf="runningLines && runningLines.length > 0">
+  <div class="col-md-2">
+    <div class="card-height">
+      <!-- <i nz-icon nzType="left" nzTheme="outline" class="m-b-15"></i> -->
+      <div class="list-group" role="tablist">
+        <ng-container *ngFor="let item of runningLines">
+          <a [ngClass]="{ active: item.businessId == currentBusinessId }"
+            class="list-group-item list-group-item-action list-style-1 mb-2  button-admin-radius lob-list" role="tab"
+            href="javascript:;" (click)="onClickBusiness(item)">{{ item.businessName }}</a>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card card-height full-heights bc-color">
+      <div class="card-body">
+        <div *ngFor="let runningLine of runningLines" nz-row>
+          <div nz-col nzSpan="24">
+            <nz-collapse *ngFor="
+                let item of runningLine.businessLines
+                  | filterbusiness: currentBusinessId;
+                let i = index
+              " class="mrg-btm bc-green">
+              <nz-collapse-panel [nzHeader]="header" [nzExtra]="extra">
+                <ng-template #header>
+                  <div class="row">
+                    <div class="col-md-2">#{{ i + 1 }}</div>
+                    <div class="col-md-1">
+                      <i nz-icon *ngIf="item.read" [nzType]="'check-circle'" [nzTheme]="'fill'"
+                        class="read-check-icon"></i>
+                    </div>
+                    <div class="col-md-9">{{ item.title }}</div>
+                  </div>
+                </ng-template>
+                <ng-template #extra> </ng-template>
+
+                <div *ngIf="item.speakerNoteUrl" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="14">
+                    <p class="marginbtm">
+                      {{"business-dashboard.agenda.create-item.speakernote" | translate}}
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="2">
+                    <button nz-button nzType="default" (click)="onViewFile(item.speakerNoteUrl)"
+                      class="bc-btn d-flex align-items-center justify-content-center" title="View Speaker Note">
+                      <i nz-icon nzType="file-pdf" [nzTheme]="'twotone'"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="!item.speakerNotebtn">
+                    <button nz-popconfirm
+                      nzPopconfirmTitle='{{"business-dashboard.live-business.woulduliketostopcurbus" | translate}}'
+                      (nzOnConfirm)="startSpeakerNote(item, 'Start')" nzPopconfirmPlacement="topLeft" nz-button
+                      nzType="default" class="bc-btn start-button d-flex align-items-center justify-content-center"
+                      [nzCondition]="!buttonValidation()">
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.speakerNotebtn">
+                    <button (click)="pauseBusiness(item)" nz-button nzType="default"
+                      class="bc-btn pause-button d-flex align-items-center justify-content-center">
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.speakerNotebtn">
+                    <button (click)="startSpeakerNote(item, 'Stop')" nz-button nzType="default"
+                      class="bc-btn stop-button d-flex align-items-center justify-content-center">
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div *ngIf="item.allotedTime" nz-col nzSpan="3">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }}m
+                    </button>
+                  </div>
+                </div>
+                <div *ngIf="item.primaryMemberId&&item.primaryDocumentUrl" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="14">
+                    <p class="marginbtm">
+                      {{ item.businessName
+                      }}<label *ngIf="item.primaryMemberName" class="member_bc">{{ " : " + item.primaryMemberName
+                        }}</label>
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.primaryDocumentUrl">
+                    <button nz-button nzType="default" (click)="onViewFile(item.primaryDocumentUrl)"
+                      class="bc-btn d-flex align-items-center justify-content-center" title="View Document">
+                      <i nz-icon nzType="file-pdf" [nzTheme]="'twotone'"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="!item.questionbtn">
+                    <button nz-popconfirm
+                      nzPopconfirmTitle='{{"business-dashboard.live-business.woulduliketostopcurbus" | translate}}'
+                      (nzOnConfirm)="startQuestion(item, 'Start')" nzPopconfirmPlacement="topLeft" nz-button
+                      nzType="default" class="bc-btn start-button d-flex align-items-center justify-content-center"
+                      [nzCondition]="!buttonValidation()">
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.questionbtn">
+                    <button (click)="pauseBusiness(item)" nz-button nzType="default"
+                      class="bc-btn pause-button d-flex align-items-center justify-content-center">
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.questionbtn">
+                    <button (click)="startQuestion(item, 'Stop')" nz-button nzType="default"
+                      class="bc-btn stop-button d-flex align-items-center justify-content-center">
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div *ngIf="item.allotedTime" nz-col nzSpan="3">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }}m
+                    </button>
+                  </div>
+                </div>
+                <div *ngIf="item.secondaryMemberId&&item.secondaryDocumentUrl" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="14">
+                    <p class="marginbtm">
+                      {{"business-dashboard.agenda.create-item.response" | translate}}
+                      <label *ngIf="item.secondaryMemberName" class="member_bc">{{ " : " + item.secondaryMemberName
+                        }}</label>
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.secondaryDocumentUrl">
+                    <button nz-button nzType="default" (click)="onViewFile(item.secondaryDocumentUrl)"
+                      class="bc-btn d-flex align-items-center justify-content-center" title="View Document">
+                      <i nz-icon [nzTheme]="'twotone'" nzType="file-pdf"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="!item.answerbtn">
+                    <button nz-popconfirm
+                      nzPopconfirmTitle='{{"business-dashboard.live-business.woulduliketostopcurbus" | translate}}'
+                      (nzOnConfirm)="startAnswer(item, 'Start')" nzPopconfirmPlacement="topLeft" nz-button
+                      nzType="default" class="bc-btn start-button d-flex align-items-center justify-content-center"
+                      [nzCondition]="!buttonValidation()">
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.answerbtn">
+                    <button (click)="pauseBusiness(item)" nz-button nzType="default"
+                      class="bc-btn pause-button d-flex align-items-center justify-content-center">
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2" *ngIf="item.answerbtn">
+                    <button (click)="startAnswer(item, 'Stop')" nz-button nzType="default"
+                      class="bc-btn stop-button d-flex align-items-center justify-content-center">
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div *ngIf="item.allotedTime" nz-col nzSpan="3">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }}m
+                    </button>
+                  </div>
+                </div>
+                <div nz-col nzSpan="24">
+                  <nz-collapse *ngFor="
+                    let subbusiness of item.lobBusinessAgendaResponse
+                    let i = index
+                  " class="mrg-btm bc-green">
+                    <nz-collapse-panel [nzHeader]="header" [nzExtra]="extra">
+                      <ng-template #header>
+                        <div class="row">
+                          <div class="col-md-9">{{ subbusiness.subBusinessName }}</div>
+                        </div>
+                      </ng-template>
+                      <ng-template #extra> </ng-template>
+                      <ng-container *ngIf="subbusiness.lobBusinessRespondentMember">
+                        <div *ngFor="let respondent of subbusiness.lobBusinessRespondentMember" nz-row
+                          class="marginbtm-15">
+                          <div nz-col nzSpan="14">
+                            <p class="marginbtm">
+                              {{"business-dashboard.agenda.create-item.response" | translate}}
+                              <label *ngIf="respondent.memberName" class="member_bc">{{ " : " + respondent.memberName
+                                }}</label>
+                            </p>
+                          </div>
+                          <div nz-col nzSpan="2" *ngIf="respondent.documentUrl">
+                            <button nz-button nzType="default" (click)="onViewFile(respondent.documentUrl)"
+                              class="bc-btn d-flex align-items-center justify-content-center" title="View Document">
+                              <i nz-icon [nzTheme]="'twotone'" nzType="file-pdf"></i>
+                            </button>
+                          </div>
+                          <div nz-col nzSpan="2" *ngIf="!respondent.respanswerbtn">
+                            <button nz-popconfirm
+                              nzPopconfirmTitle='{{"business-dashboard.live-business.woulduliketostopcurbus" | translate}}'
+                              (nzOnConfirm)="startRespAnswer(item, respondent, 'Start')" nzPopconfirmPlacement="topLeft"
+                              nz-button nzType="default"
+                              class="bc-btn start-button d-flex align-items-center justify-content-center"
+                              [nzCondition]="!buttonValidation()">
+                              <i nz-icon nzType="caret-right"></i>
+                            </button>
+                          </div>
+                          <div nz-col nzSpan="2" *ngIf="respondent.respanswerbtn">
+                            <button (click)="pauseBusiness(respondent)" nz-button nzType="default"
+                              class="bc-btn pause-button d-flex align-items-center justify-content-center">
+                              <i nz-icon *ngIf="!respondent.pausebtn" nzType="pause"></i>
+                              <i nz-icon *ngIf="respondent.pausebtn" nzType="caret-right"></i>
+                            </button>
+                          </div>
+                          <div nz-col nzSpan="2" *ngIf="respondent.respanswerbtn">
+                            <button (click)="startRespAnswer(item, respondent, 'Stop')" nz-button nzType="default"
+                              class="bc-btn stop-button d-flex align-items-center justify-content-center">
+                              <i nz-icon nzType="border"></i>
+                            </button>
+                          </div>
+                          <div *ngIf="item.allotedTime" nz-col nzSpan="3">
+                            <button nz-button nzType="default">
+                              {{ item.allotedTime }}m
+                            </button>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </nz-collapse-panel>
+                  </nz-collapse>
+                </div>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4" [ngClass]="{
+      enlarge: fullScreenMode == true
+    }">
+    <div class="abs-adj bc-btn-holder">
+      <button (click)="addClass()" class="bc-btn-fll margnrtp-15">
+        <div *ngIf="fullScreenMode">
+          <img src="../../assets/img/normalscreen.svg" alt="" width="15" />
+        </div>
+        <div *ngIf="!fullScreenMode">
+          <img src="../../assets/img/fullscreen.svg" alt="" width="15" />
+        </div>
+      </button>
+    </div>
+    <div class="card-height full-heights no-brdr bc-color prv-area">
+      <span *ngIf="!pdfSrc" class="prv-bc">Content Preview</span>
+      <pinch-zoom [disableZoomControl]="'disable'" *ngIf="pdfSrc" class="zoom-reader">
+        <div>
+          <pdf-viewer id="page" *ngIf="pdfSrc" [src]="pdfSrc" [render-text]="false" [show-all]="true"
+            style="display: block;" [original-size]="true" [fit-to-page]="!fullScreenMode"></pdf-viewer>
+        </div>
+      </pinch-zoom>
+    </div>
+  </div>
+</div>

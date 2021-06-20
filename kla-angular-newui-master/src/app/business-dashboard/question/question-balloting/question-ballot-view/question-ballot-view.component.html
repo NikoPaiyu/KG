@@ -1,0 +1,490 @@
+<form nz-form>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item
+          [routerLink]="[
+            '/business-dashboard/question/question-dept-dashboard'
+          ]"
+        >
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12">
+          <h2 class="admin-page-heading">{{ _desidePageTitle() }}</h2>
+        </div>
+      </div>
+      <div class="sticky_action_bar">
+      <div class="row">
+                <div class="col-sm-12 d-flex justify-content-end">
+          <button
+            nz-button
+            nzType="primary"
+            (click)="onBack()"
+            style="margin-left: 6px;"
+          >
+          {{ "business-dashboard.question.questionview.back" | translate }}
+          </button>
+          <button
+            *ngIf="buttonList.Approve && !isBallotApproved && action == 'apv'"
+            nz-button
+            nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantcancelsetupQues" | translate}}'
+            nzCancelText = "No"
+            nzOkText = "Yes"
+            (nzOnConfirm)="cancelBallot()"
+            nzPopconfirmPlacement="bottomLeft"
+            style="margin-left: 6px;"
+          >
+          {{"business-dashboard.question.cancelsettingupofquestion" | translate}}
+          </button>
+          <button
+            *ngIf="buttonList.Approve && !isBallotApproved && action == 'apv'"
+            nz-button
+            nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantappsetupQuestions" | translate}}'
+            nzCancelText = "No"
+            nzOkText = "Yes"
+            (nzOnConfirm)="approveBallot()"
+            nzPopconfirmPlacement="bottomLeft"
+            style="margin-left: 6px;"
+          >
+          {{"business-dashboard.question.approvesettingupofquestions" | translate}}
+          </button>
+          <button
+            *ngIf="action == 'dept'"
+            nz-button
+            nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantsendQuestodep" | translate}}'
+            nzCancelText = "No"
+            nzOkText = "Yes"
+            (nzOnConfirm)="sendToDept()"
+            nzPopconfirmPlacement="bottomLeft"
+            style="margin-left: 6px;"
+          >
+          {{"business-dashboard.question.sendtodepartment" | translate}}
+          </button>
+          <button
+            *ngIf="action == 'dept' || ballotList.length > 0"
+            nz-button
+            nzType="primary"
+            style="margin-left: 6px;"
+            (click)="getPreviewData()"
+          >
+          {{"business-dashboard.question.preview" | translate}}
+          </button>
+          <div class="col-md-4 d-flex align-items-center">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input
+                type="text"
+                [(ngModel)]="searchParam"
+                name="search"
+                nz-input
+                placeholder="{{
+                  'business-dashboard.question.questionlist.inputsearch'
+                    | translate
+                }}"
+                (ngModelChange)="onSearch()"
+              />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      
+  <nz-divider></nz-divider>
+      </div>
+    </div>
+  </div>
+  
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="ballotList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="slNo">
+          {{"business-dashboard.question.slno" | translate}}
+        </th>
+        <th nzShowSort nzSortKey="memberName">
+          {{"business-dashboard.question.member" | translate}}
+        </th>
+        <th *ngIf="!shownotice" nzShowSort nzSortKey="questionNumber">
+          {{"business-dashboard.question.questionlist.questionnumber" | translate}}
+        </th>
+        <th nzShowSort nzSortKey="heading">
+          <label *ngIf="shownotice">{{"business-dashboard.question.notice" | translate}}</label>
+          <label *ngIf="!shownotice">{{"business-dashboard.question.question" | translate}}</label>
+        </th>
+        <th *ngIf="showSetTolob && buttonList.AddToLOB && action === 'lob'">
+          {{"business-dashboard.question.settolob" | translate}}
+        </th>
+        <!-- <th nzShowSort nzSortKey="ruling">
+          Ruling / Opposition
+        </th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data; let i = index">
+        <td>
+          {{ list.slNo }}
+        </td>
+        <td>
+          <ng-container
+            *ngIf="
+              list.question.clubbingDetails &&
+                list.question.clubbingDetails.length > 1;
+              else noClubbing
+            "
+          >
+            <a
+              nz-popover
+              [nzPopoverContent]="contentTemplate"
+              nzPopoverTrigger="click"
+              (click)="_showClubbedMembers(list.question.clubbingDetails)"
+              href="javascript:void(0);"
+              ><img src="../../assets/img/club_q_active.svg" alt="" /></a
+          ></ng-container>
+          {{ list.memberName }}
+        </td>
+        <ng-template #noClubbing>
+          <img src="../../assets/img/club_q.svg" alt="" />
+        </ng-template>
+        <td *ngIf="!shownotice && list.question.questionNumber">
+          {{ list.question.questionNumber }}
+        </td>
+        <td *ngIf="list.heading; else noHeading">
+          <!-- {{ list.heading }} -->
+          <a
+            href="javascript:void(0);"
+            (click)="showVersionModal(list.questionId)"
+          >
+            {{ list.heading }}</a
+          >
+        </td>
+        <ng-template #noHeading>
+          <td>
+            <nz-tag [nzColor]="'red'"> Not Set </nz-tag>
+          </td>
+        </ng-template>
+        <td
+          class="td"
+          *ngIf="list.cansettoLOB && buttonList.AddToLOB && action === 'lob'"
+        >
+          <nz-switch
+            [nzDisabled]="list.takentoLOB"
+            [(ngModel)]="list.takentoLOB"
+            name="settoLOB_{{ i }}"
+            (ngModelChange)="_confrmLOB(i, list)"
+          ></nz-switch>
+        </td>
+        <!-- <td>
+          Ruling
+        </td> -->
+      </tr>
+    </tbody>
+  </nz-table>
+</form>
+<ng-template #contentTemplate>
+  <div *ngIf="ClubbedMembers.data">
+    <nz-table
+      #rowTable
+      [nzData]="ClubbedMembers.data"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+      [nzBordered]="false"
+    >
+      <thead></thead>
+      <tbody>
+        <tr *ngFor="let clubb of rowTable.data; let i = index">
+          <td>{{ clubb.noticeNumber }}:</td>
+          <td>
+            {{ clubb.memberName }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</ng-template>
+
+<nz-modal
+  [nzTitle]="versionModalTitle"
+  [(nzVisible)]="showVersion"
+  (nzOnCancel)="cancelVersion()"
+  nzClassName="pdngs"
+  [nzFooter]="null"
+  [nzWidth]="'800'"
+>
+  <div class="pading-all width-100">
+    <div class="padding-15">
+      <div class="col-md-12" *ngIf="questionVersion">
+        <div
+          class="row paddingT15"
+          *ngIf="questionVersion.assemblyId && questionVersion.sessionId"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.assembly" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblyV1">
+            <span>{{ questionVersion.assemblyId }}</span>
+          </div>
+          <div class="col-md-4">
+            {{ "business-dashboard.question.session" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblySessionV1">
+            <span>{{ questionVersion.sessionId }}</span>
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="
+            questionVersion.clubbingDetails &&
+            questionVersion.clubbingDetails.length > 0
+          "
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.mlaName" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div
+              class="row input-style"
+              *ngFor="let ma of questionVersion.clubbingDetails; let i = index"
+            >
+              <span>{{ ma.memberName }}</span>
+            </div>
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="
+            questionVersion.clubbingDetails &&
+            questionVersion.clubbingDetails.length > 0
+          "
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeno" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div
+              *ngFor="let ma of questionVersion.clubbingDetails; let i = index"
+            >
+              <span>{{ ma.noticeNumber }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.registrationDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.dateofreg" | translate }} :
+          </div>
+          <div class="col-md-8" id="regDateV1">
+            <span>{{ questionVersion.registrationDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.questionDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questiondate" | translate }} :
+          </div>
+          <div class="col-md-8" id="questionDateV1">
+            <span>{{ questionVersion.questionDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.category">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ncategory" | translate }}:
+          </div>
+          <div class="col-md-8">
+            <span>{{ questionVersion.category }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.priority">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticepriority" | translate }} :
+          </div>
+          <div class="col-md-8" id="priorityV1">
+            <span>{{ questionVersion.priority }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.subjectName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ministersubject" | translate }} :
+          </div>
+          <div class="col-md-8" id="ministerSubjectV1">
+            <span>{{ questionVersion.subjectName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionVersion.portfolioName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.portfolio" | translate }}
+            :
+          </div>
+          <div class="col-md-8" id="ministerV1">
+            <span>{{ questionVersion.portfolioName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeheading" | translate }} :
+          </div>
+          <div class="col-md-8" id="noticeHeadingV1">
+            <span *ngIf="!editable" class="word-break">{{
+              questionVersion.heading
+            }}</span>
+            <input
+              type="text"
+              *ngIf="editable"
+              nz-input
+              [(ngModel)]="questionVersion.heading"
+              name="heading"
+              id="heading"
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+            />
+          </div>
+        </div>
+        <div
+          class="row paddingT15"
+          *ngIf="questionVersion.tags && questionVersion.tags.length > 0"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.versioning.tags" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div
+                class="col-auto tag-style"
+                *ngFor="let tag of questionVersion.tags; let i = index"
+              >
+                <span>{{ tag.tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="paddingT15"
+          *ngIf="questionVersion.clauses && questionVersion.clauses.length > 0"
+        >
+          <div class="col-md-12 clause-style">
+            <ng-container
+              *ngFor="let clause of questionVersion.clauses; let i = index"
+            >
+              <div class="row paddingT15">
+                <div class="col-md-2">{{ "Clause " + clauseNo[i] }} :</div>
+
+                <div class="col-md-10">
+                  <div id="clauseV1">
+                    <textarea
+                      *ngIf="editable"
+                      nz-input
+                      [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+                      [(ngModel)]="clause.clause"
+                      [name]="clause.clause"
+                      [ngModelOptions]="{ standalone: true }"
+                      nzRequired
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    >
+                    </textarea>
+                    <span *ngIf="!editable" class="word-break">{{
+                      clause.clause
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="row paddingT15" *ngIf="clause.answerText">
+                <div class="col-md-4">
+                  {{
+                    "business-dashboard.question.versioning.answer" | translate
+                  }}:
+                </div>
+                <div class="col-md-8">
+                  <div class="row" id="answerV1">
+                    <span class="word-break">{{ clause.answerText }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ng-template #versionModalTitle>
+    <div class="row paddingT15">
+      <div class="col-md-6">
+        <nz-select
+          (ngModelChange)="getVersionDetailsById($event)"
+          [(ngModel)]="selectedVersion"
+        >
+          <ng-container *ngFor="let version of versionsCombo">
+            <nz-option
+              nzCustomContent
+              nzLabel="{{ version.ROLE }}"
+              [nzValue]="version.id"
+            >
+              <div class="row dropdown-option">
+                <div class="col-md-12">
+                  <div class="row">
+                    <strong>{{ version.ROLE }}</strong>
+                  </div>
+                  <div class="row">
+                    {{ version.cretationDate | date: "dd-MM-yyyy hh:mm a" }}
+                  </div>
+                </div>
+              </div>
+            </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <div class="col-md-6" *ngIf="listStatus !== 'SENT'">
+        <button
+          *ngIf="
+            !editable &&
+            buttonList.EditNotice &&
+            action == 'apv' &&
+            selectedVersion == currentVersion
+          "
+          nz-button
+          nzType="primary"
+          (click)="onEditNotice(questionVersion)"
+          style="margin-left: 6px;"
+        >
+          {{"business-dashboard.question.edit" | translate}}
+        </button>
+
+        <button
+          *ngIf="editable"
+          nz-button
+          nzType="primary"
+          (click)="onSaveEditedNotice(questionVersion)"
+          style="margin-left: 6px;"
+        >
+        {{"business-dashboard.question.save" | translate}}
+        </button>
+
+        <button
+          *ngIf="editable"
+          nz-button
+          nzType="primary"
+          (click)="onCancelEditNotice()"
+          style="margin-left: 6px;"
+        >
+        {{"business-dashboard.question.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>

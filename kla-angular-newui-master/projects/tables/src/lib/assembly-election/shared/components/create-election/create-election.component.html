@@ -1,0 +1,109 @@
+<div class="p-20 width-100">
+    <form nz-form [formGroup]="createElectionForm">
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{
+                                "cpl.docupload.assembly" | translate
+                                }}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control nzErrorTip="{{'tables.assembly-election.create-election.assembly-required'}}">
+                                <nz-select nzAllowClear nzPlaceHolder="{{ 'cpl.docupload.selassembly' | translate }}"
+                                    formControlName="assembly" (ngModelChange)="getElectionType($event)">
+                                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId"
+                                        [nzValue]="item">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{"business-dashboard.question.questionlist.subject"|translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control nzErrorTip="{{ 'business-dashboard.cpl.documents.subjectrequired'|translate}}">
+                                <input nz-input placeholder="{{'cpl.registration.selectsubject'|translate}}" formControlName="subject" />
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{"business-dashboard.question.type"|translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control nzErrorTip="{{'business-dashboard.cpl.documents.typerequired'|translate}}">
+                                <nz-select nzAllowClear nzPlaceHolder="{{ 'business-dashboard.question.type' | translate }}" formControlName="type">
+                                    <nz-option *ngFor="let type of electionType" [nzLabel]="type?.split('_').join(' ') | titlecase" [nzValue]="type">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{"lobview.view.description"|translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control nzErrorTip="{{'tables.assembly-election.create-election.description-required'}}">
+                                <textarea nz-input rows="2" placeholder="{{'lobview.view.description'|translate}}"
+                                    formControlName="description"></textarea>
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{"cpl.filelistflow.year"|translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control nzErrorTip="{{'tables.assembly-election.create-election.year-required'|translate}}">
+                                <nz-select nzAllowClear nzPlaceHolder="{{ 'cpl.filelistflow.year' | translate }}" formControlName="year">
+                                    <nz-option *ngFor="let year of yearList" [nzLabel]="year" [nzValue]="year">
+                                    </nz-option>
+                                </nz-select>
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+    </form>
+    <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="default" (click)="handleCancel()">
+                {{"cpl.correspondencelist.cancel"|translate}}
+            </button>
+            <button type="button" nz-button nzType="primary" class="mrgL6" nz-popconfirm
+                nzPopconfirmTitle="{{'tables.assembly-election.create-election.create-election-confirm'|translate}}" (nzOnConfirm)="createElection()">
+               {{"tables.assembly-election.assembly-election-list.create-election"|translate}}
+            </button>
+        </div>
+    </div>
+</div>

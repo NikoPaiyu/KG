@@ -1,0 +1,256 @@
+<div class="d-flex justify-content-between marginbtm-15">
+  <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="goBack()">
+    Back
+  </button>
+  <button
+    class="ml-6"
+    nz-button
+    [nzType]="'primary'"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to request Closure?"
+    nzCancelText="Cancel"
+    nzOkText="Request Closure"
+    (nzOnConfirm)="fileClosure()"
+    (nzOnCancel)="cancel()"
+    *ngIf="fileClose && fileResponse?.fileResponse?.status === 'APPROVED'"
+  >
+    File Closure
+  </button>
+  <button
+    class="ml-6 m-r5"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to pull?"
+    (nzOnConfirm)="showPullpopup()"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      pullButton &&
+      canPull &&
+      fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+      currentPool !== currentPoolUser
+    "
+  >
+    Pull
+  </button>
+  <button
+    class="m-r5"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to Approve?"
+    (nzOnConfirm)="approveFile()"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      notesInfo.status == 'SUBMITTED' &&
+      _canApprove() &&
+      assignee == auth.getCurrentUser().userId &&
+      showForward &&
+      !ratificationApprove &&
+      fileResponse
+    "
+    [disabled]="!showApprove"
+  >
+    Approve
+  </button>
+  <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Approve with ratification?"
+    nzCancelText="Approve"
+    nzOkText="Approve subjected to ratification"
+    (nzOnConfirm)="ratificationApproveFile(fileResponse?.fileResponse.fileId)"
+    (nzOnCancel)="approveFile()"
+    *ngIf="
+      canApprove &&
+      assignee == user.userId &&
+      commonService.doIHaveAnAccess('FILE_RATIFICATION', 'APPROVE') &&
+      fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+      ratificationApprove
+    "
+    [disabled]="!showApprove"
+  >
+    Approve</button
+  >&nbsp;
+  <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="{{
+      'business-dashboard.correspondence.approveclosure' | translate
+    }}"
+    nzCancelText="Cancel"
+    nzOkText="Approve"
+    (nzOnConfirm)="approveClosure()"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      commonService.doIHaveAnAccess('FILE', 'APPROVE') &&
+      fileResponse?.fileResponse?.status === 'CLOSURE_PENDING'
+    "
+  >
+    Approve File Closure</button
+  >&nbsp;
+  <nz-select
+    style="width: 280px"
+    name="selectedRole"
+    [(ngModel)]="selectedRole"
+    placeholder="Select to forward"
+    nzAllowClear
+    (ngModelChange)="forwardOrReturn()"
+    *ngIf="
+      workflowUsers.length > 0 &&
+      notesInfo.status === 'SUBMITTED' &&
+      assignee == auth.getCurrentUser().userId &&
+      showForward
+    "
+  >
+    <ng-container *ngFor="let role of workflowUsers">
+      <nz-option
+        *ngIf="role.code !== currentPoolUser"
+        nzValue="{{
+          role.userId + '-' + role.actionRow + '-' + role.actionGroup
+        }}"
+        nzLabel="{{ role.fullName + ' - ' + role.actionName }}"
+      ></nz-option>
+    </ng-container>
+  </nz-select>
+  <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure to {{ forwardReturnButton }} this file ?"
+    [disabled]="!selectedRole"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      workflowUsers.length > 0 &&
+      notesInfo.status === 'SUBMITTED' &&
+      assignee == auth.getCurrentUser().userId &&
+      showForward
+    "
+    (nzOnConfirm)="forwardFile(notesInfo.fileId)"
+  >
+    {{ forwardReturnButton }}
+  </button>
+  <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    *ngIf="
+      !showForward &&
+      forwrdMsg == null &&
+      assignee == auth.getCurrentUser().userId
+    "
+    (click)="addCommMembers('select')"
+  >
+    Add Members To Committee
+  </button>
+  <nz-alert
+    nzType="warning"
+    nzMessage="{{ forwrdMsg }}"
+    *ngIf="
+      !showForward && forwrdMsg && assignee == auth.getCurrentUser().userId
+    "
+  ></nz-alert>
+</div>
+<nz-alert
+  class="m-t"
+  nzType="warning"
+  nzMessage="{{ approveMsg }}"
+  *ngIf="approveMsg && assignee == auth.getCurrentUser().userId"
+></nz-alert>
+<nz-modal [(nzVisible)]="showSkipModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">Reason To Skip</div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea
+          nz-input
+          placeholder="Reason to skip"
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="256"
+          [(ngModel)]="reason"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="handleCancel()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          [disabled]="reason === ''"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to skip user and forward?"
+          (nzOnConfirm)="skip = false; forwardFile(notesInfo.fileId)"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+          Forward
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">Reason to pull</div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea
+          nz-input
+          placeholder="Reason to pull"
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="256"
+          [(ngModel)]="pullRemark"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="cancelPull()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          [disabled]="!pullRemark"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to pull?"
+          (nzOnConfirm)="pullFile()"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+          Pull File
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

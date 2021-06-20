@@ -1,0 +1,490 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"cpl.actregistration.dash" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"cpl.amendmentview.amendment" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading"> {{"cpl.amendmentview.amendment" | translate}}</h2>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<nz-tabset>
+  <nz-tab nzTitle='{{"cpl.doc-amendments.amendmentsforaction" | translate}}' (nzClick)="getPendingAmendments()">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-5">
+            <!-- Assembly -->
+          </div>
+          <div class="col-md-4">
+            <!-- <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assemblyId">
+              <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id"></nz-option>
+            </nz-select> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-5">
+            <!-- Session -->
+          </div>
+          <div class="col-md-4">
+            <!-- <nz-select nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="sessionId">
+              <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+            </nz-select> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input type="text" [(ngModel)]="pendingParam" (ngModelChange)="searchPending()" nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}' />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+        <button (click)="getPendingAmendments()" nz-button nzType="primary" class="mrgL6">
+          <i class="refresh-icon" nz-icon nzType="reload" nzTheme="outline"></i>
+        </button>
+      </div>
+      
+    </div>
+    <nz-table #pendingTable nzShowPagination nzShowSizeChanger [nzData]="pendingAmendments">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [nzDisabled]="true" *ngIf="checkbox"></th>
+          <th>{{"cpl.docamendments.slno" | translate}}.</th>
+          <th>{{"cpl.docamendments.amendmenttype" | translate}}</th>
+          <th>{{"cpl.docamendments.membername" | translate}}</th>
+          <th>{{"cpl.amendmentview.layingdate" | translate}}</th>
+          <th>{{"cpl.docamendments.sronumber" | translate}}</th>
+          <th>{{"cpl.docamendments.fileno" | translate}}</th>
+          <th>{{"cpl.docamendments.preview" | translate}}</th>
+          <th>{{"cpl.docamendments.status" | translate}}</th>
+        </tr>
+        <tr *ngIf="setOfCheckedId.size !== 0">
+          <th colspan="2">
+            <span>{{ setOfCheckedId.size }} {{"cpl.documents.selected" | translate}}</span>
+          </th>
+          <th colspan="6">
+            <button (click)="showFileModal()" nz-button [nzType]="'default'"
+              class="mr-6 secondary-button button-admin-radius button-font dark-border dark-font">
+              {{"cpl.documents.createorattachtofile" | translate}}
+            </button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of pendingTable.data; let i = index">
+          <td nzShowCheckbox [nzChecked]="setOfCheckedId.has(data.id)" *ngIf="checkbox"
+            (nzCheckedChange)="onItemChecked(data.id, $event, data.documentId)"
+            [nzDisabled]="data.status !== 'LAYING_APPROVED'"></td>
+          <td>{{ i + 1 }}</td>
+          <td class="break-word" (click)="viewAmendment(data.id)">           
+           {{ data.type }}
+          </td>
+          <td class="break-word" (click)="viewAmendment(data.id)">
+            <!-- <ng-container *ngIf="data.typeNumber .length > 18; else typeNumber">
+          <span nz-tooltip [nzTooltipTitle]="data.typeNumber ">
+            {{ data.typeNumber .substr(0, 18) }}..</span>
+        </ng-container>
+        <ng-template #typeNumber>
+          {{data.typeNumber }}
+        </ng-template> -->
+        {{ data.memberName }}
+          </td>
+          <td class="break-word" (click)="viewAmendment(data.id)">
+            <!-- <ng-container *ngIf="data.typeName .length > 18; else typeName">
+          <span nz-tooltip [nzTooltipTitle]="data.typeName ">
+            {{ data.typeName .substr(0, 18) }}..</span>
+        </ng-container>
+        <ng-template #typeName>
+          {{data.typeName }}
+        </ng-template> -->
+            {{data.layingDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td>
+            <a href="javascript:;" (click)="viewDocument(data.documentId)">{{ data.typeNumber }}</a>
+          </td>
+          <td (click)="viewAmendment(data.id)">{{ data.listFileNumber }}</td>
+          <td (click)="showPdfModal(data.noticeUrl)">
+            <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+          </td>
+          <td *ngIf="data.status == 'ACCEPTED' || data.status == 'REJECTED'"
+            [ngClass]="data.status == 'ACCEPTED' ? 'accept-color' : 'reject-color'"
+            (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td>
+          <td *ngIf="(!acceptReject && data.status != 'ACCEPTED' && data.status != 'REJECTED') || 
+          (data.status !== 'LIST_APPROVED' && data.status != 'ACCEPTED' && data.status != 'REJECTED')"
+          (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td>
+          <td *ngIf="acceptReject && data.status == 'LIST_APPROVED'">
+            <div class="d-flex">
+              <button nz-button class="btn-color" nz-popconfirm
+                nzPopconfirmTitle='{{"business-dashboard.cpl.documents.accepttheamendment" | translate}}'
+                (nzOnConfirm)="updateStatus(data, 'ACCEPTED')" nzPopconfirmPlacement="leftTop">
+                {{"cpl.docamendments.accept" | translate}}
+              </button>
+              <button nz-button nzType="danger" class="mrgL6" nz-popconfirm
+                nzPopconfirmTitle='{{"business-dashboard.cpl.documents.rejectconsent" | translate}}'
+                (nzOnConfirm)="updateStatus(data, 'REJECTED')" nzPopconfirmPlacement="leftTop">
+                {{"cpl.docamendments.reject" | translate}}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{"cpl.doc-amendments.allAmendments" | translate}}' (nzClick)="getAllAmendmentList()">
+    <div class="row">
+      <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-5">
+            <!-- Assembly -->
+          </div>
+          <div class="col-md-4">
+            <!-- <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assemblyId"
+              (ngModelChange)="getAllAmendmentList()">
+              <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id"></nz-option>
+            </nz-select> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-5">
+            <!-- Session -->
+          </div>
+          <div class="col-md-4">
+            <!-- <nz-select nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="sessionId"
+              (ngModelChange)="getAllAmendmentList()">
+              <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+            </nz-select> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input type="text" [(ngModel)]="searchParam" (ngModelChange)="search()" nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}' />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+        <button (click)="getAllAmendmentList()" nz-button nzType="primary" class="mrgL6">
+          <i class="refresh-icon" nz-icon nzType="reload" nzTheme="outline"></i>
+        </button>
+      </div>
+    </div>
+    <nz-table #rowSelectionTable nzShowPagination nzShowSizeChanger [nzData]="amendMentList">
+      <thead>
+        <tr>
+          <th>{{"cpl.docamendments.slno" | translate}}.</th>
+          <th>{{"cpl.docamendments.amendmenttype" | translate}}</th>
+          <th>{{"cpl.docamendments.membername" | translate}}</th>
+          <th>{{"cpl.amendmentview.layingdate" | translate}}</th>
+          <th>{{"cpl.docamendments.sronumber" | translate}}</th>
+          <th>{{"cpl.docamendments.fileno" | translate}}</th>
+          <th>{{"cpl.docamendments.preview" | translate}}</th>
+          <th>{{"cpl.docamendments.status" | translate}}</th>
+          <th *ngIf="amendmentInform">{{"cpl.docamendments.informdepart" | translate}}</th>
+        </tr>
+        <tr *ngIf="setOfCheckedId.size !== 0">
+          <th colspan="2">
+            <span>{{ setOfCheckedId.size }} {{"cpl.documents.selected" | translate}}</span>
+          </th>
+          <th colspan="6">
+            <button (click)="showFileModal()" nz-button [nzType]="'default'"
+              class="mr-6 secondary-button button-admin-radius button-font dark-border dark-font">
+              {{"cpl.docpreparion.createfile" | translate }}
+            </button>
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable.data; let i = index" >
+          <td (click)="viewAmendment(data.id)">{{ i + 1 }}</td>
+          <td class="break-word" (click)="viewAmendment(data.id)">           
+            {{ data.type }}
+          </td>
+          <td class="break-word" (click)="viewAmendment(data.id)">
+            <!-- <ng-container *ngIf="data.typeNumber .length > 18; else typeNumber">
+          <span nz-tooltip [nzTooltipTitle]="data.typeNumber ">
+            {{ data.typeNumber .substr(0, 18) }}..</span>
+        </ng-container>
+        <ng-template #typeNumber>
+          {{data.typeNumber }}
+        </ng-template> -->
+        {{ data.memberName }}
+          </td>
+          <td class="break-word" (click)="viewAmendment(data.id)">
+            <!-- <ng-container *ngIf="data.typeName .length > 18; else typeName">
+          <span nz-tooltip [nzTooltipTitle]="data.typeName ">
+            {{ data.typeName .substr(0, 18) }}..</span>
+        </ng-container>
+        <ng-template #typeName>
+          {{data.typeName }}
+        </ng-template> -->
+        {{data.layingDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td>
+            <a href="javascript:;" (click)="viewDocument(data.documentId)">{{ data.typeNumber }}</a>
+          </td>
+          <td (click)="viewAmendment(data.id)">{{ data.listFileNumber }}</td>
+          <td (click)="showPdfModal(data.noticeUrl)">
+            <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+          </td>
+          <td (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td> 
+          <td *ngIf="amendmentInform">
+            <button nz-button class="btn-color"
+             *ngIf="data.letterStatus == 'PENDING'" (click)="replyLetter(data)">
+             {{"cpl.docamendments.inform" | translate}} 
+          </button>
+          </td>
+          <!-- <td *ngIf="data.status == 'ACCEPTED' || data.status == 'REJECTED'"
+            [ngClass]="data.status == 'ACCEPTED' ? 'accept-color' : 'reject-color'">
+            {{ data.status.replace("_", " ") }}
+          </td> -->
+          <!-- <td (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td> -->
+          <!-- <td *ngIf="acceptReject && data.status == 'LAYING_APPROVED'">
+            <div class="d-flex">
+              <button nz-button class="btn-color" nz-popconfirm
+                nzPopconfirmTitle="Would you like to accept this consent?"
+                (nzOnConfirm)="updateStatus(data, 'ACCEPTED')" nzPopconfirmPlacement="leftTop">
+                Accept
+              </button>
+              <button nz-button nzType="danger" class="mrgL6" nz-popconfirm
+                nzPopconfirmTitle="Would you like to reject this consent?"
+                (nzOnConfirm)="updateStatus(data, 'REJECTED')" nzPopconfirmPlacement="leftTop">
+                Reject
+              </button>
+            </div>
+          </td> -->
+          <!-- <td *ngIf="data.status == 'ACCEPTED' || data.status == 'REJECTED'"
+            [ngClass]="data.status == 'ACCEPTED' ? 'accept-color' : 'reject-color'"
+            (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td>
+          <td *ngIf="(!acceptReject && data.status != 'ACCEPTED' && data.status != 'REJECTED') || 
+          (data.status !== 'LIST_APPROVED' && data.status != 'ACCEPTED' && data.status != 'REJECTED')"
+          (click)="viewAmendment(data.id)">
+            {{ data.status.replace("_", " ") }}
+          </td>
+          <td *ngIf="acceptReject && data.status == 'LIST_APPROVED'">
+            <div class="d-flex">
+              <button nz-button class="btn-color" nz-popconfirm
+                nzPopconfirmTitle="Would you like to accept this consent?"
+                (nzOnConfirm)="updateStatus(data, 'ACCEPTED')" nzPopconfirmPlacement="leftTop">
+                Accept
+              </button>
+              <button nz-button nzType="danger" class="mrgL6" nz-popconfirm
+                nzPopconfirmTitle="Would you like to reject this consent?"
+                (nzOnConfirm)="updateStatus(data, 'REJECTED')" nzPopconfirmPlacement="leftTop">
+                Reject
+              </button>
+            </div>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+</nz-tabset>
+<!-- model preview -->
+<nz-modal (nzOnCancel)="handleCancel()" [nzFooter]="null" [(nzVisible)]="isVisible" nzTitle='{{"noticeprocessing.notice.createnotice.prevew" | translate}}' nzWidth="1000">
+  <div class="d-flex justify-content-center">
+    <ngx-doc-viewer [url]="docUrl" viewer="google" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+  </div>
+</nz-modal>
+<!-- end model preview -->
+
+<!-- create file modal -->
+<nz-modal [(nzVisible)]="isAttachVisible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <!-- <nz-tabset>
+        <nz-tab nzTitle="Attach to file">
+          <div class="row margnrtp-15 align-items-center">
+            <div class="col-md-4">Search existing file</div>
+            <div class="col-md-8">
+              <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                <input
+                  type="text"
+                  nz-input
+                  placeholder="input file subject"
+                  nzSearch
+                />
+              </nz-input-group>
+              <ng-template #suffixButton>
+                <button nz-button nzType="primary">Search</button>
+              </ng-template>
+            </div>
+          </div>
+          <div class="row margnrtp-15" *ngIf="!hide">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button
+                nz-button
+                nzType="default"
+                class="secondary-button button-admin-radius button-font dark-border dark-font"
+                (click)="hide = !hide"
+              >
+                Advanced filter
+              </button>
+            </div>
+          </div>
+          <div class="row margnrtp-15" *ngIf="hide">
+            <div class="col-md-6">
+              File No
+              <input
+                nz-input
+                placeholder="File number"
+              />
+            </div>
+            <div class="col-md-6">
+              Subject
+              <input
+                nz-input
+                placeholder="Subject"
+              />
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <nz-card [nzTitle]="null" class="checklist-all">
+                <nz-table
+                >
+                  <tbody>
+                    <tr>
+                      <td
+                        nzShowCheckbox
+                        [nzChecked]="checkedFileId === file.fileId"
+                        (nzCheckedChange)="
+                          onFileChecked(file.fileId, file, $event)
+                        "
+                      ></td> -->
+        <!-- <td>
+                        <nz-radio-group>
+                          <label nz-radio 
+                        ></label>
+                         </nz-radio-group>
+                      </td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-card>
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button
+                type="button"
+                nz-button
+                nzType="default"
+                class="secondary-button button-admin-radius button-font dark-border dark-font"
+                (click)="handleCancel()"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                [disabled]="radioValue === null"
+                nz-button
+                nzType="primary"
+                class="float-right primary-button button-admin-radius button-font"
+                (click)="attachToFile()"
+              >
+                Attach to file
+              </button>
+            </div>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Create file"> -->
+        <!-- <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <nz-radio-group
+                [(ngModel)]="fileNumType"
+              >
+                <label nz-radio [nzValue]="true">Current Number</label>
+                <label nz-radio [nzValue]="false">Arising File</label>
+              </nz-radio-group>
+            </div>
+          </div> -->
+        <!-- <div class="row margnrtp-15">
+            <div class="col-md-3">
+              <nz-select
+              >
+                <nz-option
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div> -->
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4">
+            {{"cpl.docamendments.filesubject" | translate}}
+          </div>
+          <div class="col-md-8">
+            <input nz-input placeholder='{{"business-dashboard.cpl.view.filesubject" | translate}}' [(ngModel)]="subject" />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-2">
+            {{"cpl.docamendments.filepriority" | translate}}
+          </div>
+          <div class="col-md-10">
+            <nz-radio-group [(ngModel)]="priority">
+              <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+              <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+              <label nz-radio nzValue="ACTION_TODAY">{{"cpl.docamendments.actiontoday" | translate}}</label>
+              <label nz-radio nzValue="ASSEMBLY_URGENT">{{"cpl.docamendments.assemblyurgent" | translate}}</label>
+            </nz-radio-group>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">
+            {{"cpl.docamendments.description" | translate}}
+          </div>
+          <div class="col-md-8">
+            <textarea nz-input rows="2" placeholder='{{"business-dashboard.cpl.view.filesdescription" | translate}}' [(ngModel)]="desc"></textarea>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="default"
+              class="secondary-button button-admin-radius button-font dark-border dark-font" (click)="handleCancel()">
+              {{"cpl.correspondencelist.cancel" | translate}}
+            </button>
+            <button type="button" [disabled]="
+                  subject === '' ||
+                  priority === null
+                " nz-button nzType="primary" (click)="createFile()"
+              class="margnlft-15 primary-button button-admin-radius button-font">
+              {{ "cpl.docamendments.create" | translate}}
+            </button>
+          </div>
+        </div>
+        <!-- </nz-tab>
+      </nz-tabset> -->
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end of create file modal  -->

@@ -1,0 +1,1531 @@
+<ng-container *ngIf="!isFileView">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item> Meeting </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+</ng-container>
+<div class="row">
+  <div class="col-md-4">
+    <h4 *ngIf="!isFileView">{{ meetingDetails?.title }}</h4>
+  </div>
+  <div class="col-md-8 d-flex justify-content-end">
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="default"
+      (click)="goback()"
+      *ngIf="!editMode && !isFileView"
+    >
+      Back
+    </button>
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="edit()"
+      *ngIf="
+        !editMode &&
+        (meetingDetails?.status === null ||
+          meetingDetails?.status === 'SUBMITTED' ||
+          meetingDetails?.status === 'DETAIL_SUBMITTED') &&
+        (user.userId == assignee || meetingDetails?.fileNumber === null) &&
+        (permissions.fullEdit || permissions.chairmanEdit)
+      "
+    >
+      Edit
+    </button>
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="default"
+      (click)="edit()"
+      *ngIf="editMode"
+    >
+      Cancel
+    </button>
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="updateMeet()"
+      *ngIf="editMode"
+    >
+      Update
+    </button>
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="createQuestionnaire()"
+      *ngIf="
+        !editMode &&
+        !meetingDetails?.questionnaireId &&
+        buttons.questionairre &&
+        !isFileView &&
+        meetingDetails?.followUpMeeting &&
+        meetingDetails?.status === 'APPROVED'
+      "
+    >
+      Create Questionnaire
+    </button>
+    <!-- <button class="ml-6 m-r5" nz-button nzType="primary" (click)="viewQuestionnaire()">
+            View Questionnaire
+        </button> -->
+    <!-- <button class="ml-6 m-r5" nz-button nzType="primary" (click)="goToMinuteView()">
+            View Minutes
+        </button> -->
+    <!-- && meetingDetails?.status==='APPROVED' -->
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="goToMinutes()"
+      *ngIf="
+        !editMode &&
+        !meetingDetails?.minutesId &&
+        !isFileView &&
+        showMinuteButton() &&
+        meetingDetails?.attendenceMarked &&
+        meetingDetails?.endTime
+      "
+    >
+      Create Minutes
+    </button>
+    <button
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="showAttendenceModal()"
+      *ngIf="
+        !editMode &&
+        !isFileView &&
+        showMinuteButton() &&
+        meetingDetails?.status === 'APPROVED'
+      "
+    >
+      {{
+        meetingDetails?.attendenceMarked ? "View Attendance" : "Mark Attendance"
+      }}
+    </button>
+    <button
+      *ngIf="
+        meetingDetails?.specialInvite == null &&
+        !editMode &&
+        !isFileView &&
+        meetingDetails?.endTime == null
+      "
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="gotoSpecialInvitee('create')"
+    >
+      Special Invitee
+    </button>
+    <!-- <button *ngIf="meetingDetails?.specialInvite !== null"  class="ml-6 m-r5" nz-button nzType="primary" (click)="gotoSpecialInvitee('view')">
+           View Special Invitee
+           </button> -->
+    <button
+      *ngIf="
+        meetingDetails?.staffAllocationId == null &&
+        !editMode &&
+        !isFileView &&
+        meetingDetails?.followUpMeeting &&
+        meetingDetails?.type === 'EVIDENCE_TAKING' &&
+        meetingDetails?.status === 'APPROVED'
+      "
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="gotoStaffAllocation('create')"
+    >
+      Staff Allocation
+    </button>
+    <button
+      *ngIf="
+        !editMode &&
+        meetingDetails?.status === 'APPROVED' &&
+        !isFileView &&
+        showMinuteButton()
+      "
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="creatFollowUpMeeting()"
+    >
+      Follow Up Meeting
+    </button>
+    <button
+      *ngIf="meetingDetails?.consents.length > 0 && consentStatus === 'PENDING'"
+      class="ml-6 m-r5"
+      nz-button
+      nzType="primary"
+      (click)="giveConsentPopup()"
+    >
+      Give Consent
+    </button>
+    <!-- <button *ngIf="meetingDetails?.staffAllocationId !== null"  class="ml-6 m-r5" nz-button nzType="primary" (click)="gotoStaffAllocation('view')">
+             View  Staff Allocation
+            </button> -->
+  </div>
+</div>
+<ng-container *ngIf="!isFileView">
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-8 d-flex justify-content-end">
+      <button
+        class="ml-6 m-r5"
+        nz-button
+        nzType="default"
+        *ngIf="!viewLink"
+        (click)="viewLinks()"
+      >
+        View
+      </button>
+      <button
+        class="ml-6 m-r5"
+        nz-button
+        nzType="default"
+        *ngIf="viewLink"
+        (click)="viewLinks()"
+      >
+        Hide >>
+      </button>
+      <ng-container>
+        <span
+          class="m-r5"
+          *ngIf="viewLink && meetingDetails?.staffAllocationId !== null"
+          ><a (click)="gotoStaffAllocation('view')"> View Staff Allocation</a>
+          |</span
+        >
+        <span
+          class="m-r5"
+          *ngIf="viewLink && meetingDetails?.specialInvite !== null"
+          ><a (click)="gotoSpecialInvitee('fullview')">View Special Invitee</a>
+          |</span
+        >
+        <span *ngIf="viewLink && meetingDetails?.minutesId" class="m-r5">
+          <a (click)="goToMinuteView()">View Minutes</a> |
+        </span>
+        <span *ngIf="viewLink && meetingDetails?.questionnaireId" class="m-r5">
+          <a (click)="viewQuestionnaire(meetingDetails.questionnaireId)"
+            >View Questionnaire</a
+          >
+        </span>
+      </ng-container>
+    </div>
+  </div>
+
+  <nz-divider></nz-divider>
+</ng-container>
+<form nz-form [formGroup]="validateForm">
+  <ng-container *ngIf="meetingDetails">
+    <!-- <ng-container *ngIf="!editMode"> -->
+    <div *ngFor="let agenda of meetingDetails?.subAgenda; let i = index">
+      <div class="row">
+        <div class="col-md-6">
+          <nz-form-label [nzSm]="24" [nzXs]="24">{{
+            "committee.meeting.agenda" | translate
+          }}</nz-form-label>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button
+            class="ml-6 m-r5"
+            nz-button
+            nzType="primary"
+            (click)="showConsentPopup()"
+            *ngIf="
+              permissions.requestConsent &&
+              isFileView &&
+              fileStatus !== 'APPROVED' &&
+              !(meetingDetails.consents.length > 0)
+            "
+          >
+            Request Consent
+          </button>
+          <span *ngIf="meetingDetails.consents.length > 0 && isFileView">
+            <b> Consent Requested</b>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control [nzSm]="12" [nzXs]="24">
+              <b>{{ agenda?.agendaType?.name }}</b>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-label
+            [nzSm]="24"
+            [nzXs]="24"
+            *ngIf="agenda?.agendaType?.code === 'BILL_DISCUSSION'"
+          >
+            Sub Agenda
+          </nz-form-label>
+        </div>
+      </div>
+      <div class="row" *ngFor="let subagenda of agenda?.subAgendaBusiness">
+        <div class="col-md-8">
+          <nz-form-item>
+            <nz-form-control [nzSm]="24" [nzXs]="24">
+              <a
+                class="viewlink"
+                (click)="createSuggestions(subagenda.businessId, subagenda)"
+              >
+                <b>{{ subagenda?.businessTitle }}</b></a
+              >
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <!-- <div class="col-md-4">
+               <button  class="ml-6 m-r5" nz-button nzType="default"  *ngIf="common.doIHaveAnAccess('CREATE_COMMITTEE_MEETING_NOTICE', 'READ') && !isMeetingStarted()" (click)="gotoBillView(subagenda.businessId)">View Bill </button>
+            </div> -->
+      </div>
+    </div>
+    <!-- </ng-container> -->
+    <!-- <ng-container *ngIf="editMode">
+    <div formArrayName="agendaTypeArray">
+        <div *ngFor="let agenda of formArr.controls; let i=index">
+          <nz-card class="margn-top-7">
+          <div [formGroupName]="i">
+            <div class="row">
+              <div class="col-md-8">
+                <nz-form-label [nzSm]="24" [nzXs]="24"> {{ "committee.meeting.agenda" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-4 d-flex justify-content-end">
+                <i nz-icon nzType="minus-circle" nzTheme="outline" 
+                  *ngIf="i>0"
+                  (click)="removeAgendaType(i)"></i>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip="Select a Agenda">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a Agenda" formControlName="agendatype"
+                    (ngModelChange)="filterAgendaType();getListOfBusiness(agenda.value?.agendatype, [], i)"
+                    [nzDisabled]="formArr?.controls[i]?.value?.selectedBusiness?.length>0">
+                    <ng-container *ngFor="let data of typesofAgenda">
+                      <nz-option *ngIf="!selectedAgendas.includes(data.id)||(data.id===agenda.value?.agendatype)" 
+                      [nzValue]="data.id" [nzLabel]="data.name"></nz-option>
+                    </ng-container>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row" *ngIf="agenda.value.agendatype">
+              <div class="col-md-12">
+                <nz-form-label [nzSm]="24" [nzXs]="24"
+                >{{ "Choose Sub-Agenda" | translate}}</nz-form-label>
+              </div>
+            </div>
+            <div class="row" *ngIf="agenda.value.agendatype">
+              <div class="col-md-10">
+                <nz-form-item>
+                  <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Select a Sub-Agenda">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a Sub-Agenda" formControlName="billtype">
+                      <nz-option *ngFor="let data of formArr.controls[i].value.businessListing" [nzValue]="data" 
+                      [nzLabel]="data.joinCommittes.length>0?data.refernceTitle+'(Joint Meeting)':data.refernceTitle"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col-md-2 d-flex justify-content-end">
+                <nz-form-item>
+                  <nz-form-control [nzXs]="24" [nzSm]="12">
+                    <button nz-button nzType="dashed" class="add-button" (click)="addBill(i)" 
+                    [disabled]="agenda.value.billtype === null">
+                      <i nz-icon nzType="plus"></i>
+                      Add
+                    </button>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <ng-container>
+              <div class="row margn-top-7" *ngFor="let bill of formArr.controls[i].value.selectedBusiness">
+                <div class="col-md-12" *ngIf="bill.operationType !== 'DELETE'">
+                  {{ bill.refernceTitle?bill.refernceTitle:bill.refrenceId }} 
+                  <i nz-icon nzType="delete" class="dynamic-delete-button float-right"
+                    (click)="removeBill(bill.id, i)"></i>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+          </nz-card>
+        </div>
+      </div>
+      <div class="row margn-top-7">
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control [nzXs]="24" [nzSm]="12">
+              <button nz-button nzType="dashed" class="add-button" (click)="addAgendaType()">
+                <i nz-icon nzType="plus"></i>
+                Add New Agenda Type
+              </button>
+            </nz-form-control>
+          </nz-form-item>
+          </div>
+      </div>
+    </ng-container> -->
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-label>{{
+          "committee.meeting.joinmeeting" | translate
+        }}</nz-form-label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <ng-container *ngIf="meetingDetails?.isJointMeeting"
+              ><b>{{ "Yes" }}</b></ng-container
+            >
+            <ng-container *ngIf="!meetingDetails?.isJointMeeting"
+              ><b>{{ "No" }}</b></ng-container
+            >
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-label [nzSm]="24" [nzXs]="24"
+          >Committees
+          <button
+            *ngIf="
+              common.doIHaveAnAccess(
+                'CREATE_COMMITTEE_MEETING_NOTICE',
+                'READ'
+              ) &&
+              !isFileView &&
+              meetingDetails?.meetingNotice == null &&
+              meetingDetails?.status === 'APPROVED' &&
+              meetingDetails?.endTime == null
+            "
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="showCommitteeMeetingNotice(true)"
+          >
+            Create Committee Meeting Notice
+          </button>
+          <button
+            *ngIf="
+              common.doIHaveAnAccess(
+                'CREATE_COMMITTEE_MEETING_NOTICE',
+                'READ'
+              ) &&
+              !isFileView &&
+              meetingDetails?.meetingNotice
+            "
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="
+              viewCommitteeMeetingNoticeorLetter(meetingDetails, 'notice')
+            "
+          >
+            View Committee Meeting Notice
+          </button>
+          <button
+            *ngIf="
+              common.doIHaveAnAccess(
+                'CREATE_COMMITTEE_MEETING_NOTICE',
+                'READ'
+              ) &&
+              !isFileView &&
+              meetingDetails?.meetingLetter == null &&
+              meetingDetails?.status === 'APPROVED' &&
+              meetingDetails?.endTime == null
+            "
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="showCommitteeMeetingLetter(true)"
+          >
+            Create Committee Meeting Letter
+          </button>
+          <button
+            *ngIf="
+              common.doIHaveAnAccess(
+                'CREATE_COMMITTEE_MEETING_NOTICE',
+                'READ'
+              ) &&
+              !isFileView &&
+              meetingDetails?.meetingLetter
+            "
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="
+              viewCommitteeMeetingNoticeorLetter(meetingDetails, 'letter')
+            "
+          >
+            View Committee Meeting Letter
+          </button>
+          <button
+            *ngIf="
+              common.doIHaveAnAccess(
+                'CREATE_COMMITTEE_MEETING_NOTICE',
+                'READ'
+              ) &&
+              !isFileView &&
+              meetingDetails?.followUpMeeting &&
+              buttons.supprtingDocs
+            "
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="showSupportingDoc(true)"
+          >
+            Create Letter For Supporting documents
+          </button>
+          <!-- <button *ngIf="!isFileView" 
+              class="ml-6 m-r5" nz-button nzType="default" 
+              (click)="viewCommitteeMeetingNoticeorLetter(meetingDetails,'letter')">
+               View Letter For Supporting documents
+                </button> -->
+        </nz-form-label>
+      </div>
+    </div>
+    <div class="row" *ngFor="let comm of meetingDetails?.committee">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <b
+              >{{ comm?.name }}
+              {{ comm.parentCommittee ? "-Main Committee" : null }}</b
+            >
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row" *ngIf="meetingDetails?.followUpMeeting">
+      <div class="col-md-12">
+        <nz-form-label>{{ "Evidence Taking" | translate }}</nz-form-label>
+      </div>
+    </div>
+    <div class="row" *ngIf="meetingDetails?.followUpMeeting">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <ng-container *ngIf="meetingDetails?.type === 'EVIDENCE_TAKING'"
+              ><b>{{ "Yes" }}</b></ng-container
+            >
+            <ng-container *ngIf="meetingDetails?.type !== 'EVIDENCE_TAKING'"
+              ><b>{{ "No" }}</b></ng-container
+            >
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-label [nzSm]="24" [nzXs]="24">{{
+          "committee.meeting.meetingtittle" | translate
+        }}</nz-form-label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <b>{{ meetingDetails?.title }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6" *ngIf="editMode">
+        <nz-form-item *ngIf="permissions.fullEdit">
+          <nz-form-control
+            [nzSm]="24"
+            [nzXs]="24"
+            nzErrorTip="Give Meeting Title"
+          >
+            <input
+              nz-input
+              placeholder="Give Meeting Title"
+              formControlName="meetingTittle"
+            />
+          </nz-form-control>
+        </nz-form-item>
+        <b *ngIf="permissions.chairmanEdit">{{ meetingDetails?.title }}</b>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <nz-form-label [nzSm]="24" [nzXs]="24">{{
+          "committee.meeting.meetingagenda" | translate
+        }}</nz-form-label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control
+            [nzSm]="24"
+            [nzXs]="24"
+            nzErrorTip="Please Give Meeting Agenda"
+          >
+            <b>{{ meetingDetails?.agendaDescription }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6" *ngIf="editMode">
+        <nz-form-item *ngIf="permissions.fullEdit">
+          <nz-form-control
+            [nzSm]="24"
+            [nzXs]="24"
+            nzErrorTip="Please Give Meeting Agenda"
+          >
+            <textarea
+              nz-input
+              placeholder="Meeting Agenda"
+              formControlName="meetingAgenda"
+              [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+        <b *ngIf="permissions.chairmanEdit">{{
+          meetingDetails?.agendaDescription
+        }}</b>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <nz-form-label>Session</nz-form-label>
+      </div>
+      <div class="col-md-2">
+        <nz-form-label>Suggested Date</nz-form-label>
+      </div>
+      <div class="col-md-2">
+        <nz-form-label>
+          {{
+            isMeetingStarted() ? "Meeting Start Time" : "Suggested Time"
+          }}</nz-form-label
+        >
+      </div>
+      <div class="col-md-2">
+        <nz-form-label *ngIf="meetingDetails?.endTime">
+          Meeting End Date</nz-form-label
+        >
+      </div>
+      <div class="col-md-2">
+        <nz-form-label *ngIf="meetingDetails?.endTime">
+          Meeting End Time</nz-form-label
+        >
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <b>{{
+              meetingDetails?.occasion?.split("_").join(" ") | titlecase
+            }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-2" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <b>{{ meetingDetails?.date | date: "dd-MM-yyy" }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-2" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Select Time">
+            <b>{{ meetingDetails?.time | date: "hh:mm a" }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-2" *ngIf="!editMode">
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24">
+            <b>{{ meetingDetails?.endTime | date: "dd-MM-yyy" }}</b>
+          </nz-form-control>
+        </nz-form-item>
+        <button
+          class="ml-6 m-r5"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to end this meeting?"
+          (nzOnConfirm)="endMeeting()"
+          *ngIf="
+            meetingDetails.date &&
+            meetingDetails.time &&
+            isMeetingStarted() &&
+            !meetingDetails.endTime &&
+            permissions.endMeeting &&
+            !isFileView
+          "
+        >
+          End Meeting
+        </button>
+      </div>
+      <div class="col-md-2" *ngIf="!editMode">
+        <nz-form-item *ngIf="meetingDetails.endTime">
+          <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Select Time">
+            <b>{{ meetingDetails?.endTime | date: "hh:mm a" }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        class="col-md-4"
+        *ngIf="editMode && (permissions.fullEdit || permissions.chairmanEdit)"
+      >
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Select Session">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Select Session"
+              formControlName="sessionType"
+            >
+              <nz-option
+                nzValue="COMMITTEE_MEETING_AFTER_SESSION"
+                nzLabel="COMMITTEE MEETING AFTER SESSION"
+              ></nz-option>
+              <nz-option
+                nzValue="COMMITTEE_MEETING_BEFORE_SESSION"
+                nzLabel="COMMITTEE MEETING BEFORE SESSION"
+              ></nz-option>
+              <nz-option
+                nzValue="COMMITTEE_MEETING_NON_SESSION"
+                nzLabel="COMMITTEE MEETING NON SESSION"
+              ></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        class="col-md-3"
+        *ngIf="editMode && (permissions.fullEdit || permissions.chairmanEdit)"
+      >
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Select Date">
+            <nz-date-picker
+              nzFormat="dd-MM-yyyy"
+              formControlName="sessionDate"
+              [nzDisabledDate]="disabledDate"
+            >
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div
+        class="col-md-2"
+        *ngIf="editMode && (permissions.fullEdit || permissions.chairmanEdit)"
+      >
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Select Time">
+            <nz-time-picker
+              formControlName="sessionTime"
+              [nzUse12Hours]="true"
+              nzFormat="h:mm a"
+            ></nz-time-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6" *ngIf="meetingDetails?.venue?.name || editMode">
+        <nz-form-label [nzSm]="24" [nzXs]="24">{{
+          "committee.meeting.venue" | translate
+        }}</nz-form-label>
+      </div>
+    </div>
+
+    <div class="col-md-6" *ngIf="!editMode">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24">
+          <b>{{ meetingDetails?.venue?.name }}</b>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div
+      class="col-md-6"
+      *ngIf="editMode && (permissions.fullEdit || permissions.chairmanEdit)"
+    >
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Select a Venue">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Select a Venue"
+            formControlName="venueType"
+          >
+            <nz-option
+              *ngFor="let data of typesofVenues"
+              [nzValue]="data.id"
+              [nzLabel]="data.name"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="row" *ngIf="meetingDetails?.reportdate || editMode">
+      <div class="col-md-12">
+        <nz-form-label [nzSm]="24" [nzXs]="24"
+          >Report Presentation</nz-form-label
+        >
+      </div>
+
+      <div class="col-md-12" *ngIf="!editMode || permissions.chairmanEdit">
+        <nz-form-item>
+          <nz-form-control [nzSm]="12" [nzXs]="24">
+            <b>{{ meetingDetails?.reportdate | date: "dd/MM/yyy" }}</b>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-12" *ngIf="editMode && permissions.fullEdit">
+        <nz-form-item>
+          <nz-form-control
+            [nzSm]="12"
+            [nzXs]="24"
+            nzErrorTip="Select Report Date"
+          >
+            <nz-date-picker
+              nzFormat="dd-MM-yyyy"
+              formControlName="reportDate"
+              [nzDisabledDate]="disabledDate"
+            >
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </ng-container>
+</form>
+
+<!-- Committe meeting / Letter creation Model -->
+<nz-modal
+  [(nzVisible)]="CommitteeMeetingNoticeModel"
+  [nzFooter]="null"
+  [nzClosable]="false"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b *ngIf="isMeetingNotice">Create Meeting Notice</b>
+        <b *ngIf="isMeetingLetter">Create Meeting Letter</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">
+            {{ "committee.committe-files.title" | translate }}
+          </div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="{{
+                'committee.committe-files.title.err' | translate
+              }}"
+              [(ngModel)]="meetingNoticeTitle"
+            />
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="showCommitteeMeetingNotice(false)"
+            >
+              {{ "committee.committe-files.cancel" | translate }}
+            </button>
+            <button
+              *ngIf="isMeetingNotice"
+              [disabled]="!meetingNoticeTitle"
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to create meeting notice?"
+              (nzOnConfirm)="createCommitteeMeetingNoticeorLetter('notice')"
+              class="btn btn-primary primary-button"
+            >
+              Create Meeting Notice
+            </button>
+            <button
+              *ngIf="isMeetingLetter"
+              [disabled]="!meetingNoticeTitle"
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to create meeting letter?"
+              (nzOnConfirm)="createCommitteeMeetingNoticeorLetter('letter')"
+              class="btn btn-primary primary-button"
+            >
+              Create Meeting Letter
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- Committe meeting / Letter creation Model -->
+
+<!--Create Letter for Asking Supporting Documents -->
+<nz-modal
+  [(nzVisible)]="SupportingDocModel"
+  [nzFooter]="null"
+  [nzClosable]="false"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>Create Letter for Asking Supporting Documents</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">
+            {{ "committee.committe-files.title" | translate }}
+          </div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="{{
+                'committee.committe-files.title.err' | translate
+              }}"
+              [(ngModel)]="supportDocTitle"
+            />
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="showSupportingDoc(false)"
+            >
+              {{ "committee.committe-files.cancel" | translate }}
+            </button>
+            <button
+              [disabled]="!supportDocTitle"
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to Create Letter for Asking Supporting Documents?"
+              (nzOnConfirm)="createLetterForSupportDoc()"
+              class="btn btn-primary primary-button"
+            >
+              Create Letter for Asking Supporting Documents
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!--Create Letter for Asking Supporting Documents -->
+<!-- meeting details popup -->
+<nz-modal
+  [nzFooter]="null"
+  [(nzVisible)]="showMeetingPopup"
+  [nzClosable]="false"
+  nzTitle="Create Follow Up Meeting"
+  nzWidth="650"
+>
+  <div class="pading-all width-100">
+    <div class="row">
+      <div class="col-md-12">
+        <committee-meeting-details
+          *ngIf="showMeetingPopup"
+          [referenceDetails]="meetingDetails"
+          [followUpMeeting]="true"
+          (afterCreate)="closeMeetingPopup()"
+          (followUpCreate)="resubmitFile($event, 'COMMITTEE_MEETING')"
+        >
+        </committee-meeting-details>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end of meeting details popup -->
+
+<!--Request consent -->
+<nz-modal
+  [(nzVisible)]="viewConsemtMembers"
+  nzTitle="Consent Request With"
+  [nzClosable]="false"
+  [nzFooter]="null"
+  nzWidth="650"
+>
+  <!-- <div class="row margnrtp-10 d-flex align-items-center">
+      <div class="col-md-6 "><b>Member Name</b></div>
+      <div class="col-md-6"><b>Designation</b></div>
+  </div> -->
+  <div class="width-100 white_pd">
+    <div
+      class="row d-flex align-items-center"
+      *ngFor="let data of specialMemberList"
+    >
+      <div class="col-md-12" style="text-align: center" *ngIf="data.type">
+        <b
+          ><u>{{ data?.type }}</u></b
+        >
+      </div>
+      <div class="col-md-12">
+        <nz-table
+          #filterTable
+          [nzShowPagination]="false"
+          [nzData]="data.members"
+          class="table-all"
+        >
+          <thead>
+            <tr>
+              <th>MemberName</th>
+              <th>Designation</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of filterTable.data">
+              <td>
+                {{ item?.memberName }}
+              </td>
+              <td>
+                {{ item?.roleName }}
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+      <div class="col-md-12">
+        <nz-divider></nz-divider>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        class="secondary-button button-font dark-border dark-font"
+        (click)="handlePreviewCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        nz-button
+        nzType="primary"
+        (click)="requestConsent()"
+        class="btn btn-primary primary-button"
+      >
+        Confirm
+      </button>
+    </div>
+  </div>
+</nz-modal>
+<!-- <div class="row mrt-50 margnrtp-10">
+      <div class="col-md-12 d-flex justify-content-end">
+          <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font" (click)="handlePreviewCancel()">
+          Cancel
+        </button>
+          <button type="button" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Are you sure you want to create file?" (nzOnConfirm)="requestConsent()" class="btn btn-primary primary-button">
+         Confirm
+        </button>
+      </div>
+  </div> -->
+<!--request consent-->
+<!--Give consent-->
+<nz-modal
+  [(nzVisible)]="isConsentRequest"
+  nzTitle="Give Consent"
+  [nzClosable]="false"
+  [nzFooter]="null"
+>
+  <div class="width-100 white_pd">
+    <form [formGroup]="giveConsentForm">
+      <div class="row margnrtp-5">
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="9">Suggested Date</nz-form-label>
+            <nz-form-control [nzSpan]="15" nzErrorTip="Select Date">
+              <nz-date-picker
+                nzFormat="dd-MM-yyyy"
+                formControlName="consentDate"
+                [nzDisabledDate]="disabledDate"
+              >
+              </nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-label [nzSpan]="9">Suggested Time</nz-form-label>
+            <nz-form-control [nzSpan]="15" nzErrorTip="Select Date">
+              <nz-time-picker
+                formControlName="consentTime"
+                [nzUse12Hours]="true"
+                nzFormat="h:mm a"
+              ></nz-time-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button
+            type="button"
+            nz-button
+            nzType="primary"
+            class="secondary-button button-font dark-border dark-font"
+            (click)="cancelConsent()"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            nz-button
+            nzType="primary"
+            (click)="giveConsent()"
+            class="btn btn-primary primary-button"
+            [disabled]="!giveConsentForm.valid"
+          >
+            Give Consent
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!--give consent-->
+  <!-- mark attendence modal-->
+  <nz-modal
+    [(nzVisible)]="markattendence"
+    nzTitle="Attendance"
+    (nzOnCancel)="showAttendenceModal()"
+    [nzFooter]="null"
+    nzWidth="800"
+  >
+    <div class="width-100">
+      <!-- <div class="row margnrtp-5" *ngIf="meetingDetails?.attendenceMarked && assignee==user.userId">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button class="ml-6 m-r5" nz-button nzType="default" (click)="editAttendence()" *ngIf="!attEdit">
+                Edit
+            </button>
+            <button class="ml-6 m-r5" nz-button nzType="default" (click)="cancelEditAttendence()" *ngIf="attEdit">
+                Cancel
+            </button>
+            <button class="ml-6 m-r5" nz-button nzType="primary" (click)="handleOk(true)" *ngIf="attEdit">
+                Update
+            </button>
+        </div>
+    </div> -->
+      <nz-tabset>
+        <nz-tab nzTitle="Commitee Members">
+          <div class="row margnrtp-5">
+            <div class="col-md-12">
+              <ng-container *ngFor="let item of meetingDetails?.committee">
+                <h4>{{ item.name }}</h4>
+                <nz-table
+                  #markAttendence
+                  [nzData]="listOfDatas"
+                  [nzScroll]="{ y: '350px' }"
+                  [nzShowPagination]="false"
+                  [nzPageSize]="listOfDatas.length"
+                >
+                  <thead>
+                    <tr>
+                      <th
+                        nzShowCheckbox
+                        [(nzChecked)]="checked"
+                        (nzCheckedChange)="checkAllRows()"
+                        *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                      ></th>
+
+                      <th *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                        {{ "Attendance" | translate }}
+                      </th>
+                      <th></th>
+                      <th>{{ "Name of Person" | translate }}</th>
+                      <th>{{ "committee.list.distance" | translate }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container
+                      *ngFor="let data of markAttendence.data; let i = index"
+                    >
+                      <tr
+                        style="cursor: pointer"
+                        *ngIf="item.id === data.committeeId"
+                      >
+                        <td
+                          *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                        >
+                          <label
+                            nz-checkbox
+                            [(ngModel)]="data.present"
+                            class="checkbox-margin"
+                          ></label>
+                        </td>
+                        <td
+                          *ngIf="meetingDetails?.attendenceMarked && !attEdit"
+                        >
+                          <i
+                            nz-icon
+                            nzType="check-circle"
+                            nzTheme="outline"
+                            *ngIf="data.present"
+                          ></i>
+                          <i
+                            nz-icon
+                            nzType="close-circle"
+                            nzTheme="outline"
+                            *ngIf="!data.present"
+                          ></i>
+                        </td>
+                        <td>
+                          <b>{{ data?.userName }}</b> -
+                          {{ data?.userRole?.split("_").join(" ") }}
+                          <span *ngIf="data?.commiteeName"
+                            >({{ data?.commiteeName }})</span
+                          >
+                        </td>
+                        <td
+                          *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                        >
+                          <input
+                            nz-input
+                            placeholder="Give KM"
+                            [(ngModel)]="data.distance"
+                            type="number"
+                          />
+                        </td>
+                        <td
+                          *ngIf="meetingDetails?.attendenceMarked && !attEdit"
+                        >
+                          {{ data.distance ? data.distance : 0 }}Km
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </tbody>
+                </nz-table>
+              </ng-container>
+            </div>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Special Invitee">
+          <nz-table
+            #markAttendenceSI
+            [nzData]="listOfDatas"
+            [nzScroll]="{ y: '350px' }"
+            [nzShowPagination]="false"
+            [nzPageSize]="listOfDatas.length"
+          >
+            <thead>
+              <tr>
+                <th
+                  nzShowCheckbox
+                  [(nzChecked)]="checked"
+                  (nzCheckedChange)="checkAllRows()"
+                  *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                ></th>
+
+                <th *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                  {{ "Attendance" | translate }}
+                </th>
+                <th></th>
+                <th>{{ "Name of Person" | translate }}</th>
+                <th>{{ "committee.list.distance" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container
+                *ngFor="let data of markAttendenceSI.data; let i = index"
+              >
+                <tr
+                  style="cursor: pointer"
+                  *ngIf="data.userRole === 'SPECIAL_INVITIEE'"
+                >
+                  <td *ngIf="!meetingDetails?.attendenceMarked || attEdit">
+                    <label
+                      nz-checkbox
+                      [(ngModel)]="data.present"
+                      class="checkbox-margin"
+                    ></label>
+                  </td>
+                  <td *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                    <i
+                      nz-icon
+                      nzType="check-circle"
+                      nzTheme="outline"
+                      *ngIf="data.present"
+                    ></i>
+                    <i
+                      nz-icon
+                      nzType="close-circle"
+                      nzTheme="outline"
+                      *ngIf="!data.present"
+                    ></i>
+                  </td>
+                  <td>
+                    <b>{{ data?.userName }}</b> -
+                    {{ data?.userRole?.split("_").join(" ") }}
+                    <span *ngIf="data?.commiteeName"
+                      >({{ data?.commiteeName }})</span
+                    >
+                  </td>
+                  <td *ngIf="!meetingDetails?.attendenceMarked || attEdit">
+                    <input
+                      nz-input
+                      placeholder="Give KM"
+                      [(ngModel)]="data.distance"
+                      type="number"
+                    />
+                  </td>
+                  <td *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                    {{ data.distance ? data.distance : 0 }}Km
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </nz-table>
+        </nz-tab>
+        <nz-tab nzTitle="Legistature secretariat staff">
+          <div
+            class="row justify-content-end"
+            *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+          >
+            <div class="col-md-8">
+              <nz-cascader
+                [nzPlaceHolder]="'Select Designation'"
+                [(ngModel)]="cascaderValues"
+                [nzLoadData]="loadData"
+                (ngModelChange)="onChanges($event)"
+                class="user-cascade"
+              >
+              </nz-cascader>
+              <!-- <ng-container *ngFor="let item of selectedLSUsers">
+                <nz-tag
+                  [nzMode]="'closeable'"
+                  (nzOnClose)="handleSelectedUserClose(item.userId)"
+                  >{{ item?.label }}</nz-tag
+                >
+              </ng-container> -->
+            </div>
+            <div class="col-md-4">
+              <nz-select
+                nzShowSearch="true"
+                [(ngModel)]="selectedUser"
+                class="ml-6 m-r5 file-flow-select"
+                [nzPlaceHolder]="'Select User'"
+                (ngModelChange)="selectUser($event)"
+              >
+                <ng-container *ngFor="let item of userList">
+                  <nz-option
+                    nzValue="{{ item.userId }}"
+                    nzLabel="{{ item.userName }}"
+                  ></nz-option>
+                </ng-container>
+              </nz-select>
+            </div>
+          </div>
+          <div class="row justify-content-end">
+            <div class="col-md-12">
+              <nz-table
+                #markAttendenceLSStaff
+                [nzData]="selectedLSUsers"
+                [nzScroll]="{ y: '150px' }"
+                [nzShowPagination]="false"
+                [nzPageSize]="selectedLSUsers.length"
+              >
+                <thead>
+                  <tr>
+                    <th *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                      {{ "Attendance" | translate }}
+                    </th>
+                    <th>{{ "Name of Person" | translate }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="
+                      let data of markAttendenceLSStaff.data;
+                      let i = index
+                    "
+                  >
+                    <tr style="cursor: pointer">
+                      <td *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                        <i
+                          nz-icon
+                          nzType="check-circle"
+                          nzTheme="outline"
+                          *ngIf="data.present"
+                        ></i>
+                        <i
+                          nz-icon
+                          nzType="close-circle"
+                          nzTheme="outline"
+                          *ngIf="!data.present"
+                        ></i>
+                      </td>
+                      <td>
+                        <b>{{ data?.userName }}</b>
+                      </td>
+                      <td>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="handleSelectedUserClose(data.userId)"
+                          nzShape="circle"
+                          *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                        >
+                          <i
+                            nz-icon
+                            nzType="close-circle"
+                            nzTheme="outline"
+                          ></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </nz-table>
+            </div>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Deprtment Staff ">
+          <div
+            class="row justify-content-end"
+            *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+          >
+            <div class="col-md-3">
+              <input nz-input placeholder="Name" [(ngModel)]="deptUsername" />
+            </div>
+            <div class="col-md-3">
+              <input
+                nz-input
+                placeholder="Designation"
+                [(ngModel)]="deptDesignation"
+              />
+            </div>
+            <div class="col-md-3">
+              <input
+                nz-input
+                placeholder="Department"
+                [(ngModel)]="deptDepartment"
+              />
+            </div>
+            <div class="col-md-3">
+              <button
+                nz-button
+                nzType="primary"
+                (click)="handleSelectedUserClose(1)"
+                nzShape="circle"
+                (click)="selectDeptUser()"
+              >
+                <i nz-icon nzType="plus-circle" nzTheme="outline"></i>
+              </button>
+            </div>
+          </div>
+          <div class="row justify-content-end">
+            <div class="col-md-12">
+              <nz-table
+                #markAttendenceDStaff
+                [nzData]="selectedDUsers"
+                [nzScroll]="{ y: '150px' }"
+                [nzShowPagination]="false"
+                [nzPageSize]="selectedDUsers.length"
+              >
+                <thead>
+                  <tr>
+                    <th *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                      {{ "Attendance" | translate }}
+                    </th>
+                    <th>{{ "Name of Person" | translate }}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container
+                    *ngFor="
+                      let data of markAttendenceDStaff.data;
+                      let i = index
+                    "
+                  >
+                    <tr style="cursor: pointer">
+                      <td *ngIf="meetingDetails?.attendenceMarked && !attEdit">
+                        <i
+                          nz-icon
+                          nzType="check-circle"
+                          nzTheme="outline"
+                          *ngIf="data.present"
+                        ></i>
+                        <i
+                          nz-icon
+                          nzType="close-circle"
+                          nzTheme="outline"
+                          *ngIf="!data.present"
+                        ></i>
+                      </td>
+                      <td>
+                        <b>{{ data?.userName }}</b>
+                      </td>
+                      <td>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="removeDeptUser(data)"
+                          nzShape="circle"
+                          *ngIf="!meetingDetails?.attendenceMarked || attEdit"
+                        >
+                          <i
+                            nz-icon
+                            nzType="close-circle"
+                            nzTheme="outline"
+                          ></i>
+                        </button>
+                      </td>
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </nz-table>
+            </div>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+
+      <div class="row margnrtp-5" *ngIf="!meetingDetails?.attendenceMarked">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button
+            class="ml-6 m-r5"
+            nz-button
+            nzType="default"
+            (click)="showAttendenceModal()"
+          >
+            Cancel
+          </button>
+          <button
+            class="ml-6 m-r5"
+            nz-button
+            nzType="primary"
+            (click)="handleOk(false)"
+          >
+            Mark Attendance
+          </button>
+        </div>
+      </div>
+    </div>
+  </nz-modal>
+  <!--end mark attendence modal--></nz-modal
+>

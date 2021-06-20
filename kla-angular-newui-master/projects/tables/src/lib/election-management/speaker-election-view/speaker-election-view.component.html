@@ -1,0 +1,169 @@
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-end">
+        <button nzType="primary"  nz-button class="ml-6" (click)="editElection()"
+        *ngIf="!editMode && editElectionPermission && electionDetails?.status !== 'APPROVED'">
+            {{ "noticeprocessing.noticeprocess.edit" | translate }}
+        </button>
+        <button nzType="default"  nz-button class="ml-6" (click)="cancelEdit()"
+        *ngIf="editMode">
+            {{ "cpl.correspondencelist.cancel" | translate }}
+        </button>
+        <button nzType="primary"  nz-button class="ml-6" (click)="updateElection()"
+        *ngIf="editMode">
+            {{ "cpl.docupload.update" | translate }}
+        </button>
+    </div>
+</div>
+<form nz-form [formGroup]="updateSpeakerForm">
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{"business-dashboard.election-management.speaker-election-view-cos" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a href="javascript:;" class="viewlink" (click)="showCOS()">
+                            {{ "cpl.correspondencelist.view" | translate }}</a>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="electionDetails?.electionType === 'SPEAKER'">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "business-dashboard.election-management.protem-speaker.cabinet-notification" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewDocs(osDocuments.cabinateNote.id)"
+                            *ngIf="osDocuments.cabinateNote">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                        </a>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="electionDetails?.electionType === 'DEPUTY_SPEAKER'">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.election-management.speaker-election-view.speaker-order" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewDocs(osDocuments.spkOrder.id)"
+                            *ngIf="osDocuments.spkOrder">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                        </a>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "business-dashboard.election-management.speaker-election-list.nomination-end-date" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control *ngIf="!editMode">
+                        {{electionDetails?.nominationEndDate | date : 'dd/MM/yyyy'}}
+                    </nz-form-control>
+                    <nz-form-control  nzErrorTip="nomination end date required" *ngIf="editMode">
+                        <nz-date-picker
+                          [nzFormat]="'dd-MM-yyyy'"
+                          formControlName="nominationEndDate"
+                          [nzDisabledDate]="disabledDate"
+                          (ngModelChange)="electionDateValidation()"
+                        ></nz-date-picker>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "business-dashboard.election-management.speaker-election-list.nomination-end-time" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control *ngIf="!editMode">
+                        {{electionDetails?.nominationEndTime}}
+                    </nz-form-control>
+                    <nz-form-control  nzErrorTip="nomination end time required" *ngIf="editMode">
+                        <nz-time-picker formControlName="nominationEndTime" 
+                        ></nz-time-picker>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "business-dashboard.election-management.speaker-election-list.election-date" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control *ngIf="!editMode">
+                        {{electionDetails?.electionDate | date : 'dd/MM/yyyy'}}
+                    </nz-form-control>
+                    <nz-form-control  nzErrorTip="election date required" *ngIf="editMode">
+                        <nz-date-picker
+                          [nzFormat]="'dd-MM-yyyy'"
+                          formControlName="electionDate"
+                          [nzDisabledDate]="disabledElectionDate"
+                          (ngModelChange)="nominationDateValidation()"
+                          [nzDisabled]="updateSpeakerForm.get('nominationEndDate').value === null ||
+                          updateSpeakerForm.get('nominationEndTime').value === null"
+                        ></nz-date-picker>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "business-dashboard.election-management.speaker-election-list.election-time" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control *ngIf="!editMode">
+                        {{electionDetails?.electionTime}}
+                    </nz-form-control>
+                    <nz-form-control  nzErrorTip="election time required" *ngIf="editMode">
+                        <nz-time-picker formControlName="electionTime" 
+                        [nzDisabled]="updateSpeakerForm.get('nominationEndDate').value === null ||
+                          updateSpeakerForm.get('nominationEndTime').value === null"
+                        ></nz-time-picker>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+</form>

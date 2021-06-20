@@ -1,0 +1,130 @@
+<div class="row">
+  <div class="col-md-12">
+    <div class="live_start">
+      <div id="fullscreen" [ngClass]="{
+          enlarge: fullScreenMode == true
+        }" class="pdf-container" *ngIf="isStreaming">
+        <div class="abs-adj">
+          <button (click)="addClass()" class="mla-button padng-live margnrtp-15">
+            <div *ngIf="fullScreenMode">
+              {{ "livescreen.normalscreen" | translate }}
+              <!-- <img src="../../assets/img/normalscreen.svg" alt="" width="15" /> -->
+            </div>
+            <div *ngIf="!fullScreenMode">
+              {{ "livescreen.fullscreen" | translate }}
+              <!-- <img src="../../assets/img/fullscreen.svg" alt="" width="15" /> -->
+            </div>
+          </button>
+          <button *ngIf="pdfSrc&&hideShowNextPrevButton" [disabled]="pageNumber === 1" (click)="previousPage()"
+            class="mla-button margnrtp-15 padng-live">
+            {{ "livescreen.prevpage" | translate }}
+            <!-- <img src="../../assets/img/prev.svg" alt="" width="10" /> -->
+          </button>
+          <button *ngIf="pdfSrc&&hideShowNextPrevButton" (click)="nextPage()" [disabled]="nextDisable ? true : false"
+            class="mla-button margnrtp-15 padng-live greenbtn">
+            {{ "livescreen.nextpage" | translate }}
+            <!-- <img src="../../assets/img/next.svg" alt="" width="10" /> -->
+          </button>
+
+          <button *ngIf="pdfSrc && documentOwner" mwlConfirmationPopover
+            popoverMessage="Would you like to stop current business?" popoverTitle="Stop Confirmation" placement="left"
+            (confirm)="stopStreaming()" class="mla-button margn-lft-30 padng-live redbtn">
+            {{ "livescreen.stop" | translate }}
+            <!-- <img src="../../assets/img/stop.svg" alt="" width="20" /> -->
+          </button>
+          <p *ngIf="pdfSrc" class="page-num">
+            {{ pageNumber > totalPages ? totalPages : pageNumber }} /
+            {{ totalPages }}
+          </p>
+        </div>
+
+        <pinch-zoom [disableZoomControl]="'disable'" *ngIf="pdfSrc" class="zoom-reader">
+          <div>
+            <pdf-viewer id="page" *ngIf="pdfSrc" [src]="pdfSrc" [render-text]="false" style="display: block;"
+              (after-load-complete)="afterLoadComplete($event)" [show-all]="false" [page]="pageNumber"
+              (pageChange)="pageChange($event)"></pdf-viewer>
+          </div>
+        </pinch-zoom>
+      </div>
+
+      <div class="live_contents" *ngIf="!isStreaming">
+        <span><img src="../../assets/img/live.svg" alt="" width="50" /></span>
+        <!-- <span *ngIf="isSpeakerFlag">ലൈവ് ഷെയറിങ്ങ് ആരംഭിക്കാം...</span> -->
+        <span>{{
+          "currentbusiness.livescreen.livesharingwillstartsoon" | translate
+          }}</span>
+        <!-- <button *ngIf="isSpeakerFlag" class="mla-button">
+          <span><img src="../../assets/img/play.svg" alt=""/></span>ബിസിനസ്സ്
+          തുടങ്ങുക
+        </button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="!currentUser.authorities.includes('swearingIn')">
+  <div class="col-md-4">
+    <!-- <div class="three_blocks">
+      <div class="col-md-4 pdzero">
+        <div style="padding: 5px;">
+          <nz-progress [nzStrokeColor]="colourCode" [nzPercent]="
+              attendenceDetailsList.attendancePercentage | number: '1.1-1'
+            " [nzStrokeWidth]="8" [nzWidth]="80" nzType="circle"></nz-progress>
+        </div>
+        
+      </div>
+      <div class="col-md-8 pdzero">
+        <h2>
+          {{ "currentbusiness.livescreen.sabapresence" | translate }}
+        </h2>
+        <div class="blocks">
+          <span>{{ "currentbusiness.livescreen.presence" | translate }}</span>
+          <span class="digit_bg">
+            {{ attendenceDetailsList.totalPresent }}</span>
+        </div>
+        <div style="display: none;" class="blocks">
+          <span>{{
+            "currentbusiness.livescreen.nonattendance" | translate
+            }}</span>
+          <span class="digit_bg">
+            {{ attendenceDetailsList.totalAbsent }}
+          </span>
+        </div>
+      </div>
+    </div> -->
+    <div class="three_blocks pdzero">
+      <img src="../../../../assets/img/sabha1.JPG" alt="" width="100%" />
+    </div>
+  </div>
+  <div class="col-md-4 pdzero">
+    <div class="three_blocks" (click)="openCoverFolderTemplate()">
+      <div class="col-md-4 pdzero d-flex justify-content-center">
+        <img src="../../assets/img/Envelop.svg" alt="" width="45%" />
+      </div>
+      <div class="col-md-8 pdzero">
+        <h2>{{ "currentbusiness.livescreen.todayscover" | translate }}</h2>
+        <span>
+          {{
+          "currentbusiness.livescreen.seetodayscoverandrelateddocuments"
+          | translate
+          }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="three_blocks" (click)="navigateToLob()">
+      <div class="col-md-4 pdzero d-flex justify-content-center">
+        <img src="../../assets/img/Document.svg" alt="" width="40%" />
+      </div>
+      <div class="col-md-8 pdzero">
+        <h2>
+          {{ "currentbusiness.livescreen.listOfbusiness" | translate }}
+        </h2>
+        <div class="blocks">
+          <span>{{ "currentbusiness.livescreen.seetodaysschedule" | translate }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

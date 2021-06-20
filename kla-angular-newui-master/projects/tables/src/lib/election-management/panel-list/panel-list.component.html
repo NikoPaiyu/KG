@@ -1,0 +1,180 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-12">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+             {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.tables.poc.panelofchairman" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading"
+>Panel List</h2>
+=======
+        <h6>{{"business-dashboard.tables.poc.panellist" | translate}}</h6>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="createPanel()" [disabled]="panelList[0]?.status ==='SUBMITTED'">
+          {{"business-dashboard.tables.poc.createpanellist" | translate}}
+          </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-between">
+            <div class="col-md-6">
+                {{"business-dashboard.tables.poc.assembly" | translate}}
+            </div>
+            <div class="col-md-6">
+            <nz-select nzAllowClear nzPlaceHolder="{{'business-dashboard.tables.poc.chooseassembly' | translate}}" [(ngModel)]="assemblyId"
+            (ngModelChange)="getPanelList()">
+          <nz-option *ngFor="let type of assemblyList" [nzValue]="type" [nzLabel]="type.assemblyId">
+          </nz-option>
+        </nz-select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+<div class="row marginbtm-15">
+    <nz-table #panelListTable [nzShowPagination]="false" nzShowSizeChanger [nzData]="panelList" class="table-all">
+        <thead>
+            <tr>
+            <th>
+              {{"business-dashboard.tables.poc.slno" | translate}}
+            </th>
+            <th>
+              {{"business-dashboard.tables.poc.session" | translate}}
+            </th>
+            <th>
+              {{"business-dashboard.tables.poc.fileno" | translate}}
+            </th>
+            <th>
+              {{"business-dashboard.tables.poc.view" | translate}} 
+            </th>
+            <th>
+              {{"business-dashboard.tables.poc.status" | translate}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+             
+          <tr *ngFor="let list of panelListTable.data; let i = index">
+              <td>{{i+1}}</td>
+              <td>{{list.sessionValue}}</td>
+              <td> <a class="viewlink" (click)="viewFile(list.fileId)">{{list.fileNumber}}</a></td>
+              <td><tr>
+                <i (click)="showView(list.id,list.sessionValue,list.sessionId)"class="preview-icon pointer" nz-icon
+                  nzType="file" nzTheme="outline"></i>
+              </tr></td>
+              <td>
+                <nz-tag [nzColor]="'green'">{{ list.status?.split("_").join(" ") }}</nz-tag>
+            </td>         
+        </tbody>
+    </nz-table>
+</div>
+</div>
+</div>
+<nz-modal [nzFooter]="null"
+ [(nzVisible)]="isVisibleView" 
+ nzTitle=" {{ 'business-dashboard.tables.poc.poclist' | translate }}"
+ [nzClosable]="false" nzWidth="800">
+<div class="row padding_25">
+    <div class="col-md-12">
+ <tables-panel-view [assemblyId]="assembly" [assembly]="assemblyValue" [session]="sessionValue" [sessionId]="session"
+    [memberList]="tempPanelList.membersList" (closePopup)="handleCancel()"> 
+</tables-panel-view>
+ </div>
+ </div>
+</nz-modal>
+<nz-modal
+ [(nzVisible)]="isRequestModalVisible"
+ nzTitle=" {{ 'business-dashboard.tables.poc.poc' | translate }}"
+ [nzFooter]="null"
+ (nzOnCancel)="handleCancel()"
+>
+ <div class="padding_25">
+     <form nz-form [formGroup]="createPanelForm" class="form">
+         <div class="row">
+             <div class="col-md-12">
+                 <nz-form-item>
+                     <nz-form-label>
+                      {{"business-dashboard.tables.poc.assembly" | translate}}
+                     </nz-form-label>
+                     {{ assemblyId?.assemblyId}}
+                 </nz-form-item>
+             </div>
+             <div class="col-md-12">
+                 <nz-form-item>
+                    <nz-form-label>
+                      {{"business-dashboard.tables.poc.session" | translate}} 
+                    </nz-form-label> 
+                    <nz-form-control>
+                        <nz-select nzShowSearch nzAllowClear formControlName="sessionId" [(ngModel)]="sessionId">
+                            <nz-option
+                              *ngFor="let type of sessionList"
+                              [nzLabel]="type.sessionId"
+                              [nzValue]="type.id"
+                            ></nz-option>
+                          </nz-select>
+                    </nz-form-control>
+                 </nz-form-item>
+             </div>
+         </div>
+     </form>
+     <div *ngIf="panelList.length == '0'">
+         <div class="row margnrtp-15">
+            <div class="col-md-4"> {{"business-dashboard.tables.poc.filesubject" | translate}}</div>
+            <div class="col-md-8">
+              <input nz-input placeholder=" {{'business-dashboard.tables.poc.filesubject' | translate}} " [(ngModel)]="file.subject" />
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-4">{{"business-dashboard.tables.poc.priority" | translate}}</div>
+            <div class="col-md-8">
+              <nz-radio-group [(ngModel)]="file.priority">
+                <label nz-radio nzValue="URGENT">Urgent</label>
+                <label nz-radio nzValue="NORMAL">Normal</label>
+                <label nz-radio nzValue="ACTION_TODAY"> Action Today</label>
+                <label nz-radio nzValue="ASSEMBLY_URGENT">Assembly Urgent</label>
+              </nz-radio-group>
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-4">{{"business-dashboard.tables.poc.desc" | translate}}</div>
+            <div class="col-md-8">
+              <textarea nz-input rows="2" placeholder=" {{'business-dashboard.tables.poc.desc' | translate}} " [(ngModel)]="file.description"></textarea>
+            </div>
+          </div>
+        </div>
+         <div class="row mrt-50 margnrtp-15">
+             <div class="col-md-12 d-flex justify-content-end">
+                <button
+                type="button"
+                nz-button
+                nzType="primary"
+                nz-popconfirm
+                nzPopconfirmTitle="Are you sure you want to {{createButton}}?"
+                (nzOnConfirm)="createPanelList()"
+                [disabled]="
+                file.subject === '' ||
+                file.priority === null
+              "
+              >
+                {{createButton}}
+              </button>
+             </div>
+         </div>
+ </div>
+</nz-modal>

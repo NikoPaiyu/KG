@@ -1,0 +1,67 @@
+<!-- <p>create-assurance works!</p> -->
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.calendarofsittings.Agenda" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex">
+  <div class="col-md-6">
+    <h4>2224/PMBR1/2021/ni.se</h4>
+  </div>
+  <div class="col-md-6 d-flex justify-content-end">
+    <button class="mr-6" nz-button nzType="default" (click)="save()">
+      {{ "bill.prioritylist.create.save" | translate }}
+    </button>
+    <button class="mr-6" type="button" nz-button nzType="primary" class="mrgL6">
+      {{ "bill.prioritylist.create.submit" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<nz-tabset [nzTabBarExtraContent]="extraTemplate">
+  <nz-tab nzTitle="{{ 'business-dashboard.pmbrCommittee.assurance' | translate }}">
+    <form nz-form [formGroup]="createAssuranceForm" class="padding-10">
+      <div class='row'>
+        <div class="col-md-4">
+          <nz-form-item>
+            <nz-form-control nzErrorTip="{{
+                    'business-dashboard.pmbr.resolution-create-notice.inputcannotempty'
+                      | translate
+                  }}">
+              <input placeholder="Subject line goes here" nz-input maxlength="254" formControlName="subject" />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 mrg-top-10">
+          <nz-form-item>
+            <nz-form-control nzErrorTip="{{
+                    'business-dashboard.pmbr.resolution-create-notice.inputcannotempty'
+                      | translate
+                  }}">
+              <quill-editor #editor style="float: left" html="html" formControlName="description" [sanitize]="false">
+              </quill-editor>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+  </nz-tab>
+</nz-tabset>
+
+<ng-template #extraTemplate>
+  <button class="mr-6" nz-button nzType="default">
+    {{ "committee.committe-mgmnt.version" | translate }}
+  </button>
+  <button class="mr-6" type="button" nz-button nzType="primary">
+    {{ "noticeprocessing.noticeprocess.edit" | translate }}
+  </button>
+</ng-template>

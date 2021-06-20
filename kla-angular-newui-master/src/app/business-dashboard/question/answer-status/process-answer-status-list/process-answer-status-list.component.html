@@ -1,0 +1,438 @@
+<div class="row">
+  <div class="col-md-8 col-sm-8 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="['/business-dashboard/question/question-dept-dashboard']"
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.question" | translate }}</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12 marginbtm-10">
+    <h2 class="admin-page-heading">
+      {{"business-dashboard.question.answerstatuslist" | translate}}
+    </h2>
+  </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-between">
+    <div class="row">
+      <div class="col-md-4 col-sm-12" *ngIf="rbsPermission">
+        <!-- <button nz-button nzType="default" class="mr-15">...</button> -->
+        <button
+          *ngIf="rbsPermission.notes || rbsPermission.version"
+          nz-button
+          nzType="default"
+          class="mr-6"
+          (click)="handleNotes(true)"
+        >
+          {{ "business-dashboard.question.notes" | translate }}({{
+            notesList.length
+          }})
+        </button>
+      </div>
+      <div
+        *ngIf="rbsPermission"
+        class="col-md-8 col-sm-12 d-flex justify-content-end"
+      >
+        <button
+          nz-button
+          nzType="default"
+          (click)="onBack(qDetail.status)"
+          class="mr-6"
+        >
+        {{ "business-dashboard.question.questionview.back" | translate }}
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          (click)="showPreviewModal()"
+          class="mr-6"
+          *ngIf="qDetail"
+        >
+        {{ "business-dashboard.question.printpreview" | translate }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          *ngIf="rbsPermission.Approve"
+          nz-popconfirm
+          nzCancelText = "No"
+          nzOkText = "Yes"
+          nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttoadmitthislist" | translate}}'
+          (nzOnConfirm)="admitQuestion()"
+          nzPopconfirmPlacement="bottomLeft"
+          class="mr-6"
+        >
+          <!-- [disabled]="!claimParams['IsClaimed']" -->
+          {{ "business-dashboard.question.admit" | translate }}
+        </button>
+        <nz-select
+          *ngIf="rbsPermission.ForwardTo"
+          class="col-md-5"
+          nzPlaceHolder="--Select--"
+          [(ngModel)]="forwardToQS"
+          (ngModelChange)="forwardNoticeTo($event)"
+        >
+          <nz-option
+            *ngFor="let data of forwardTo"
+            [nzLabel]="data.displayName"
+            [nzValue]="data"
+          ></nz-option>
+        </nz-select>
+        <button
+          nz-button
+          nzType="primary"
+          *ngIf="rbsPermission.ForwardTo"
+          nz-popconfirm
+          nzCancelText = "No"
+          nzOkText = "Yes"
+          nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+          (nzOnConfirm)="forwardToQuestion()"
+          nzPopconfirmPlacement="bottomLeft"
+          style="margin-left: 6px;"
+        >
+          <!-- [disabled]="!claimParams['IsClaimed']" -->
+          {{ ForwardButton }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="input-group">
+  <div class="row align-items-center">
+    <div
+      class="col-md-2 align-items-center"
+      *ngIf="activityFlowList && activityFlowList.length > 0"
+    >
+      <span class="workflowhd">{{ "business-dashboard.question.mainworkflow" | translate }}</span>
+    </div>
+    <div class="col-md-10 marginbtm-10 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of activityFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [ngClass]="{ dropFlow: data.endWrkflow }"
+            [nzTitle]="data.owner ? data.owner : data.taskDefinitionKey"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" *ngIf="qDetail">
+  <div class="col-md-4">
+    {{ "Assembly : " + assemblySession["assemblyId"] }}
+  </div>
+
+  <div class="col-md-4">
+    {{ "Session : " + this.assemblySession["sessionId"] }}
+  </div>
+  <div class="col-md-4">
+    {{ "Generated On: " + (this.qDetail.date | date: "dd-MM-yyyy") }}
+  </div>
+</div>
+<div *ngIf="qDetail" id="print-section" style="padding-top: 20px;">
+  <div class="row" style="text-align: center;">
+    <div class="col-md-12">
+      <h5>
+        <strong
+          ><u>{{ qDetail.heading }}</u></strong
+        >
+      </h5>
+    </div>
+  </div>
+  <div class="row" style="text-align: center;">
+    <div class="col-md-12">
+      <h6>
+        <strong>{{ qDetail.subHeading }}</strong>
+      </h6>
+    </div>
+  </div>
+  <div class="row" style="text-align: center;">
+    <div class="col-md-12">
+      <table border="1" style="width: 100%;">
+        <thead>
+          <tr>
+            <th rowspan="2">ക്രമ നമ്പർ</th>
+            <th rowspan="2">വകുപ്പ് മന്ത്രി</th>
+            <th rowspan="2">തീയതി</th>
+            <th rowspan="2">
+              ഉത്തരം ലഭിക്കാനുള്ളവ ( നക്ഷത്രചിഹ്നമിടാത്ത ചോദ്യങ്ങൾ )
+            </th>
+            <th colspan="2">
+              വിവരം ശേഖരിച്ചുവരുന്നുവെന്നു മറുപടി നല്കിയിരുന്നതും അന്തിമ മറുപടി
+              ലഭിക്കാത്തവയും ( നക്ഷത്രചിഹ്നമിടാത്ത ചോദ്യങ്ങൾ )
+            </th>
+            <th rowspan="2">ആകെ ചോദ്യങ്ങൾ</th>
+          </tr>
+          <tr>
+            <th>പൂർണമായും വിവരം ശേഖരിച്ചുവരുന്നവ</th>
+            <th>ചില പിരിവുകൾക്കു വിവരം ശേഖരിച്ചുവരുന്നവ</th>
+          </tr>
+          <tr>
+            <th>(1)</th>
+            <th>(2)</th>
+            <th>(3)</th>
+            <th>(4)</th>
+            <th>(5)</th>
+            <th>(6)</th>
+            <th>(7)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of qDetail.statusItems; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.portfolio.name }}</td>
+            <td>{{ item.date | date: "dd-MM-yyyy" }}</td>
+            <td>
+              {{
+                item.pendingQuestionNumbers
+                  ? item.pendingQuestionNumbers.toString()
+                  : ""
+              }}
+            </td>
+            <td>
+              {{
+                item.notAnsweredQuestions
+                  ? item.notAnsweredQuestions.toString()
+                  : ""
+              }}
+            </td>
+            <td>
+              {{
+                item.partiallyAnsweredQuestion
+                  ? item.partiallyAnsweredQuestion.toString()
+                  : ""
+              }}
+            </td>
+            <td>{{ item.totalQuestions }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<form nz-form class="question-create">
+  <nz-drawer
+    [nzMaskClosable]="false"
+    [nzWidth]="550"
+    [nzVisible]="shownotes"
+    nzTitle="Notes & Comments"
+    (nzOnClose)="handleNotes(false)"
+  >
+    <div
+      #scrollMe
+      class="chat-main-body"
+      [ngClass]="{ fullScroll: rbsPermission && !rbsPermission.addnote }"
+      [scrollTop]="scrollMe.scrollHeight"
+    >
+      <nz-card *ngFor="let data of notesList; let i = index" class="mb-15">
+        <div>
+          <div class="input-group">
+            <div class="row d-flex justify-content-between">
+              <div class="col-md-5 padding0">
+                {{ data?.owner?.details?.fullName }}
+              </div>
+              <div class="col-md-7 txt-alignR padding0">
+                <div nz-row hover>
+                  <button
+                    *ngIf="data.editNote"
+                    nz-button
+                    nzType="default"
+                    (click)="editNotes(i, data)"
+                  >
+                  {{ "business-dashboard.question.edit" | translate }}</button
+                  >&nbsp;&nbsp;
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 padding0">
+                <div class="input-group">
+                  <span class="font-w">
+                    {{ (data?.owner?.roles)[0]?.roleName }}</span
+                  >
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <span *ngIf="data.noteditable">
+                      <nz-input-group
+                        nzSearch
+                        nzSize="large"
+                        [nzAddOnAfter]="suffixButton"
+                      >
+                        <input
+                          type="text"
+                          nzSize="large"
+                          nz-input
+                          [(ngModel)]="editedNote"
+                          name="editedNote"
+                          nz-input
+                          placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}'
+                        />
+                      </nz-input-group>
+                      <ng-template #suffixButton>
+                        <button
+                          nzType="default"
+                          (click)="updateNotes(i, data)"
+                          nz-button
+                        >
+                        {{ "business-dashboard.question.save" | translate }}
+                        </button>
+                      </ng-template>
+                    </span>
+                    <span *ngIf="!data.noteditable"
+                      ><b class="text-left">{{ data.note }}</b></span
+                    >
+                    <div>
+                      <div class="d-flex justify-content-between mt-20 w-100">
+                        <div class="col-md-12 d-flex justify-content-end pr0">
+                          <div>
+                            {{ data.createDate | date: "dd MMMM yyyy" }}
+                          </div>
+                          <div class="margnlft-15">
+                            {{ data.createDate | date: "hh:mm a" }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div class="chat-footer" *ngIf="rbsPermission && rbsPermission.addnote">
+      <div>
+        <div class="col">
+          <div>
+            <span>
+              <nz-input-group
+                nzSearch
+                nzSize="large"
+                [nzAddOnAfter]="suffixButton"
+              >
+                <textarea
+                  nz-input
+                  placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}'
+                  nz-input
+                  [(ngModel)]="noteGiven"
+                  name="noteGiven"
+                  [nzAutosize]="{ minRows: 1, maxRows: 6 }"
+                ></textarea>
+              </nz-input-group>
+
+              <ng-template #suffixButton>
+                <button nzType="default" (click)="saveNotes()" nz-button>
+                  {{ "business-dashboard.question.save" | translate }}
+                </button>
+              </ng-template>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="">
+      <nz-modal
+        [(nzVisible)]="ShowRules"
+        nzTitle="Rules & Directions"
+        (nzOnCancel)="cancelRuleSelection()"
+        (nzOnOk)="applyRule()"
+      >
+        <div class="padding-15">
+          <nz-table #rulesForNotes [nzData]="ruleList" [nzPageSize]="5">
+            <thead>
+              <tr>
+                <th></th>
+                <th>{{ "business-dashboard.question.ruleno" | translate }}</th>
+                <th>{{ "business-dashboard.question.description" | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of rulesForNotes.data">
+                <td
+                  nzShowCheckbox
+                  [(nzChecked)]="data.checked"
+                  (nzCheckedChange)="checkedRule()"
+                ></td>
+                <td>{{ data.code }}</td>
+                <td>{{ data.englishDescription }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <div class="row">
+            <div class="col-md-2">
+              <nz-form-label>
+                {{ "business-dashboard.question.reason" | translate }}
+              </nz-form-label>
+            </div>
+            <div class="col-md-10">
+              <input
+                type="text"
+                nzSize="large"
+                nz-input
+                [(ngModel)]="reason"
+                name="reason"
+                nz-input
+                placeholder='{{"business-dashboard.question.typeyourreasonhere" | translate}}'
+                class="bg_inp"
+              />
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+    </div>
+  </nz-drawer>
+</form>
+
+<nz-modal
+  [nzTitle]="versionModalTitle"
+  [(nzVisible)]="showPreview"
+  (nzOnCancel)="cancelVersion()"
+  nzClassName="pdngs"
+  [nzFooter]="null"
+  [nzWidth]="'900'"
+>
+  <div class="lob_form" id="preview-section">
+    <div [innerHTML]="previewData | safeHtml"></div>
+  </div>
+  <ng-template #versionModalTitle>
+    <div class="row">
+      <div class="col-md-6">
+        {{ "business-dashboard.question.preview" | translate }}
+      </div>
+      <div class="col-md-6" style="text-align: right; padding-right: 50px;">
+        <button
+          nz-button
+          nzType="dashed"
+          [useExistingCss]="true"
+          printSectionId="preview-section"
+          ngxPrint
+          style="margin-left: 6px;"
+        >
+        {{ "business-dashboard.question.print" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>

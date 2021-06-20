@@ -1,0 +1,89 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2015",
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2018",
+      "dom"
+    ],
+    "paths": {
+      "cpl": [
+        "dist/cpl"
+      ],
+      "cpl/*": [
+        "dist/cpl/*"
+      ],
+      "bill": [
+        "dist/bill"
+      ],
+      "bill/*": [
+        "dist/bill/*"
+      ],
+      "correspondence": [
+        "dist/correspondence"
+      ],
+      "correspondence/*": [
+        "dist/correspondence/*"
+      ],
+      "committee": [
+        "dist/committee"
+      ],
+      "committee/*": [
+        "dist/committee/*"
+      ],
+      "pmbr": [
+        "dist/pmbr"
+      ],
+      "pmbr/*": [
+        "dist/pmbr/*"
+      ],
+      "tables": [
+        "dist/tables"
+      ],
+      "tables/*": [
+        "dist/tables/*"
+      ],
+      "office": [
+        "dist/office"
+      ],
+      "office/*": [
+        "dist/office/*"
+      ],
+      "budget": [
+        "dist/budget"
+      ],
+      "budget/*": [
+        "dist/budget/*"
+      ],
+      "genericfile": [
+        "dist/genericfile"
+      ],
+      "genericfile/*": [
+        "dist/genericfile/*"
+      ],
+      "digitisation": [
+        "dist/digitisation"
+      ],
+      "digitisation/*": [
+        "dist/digitisation/*"
+      ]
+    }
+  },
+  "angularCompilerOptions": {
+    "fullTemplateTypeCheck": true,
+    "strictInjectionParameters": true
+  }
+}

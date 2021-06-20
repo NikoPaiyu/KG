@@ -1,0 +1,157 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{"budget.budgetspeech.dashboard"| translate}}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    Cut Motion
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading"> List For Cut Motion</h2>
+        </div>
+        <div class="col-md-6 justify-content-end d-flex">
+            <button  [disabled]="!cutmotionListDto.demandMasterId" class="ml-6" nz-button [nzType]="'primary'" (click)="generateReport()">
+                Generate Report
+            </button>
+            <button  class="ml-6" nz-button [disabled]="cutmotionListDto.isresubmit || !cutmotionListDto.demandMasterId" [nzType]="'primary'" nz-popconfirm
+                nzPopconfirmTitle='Are you sure you want to attach list to file?' nzCancelText="No" nzOkText="Yes"
+                (nzOnConfirm)="resubmitCutmotion()">
+                Attach To File
+            </button>
+        </div>
+
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row margntp-25">
+        <div class="col-md-4">
+            <h4> View Cut Motions</h4>
+        </div>
+        <div class="col-md-8 d-flex justify-content-end">
+            <label> show : &nbsp;</label>
+            <nz-radio-group [(ngModel)]="cutmotionListDto.filterValue" class="d-flex">
+                <label class="d-flex" nz-radio nzValue="POLICY_CUT" (click)="filterWithCutmotionType()">Policy Cut
+                    ({{cutmotionListDto.subcutmotions['policyCut'] ? cutmotionListDto.subcutmotions['policyCut'].length
+                    : 00}}) </label>
+                <label class="d-flex" nz-radio nzValue="ECONOMY_CUT" (click)="filterWithCutmotionType()">Economy Cut
+                    ({{cutmotionListDto.subcutmotions['economyCut'] ?
+                    cutmotionListDto.subcutmotions['economyCut'].length : 00}}) </label>
+                <label class="d-flex" nz-radio nzValue="TOKEN_CUT" (click)="filterWithCutmotionType()">Token Cut
+                    ({{cutmotionListDto.subcutmotions['tokenCut'] ? cutmotionListDto.subcutmotions['tokenCut'].length :
+                    00}})</label>
+                <!-- <label nz-radio nzValue="D">D</label> -->
+            </nz-radio-group>
+
+            <!-- <i nz-icon nzType="eye" nzTheme="outline"></i> -->
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+</ng-container>
+
+<div class="row marginbtm-25 margntp-25">
+    <div class="col-md-4">
+        <nz-select style="padding: 12px;" nzShowSearch nzPlaceHolder="--select date--"
+            [(ngModel)]="cutmotionListDto.selcosDate" [ngModelOptions]="{standalone: true}"
+            (ngModelChange)="renderSDFGDemands($event)">
+            <nz-option *ngFor="let date of cosdates" [nzLabel]="date.value | date: 'dd/MM/yyyy'" [nzValue]="date">
+            </nz-option>
+        </nz-select>
+        <ul class="listbd" *ngFor="let sdfgDemandList of cutmotionListDto.sdfgDemandList; let i=index;">
+            <li (click)="view_cutmotion(sdfgDemandList)" [ngClass]="{ selRow: sdfgDemandList.selRow}">
+                {{sdfgDemandList.demandNameEng}} </li>
+        </ul>
+    </div>
+    <div class="col-md-8 ">
+        <div class="row ">
+            <div class="col-md-12 ">
+                <span class="title-cm ">{{ cutmotionListDto.selDemandName | translate }}</span>
+            </div>
+        </div>
+        <div class="row bg_block ">
+            <div class="col-md-12 ">
+                <ul class="list_data" *ngIf="cutmotionListDto.subcutmotions">
+                    <li class="list_policy"
+                        *ngIf="cutmotionListDto.subcutmotions['policyCut'] && cutmotionListDto.subcutmotions['policyCut'].length > 0">
+                        <ng-container
+                            *ngFor="let policyCut of cutmotionListDto.subcutmotions['policyCut'];">
+                            <div class="list-data ">
+                                <div class="marginbtm-10 ">
+                                    Members name: <strong> {{policyCut.memberNameEng}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    Cut Motion Type: <strong>{{policyCut.type}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    <strong>
+                                        <quill-view-html [content]="policyCut.notes"></quill-view-html>
+                                    </strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    <strong> Remarks: </strong><br />
+                                    <quill-view-html [content]="policyCut.remarks"></quill-view-html>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </li>
+                    <li class="list_economy"
+                        *ngIf="cutmotionListDto.subcutmotions['economyCut'] && cutmotionListDto.subcutmotions['economyCut'].length > 0">
+                        <ng-container
+                            *ngFor="let economyCut of cutmotionListDto.subcutmotions['economyCut']; let i=index;">
+                            <div class="list-data ">
+                                <div class="marginbtm-10 ">
+                                    Members name: <strong> {{economyCut.memberNameEng}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    Cut Motion Type: <strong>{{economyCut.type}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    <strong>
+                                        <quill-view-html [content]="renderEconomyCut(economyCut)"></quill-view-html>
+                                    </strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    <strong> Remarks: </strong><br />
+                                    <quill-view-html [content]="economyCut.remarks"></quill-view-html>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </li>
+                    <li class="list_token"
+                        *ngIf="cutmotionListDto.subcutmotions['tokenCut'] && cutmotionListDto.subcutmotions['tokenCut'].length > 0">
+                        <ng-container *ngFor="let tokenCut of cutmotionListDto.subcutmotions['tokenCut']; let i=index;">
+                            <div class="list-data ">
+                                <div class="marginbtm-10 ">
+                                    Members name: <strong> {{tokenCut.memberNameEng}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    Cut Motion Type: <strong>{{tokenCut.type}}</strong>
+                                </div>
+                                <div class="marginbtm-10 ">
+                                    <strong>
+                                        <quill-view-html [content]="tokenCut.notes"></quill-view-html>
+                                    </strong>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <nz-modal [(nzVisible)]="reportVisible" [nzFooter]="null" (nzOnCancel)="reportVisible= false" nzWidth="800">
+        <div class="width-100 pading-all">
+            <div class="row margnrtp-15 margnrgt-15">
+                <div class="col-md-12 align-items-center">
+                    <ngx-doc-viewer [url]="reportUrl" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+                </div>
+            </div>
+        </div>
+    </nz-modal>

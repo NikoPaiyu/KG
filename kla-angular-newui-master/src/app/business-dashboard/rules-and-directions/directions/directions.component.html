@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.question.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <a> {{"business-dashboard.question.rules&directions" | translate}} </a>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+          <h3>{{"business-dashboard.rules&directions.Direction(s)" | translate}}</h3> 
+    </div>
+</div>
+
+<nz-table #middleTable nzSize="middle" [nzData]="listOfDirections" class="table-all">
+  <thead>
+    <tr>
+      <th>{{"business-dashboard.question.slno" | translate}}</th>
+      <th>{{"business-dashboard.rules&directions.directionCode" | translate}}</th>
+      <th>{{"business-dashboard.rules&directions.direction's" | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of listOfDirections">
+      <td>{{ data.id }}</td>
+      <td>{{ data.code}}</td>
+      <td>{{ data.englishDescription}}</td>
+    </tr>
+  </tbody>
+</nz-table>
+

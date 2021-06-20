@@ -1,0 +1,65 @@
+
+<div class="width-100  pading-all">
+    <form [formGroup]="createBDGRLForm">
+        <div class="row margnrtp-5">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">{{"table.listga.assembly" |translate}}</nz-form-label>
+                    <nz-form-control [nzSpan]="15" nzErrorTip="Select Assembly">
+                        {{ assemblySession["assembly"]?.currentassemblyVal}}
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">{{"table.listga.session" |translate}}</nz-form-label>
+                    <nz-form-control [nzSpan]="15" nzErrorTip="Select Session">
+                        {{assemblySession["session"]?.currentsessionVal}}
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-12 margnrtp-15 ">
+                <div>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6">GRL Request Note</nz-form-label>
+                        <nz-form-control nzErrorTip="Enter Budget Note" [nzSpan]="18">
+                            <textarea nz-input formControlName="note" [nzAutosize]="{ minRows: 3, maxRows: 6 }" maxlength="255" nzRequired>
+                                </textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+
+            <div class="col-md-8">Budget :
+                <nz-form-item>
+                  <nz-form-control nzErrorTip="Select Budget">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Budget"
+                      formControlName="budget"
+                      (ngModelChange)="select_budget()"
+                      
+                    >
+                      <nz-option
+                        *ngFor="let data of budget_documents"
+                        [nzLabel]="data.value"
+                        [nzValue]="data.key"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end" *ngIf="!BudgetDocument_GRL || (BudgetDocument_GRL && BudgetDocument_GRL.status === 'SAVED')">
+                <button [disabled]="false" type="button" nz-button nzType="primary" (click)="saveBudgetDocument()" class="margnlt-5">
+                    {{"table.listga.save" |translate}}
+                </button>
+                <button nz-popconfirm nzPopconfirmTitle="Are you sure you want to Submit?" (nzOnConfirm)="submitBudgetDocument()" (nzOnCancel)="cancelCnfrm()" nz-button nzType="primary" class="margnlt-5" [disabled]="!createBDGRLForm.valid">
+                    {{"table.listga.submit" |translate}}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

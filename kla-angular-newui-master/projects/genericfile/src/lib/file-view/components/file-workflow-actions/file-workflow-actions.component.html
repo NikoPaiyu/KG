@@ -1,0 +1,54 @@
+<div *ngIf="fileDetails.currentAssignee && fileDetails.status !== 'APPROVED'">
+  <div class="row justify-content-end">
+    <div class="col-md-4">
+      <nz-cascader
+        [nzPlaceHolder]="'Select Designation'"
+        [(ngModel)]="cascaderValues"
+        [nzLoadData]="loadData"
+        (ngModelChange)="onChanges($event)"
+        class="user-cascade"
+      >
+      </nz-cascader>
+    </div>
+    <div class="col-md-4">
+      <nz-select
+        nzShowSearch="true"
+        [(ngModel)]="selectedUser"
+        class="ml-6 m-r5 file-flow-select"
+        [nzPlaceHolder]="'Select User'"
+        (ngModelChange)="ForwardOrReturnEnable($event)"
+      >
+        <ng-container *ngFor="let item of userList">
+          <nz-option
+            nzValue="{{ item.value }}"
+            nzLabel="{{ item.label }}"
+          ></nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+    <div class="col-md-4">
+      <button
+        class="ml-6"
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to FORWARD ?"
+        [disabled]="!forwardOrReturnShow"
+        (nzOnConfirm)="ForwardFile(fileDetails.fileId)"
+      >
+        {{ forwardOrReturn }}
+      </button>
+      <button
+        class="ml-6"
+        nz-button
+        nzType="primary"
+        nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to APPROVE ?"
+        [disabled]="!approveShow"
+        (nzOnConfirm)="ApproveFile(fileDetails.fileId)"
+      >
+        Approve
+      </button>
+    </div>
+  </div>
+</div>

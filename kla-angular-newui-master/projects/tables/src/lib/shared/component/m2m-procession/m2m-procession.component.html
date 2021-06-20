@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-md-12">
+        <h5>Minute to Minute</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 custom-rd">
+        <nz-radio-group [(ngModel)]="selectedValues.m2mValue">
+            <div *ngFor="let m2m of m2mAndProcessionList?.m2mListDTOList">
+                <label nz-radio [nzValue]="m2m.id">
+                    {{m2m.header}}
+                </label>
+            </div>
+        </nz-radio-group>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 margnrtp-15">
+        <h5>Procession</h5>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 custom-rd">
+        <nz-radio-group [(ngModel)]="selectedValues.processionValue">
+            <li *ngFor="let p of m2mAndProcessionList?.processionDTOList">
+                <label nz-radio [nzValue]="p.id">
+                    <i
+                    (click)="showProcession(p.processionUrl)"
+                    class="preview-icon pointer"
+                    nz-icon
+                    nzType="file"
+                    nzTheme="outline"
+                  ></i>
+                </label>
+            </li>
+        </nz-radio-group>
+    </div>
+</div>
+<div class="row mrt-50 margnrtp-15">
+    <div class="col-md-12 d-flex justify-content-end">
+        <button type="button" nz-button nzType="default" (click)="closeM2MPModal()"
+            class="secondary-button button-admin-radius button-font dark-border dark-font">
+            Cancel
+        </button>
+        <button type="button" [disabled]="!selectedValues.m2mValue || !selectedValues.processionValue" nz-button
+            nzType="primary" nz-popconfirm nzPopconfirmTitle="Do you want to attach to file?"
+            (nzOnConfirm)="attachToFile()" (nzOnCancel)="cancel()"
+            class="primary-button button-admin-radius button-font">
+            Attach
+        </button>
+    </div>
+</div>

@@ -1,0 +1,138 @@
+// .td_heading {
+//   max-width: 50px;
+//   word-break: break-all;
+// }
+
+.td {
+  padding: 5px 0px;
+}
+th.bg-head {
+  min-width: 120px;
+}
+.bg-head1 {
+  min-width: 320px !important;
+}
+.bg-head2 {
+  min-width: 260px !important;
+}
+.td-width td {
+  width: 99px;
+  padding: 16px 16px;
+}
+.pdng-td {
+  padding: 16px 0px 16px 0px;
+}
+.disablerow {
+  background-color: #fbfbfb;
+  border-bottom: #7465e0 solid 1px;
+  border-top: #7465e0 solid 1px;
+}
+.paddingT15 {
+  padding-top: 15px;
+}
+
+.paddingL15 {
+  padding-left: 15px;
+}
+
+.paddingT20 {
+  padding-top: 20px;
+}
+
+.vertical-line {
+  height: auto;
+}
+
+.border-right {
+  border-right: inset;
+}
+
+.color {
+  color: red;
+}
+
+.selection-vrsn {
+  padding: 10px 0px;
+  background: #eee;
+  display: flex;
+  margin: 0 0px;
+  align-items: center;
+}
+.width-auto {
+  width: auto;
+}
+
+.input-style {
+  border: 1px solid black;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  margin: 0 5px 10px;
+}
+.tag-style {
+  border: 1px solid black;
+  padding: 6px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+.paddingL0 {
+  padding-left: 0px !important;
+}
+
+.answer {
+  background: #eee;
+  margin-top: 5px;
+}
+
+.clause-style {
+  border: 1px solid black;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.back-color {
+  background: #f3f371;
+}
+
+.dropdown-option {
+  margin: 0;
+}
+.word-break {
+  word-break: break-word;
+  font-family: rachana;
+  font-size: 18px;
+}
+.plr {
+  padding-right: 25px;
+}
+
+.divider {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 0px;
+}
+.despan {
+  position: absolute;
+  background: #ff6b6b;
+  color: #fff;
+  padding: 0px 7px;
+  border-radius: 10px;
+  bottom: 15px;
+  left: 5px;
+  z-index: 9;
+  white-space: nowrap;
+}
+.disablerow {
+  position: relative;
+}
+.rel{width: 5px;display: table-cell;position: relative;}
+#ul.list li{
+  display: inline;
+}
+.mb0{margin-bottom: 0px !important;}
+.mt0{margin-top: 0px !important;}
+.flt{float: left;}
+a.disabled {
+  pointer-events: none;
+  cursor: not-allowed; 
+}

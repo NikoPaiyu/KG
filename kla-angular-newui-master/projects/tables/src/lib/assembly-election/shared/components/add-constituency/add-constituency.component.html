@@ -1,0 +1,88 @@
+<div class="p-20 width-100">
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label nz-checkbox [(ngModel)]="allChecked"
+                         (ngModelChange)="selectAllConstituencies()">{{"tables.assembly-election.create-election.add-constituency.check-all"|translate}}</label>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                            "business-dashboard.question.questionmlalisting.constituency" | translate
+                            }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <nz-select nzAllowClear nzPlaceHolder="{{ 'tables.assembly-election.create-election.add-constituency.choose-constituency' | translate }}" [nzMaxTagCount]="5"
+                                [(ngModel)]="selectedConstituencies" nzMode="multiple" (ngModelChange)="checkAllSelected()">
+                                <nz-option *ngFor="let item of constituencyList" [nzLabel]="item.kerelaContituencyName"
+                                    [nzValue]="item">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                            "business-dashboard.election-management.speaker-election-list.election-date" | translate
+                            }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <nz-date-picker [(ngModel)]="electionDate" [nzFormat]="'dd-MM-yyyy'"
+                            (ngModelChange)="resultDateValidation()" [nzDisabledDate]="disabledElectionDate"></nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                            "tables.assembly-election.assembly-election-view.result-date" | translate
+                            }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <nz-date-picker [(ngModel)]="resultDate" [nzFormat]="'dd-MM-yyyy'"
+                            [nzDisabled]="!electionDate" [nzDisabledDate]="disabledResultDate"
+                            (ngModelChange)="electionDateValidation()"></nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="default" (click)="handleCancel()">
+                {{"cpl.correspondencelist.cancel"|translate}}
+            </button>
+            <button type="button" nz-button nzType="primary" class="mrgL6" nz-popconfirm
+                nzPopconfirmTitle="{{'tables.assembly-election.create-election.add-constituency.add-constituency-confirm'|translate}}" (nzOnConfirm)="addConstituency()"
+                [disabled]="selectedConstituencies.length === 0">
+                {{"tables.assembly-election.assembly-election-view.add-constituency"|translate}}
+            </button>
+        </div>
+    </div>
+</div>

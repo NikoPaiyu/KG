@@ -1,0 +1,343 @@
+<div class="mla-bg-cover mla-font-ml">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-3 padding_adjust col-adv">
+        <div class="mla-grouping">
+          <div class="logo-section marginbtm-10">
+            <a class="logo-member-unit"><img src="../../assets/img/logo.svg" alt="" /></a>
+            <span class="kla-name">{{
+              assemblyandsession?.assemblyValue}} {{"dashboard.keralalegislativeassembly" | translate
+              }}</span>
+          </div>
+          <div class="col-md-12 d-flex margnrtp-15 mla-color align-center flex-nowrap align-items-center">
+            <!-- <div class="custom-width">
+              {{ "dashboard.14thassembly" | translate }}
+            </div> -->
+            <div class="custom-width">
+              {{ assemblyandsession?.sessionValue}} {{"dashboard.session" | translate }}
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="custom-menu-holder margnlft-15">
+              <div class="row">
+                <div class="col-12">
+                  <div class="profileDetails">
+                    <div class="pro_img">
+                      <img class="profileImg" src="{{
+                          userData.photoUrl != ''
+                            ? userData.photoUrl
+                            : '../../../../assets/img/user.png'
+                        }}" alt="" />
+                    </div>
+                    <div class="profileText mla-color">
+                      <div class="custom-width marginbtm-5 mla-color">
+                        {{ "dashboard.welcome" | translate }}
+                      </div>
+                      <div class="custom-width mla-color">
+                        <strong>{{ retunUserName(userData)
+                          }}</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- <div class="col-12 d-flex flex-wrap marginbtm-15">
+              <div class="custom-width white marginbtm-10">സ്വാഗതം</div>
+              <div class="custom-width white">
+                <img src="{{ userData.photoUrl }}" alt="" />
+                <strong>{{ userData.fullName }}</strong>
+              </div>
+            </div> -->
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="menu-admin">
+                    <ul nz-menu nzMode="inline" class="kiosk-menu">
+                      <!-- <ng-container *ngFor="let menu of this.currentUser.menu"> -->
+                      <ng-container *ngFor="let menu of this.userData.rbsRoleMenu">
+                        <li nz-menu-item (click)="navigate(menu.menuUri);openHandler(menu.id, null, null, 'level1')"
+                          *ngIf="!menu.children || menu.children.length == 0">
+                          <span><img [src]="getMenuIcon(menu.menuUri)" /></span>
+                          {{ returnMenuName(menu) }}
+                        </li>
+
+                        <li nz-submenu *ngIf="menu.children && menu.children.length > 0" 
+                          [nzTitle]="menuTitle"
+                          [(nzOpen)]="menu.level1" (nzOpenChange)="openHandler(menu.id, null, null, 'level1')">
+                          <ng-template #menuTitle>
+                            <span><img [src]="getMenuIcon(menu.children.menuUri)" /></span>
+                            {{ returnMenuName(menu) }}
+                          </ng-template>
+                          <ul *ngFor="let submenu of menu.children">
+                            <li (click)="navigate(submenu.menuUri);openHandler(menu.id, submenu.id, null, 'level2')" nz-menu-item *ngIf="
+                                !submenu.children || submenu.children.length == 0
+                              ">
+                              <span><img src="../../assets/img/menu-icons/Business.svg" alt=""></span>
+                              {{ returnMenuName(submenu) }}
+                            </li>
+
+                            <li nz-submenu *ngIf="submenu.children && submenu.children.length > 0"
+                              [nzTitle]="submenuTitle"
+                              [(nzOpen)]="submenu.level2" (nzOpenChange)="openHandler(menu.id, submenu.id, null, 'level2')">
+                              <ng-template #submenuTitle>
+                                <span><img src="../../assets/img/menu-icons/RulesandInstructions.svg" /></span>
+                                {{ returnMenuName(submenu) }}
+                              </ng-template>
+                              <ul *ngFor="let subsubmenu of submenu.children">
+                                <li (click)="navigate(subsubmenu.menuUri);openHandler(menu.id, submenu.id, subsubmenu.id, 'level3')" nz-menu-item *ngIf="
+                                    !subsubmenu.children ||
+                                    subsubmenu.children.length == 0
+                                  ">
+                                  <span><img src="../../assets/img/menu-icons/Business.svg" alt=""></span>
+                                  {{ returnMenuName(subsubmenu) }}
+                                </li>
+                                <!--- added new line-->
+                                <li nz-submenu *ngIf="subsubmenu.children && subsubmenu.children.length > 0"
+                                  nzTitle="{{ returnMenuName(subsubmenu) }}"
+                                  [(nzOpen)]="subsubmenu.level3" (nzOpenChange)="openHandler(menu.id, submenu.id, subsubmenu.id, 'level3')">
+                                  <ul *ngFor="let subsubsubmenu of subsubmenu.children">
+                                    <li [routerLink]="subsubsubmenu.menuUri" nz-menu-item *ngIf="
+                                      !subsubsubmenu.children ||
+                                      subsubsubmenu.children.length == 0
+                                    ">
+                                      <span><img src="../../assets/img/menu-icons/Business.svg" alt=""></span>
+                                      {{ returnMenuName(subsubsubmenu) }}
+                                    </li>
+                                  </ul>
+                                </li>
+                                <!--- added new line-->
+                              </ul>
+                            </li>
+                          </ul>
+                        </li>
+                      </ng-container>
+                      <!-- </ng-container> -->
+                    </ul>
+
+                    <!-- <ul class="admin-menu-items">
+                        <li><a href="#"> Dashboard</a></li>
+                        <li><a href="#">Bill</a></li>
+                        <li><a href="#">Assembly</a></li>
+                        <li><a href="#">Location</a></li>
+                        <li>
+                          <a href="#">User Management</a> <span></span>
+                          <ul class="submenu-admin">
+                            <li><a href="#"> Dashboard</a></li>
+                            <li><a href="#">Bill</a></li>
+                            <li><a href="#">Assembly</a></li>
+                            <li><a href="#"> Dashboard</a></li>
+                            <li><a href="#">Bill</a></li>
+                            <li><a href="#">Assembly</a></li>
+                          </ul>
+                        </li>
+                        <li><a href="#"> Dashboard</a></li>
+                        <li><a href="#">Bill</a></li>
+                        <li><a href="#">Assembly</a></li>
+                        <li><a href="#">Location</a></li>
+                        <li><a href="#">User Management</a></li>
+                      </ul> -->
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-9 pdzero col-advs">
+        <header class="header mla-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-3 align-items-center d-flex">
+                <div class="d-flex flex-wrap align-items-center">
+                  <div class="mla-color margnrgt-15">
+                    <strong>{{ time | date: "hh:mm a" }}</strong>
+                  </div>
+                  <div class="mla-color">
+                    {{ time | date: "dd MMMM yyyy" }}
+                  </div>
+
+                </div>
+              </div>
+              <div class="col-md-9">
+                <div class="row">
+                  <div class="col-md-12 d-flex  flex-nowrap justify-content-end">
+
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a language"
+                      [(ngModel)]="selectedLanguage" (ngModelChange)="selcetLanguage()" class="lng selct_lng">
+                      <nz-option nzLabel="English" nzValue="English"></nz-option>
+                      <nz-option nzLabel="മലയാളം" nzValue="Malayalam"></nz-option>
+                    </nz-select>
+                    <div class="buton-box">
+                      <button (click)="openHandRiseNotificationBar()" *ngIf="speakerSocketOpened" type="button"
+                        class="d-flex flex-nowrap align-items-center mla-button">
+                        <span><img src="../../assets/img/hand.svg" alt="" />
+                          <span *ngIf="speakerSocketOpened && handRiseCount > 0" class="badge_mla">{{ handRiseCount
+                            }}</span>
+                        </span>
+                        <span>{{ "dashboard.subquestion" | translate }}</span>
+                      </button>
+                      <div class="handup" [ngClass]="
+                          handRiseNotificationBar
+                            ? 'notificationShow'
+                            : 'notificationHide'
+                        ">
+                        <!-- command for handraise -->
+                        <div class="d-flex justify-content-between">
+                          <nz-list *ngIf="handRiseRequestDetailList.length == 0" [nzDataSource]="[]"></nz-list>
+                          <button class="mla-button hand_btn" style="padding: 8px 15px;"
+                            *ngIf="handRiseRequestDetailList.length > 0" (click)="seeAllClick()" routerLink="handraise">
+                            <img src="../../assets/img/fullscreen.svg" alt="" width="15" />
+                          </button>
+
+                          <button *ngIf="handRiseRequestDetailList.length > 0" (click)="clearAllHandRiseRequest()"
+                            class="mla-button hand_btn">
+                            {{ "dashboard.clearall" | translate }}
+                          </button>
+                        </div>
+                        <div class="overflw-hand">
+                          <ng-container *ngFor="
+                              let item of handRiseRequestDetailList;
+                              let i = index
+                            ">
+                            <div [ngClass]="
+                                item.memberGroup == 'OPOSITION_PARTY'
+                                  ? 'opposition_party'
+                                  : 'ruling_party'
+                              " class="hand_block_mla">
+                              <div class="hand_mla_img">
+                                <img src="{{
+                                    item.ownerImage
+                                      ? item.ownerImage
+                                      : '../../assets/img/hand.svg'
+                                  }}" alt="" />
+                              </div>
+
+                              <div class="name_time">
+                                <div class="mla_name_hand">
+                                  <h4>
+                                    {{
+                                    item.ownerMalayalamName || item.ownerName
+                                    }}
+                                  </h4>
+                                </div>
+                                <div class="mla_time_hand">
+                                  <div>{{ item.time | date: "hh:mm a" }}</div>
+                                  <span [ngClass]="
+                                      item.memberGroup == 'OPOSITION_PARTY'
+                                        ? 'opposition_party'
+                                        : 'ruling_party'
+                                    ">{{
+                                    (item.memberGroup == "OPOSITION_PARTY"
+                                    ? 'dashboard.handraise.opposition'
+                                    : 'dashboard.handraise.ruling') | translate
+                                    }}</span>
+                                </div>
+                              </div>
+                              <!-- <div>
+                            <button (click)="handRiseRequestAccept(item.requestId, i)">accept</button>
+                          </div> -->
+                            </div>
+                          </ng-container>
+                        </div>
+                        <!-- end command for handraise -->
+                      </div>
+                    </div>
+                    <button *ngIf="
+                        !speakerSocketOpened &&
+                        !isGovernor &&
+                        !isMinister &&
+                        !speakerNoteOpened &&
+                        !userData.authorities.includes('swearingIn')
+                      " type="button" (click)="handRiseClick()"
+                      class="d-flex flex-nowrap align-items-center mla-button">
+                      <span><img src="../../assets/img/hand.svg" alt="" /></span>
+                      <span> {{ "dashboard.raisehand" | translate }}</span>
+                    </button>
+                    <button *ngIf="!speakerNoteOpened && !isGovernor &&
+                    !userData.authorities.includes('swearingIn')" type="button" (click)="notAvailable()"
+                      class="d-flex flex-nowrap align-items-center mla-button">
+                      <span><img src="../../assets/img/mail.svg" alt="" /></span>
+                      <span> {{ "dashboard.email" | translate }}</span>
+                    </button>
+                    <!-- <a
+                      *ngIf="!isGovernor"
+                      class="d-flex flex-nowrap align-items-center mla-button"
+                      target="_blank"
+                      href="https://email.gov.in/"
+                    >
+                      <span
+                        ><img
+                          src="../../assets/img/mail.svg"
+                          class="max-img"
+                          alt="Logout"
+                      /></span>
+                      <span>{{ "dashboard.email" | translate }}</span>
+                    </a> -->
+                    <!-- <button
+              type="button"
+              class="d-flex flex-nowrap align-items-center secondary-button button-padng"
+            >
+              <span><img src="../../assets/img/logout.svg" alt="Logout"/></span>
+              അറിയിപ്പുകൾ
+            </button> -->
+                    <button type="button" *ngIf="!isGovernor && !speakerNoteOpened &&
+                    !userData.authorities.includes('swearingIn')" (click)="onChat()"
+                      class="d-flex flex-nowrap align-items-center mla-button">
+
+                      <span><img src="../../assets/img/chat.png" class="max-img" alt="" /><span [ngClass]="{
+                            'notification-icon': neMessageFlag == true
+                          }">
+                        </span></span>
+                      <span>{{ "dashboard.chat" | translate }} </span>
+                      <!-- <nz-badge [nzCount]="count" [nzStyle]="{ backgroundColor: '#52c41a' }">
+                      </nz-badge> -->
+                    </button>
+
+                    <button (click)="onLogOut()" type="button"
+                      class="d-flex flex-nowrap align-items-center mla-button button-padng">
+                      <span><img src="../../assets/img/logout.svg" class="max-img" alt="Logout" /></span>
+                      <span>{{ "dashboard.logout" | translate }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main>
+          <div class="container-fluid">
+            <div class="contentarea">
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <nz-modal
+          [(nzVisible)]="languageSelectionPopup"
+          nzTitle="Select Language"
+          (nzOnCancel)="cancelLanguage()"
+          (nzOnOk)="selcetLanguage()"
+        >
+          <p class="checkbox-style">
+            <label nz-checkbox
+            formControlName="eng">English</label>
+            <label nz-checkbox
+            formControlName="mal">Malayalam</label> -->
+<!-- <label
+              nz-checkbox
+              formControlName="eng"
+              name="eng">
+              English
+            </label>
+            <label
+              nz-checkbox
+              formControlName="mal"
+              name="mal">
+              Malayalam
+            </label> -->
+<!-- </p>
+        </nz-modal> -->

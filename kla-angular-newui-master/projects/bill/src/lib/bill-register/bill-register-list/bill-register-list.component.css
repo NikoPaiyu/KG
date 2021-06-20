@@ -1,0 +1,16 @@
+.left_align{text-align: left !important;}
+.ml-6{margin-left: 6px;}
+.padding_25 {padding: 25px;}
+.padding_15 {padding: 25px;}
+.titlestyle{
+    width: 100%;
+    word-break: break-all;
+  }
+  .viewlink {
+    color: blue;
+  }
+  .table-all tr td td {
+    background-color: #ccc0 !important;
+    padding-bottom: 0px !important;
+    padding-top: 5px !important;
+  }

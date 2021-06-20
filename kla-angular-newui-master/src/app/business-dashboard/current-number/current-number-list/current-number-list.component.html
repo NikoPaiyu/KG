@@ -1,0 +1,102 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"Dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"List" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">{{"Current Number List" | translate}}</h2>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-10">
+        <div class="row d-flex-justify-content-between">
+            <div class="col-md-1">
+                {{"Assembly"|translate}}
+            </div>
+            <div class="col-md-3">
+                <nz-select nzAllowClear nzPlaceHolder="Choose assembly" [(ngModel)]="assemblyId"
+                (ngModelChange)="getCurrentNumberList()">
+             <nz-option *ngFor="let type of assemblyList" [nzValue]="type.id" [nzLabel]="type.assemblyId">
+             </nz-option>
+           </nz-select>
+            </div>
+            <div class="col-md-1">
+                {{"Section"|translate}}
+            </div>
+            <div class="col-md-3">
+                <nz-select nzAllowClear nzPlaceHolder="Choose section" [(ngModel)]="sectionId"
+                (ngModelChange)="getCurrentNumberList()">
+             <nz-option *ngFor="let type of klaSections" [nzValue]="type.klaSectionId" [nzLabel]="type.klaSectionName">
+             </nz-option>
+           </nz-select>
+            </div>
+            <div class="col-md-1">
+                {{"Date"|translate}}
+            </div>
+            <div class="col-md-3">
+                <nz-date-picker [(ngModel)]="date" (ngModelChange)="getCurrentNumberList()"
+                [nzFormat]="'dd-MM-yyyy'"></nz-date-picker>            
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input type="text" name="search" [(ngModel)]="search" (ngModelChange)="onSearch()" nz-input
+                placeholder="Search here" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+        </ng-template>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+     <div class="row marginbtm-15">
+        <nz-table #currentNumberTable nzShowPagination nzShowSizeChanger [nzData]="currentList" class="table-all">
+           <thead>
+               <tr>
+                <th>
+                  Sl.No
+                </th>
+                <th>
+                    Current Number
+                 </th>
+                <th>
+                Assembly
+                </th>
+                <th>
+                Section Name
+                </th>
+                <th>
+                Created Date
+                </th>
+                <th>
+                Subject
+                </th>
+               </tr>
+           </thead>
+           <tbody>
+               <tr *ngFor="let list of currentNumberTable.data; let i = index">
+                 <td>{{i+1}}</td>
+                 <td>{{list.currentNumber}}</td>
+                 <td>{{list.assemblyValue}}</td>
+                 <td>{{list.section}}</td>
+                 <td>{{list.createdDate | date: "dd/MM/yyyy"}}</td>
+                 <td>{{list.subject}}</td>
+               </tr>
+           </tbody>
+        </nz-table>
+      </div>
+     </div>
+</div>

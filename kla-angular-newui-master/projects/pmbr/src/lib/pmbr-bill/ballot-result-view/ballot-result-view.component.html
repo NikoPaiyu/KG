@@ -1,0 +1,58 @@
+<div class="padding_25">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h5><u>{{assemblyId}}-ാം കേരള നിയമസഭ</u></h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <h5><u>{{sessionId}}-ാം സമ്മേളനം</u></h5>
+            </div>
+        </div>
+        <div class="rowd-flex justify-content-center">
+            <div class="col-md-12">
+                <h6><u>{{ballotResult?.presentationDate}}&nbsp;&nbsp; തീയതി സഭയിൽ അനൗദ്യോഗിക ബില്ലുകൾക്ക് 
+                    അവതരണാനുമതി പ്രമേയം അവതരിപ്പിക്കുന്നതിന് മുൻഗണന ലഭിച്ച അംഗങ്ങൾ.
+                </u></h6>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <nz-table #ballotTable  nzShowPagination [nzData]="ballotResult?.pmbrBillLottingResultDto">
+                    <thead>
+                      <tr>
+                        <th>Ballot No</th>
+                    <th>{{ "business-dashboard.question.member" | translate }}</th>
+                    <th>Bill Name</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of ballotTable.data; let i = index">
+                        <td>{{ i+1 }}</td>
+                        <td>{{ data.memberName }}</td>
+                        <td *ngIf="data.billId !== 0 || user.userId != data.userId">{{ data.billTitle }}</td>
+                        <td *ngIf="data.billId === 0 && user.userId == data.userId">
+                            <button nz-button nzType="primary" class="mr-6" (click)="chooseBill()"
+                            *ngIf="!showDropDown"
+                            > {{ "Choose Bill" | translate }}</button>
+                            <nz-select [(ngModel)]="choosedBill" nzAllowClear nzShowSearch
+                            nzPlaceHolder="Select Bill" *ngIf="showDropDown">
+                            <ng-container *ngFor="let bill of billList">
+                                <nz-option  *ngIf="showDropDown" 
+                                [nzLabel]="bill.title"
+                                [nzValue]="bill"></nz-option>
+                            </ng-container> 
+                            </nz-select>
+                            <button nz-button nzType="default" class="mr-6" (click)="cancelChoose()"
+                            *ngIf="showDropDown"
+                            > {{ "Cancel" | translate }}</button>
+                            <button nz-button nzType="primary" class="mr-6" (click)="updateResult()"
+                            *ngIf="showDropDown" [disabled]="!choosedBill"
+                            > {{ "Update" | translate }}</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+            </div>
+        </div>
+</div>

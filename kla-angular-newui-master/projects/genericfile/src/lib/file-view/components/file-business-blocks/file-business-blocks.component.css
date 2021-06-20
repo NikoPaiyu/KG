@@ -1,0 +1,131 @@
+.business_block {
+  border-radius: 5px;
+  cursor: pointer;
+}
+.business_block .block-buttons {
+  border: none;
+  box-shadow: none;
+}
+.business_block .block-title {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.folder-icon {
+  font-size: 50px !important;
+  color: #1f89e5;
+}
+
+.bg_block {
+  background: #f1f7fb;
+  border: #e6eff4 solid 1px;
+  border-radius: 5px;
+  padding: 15px;
+  margin: 5px;
+  cursor: pointer;
+  text-align: center;
+}
+.text-align-right {
+  text-align: right;
+}
+.document-block {
+  text-align: center;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.mr-10 {
+  margin-right: 10px;
+}
+.padding_25 {
+  padding: 25px;
+}
+.padding_15 {
+  padding: 15px;
+}
+.attachment-container {
+  position: relative;
+  height: auto;
+  padding: 8px;
+
+  border-radius: 2px;
+}
+.attachment-container .attachment-item {
+  padding: 0;
+  height: 36px;
+  border: 1px solid #d9d9d9;
+  padding: 0 4px;
+  transition: background-color 0.3s;
+}
+.attachment-item .thumbnail-image {
+  display: block;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+}
+.attachment-item .title {
+  display: inline-block;
+  box-sizing: border-box;
+  max-width: 100%;
+  margin: 0 0 0 8px;
+  padding-right: 8px;
+  padding-left: 48px;
+  overflow: hidden;
+  line-height: 44px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: all 0.3s;
+}
+.attachment-item .action-button {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  font-size: 14px;
+  border-radius: 2px;
+}
+.pdfdoc {
+  display: flex;
+  cursor: pointer;
+}
+.border {
+  border: 1px solid #fff;
+}
+
+.mr-tp {
+  margin-top: 15px;
+}
+.doc-download-btn {
+  float: right;
+}
+.ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-rounded-corners {
+  background-color: white !important;
+}
+.block-padding-0 {
+  padding: 0;
+}
+.user-cascade {
+  width: 100%;
+}
+.attachment-box {
+  border: 1px solid;
+}
+.attachment-box > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.attachment-box > ul > li {
+  font-size: 20px;
+  margin: 0;
+  padding: 8px;
+  line-height: 1;
+}
+.attachment-box > ul > li:not(:last-child) {
+  border-bottom: 1px solid;
+}
+.attachment-box > ul > li > * {
+  display: inline-block;
+  vertical-align: middle;
+}
+.attachment-box > ul > li > i {
+  font-size: 57px !important;
+}

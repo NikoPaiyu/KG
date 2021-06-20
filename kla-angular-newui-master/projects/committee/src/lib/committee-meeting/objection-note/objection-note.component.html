@@ -1,0 +1,95 @@
+<form nz-form [formGroup]="noteForm" class="form">
+<div class="padding_25">
+  <div *ngIf="purpose == 'Add Dissent Note'">
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-label>Dissent Note</nz-form-label>
+          <nz-form-control  nzErrorTip="Enter Dissent Note">
+            <!-- <textarea
+            nz-input
+            [nzAutosize]="{ minRows: 4, maxRows: 8 }"
+            formControlName="note"
+            nzRequired
+            class="ant-select-selection"
+            nzRequired
+            oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+          >
+        </textarea> -->
+          <quill-editor 
+            [styles]="{ height: '250px', width: '750px' }"
+            formControlName="note"
+            [modules]="modules"
+          ></quill-editor>
+          </nz-form-control>
+        </nz-form-item>
+        
+       </div>
+    </div>   
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-form-item>
+          <nz-form-label>Signed Members</nz-form-label>
+          <nz-form-control  nzErrorTip="Select at least one Member">
+            <nz-select
+            nzShowSearch
+            [nzAllowClear]="!isMLA()"
+            formControlName="signedMembers"
+            nzMode="multiple"
+            (ngModelChange)="onMemberChange($event)"
+          >
+            <nz-option
+              *ngFor="let member of memberList"
+              nzLabel="{{member?.memberName}} - {{member?.roleCode}} - ({{member?.committeeName}})"
+              [nzValue]="member.memberId"
+              [nzDisabled]="member.disabled"
+            ></nz-option>
+          </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+        
+       </div>
+    </div>   
+    <div class="row margnrtp-25">
+      <div class="col-md-12 align-right">
+        <button class="mr-6" nz-button (click)="cancelDissentnote()">Cancel</button>
+        <button
+          class="mr-6"
+          nzType="primary"
+          nz-button
+          (click)="addNote()"
+        >
+         Add note
+        </button>
+      </div>
+    </div>
+  </div>  
+  <div *ngIf="purpose == 'View Dissent Note' && memberList">
+    <div class="row margnrtp-25">
+      <div class="col-md-12 align-right">
+        <button class="mr-6" nz-button (click)="cancelDissentnote()">Cancel</button>
+       </div>
+    </div>    
+    <div class="row margnrtp-25" *ngFor="let data of reportDto?.dissentNotes">
+      <nz-card class="margnrtp-15"  style="width: 100%;">
+        <div class="padding_25">
+        <div class="row margnrtp-10">
+          <!-- {{ data.note }} -->
+          <quill-view-html [content]="data?.note"> </quill-view-html>
+        </div>
+        <div class="row margnrtp-10">
+        Signed Members:
+        </div>
+        <div class="row margnrtp-10">
+          <ul>
+            <li 
+            *ngFor="let member of data?.members">{{member}}</li>
+          </ul>
+        </div>
+       </div>
+      </nz-card>
+   </div>
+
+  </div>
+</div>  
+</form>    

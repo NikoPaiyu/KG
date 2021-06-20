@@ -1,0 +1,238 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "cpl.actregistration.dash" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{"table.listga.table" |translate}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+              <h2 class="admin-page-heading">{{"table.listga.mot"|translate}}</h2>
+        </div>
+        <div class="col-md-6 justify-content-end">
+            <button class="ml-6" nz-button [nzType]="'primary'" class="float-right" (click)="showAmendmentpopup()">
+         {{"table.listga.create"|translate}}
+        </button>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+</ng-container>
+<ng-container *ngIf="!isFileView">
+    <div class="row marginbtm-10">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3 d-flex align-items-center marginbtm-10">
+                    <button class="plus-arrange margnrt-5" nz-button [nzType]="'primary'" (click)="showModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+                    <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle="{{
+              'Filter Columns'
+                | translate
+            }}" (nzOnCancel)="_hideFilter()" (nzOnOk)="_showFilter()">
+                        <div class="pading-all">
+                            <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                                <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+                            </p>
+                        </div>
+                        <!-- </div> -->
+                    </nz-modal>
+
+                    <button nz-button nzType="default" (click)="clearFilter()" (keyup.enter)="DoNothing()">
+                    {{
+                    "business-dashboard.question.questionlist.clearfilter" | translate
+                    }}
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row fltr">
+        <div class="col-md-3" *ngIf="tablefiltrParams.disable.fileSubjectdisable">
+            <div class="row align-items-center">
+                <div class="col-md-5 wordbreak">
+                    {{"table.listga.noticenumber" |translate}}
+                </div>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['NoticeNumber']" name="fileNumber" (ngModelChange)="searchCol(filterSelected)">
+                        <nz-option *ngFor="let Notice of tablefiltrParams.data.NoticeNumber" nzLabel="{{ Notice }}" nzValue="{{ Notice }}">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" *ngIf="tablefiltrParams.disable.processionUrldisable">
+            <div class="row align-items-center">
+                <div class="col-md-5 wordbreak">
+                    {{"table.listga.assembly" |translate}}
+                </div>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['assembly']" name="assembly" (ngModelChange)="searchCol(filterSelected)">
+                        <nz-option *ngFor="let assembly of tablefiltrParams.data.Assembly" nzLabel="{{assembly}}" nzValue="{{ assembly }}">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3" *ngIf="tablefiltrParams.disable.statusdisable">
+            <div class="row align-items-center">
+                <div class="col-md-5 wordbreak">
+                    {{"table.listga.session" |translate}}
+                </div>
+                <div class="col-md-6">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['Session']" name="Session" (ngModelChange)="searchCol(filterSelected)">
+                        <nz-option *ngFor="let s of tablefiltrParams.data.Session" nzLabel="{{ s }}" nzValue="{{ s }}">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row margnrtp-15 justify-content-end">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <nz-input-group [nzSuffix]="suffixIconSearch">
+                        <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                'business-dashboard.question.questionlist.inputsearch' | translate
+              }}" (ngModelChange)="onSearchUser()" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <i nz-icon nzType="search"></i>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nz-divider></nz-divider>
+</ng-container>
+<nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="currentPageDataChange($event)" class="table-all">
+    <thead *ngIf="isChecked" (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+            <th>
+                SL No
+            </th>
+            <!-- <th nzShowSort nzSortKey="membername">
+                MemberName
+            </th> -->
+            <th nzShowSort nzSortKey="noticeNo">
+                {{"table.listga.noticenumber" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="subject">
+                Subject
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let list of filterTable.data;let i=index" (click)="viewGovernessAddress(list)">
+            <td>
+                {{i+1}}
+            </td>
+            <!-- <td>
+                {{list.submittedMemberName?.details?.fullName ? list.submittedMemberName?.details?.fullName : ''}}
+            </td> -->
+            <td>
+                <nz-tag>{{ list.motionOfThanks?.noticeNumber }}</nz-tag>
+            </td>
+            <td>{{list?.subject? list?.subject :''}}</td>
+            <td>
+                <button class="ml-6" nz-button [nzType]="'primary'" (click)="viewAmendment(list.amendmentText)">
+           View
+                   </button>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="isCreateAmendment" nzTitle="Create Amendment For MOT" [nzClosable]="false" [nzFooter]="null" nzWidth="1000">
+    <div class="width-100  pading-all">
+        <form [formGroup]="amendmentForm">
+            <div class="row margnrtp-5">
+                <div class="col-md-6 margnrtp-15">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-form-item>
+                                <nz-form-label [nzSpan]="6"> {{"table.listga.mo" |translate}}</nz-form-label>
+                                <nz-form-control [nzSpan]="18 " nzErrorTip="Select MOT">
+                                    <nz-select nzAllowClear name="MOT" formControlName="Mot" (ngModelChange)="getNoticeContent($event)">
+                                        <nz-option *ngFor="let item of motList" [nzLabel]="item.noticeNumber" [nzValue]="item.id">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-12 margnrtp-15" *ngIf="viewContent" style="background-color: #eee;">
+                            <h4 style="text-align: center;">Preview</h4>
+                            <div>
+                                <quill-view-html [content]="viewContent" *ngIf="viewContent"></quill-view-html>
+                            </div>
+                        </div>
+                        <div class="col-md-12 margnrtp-15 d-flex justify-content-center" style="background-color: #eee;" *ngIf="!viewContent">
+                            Please Select an MOT To View
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 margnrtp-15">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6"> {{"table.listga.amendment"|translate}}</nz-form-label>
+                        <nz-form-control [nzSpan]="18 " nzErrorTip="Add Amendment">
+                            <textarea nz-input [nzAutosize]="{ minRows: 4, maxRows: 8 }" formControlName="amendment" nzRequired class="ant-select-selection" name="amendment" nzRequired oninput="javascript: if (this.value.length==1 && this.value==' '
+                            ) this.value='' ;">
+    </textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row  margnrtp-15">
+                <div class="col-md-12">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6"> Subject</nz-form-label>
+                        <nz-form-control [nzSpan]="18" nzErrorTip="Add Amendment Suubject">
+                            <textarea nz-input [nzAutosize]="{ minRows: 4, maxRows: 8 }" maxlength="255" formControlName="subject" nzRequired class="ant-select-selection" name="subject" nzRequired oninput="javascript: if (this.value.length==1 && this.value==' '
+                        ) this.value='' ;">
+</textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15 d-flex justify-content-space-between">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="button" nz-button nzType="default" class="margnlt-5" (click)="cancel()">
+                        {{"table.listga.cancel"|translate}}
+                    </button>
+                    <!-- <button type="button " nz-button nzType="primary " (click)="saveProcession( 'SAVE') " class="margnlt-5 ">
+                        Save
+                    </button> -->
+                    <button type="button" nz-button nzType="primary" (click)="saveAmendment()" class="bmargnlt-5">
+                       {{"table.listga.submit" |translate}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isViewAmendment" nzTitle="View" (nzOnCancel)="handleCancel()" [nzFooter]="null">
+    <div class="row d-flex justify-content-center">
+        <quill-view-html [content]="amendmentContent" *ngIf="amendmentContent"></quill-view-html>
+    </div>
+</nz-modal>

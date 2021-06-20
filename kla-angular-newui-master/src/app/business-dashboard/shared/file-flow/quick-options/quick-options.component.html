@@ -1,0 +1,17 @@
+<div class="col-md-12 marginbtm-10 mrt-5" *ngIf="showNote">
+    <div class="txt-area-main">
+      <div class="col">
+        <strong>Quick options: </strong>
+        <nz-tag
+          *ngFor="let tag of quickOptions; let i = index"
+          nzMode="checkable"
+          [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+          (nzCheckedChange)="CheckforRules($event, tag, i)"
+        >
+          <div>
+            {{ tag.label }}
+          </div>
+        </nz-tag>
+      </div>
+    </div>
+  </div>

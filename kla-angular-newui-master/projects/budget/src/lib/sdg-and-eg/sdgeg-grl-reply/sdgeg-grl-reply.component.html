@@ -1,0 +1,26 @@
+
+
+  <nz-card style="width: 600px">
+    <div class="row" *ngIf="sectionMode && grlReply?.status == 'SUBMITTED'">
+      <div class="col-md-12 align-right">
+        <button nz-button nzType="default" class ="mr-6" *ngIf="sectionMode && editMode" (click)="onCancel()">Cancel</button>
+        <button nz-button nzType="primary" class ="mr-6" *ngIf="sectionMode && !editMode" (click)="editMode = true">Edit</button>
+        <button nz-button nzType="primary" class ="mr-6" *ngIf="sectionMode && editMode" (click)="onSave()">Save</button>
+      </div>
+
+    </div>
+    <div class="row mrgT20">
+      <div class="col-md-12">
+           <span *ngIf="sectionMode &&!editMode">
+            {{content}}
+           </span>
+           <span *ngIf="!sectionMode">
+            {{grlReply?.masterContent}}
+           </span>
+           <textarea *ngIf="sectionMode && editMode"
+           nz-input [(ngModel)]="content" [nzAutosize]="{ minRows: 3, maxRows: 6 }" maxlength="255" nzRequired>
+          </textarea>  
+      </div>
+    </div>
+  </nz-card>    
+

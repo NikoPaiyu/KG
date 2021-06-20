@@ -1,0 +1,42 @@
+
+<h6>Reply:</h6>
+<div [formGroup]="businessData">
+  <nz-card style="width: 700px">
+    <div class="row mrgT20">
+      <div class="col-md-6">
+        <nz-form-item>
+            <nz-form-label>Select SDG/EG</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="sdgAndEgId" (ngModelChange)="selectSDGEG($event)" nzShowSearch>
+                <nz-option *ngFor="let option of sdgEGList" [nzLabel]="option.title" [nzValue]="option.id">
+                </nz-option>
+            </nz-select>
+            <button  class="mrgT20" *ngIf="showPreview" nz-button nzType="default" (click)="sdgegPreview = true">
+               Preview
+            </button>
+              <div *ngIf="businessData?.value?.content == null && isSubmit">
+                <span class="text-danger">Content is required</span>
+            </div>          
+            </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+      <div class="row mrgT20">
+        <div class="col-md-12">
+          <nz-form-item>
+              <nz-form-label>Governor's Recommendation Letter</nz-form-label>
+              <nz-form-control>
+                <textarea nz-input formControlName="content" [nzAutosize]="{ minRows: 4, maxRows: 8 }" maxlength="255" nzRequired>
+                </textarea>  
+                <div *ngIf="businessData?.value?.content == null && isSubmit">
+                  <span class="text-danger">Content is required</span>
+              </div>          
+              </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </nz-card> 
+</div>     
+<nz-modal nzWidth="500" [(nzVisible)]="sdgegPreview" nzTitle="SDG EG Preview" (nzOnCancel)="sdgegPreview = false" (nzOnOk)="sdgegPreview  = false">
+  <budget-sdfg-preview *ngIf="selsdgegId" [selsdgegId]="selsdgegId"></budget-sdfg-preview>
+</nz-modal>

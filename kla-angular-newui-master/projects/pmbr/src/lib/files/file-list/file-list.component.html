@@ -1,0 +1,1160 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.pmbr.resolution-list.pmbr" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"
+        >{{billFileType}}</h2>
+    </div>
+    <!-- <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+          <button
+            class="d-flex align-items-center mr-6"
+            nz-button
+            nzType="default"
+            *ngIf="createFilePermission"
+            (click)="showRequestModal()"
+          >
+            {{
+              "business-dashboard.listprioritylist.prioritylist.createschedulefile"
+                | translate
+            }}
+          </button>
+        </div>
+      </div> -->
+</div>
+<nz-divider></nz-divider>
+<nz-tabset>
+    <nz-tab nzTitle='{{ "cpl.dashboard.filesforaction" | translate }}' (nzClick)="getAssemblySession();clearFilter();clearSearch(); getPendingFiles()" *ngIf="!lawFiles">
+        <div class="row marginbtm-15">
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.assembly" | translate }}
+                <nz-select nzAllowClear name="assemblyId" [(ngModel)]="assemblyId" (ngModelChange)="getSessionForAssembly()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.questionlist.session" | translate }}
+                <nz-select nzAllowClear name="sessionId" [(ngModel)]="sessionId"
+                    (ngModelChange)="getPendingFiles()">
+                    <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-3 d-flex align-items-center whitespace" *ngIf="params">
+                {{ "cpl.fileworkflow.filetype" | translate }}:
+                <nz-select [(ngModel)]="fileType" (ngModelChange)="getPendingFiles()" name="fileType">
+                    <nz-option *ngFor="let type of fileTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+                <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle='{{ "business-dashboard.question.questionlist.filtercolumns" | translate }}' (nzOnCancel)="_hideFilter()"
+                    (nzOnOk)="_showFilter()">
+                    <div class="width-100 pading-all">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                                    <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)"
+                                        [(ngModel)]="box.checked">{{ box.label }}</label>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </nz-modal>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace" *ngIf="!params"></div>
+            <div class="col-md-4">
+                <div class="row d-flex justify-content-end">
+                    <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                        {{ "business-dashboard.bill-management.billlist.clearFilter" | translate }}
+                    </button>
+                    <div class="col-md-6">
+                        <nz-input-group [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchPending" (ngModelChange)="filtering()" name="search" nz-input
+                                placeholder="" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row fltr">
+            <div class="col-md-4" *ngIf="filenodisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.responses.ordapprove.fileNo" | translate }}.
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.fileNumber"
+                            name="filenum" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                            <nz-option *ngFor="let num of fileno" [nzLabel]="num" [nzValue]="num"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="filesubjectdisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subject"
+                            name="filesub" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                            <nz-option *ngFor="let sub of filesubject" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="prioritydisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.question.questionlist.priority" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.priority"
+                            name="status" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                            <nz-option *ngFor="let p of priority" [nzLabel]="p" [nzValue]="p"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="subtypeDisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "cpl.fileworkflow.filetype" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subtype"
+                            name="subtype" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                            <nz-option *ngFor="let type of filesubtype" [nzLabel]="type" [nzValue]="type"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="regdatedisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                    </div>
+                    <div class="word-break">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.regDate"
+                            name="regdate" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                            <nz-option *ngFor="let date of regDate" [nzLabel]="date | date: 'dd-MM-yyyy'"
+                                [nzValue]="date"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="pendingFiles" class="table-all">
+            <thead>
+                <tr>
+                    <th nzShowSort nzSortKey="fileno">
+                        {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="filesubject">
+                        {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="priority">
+                        {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="fromwhom">
+                        {{ "noticeprocessing.staff.personalregister.fromwhom" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="filetype">
+                        {{ "cpl.fileworkflow.filetype" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="regdate">
+                        {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                    </th> <th nzShowSort nzSortKey="status">
+                        {{ "business-dashboard.question.questionlist.status" | translate }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of fileTable.data; let i = index" 
+                nz-popover nzType="primary" nzPopoverPlacement="left" 
+                [nzPopoverContent]="contentTemplate"(click)="viewFile(item.fileId)">
+                <ng-template #contentTemplate>
+                    <div>
+                        <span (click)="viewFile(item.fileId)">{{ "cpl.correspondencelist.view" | translate }}</span>
+                    </div>
+                </ng-template>
+                    <td>{{item.fileNumber}}</td>
+                    <td>{{item.subject}}</td>
+                    <td>{{item.priority}}</td>
+                    <td></td>
+                    <td *ngIf="item?.type !== 'PMBR'">{{item?.type?.split('_').join(' ')}}</td>
+                    <td *ngIf="item?.type === 'PMBR'">PM BILL</td>
+                    <td>{{item.createdDate | date: "dd-MM-yyyy"}}</td>
+                    <td>
+                        <nz-tag [nzColor]="'green'">{{ item.status?.split("_").join(" ") }}</nz-tag>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle="My Files" (nzClick)="getAssemblySession();getMyFiles();clearFilter();clearSearch()"
+    *ngIf="myFiles">
+    <div class="row marginbtm-15">
+        <div class="col-md-4">
+            <div class="row align-items-center">
+                <div class="col-md-3"> {{ "business-dashboard.question.questionlist.status" | translate }}:</div>
+                <div class="col-md-7">
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="Select Type">
+                            <nz-select nzRequired nzShowSearch nzAllowClear nzPlaceHolder=""
+                                [(ngModel)]="approvedFileStatusType" (ngModelChange)="searchMyFiles()">
+                                <nz-option *ngFor="let doc of statusType" [nzLabel]="doc" [nzValue]="doc">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-1 d-flex align-items-center">
+            <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showModal()">
+                <i nz-icon nzType="plus"></i>
+            </button>
+        </div>
+        <div class="col-md-3 d-flex align-items-center whitespace" *ngIf="params">
+            {{ "cpl.fileworkflow.filetype" | translate }}:
+            <nz-select [(ngModel)]="fileType" (ngModelChange)="getMyFiles()" name="fileType">
+                <nz-option *ngFor="let type of fileTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-2 d-flex justify-content-end">
+            <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                {{ "noticeprocessing.noticetemplate.listtemplate.clearfilter" | translate }} 
+            </button>
+        </div>
+        <div class="col-md-2 d-flex align-items-center justify-content-end">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+                <input type="text" name="search" [(ngModel)]="searchMyFile" (ngModelChange)="searchMyFiles()"
+                    nz-input placeholder='{{ "usermanagement.listrole.searchhere" | translate }}' />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+                <i nz-icon nzType="search"></i>
+            </ng-template>
+        </div>
+    </div>
+    <div class="row fltr">
+        <div class="col-md-4" *ngIf="filenodisable">
+            <div class="row align-items-center">
+                <div class="col-md-3 wordbreak">
+                    {{ "noticeprocessing.staff.personalregister.fileno" | translate }}.
+                </div>
+                <div class="col-md-8">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.fileNumber"
+                        name="filenum" (ngModelChange)="searchMyFileCol(filterSelected)">
+                        <nz-option *ngFor="let num of fileno" [nzLabel]="num" [nzValue]="num"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" *ngIf="filesubjectdisable">
+            <div class="row align-items-center">
+                <div class="col-md-3 wordbreak">
+                    {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                </div>
+                <div class="col-md-8">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subject"
+                        name="filesub" (ngModelChange)="searchMyFileCol(filterSelected)">
+                        <nz-option *ngFor="let sub of filesubject" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" *ngIf="prioritydisable">
+            <div class="row align-items-center">
+                <div class="col-md-3 wordbreak">
+                    {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                </div>
+                <div class="col-md-8">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.priority"
+                        name="status" (ngModelChange)="searchMyFileCol(filterSelected)">
+                        <nz-option *ngFor="let p of priority" [nzLabel]="p" [nzValue]="p"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" *ngIf="subtypeDisable">
+            <div class="row align-items-center">
+                <div class="col-md-3 wordbreak">
+                    {{ "cpl.fileworkflow.filetype" | translate }}
+                </div>
+                <div class="col-md-8">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subtype"
+                        name="subtype" (ngModelChange)="searchMyFileCol(filterSelected)">
+                        <nz-option *ngFor="let type of filesubtype" [nzLabel]="type" [nzValue]="type"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" *ngIf="regdatedisable">
+            <div class="row align-items-center">
+                <div class="col-md-3 wordbreak">
+                    {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                </div>
+                <div class="col-md-8">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.regDate"
+                        name="regdate" (ngModelChange)="searchMyFileCol(filterSelected)">
+                        <nz-option *ngFor="let date of regDate" [nzLabel]="date | date: 'dd-MM-yyyy'"
+                            [nzValue]="date"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 pdzero icon-color">
+                    <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="approvedFileList" class="table-all">
+        <thead>
+            <tr>
+                <th nzShowSort nzSortKey="fileNumber">
+                    {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="subject">
+                    {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="priority">
+                    {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="type">
+                    {{ "cpl.fileworkflow.filetype" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="createdDate" class="reg-date">
+                    {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.question.questionlist.status" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let list of fileTable.data; let i = index">
+                <tr (click)="viewFile(list.fileId)">
+                    <td>
+                        <a>
+                            {{ list.fileNumber }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ list.subject }}
+                    </td>
+                    <td>
+                        {{ list.priority?.split("_").join(" ") }}
+                    </td>
+                    <td *ngIf="list?.type !== 'PMBR'">{{list?.type?.split('_').join(' ')}}</td>
+                    <td *ngIf="list?.type === 'PMBR'"> PM BILL </td>
+                    <td>
+                        {{ list.createdDate | date: "dd-MM-yyyy" }}
+                    </td>
+                    <td>
+                        <nz-tag [nzColor]="'green'">{{ list.status?.split("_").join(" ") }}</nz-tag>
+                    </td>
+                </tr>
+            </ng-container>
+        </tbody>
+    </nz-table>
+    </nz-tab>
+
+    <nz-tab nzTitle='{{ "cpl.files.AllFiles" | translate }}' (nzClick)="getAssemblySession(); getAllFiles();clearFilter();clearSearch();"
+    *ngIf="!myFiles && !lawFiles">
+        <div class="row marginbtm-15">
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.assembly" | translate }}
+                <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assembly" (ngModelChange)="getSessionForAssembly()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.questionlist.session" | translate }}
+                <nz-select nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="session"
+                    (ngModelChange)="getAllFiles()">
+                    <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-3">
+                <div class="row align-items-center">
+                    <div class="col-md-5 wordbreak"> {{ "business-dashboard.question.questionlist.status" | translate }}:</div>
+                    <div class="col-md-7">
+                        <nz-select nzRequired nzShowSearch nzAllowClear nzPlaceHolder=""
+                            [(ngModel)]="fileStatusType" (ngModelChange)="getAllFiles()">
+                            <nz-option *ngFor="let doc of statusType" [nzLabel]="doc" [nzValue]="doc">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end">
+                <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                    {{ "noticeprocessing.noticetemplate.listtemplate.clearfilter" | translate }}
+                </button>
+            </div>
+            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" name="search" [(ngModel)]="searchAllFiles" (ngModelChange)="onSearch()" nz-input
+                        placeholder="Search here" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+        <div class="row fltr">
+            <div class="col-md-3 d-flex align-items-center whitespace" *ngIf="params">
+                {{ "cpl.fileworkflow.filetype" | translate }}:
+                <nz-select [(ngModel)]="fileType" (ngModelChange)="getAllFiles()" name="fileType">
+                    <nz-option *ngFor="let type of fileTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-4" *ngIf="filenodisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "noticeprocessing.staff.personalregister.fileno" | translate }}.
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.fileNumber"
+                            name="filenum" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let num of fileno" [nzLabel]="num" [nzValue]="num"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="filesubjectdisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subject"
+                            name="filesub" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let sub of filesubject" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="prioritydisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.priority"
+                            name="status" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let p of priority" [nzLabel]="p" [nzValue]="p"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="subtypeDisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "cpl.fileworkflow.filetype" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subtype"
+                            name="subtype" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let type of filesubtype" [nzLabel]="type" [nzValue]="type"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="regdatedisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                    </div>
+                    <div class="word-break">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.regDate"
+                            name="regdate" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let date of regDate" [nzLabel]="date | date: 'dd-MM-yyyy'"
+                                [nzValue]="date"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <nz-table #docTable nzShowPagination nzShowSizeChanger [nzData]="allFiles" class="table-all">
+            <thead>
+                <tr>
+                    <th nzShowSort nzSortKey="fileno">
+                        {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="filesubject">
+                        {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="priority">
+                        {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="fromwhom">
+                        {{ "noticeprocessing.staff.personalregister.fromwhom" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="filetype">
+                        {{ "cpl.fileworkflow.filetype" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="regdate">
+                        {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                    </th> <th nzShowSort nzSortKey="status">
+                        {{ "business-dashboard.question.questionlist.status" | translate }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of docTable.data" nz-popover 
+                    nzType="primary" nzPopoverPlacement="left" 
+                    [nzPopoverContent]="contentTemplate" (click)="viewFile(item.fileId)">
+                    <ng-template #contentTemplate>
+                        <div>
+                            <span (click)="viewFile(item.fileId)">{{ "cpl.correspondencelist.view" | translate }}</span>
+                        </div>
+                    </ng-template>
+                    <td>{{item.fileNumber}}</td>
+                    <td class="word-break">{{item.subject}}</td>
+                    <td>{{item.priority}}</td>
+                    <td></td>
+                    <td *ngIf="item?.type !== 'PMBR'">{{item?.type?.split('_').join(' ')}}</td>
+                    <td *ngIf="item?.type === 'PMBR'">PM BILL</td>
+                    <td>{{item.createdDate | date: "dd-MM-yyyy"}}</td>
+                    <td>
+                        <nz-tag [nzColor]="'green'">{{ item.status?.split("_").join(" ") }}</nz-tag>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "cpl.files.filesforratification" | translate }}' (nzClick)="getAssemblySession(); getPendingRatification();clearFilter();clearSearch();"
+    *ngIf="ratification">
+    <div class="row marginbtm-15">
+        <div class="col-md-2 d-flex align-items-center whitespace">
+            {{ "business-dashboard.question.assembly" | translate }}
+            <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assembly" (ngModelChange)="getSessionForAssembly()">
+                <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                </nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-2 d-flex align-items-center whitespace">
+            {{ "business-dashboard.question.questionlist.session" | translate }}
+            <nz-select nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="session"
+                (ngModelChange)="getPendingRatification()">
+                <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                </nz-option>
+            </nz-select>
+        </div>
+    </div>
+    <nz-table #docTable nzShowPagination nzShowSizeChanger [nzData]="ratificationList" class="table-all">
+        <thead>
+            <tr>
+                <th nzShowSort nzSortKey="fileno">
+                    {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="filesubject">
+                    {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="priority">
+                    {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="fromwhom">
+                    {{ "noticeprocessing.staff.personalregister.fromwhom" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="filetype">
+                    {{ "cpl.fileworkflow.filetype" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="regdate">
+                    {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                </th> <th nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.question.questionlist.status" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of docTable.data" nz-popover 
+                nzType="primary" nzPopoverPlacement="left" 
+                [nzPopoverContent]="contentTemplate" (click)="viewFile(item.fileId)">
+                <ng-template #contentTemplate>
+                    <div>
+                        <span (click)="viewFile(item.fileId)">{{ "cpl.correspondencelist.view" | translate }}</span>
+                    </div>
+                </ng-template>
+                <td>{{item.fileNumber}}</td>
+                <td class="word-break">{{item.subject}}</td>
+                <td>{{item.priority}}</td>
+                <td></td>
+                <td *ngIf="item?.type !== 'PMBR'">{{item?.type?.split('_').join(' ')}}</td>
+                <td *ngIf="item?.type === 'PMBR'">PM BILL</td>
+                <td>{{item.createdDate | date: "dd-MM-yyyy"}}</td>
+                <td>
+                    <nz-tag [nzColor]="'green'">{{ item.status?.split("_").join(" ") }}</nz-tag>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+    </nz-tab>
+
+
+
+
+    <nz-tab nzTitle='{{ "business-dashboard.pmbr.file-list.lawfiles" | translate }}' (nzClick)="getLawDeptFiles();" *ngIf="lawFiles" >
+        <div class="row marginbtm-15">
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.assembly" | translate }}
+                <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assembly" (ngModelChange)="getSessionForAssembly()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.questionlist.session" | translate }}
+                <nz-select nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="session"
+                    (ngModelChange)="getAllFiles()">
+                    <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-3">
+                <div class="row align-items-center">
+                    <div class="col-md-5 wordbreak"> {{ "business-dashboard.question.questionlist.status" | translate }}:</div>
+                    <div class="col-md-7">
+                        <nz-select nzRequired nzShowSearch nzAllowClear nzPlaceHolder=""
+                            [(ngModel)]="fileStatusType" (ngModelChange)="getAllFiles()">
+                            <nz-option *ngFor="let doc of statusType" [nzLabel]="doc" [nzValue]="doc">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end">
+                <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                    {{ "noticeprocessing.noticetemplate.listtemplate.clearfilter" | translate }}
+                </button>
+            </div>
+            <div class="col-md-2 d-flex align-items-center justify-content-end">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" name="search" [(ngModel)]="searchAllFiles" (ngModelChange)="onSearch()" nz-input
+                        placeholder="{{ 'cpl.registration.searchhere' | translate }}" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+        <div class="row fltr">
+            <div class="col-md-3 d-flex align-items-center whitespace" *ngIf="params">
+                {{ "cpl.fileworkflow.filetype" | translate }}:
+                <nz-select [(ngModel)]="fileType" (ngModelChange)="getAllFiles()" name="fileType">
+                    <nz-option *ngFor="let type of fileTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-4" *ngIf="filenodisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "noticeprocessing.staff.personalregister.fileno" | translate }}.
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.fileNumber"
+                            name="filenum" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let num of fileno" [nzLabel]="num" [nzValue]="num"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="filesubjectdisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subject"
+                            name="filesub" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let sub of filesubject" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="prioritydisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.priority"
+                            name="status" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let p of priority" [nzLabel]="p" [nzValue]="p"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="subtypeDisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "cpl.fileworkflow.filetype" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subtype"
+                            name="subtype" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let type of filesubtype" [nzLabel]="type" [nzValue]="type"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" *ngIf="regdatedisable">
+                <div class="row align-items-center">
+                    <div class="col-md-3 wordbreak">
+                        {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                    </div>
+                    <div class="word-break">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.regDate"
+                            name="regdate" (ngModelChange)="searchCol(filterSelected)">
+                            <nz-option *ngFor="let date of regDate" [nzLabel]="date | date: 'dd-MM-yyyy'"
+                                [nzValue]="date"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="col-md-1 pdzero icon-color">
+                        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="lawDeptFiles" class="table-all">
+          <thead>
+            <tr>
+              <th></th>
+              <th  nzShowSort nzSortKey="bill">
+                {{ "bill.prioritylist.listing.fileno" | translate }}
+              </th>
+              <th>
+                {{ "committee.committe-files.filesubject" | translate }}
+              </th>
+              <th>
+                {{ "business-dashboard.question.questionlist.priority" | translate }}
+              </th>
+              <th>
+                {{ "cpl.fileworkflow.filetype" | translate }}
+              </th>
+              <th>
+                {{ "cpl.files.regdate" | translate }}
+              </th>
+              <th>
+                {{ "business-dashboard.question.status" | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let list of fileTable.data; let i = index">
+              <tr (click)="viewBile(list.bill.id)">
+                <td nzShowCheckbox> </td>
+                <td>
+              <tr>
+                {{list.bill.fileNumber}}
+              </tr>
+              <!-- <a class="viewlink"
+              (click)='showCreateNotice("INTRODUCE_BILL",list,"viewnotice")'>{{createNoticeText("INTRODUCE_BILL",list)}}</a> -->
+              </td>
+
+              <td>
+                {{ list.fileSubject }}
+              </td>
+              <td>
+                {{ list.filePriority }}
+              </td>
+              <td>
+                {{ list.bill.type }}
+              </td>
+              <td>
+                {{ list.bill.createdDate | date:"dd-MM-yyyy" }}
+              </td>
+              <td>
+                <nz-tag [nzColor]="'green'">{{list.bill.status }}</nz-tag>
+              </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+        </nz-tab>
+        <!-- <nz-tab nzTitle="Ballot Files" (nzClick)="getAssemblySession();clearFilter();clearSearch(); getPendingFile()">
+            <div class="row marginbtm-15">
+                <div class="col-md-2 d-flex align-items-center whitespace">
+                    {{ "business-dashboard.question.assembly" | translate }}
+                    <nz-select nzAllowClear name="assemblyId" [(ngModel)]="assemblyId"
+                        (ngModelChange)="getPendingFile()">
+                        <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-2 d-flex align-items-center whitespace">
+                    {{ "business-dashboard.question.questionlist.session" | translate }}
+                    <nz-select nzAllowClear name="sessionId" [(ngModel)]="sessionId"
+                        (ngModelChange)="getPendingFile()">
+                        <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-3 d-flex align-items-center whitespace" *ngIf="params">
+                    {{ "cpl.fileworkflow.filetype" | translate }}:
+                    <nz-select [(ngModel)]="fileType" (ngModelChange)="getPendingFiles()" name="fileType">
+                        <nz-option *ngFor="let type of fileTypes" [nzLabel]="type" [nzValue]="type"></nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-1 d-flex align-items-center">
+                    <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showModal()">
+                        <i nz-icon nzType="plus"></i>
+                    </button>
+                    <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle='{{ "business-dashboard.question.questionlist.filtercolumns" | translate }}' (nzOnCancel)="_hideFilter()"
+                        (nzOnOk)="_showFilter()">
+                        <div class="width-100 pading-all">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                                        <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)"
+                                            [(ngModel)]="box.checked">{{ box.label }}</label>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </nz-modal>
+                </div>
+                <div class="col-md-2 d-flex align-items-center whitespace" *ngIf="!params"></div>
+                <div class="col-md-2 d-flex justify-content-end">
+                    <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                        {{ "business-dashboard.bill-management.billlist.clearFilter" | translate }}
+                    </button>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <nz-input-group [nzSuffix]="suffixIconSearch">
+                        <input type="text" [(ngModel)]="searchPending" (ngModelChange)="filtering()" name="search" nz-input
+                            placeholder="" />
+                    </nz-input-group>
+                    <ng-template #suffixIconSearch>
+                        <i nz-icon nzType="search"></i>
+                    </ng-template>
+                </div>
+            </div>
+            <div class="row fltr">
+                <div class="col-md-4" *ngIf="filenodisable">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 wordbreak">
+                            {{ "business-dashboard.responses.ordapprove.fileNo" | translate }}.
+                        </div>
+                        <div class="col-md-8">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.fileNumber"
+                                name="filenum" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                                <nz-option *ngFor="let num of fileno" [nzLabel]="num" [nzValue]="num"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div class="col-md-1 pdzero icon-color">
+                            <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" *ngIf="filesubjectdisable">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 wordbreak">
+                            {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                        </div>
+                        <div class="col-md-8">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subject"
+                                name="filesub" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                                <nz-option *ngFor="let sub of filesubject" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div class="col-md-1 pdzero icon-color">
+                            <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" *ngIf="prioritydisable">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 wordbreak">
+                            {{ "business-dashboard.question.questionlist.priority" | translate }}
+                        </div>
+                        <div class="col-md-8">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.priority"
+                                name="status" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                                <nz-option *ngFor="let p of priority" [nzLabel]="p" [nzValue]="p"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div class="col-md-1 pdzero icon-color">
+                            <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" *ngIf="subtypeDisable">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 wordbreak">
+                            {{ "cpl.fileworkflow.filetype" | translate }}
+                        </div>
+                        <div class="col-md-8">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.subtype"
+                                name="subtype" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                                <nz-option *ngFor="let type of filesubtype" [nzLabel]="type" [nzValue]="type"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div class="col-md-1 pdzero icon-color">
+                            <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4" *ngIf="regdatedisable">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 wordbreak">
+                            {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                        </div>
+                        <div class="word-break">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected.regDate"
+                                name="regdate" (ngModelChange)="searchFileForActionCol(filterSelected)">
+                                <nz-option *ngFor="let date of regDate" [nzLabel]="date | date: 'dd-MM-yyyy'"
+                                    [nzValue]="date"></nz-option>
+                            </nz-select>
+                        </div>
+                        <div class="col-md-1 pdzero icon-color">
+                            <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="BallotPendingFiles" class="table-all">
+                <thead>
+                    <tr>
+                        <th nzShowSort nzSortKey="slNo">
+                            {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+                        </th>
+                        <th nzShowSort nzSortKey="sroNumber">
+                            {{ "noticeprocessing.staff.personalregister.filesubject" | translate }}
+                        </th>
+                        <th nzShowSort nzSortKey="amendmentsNo">
+                            {{ "business-dashboard.aod.aod-list.priority" | translate }}
+                        </th>
+                        <th nzShowSort nzSortKey="amendmentsNo">
+                            {{ "noticeprocessing.staff.personalregister.fromwhom" | translate }}
+                        </th>
+                        <th nzShowSort nzSortKey="amendmentsNo">
+                            {{ "cpl.fileworkflow.filetype" | translate }}
+                        </th>
+                        <th nzShowSort nzSortKey="amendmentsNo">
+                            {{ "business-dashboard.question.questionlist.regdate" | translate }}
+                        </th> <th nzShowSort nzSortKey="amendmentsNo">
+                            {{ "business-dashboard.question.questionlist.status" | translate }}
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of fileTable.data; let i = index" 
+                    nz-popover nzType="primary" nzPopoverPlacement="left" 
+                    [nzPopoverContent]="contentTemplate"(click)="viewFile(item.fileId)">
+                    <ng-template #contentTemplate>
+                        <div>
+                            <span (click)="viewFile(item.fileId)">View</span>
+                        </div>
+                    </ng-template>
+                        <td>{{item.fileNumber}}</td>
+                        <td>{{item.subject}}</td>
+                        <td>{{item.priority}}</td>
+                        <td></td>
+                        <td>{{item.type}}</td>
+                        <td>{{item.createdDate | date: "dd-MM-yyyy"}}</td>
+                        <td>
+                            <nz-tag [nzColor]="'green'">{{ item.status?.split("_").join(" ") }}</nz-tag>
+                        </td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </nz-tab> -->
+</nz-tabset>
+<nz-modal
+  [(nzVisible)]="isRequestModalVisible"
+  nzTitle="Create Schedule File"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleCancel()"
+>
+  <div class="padding_25">
+    <form nz-form [formGroup]="fileForm" class="form">
+      <div class="row">
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{ "bill.prioritylist.create.errortpl" | translate }}
+          </ng-container>
+        </ng-template>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-label>{{
+              "bill.prioritylist.listing.assembly" | translate
+            }}</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+              <nz-select nzShowSearch nzAllowClear formControlName="assemblyId" [nzDisabled]="this.cosId !== 0" (ngModelChange)="getSessionForAssembly()">
+                <nz-option
+                  *ngFor="let type of assemblyList"
+                  [nzLabel]="type.assemblyId"
+                  [nzValue]="type.id"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-label>{{
+              "bill.prioritylist.listing.session" | translate
+            }}</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+              <nz-select nzShowSearch nzAllowClear formControlName="sessionId" [nzDisabled]="this.cosId !== 0">
+                <nz-option
+                  *ngFor="let type of sessionList"
+                  [nzLabel]="type.sessionId"
+                  [nzValue]="type.id"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"business-dashboard.cpl.view.filesubject" | translate}}</div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder=""
+              [(ngModel)]="file1.subject"
+            />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"business-dashboard.question.questionlist.priority" | translate}}</div>
+          <div class="col-md-8">
+            <nz-radio-group [(ngModel)]="file1.priority">
+              <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+              <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+              <label nz-radio nzValue="ACTION_TODAY">{{"cpl.docamendments.actiontoday" | translate}}</label>
+              <label nz-radio nzValue="ASSEMBLY_URGENT">{{"cpl.docamendments.assemblyurgent" | translate}}</label>
+            </nz-radio-group>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"cpl.docamendments.description" | translate}}</div>
+          <div class="col-md-8">
+            <textarea
+              nz-input
+              rows="2"
+              placeholder="File description"
+              [(ngModel)]="file1.description"
+            ></textarea>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="handleCancel()"
+            >
+            {{"business-dashboard.question.cancel" | translate}}
+            </button>
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle='{{"bill.bill-clause.list.wanttocreatefile" | translate}}'
+              (nzOnConfirm)="createFile()"
+              class="btn btn-primary primary-button"
+              [disabled]="file1.subject === '' || file1.priority === null || !this.fileForm.valid"
+            >
+            {{"cpl.docpreparion.createfile" | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+

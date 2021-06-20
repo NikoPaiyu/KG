@@ -1,0 +1,185 @@
+<div class="row">
+  <div class="col-md-9">
+    <nz-empty
+      *ngIf="!runningLines || runningLines.length == 0"
+      [nzNotFoundContent]="contentTpl"
+    >
+      <ng-template #contentTpl>
+        <span> {{"business-dashboard.lob.bus-controller-view.NoCurrentBusiness" | translate}} </span>
+      </ng-template>
+    </nz-empty>
+    <div *ngFor="let runningLine of runningLines" nz-row>
+      <div nz-col nzSpan="24">
+        <nz-collapse nzAccordion="true">
+          <nz-collapse-panel [nzHeader]="runningLine.businessName">
+            <nz-collapse *ngFor="let item of runningLine.businessLines">
+              <nz-collapse-panel nzHeader="{{ item.title }}" [nzExtra]="extra">
+                <ng-template #extra> </ng-template>
+
+                <div *ngIf="item.speakerNoteUrl" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="8">
+                    <p class="marginbtm">
+                      {{"cpl.fileworkflow.speakernote" | translate}}
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="!item.speakerNotebtn">
+                    <button
+                      nz-button
+                      nzType="default"
+                      (click)="startSpeakerNote(item, 'Start')"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.speakerNotebtn">
+                    <button
+                      (click)="pauseBusiness(item)"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.speakerNotebtn">
+                    <button
+                      (click)="startSpeakerNote(item, 'Stop')"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="2">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }} m
+                    </button>
+                  </div>
+                </div>
+                <div *ngIf="item.primaryMemberId" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="8">
+                    <p class="marginbtm">
+                      {{ item.businessName }}
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="!item.questionbtn">
+                    <button
+                      (click)="startQuestion(item, 'Start')"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.questionbtn">
+                    <button
+                      (click)="pauseBusiness(item)"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.questionbtn">
+                    <button
+                      (click)="startQuestion(item, 'Stop')"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }} m
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="7">
+                    <label class="member_bc">{{
+                      item.primaryMemberName
+                    }}</label>
+                  </div>
+                </div>
+                <div *ngIf="item.secondaryMemberId" nz-row class="marginbtm-15">
+                  <div nz-col nzSpan="8">
+                    <p class="marginbtm">
+                      {{"business-dashboard.agenda.create-item.response" | translate}}
+                    </p>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="!item.answerbtn">
+                    <button
+                      nz-button
+                      nzType="default"
+                      (click)="startAnswer(item, 'Start')"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.answerbtn">
+                    <button
+                      (click)="pauseBusiness(item)"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon *ngIf="!item.pausebtn" nzType="pause"></i>
+                      <i nz-icon *ngIf="item.pausebtn" nzType="caret-right"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3" *ngIf="item.answerbtn">
+                    <button
+                      (click)="startAnswer(item, 'Stop')"
+                      nz-button
+                      nzType="default"
+                      class="bc-btn"
+                    >
+                      <i nz-icon nzType="border"></i>
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="3">
+                    <button nz-button nzType="default">
+                      {{ item.allotedTime }} m
+                    </button>
+                  </div>
+                  <div nz-col nzSpan="7">
+                    <label class="member_bc">{{
+                      item.secondaryMemberName
+                    }}</label>
+                  </div>
+                </div>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </div>
+    <div class="row">
+      <button
+        *ngIf="runningLines && runningLines.length > 0"
+        mwlConfirmationPopover
+        [popoverMessage]="popoverTitle"
+        placement="top"
+        (confirm)="stopTodaysBusiness()"
+        class="primary-button"
+      >
+        {{"business-dashboard.lob.bus-controller-view.stoptodaybusiness" | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <h1>
+      <countup-timer
+        *ngIf="runningLines && runningLines.length > 0"
+        [countUpTimerConfig]="timerConfig"
+      ></countup-timer>
+    </h1>
+  </div>
+</div>

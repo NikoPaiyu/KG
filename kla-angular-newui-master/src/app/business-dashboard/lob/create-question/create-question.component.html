@@ -1,0 +1,228 @@
+<div class="lob_form">
+  <form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm(validateForm.value)">
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSpan]="8" nzRequired>{{"cpl.registration.title" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="errorTpl">
+        <input nz-input formControlName="title" />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{"business-dahsboard.question.inputisrequired" | translate}}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label *ngIf="item.businessName == 'Address by The Governor'" [nzSpan]="8" nzRequired>
+        {{"business-dashboard.lob.bus-controller-view.Governor" | translate}}</nz-form-label>
+      <nz-form-label *ngIf="item.businessName != 'Address by The Governor'" [nzSpan]="8" nzRequired>
+        {{"business-dashboard.question.member" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="errorTpl">
+        <nz-select nzShowSearch nzAllowClear
+          nzPlaceHolder='{{"business-dashboard.lob.bus-controller-view.selaperson" | translate}}'
+          formControlName="memberId">
+          <ng-container *ngFor="let member of members">
+            <nz-option [nzLabel]="member.label" [nzValue]="member"></nz-option>
+          </ng-container>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="8" nzRequired>{{"noticeprocessing.noticeprocess.description" | translate}}
+      </nz-form-label>
+      <nz-form-control [nzSpan]="16"
+        nzErrorTip='{{"business-dashboard.lob.bus-controller-view.pleasewritesomethinghere" | translate}}'>
+        <textarea nz-input formControlName="description"></textarea>
+        <!-- <angular-editor
+          formControlName="description"
+          [config]="editorConfig"
+        ></angular-editor> -->
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSpan]="8">Time(In Minutes)</nz-form-label>
+      <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="errorTpl">
+        <input nz-input type="number" formControlName="allotedTime" />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="8">{{"business-dashboard.agenda.create-item.doc" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-upload [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 1" [nzBeforeUpload]="beforeUpload"
+          [nzRemove]="handleRemoveFIle">
+          <button nz-button type="button">
+            <i nz-icon nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-label [nzSpan]="8">{{"lobview.view.response" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-upload
+          [(nzFileList)]="answerFileList"
+          [nzShowButton]="answerFileList.length < 1"
+          [nzBeforeUpload]="beforeUploadAnswer"
+          [nzRemove]="handleRemoveAnswerFile"
+        >
+          <button nz-button type="button" class="mrbottom">
+            <i nz-icon nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+        <nz-form-control [nzSpan]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder='{{"business-dashboard.lob.bus-controller-view.selRes/Min" | translate}}'
+            formControlName="secondaryOwnerId"
+          >
+            <ng-container *ngFor="let member of members">
+              <nz-option
+                [nzLabel]="member.label"
+                [nzValue]="member"
+              ></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="8">{{"cpl.fileworkflow.speakernote" |translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-upload [(nzFileList)]="speaketNoteFileList" [nzShowButton]="speaketNoteFileList.length < 1"
+          [nzBeforeUpload]="beforeUploadSpeakerNote" [nzRemove]="handleRemoveSpeakerNoteFile">
+          <button nz-button type="button" class="mrbottom">
+            <i nz-icon nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="8">{{"business-dashboard.lob.lob-create.ministerreading" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="16">
+        <nz-upload
+          [(nzFileList)]="ministerReadingFileList"
+          [nzShowButton]="ministerReadingFileList.length < 1"
+          [nzBeforeUpload]="beforeMinisterReading"
+          [nzRemove]="handleRemoveMinisterReading"
+        >
+          <button nz-button type="button" class="mrbottom">
+            <i nz-icon nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+        <!-- <nz-form-control [nzSpan]="24">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder='{{"business-dashboard.lob.ob-create.selMinister" | translate}}'
+            formControlName="ministerId"
+          >
+            <ng-container *ngFor="let member of members">
+              <nz-option
+                [nzLabel]="member.label"
+                [nzValue]="member"
+              ></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control> -->
+      </nz-form-control>
+    </nz-form-item>
+    <div formArrayName="subbusiness">
+      <div *ngFor="
+          let business of validateForm.get('subbusiness')['controls'];
+          let businessIndex = index
+        " [formGroupName]="businessIndex">
+        <nz-card class="marginbtm-15">
+          <div class="row marginbtm-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <i nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to delete sub business?"
+              (nzOnConfirm)="deleteSubbusiness(businessIndex, business.value.id)" class="btn_x"></i>
+            </div>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label [nzSpan]="8">
+              {{"business-dashboard.lob.lob-create.subbusinessname" | translate}}</nz-form-label>
+              <nz-form-control [nzSpan]="16" nzHasFeedback [nzErrorTip]="errorTpl">
+                <input nz-input type="text" formControlName="subBusinessName" />
+                <ng-template #errorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    {{"business-dashboard.lob.lob-create.addsubbusentersubbusinessiness" | translate}}
+                  </ng-container>
+                </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+          <div formArrayName="lobBusinessRespondentMember">
+            <div *ngFor="
+              let resp of lobBusinessRespondentMember2(business).controls;
+              let respondentsIndex = index
+            " [formGroupName]="respondentsIndex">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="5">{{"lobview.view.response" | translate}}</nz-form-label>
+                <nz-form-control [nzSpan]="19">
+                  <nz-form-control [nzSpan]="13">
+                    <nz-select nzShowSearch nzAllowClear
+                      nzPlaceHolder='{{"business-dashboard.lob.bus-controller-view.selRes/Min" | translate}}'
+                      formControlName="memberId"
+                      [compareWith]="compareFn">
+                      <ng-container *ngFor="let member of members">
+                        <nz-option [nzLabel]="member.label" [nzValue]="member"></nz-option>
+                      </ng-container>
+                    </nz-select>
+                  </nz-form-control>  
+                  <nz-form-control [nzSpan]="9">
+                    <nz-upload [nzAction]="uploadURL" [nzShowButton]="!resp.value.documentUrl" (nzChange)="addRespondentAttachment($event, respondentsIndex, business)">
+                      <button nz-button type="button" class="mrbottom btn_h">
+                        <i nz-icon
+                          nzType="upload"></i><span>{{"cpl.correspondencelist.clicktoupload" | translate}}</span>
+                      </button>
+                    </nz-upload>
+                    <div *ngIf="resp.value.documentUrl && resp.value.showURL">
+                      <a [href]="resp.value.documentUrl" target="_blank">{{"lobview.view.response" | translate}}</a>
+                    </div>
+                  </nz-form-control>
+                  <nz-form-control [nzSpan]="2" *ngIf="lobBusinessRespondentMember2(business).controls.length > 1">
+                    <i nz-icon nzType="delete" nzTheme="outline" nz-popconfirm nzPopconfirmTitle="Are you sure you want to delete attachment?"
+                    (nzOnConfirm)="deletedRespondents(business,resp.value.id, respondentsIndex)"></i>
+                  </nz-form-control>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+              <button nz-button type="button"
+                (click)="addRespondents(business)">{{"business-dashboard.lob.lob-create.addrespondent" | translate}}
+              </button>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-12 d-flex justify-content-center">
+        <button nz-button type="button"
+          (click)="addSubbusiness()">{{"business-dashboard.lob.lob-create.addsubbusiness" | translate}}
+        </button>
+      </div>
+    </div>
+
+
+    <nz-form-item>
+      <nz-form-control [nzOffset]="7" [nzSpan]="12">
+        <button nz-button nzType="primary" [nzLoading]="isLoading" [disabled]="!validateForm.valid" class="margnrtp-15">
+          {{"cpl.docupload.submit" | translate}}
+        </button>
+        <button nz-button type="button" (click)="resetForm()" class="margnrtp-15">
+          {{ "business-dashboard.agenda.agenda-create.reset" | translate }}
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>

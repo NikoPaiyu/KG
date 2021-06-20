@@ -1,0 +1,101 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "Dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "miscellaneous-business-file.business.documents" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h4>
+      <b>{{
+        "miscellaneous-business-file.business.documents.list" | translate
+      }}</b>
+    </h4>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<nz-table
+  #rowSelectionTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="documentList"
+>
+  <thead>
+    <tr>
+      <th>slno</th>
+      <th>File Number</th>
+      <th>Document Ttitle</th>
+      <th>Status</th>
+      <th>View</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of rowSelectionTable.data; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ data.fileNumber }}</td>
+      <td>{{ data.title }}</td>
+      <td>{{ data.status }}</td>
+      <td>
+        <i
+          (click)="showPreviewModal(data)"
+          class="preview-icon"
+          nz-icon
+          nzType="file"
+          nzTheme="outline"
+        ></i>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="modelVisible"
+  nzTitle="Preview"
+  nzWidth="1000"
+>
+  <nz-tabset [nzSelectedIndex]="activeTabIndex">
+    <nz-tab [nzTitle]="selectedDocument?.title" (nzClick)="showtab(0)">
+      <div class="padding_25" style="background-color: white">
+        <!-- <div [innerHTML]="selectedDocument?.description"></div> -->
+        <ckeditor
+          [disabled]="true"
+          [editor]="Editor"
+          [(ngModel)]="selectedDescription"
+          [config]="ckeConfig"
+          debounce="500"
+        >
+        </ckeditor>
+      </div>
+      <div>
+        <h5 *ngIf="selectedDocument?.attachment?.length > 0">Attachments</h5>
+        <ul class="folder-list-view d-flex flex-wrap justify-content-between">
+          <li
+            (click)="showPdfTab(item)"
+            *ngFor="let item of selectedDocument?.attachment"
+          >
+            <img src="../../assets/img/File_Icon.png" alt="" />
+            <span>{{ item.title }}</span>
+          </li>
+        </ul>
+      </div>
+    </nz-tab>
+    <nz-tab [nzTitle]="pdfDetails?.title" nzClosable *ngIf="showPdfViewerTab">
+      <div class="row">
+        <div class="col-md-12">
+          <ngx-doc-viewer
+            [url]="pdfDetails?.url"
+            viewer="url"
+            style="width: 100%; height: 800px"
+          ></ngx-doc-viewer>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</nz-modal>

@@ -1,0 +1,535 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "Dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "Bill" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h2 class="admin-page-heading">
+      {{ "bill.bill-clause.list.bill332" | translate }}
+    </h2>
+  </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row align-right">
+  <div class="col-md-12">
+    <button class="mr-6" nz-button nzType="default" (click)="viewBill()">
+      {{ "bill.bill-clause.list.generatespeakernote" | translate }}
+    </button>
+    <button
+      class="align-items mr-6"
+      nz-button
+      nzType="default"
+      (click)="generateSpeakerNote()"
+    >
+      <i nz-icon nzType="eye" class="baseline" nzTheme="outline"></i>
+      {{ "bill.bill-clause.list.viewbill" | translate }}
+    </button>
+    <button
+      class="mr-6"
+      nz-dropdown
+      [nzDropdownMenu]="menu"
+      nz-button
+      nzType="default"
+      (click)="forwardToCommitte()"
+    >
+    {{ "bill.bill-clause.list.forwardcommittee" | translate }}
+    </button>
+
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <ul nz-menu>
+        <li nz-menu-item>
+          <a nz-button nzType="link" (click)="subjectCommittee()"
+            >{{ "bill.bill-clause.list.subjectcommittee" | translate }}</a
+          >
+        </li>
+        <li nz-menu-item>
+          <a nz-button nzType="link" (click)="selectCommittee()"
+            >{{ "bill.bill-clause.list.selectcommittee" | translate }}</a
+          >
+        </li>
+      </ul>
+    </nz-dropdown-menu>
+
+    <button nz-button class="mr-6" nzType="default" (click)="submitForm(false)">
+      <i nz-icon nzType="save" class="baseline" nzTheme="outline"></i>
+      {{ "business-dashboard.question.save" | translate }}
+    </button>
+    <button
+      class="mr-6"
+      nz-button
+      [nzType]="'primary'"
+      (click)="submitForm(true)"
+    >
+      <i nz-icon nzType="check-circle" class="baseline" nzTheme="outline"></i>
+      {{ "business-dashboard.question.submit" | translate }}
+    </button>
+
+    <button nz-button nzType="default" class="mr-6" (click)="backToList()">
+      <i nz-icon nzType="rollback" nzTheme="outline" class="baseline"></i>
+      {{ "Back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<form nz-form [formGroup]="validateForm">
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-8">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.enternameofbill" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>
+                {{
+                  "bill.addtobillregister.nameofbill" | translate
+                }}</nz-form-label
+              >
+            </div>
+            <div class="col-md-12">
+              <input
+                nz-input
+                placeholder='{{ "bill.addtobillregister.nameofbill" | translate }}'
+                formControlName="billName"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "dashboard.language" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.status" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-12">
+              <nz-select formControlName="status">
+                <nz-option
+                  *ngFor="let st of statusList"
+                  [nzLabel]="st.value"
+                  [nzValue]="st.value"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectnatureofbill" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.billnature" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              {{ "bill.bill-clause.list.government" | translate }}
+              <!-- <nz-radio-group formControlName="billNature">
+                <label nz-radio nzValue="Government">{{ "bill.bill-clause.list.government" | translate }}</label>
+                <label nz-radio nzValue="Private">{{ "bill.bill-clause.list.private" | translate }}</label>
+              </nz-radio-group> -->
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selecttypeofbill" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.billtype" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-select formControlName="billType">
+                <nz-option
+                  *ngFor="let type of billTypeList"
+                  [nzLabel]="type.value"
+                  [nzValue]="type.value"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.enterbillreference" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.billreference" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <input
+                nz-input
+                placeholder='{{ "bill.bill-clause.list.previousbillreference" | translate }}'
+                formControlName="billReference"
+              />
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectmemberincharge" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.memberincharge" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-select
+                formControlName="memberinCharge"
+                nzPlaceHolder='{{ "bill.bill-clause.list.memberincharge" | translate }}'
+              >
+                <nz-option
+                  *ngFor="let member of memberList"
+                  [nzLabel]="member.value"
+                  [nzValue]="member.value"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "cpl.registration.selectdepartment" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dept" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-select
+                formControlName="department"
+                nzPlaceHolder='{{ "bill.bill-clause.list.choosedepartment" | translate }}'
+              >
+                <nz-option
+                  *ngFor="let dept of departmentList"
+                  [nzLabel]="dept.value"
+                  [nzValue]="dept.value"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "dashboard.language" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.lang" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-12">
+              <nz-select formControlName="language">
+                <nz-option
+                  *ngFor="let lang of languageList"
+                  [nzLabel]="lang.value"
+                  [nzValue]="lang.value"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofmotion" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfMotionForLeave"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofpub69" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfPublicationOn69"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofpub72" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfPublicationOn72"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofdispatch" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker formControlName="dateOfDispatch"></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofintro" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfIntroduction"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofreferbilltocommitte" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfreferringToCommitte"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row justify-content-between marginbtm-15">
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofcirculation" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateForElicitingOpinion"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofcommittemeeting" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfCommitteMeeting"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-label>{{
+                "bill.addtobillregister.dateofpubcommitterpt" | translate
+              }}</nz-form-label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-date-picker
+                formControlName="dateOfPublicationOfCommitteReport"
+              ></nz-date-picker>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</form>
+
+<nz-modal
+  [(nzVisible)]="showSubjectCommittee"
+  nzTitle='{{ "bill.bill-clause.list.forwardsubjectcommittee" | translate }}'
+  (nzOnCancel)="subjectCommitteeCancel()"
+  (nzOnOk)="subjectCommitteeOk()"
+  nzOkText="forward"
+>
+  <div class="col-md-12">
+    {{ "bill.bill-clause.list.main" | translate }}
+  </div>
+  <div class="col-md-12">
+    <nz-select [(ngModel)]="committeeName">
+      <nz-option nzValue="Committee name" nzLabel="Committee name"></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-12">
+    {{ "bill.bill-clause.list.jointreference" | translate }}
+  </div>
+  <div class="col-md-12">
+    <nz-table [nzData]="subjectData">
+      <tbody>
+        <tr *ngFor="let list of subjectData">
+          <td nzShowCheckbox></td>
+          <td>{{ list.name }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="showSelectCommittee"
+  nzTitle='{{ "bill.bill-clause.list.create&forwardselectcommittee" | translate }}'
+  (nzOnCancel)="selectCommitteeCancel()"
+  (nzOnOk)="selectCommitteeOk()"
+  nzOkText="create & forward"
+>
+  <div class="col-md-12">
+    {{ "bill.bill-clause.list.selectmembers" | translate }}
+  </div>
+  <div class="col-md-12">
+    <input nz-input placeholder='{{ "bill.bill-clause.list.searchbyname" | translate }}' [(ngModel)]="selectSearch" />
+  </div>
+
+  <div class="col-md-12">
+    <nz-table [nzData]="selectData">
+      <tbody>
+        <tr *ngFor="let list of selectData">
+          <td nzShowCheckbox></td>
+          <td>{{ list.name }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-modal>

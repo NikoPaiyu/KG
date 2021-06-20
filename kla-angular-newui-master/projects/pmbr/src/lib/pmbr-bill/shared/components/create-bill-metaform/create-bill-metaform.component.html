@@ -1,0 +1,105 @@
+<form nz-form [formGroup]="createBillForm" class="form padding_25">
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label>{{ "business-dashboard.bill-management.billCreate.language" | translate }}
+                </nz-form-label>
+                <nz-form-control nzErrorTip="Bill language is required">
+                    <nz-select formControlName="language">
+                        <nz-option *ngFor="let languages of billLanguages" [nzValue]="languages.value"
+                            [nzLabel]="languages.label"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-label>{{ "business-dashboard.question.questionlist.priority" | translate }}
+                </nz-form-label>
+                <nz-form-control nzErrorTip="Bill priorities is required">
+                    <nz-select formControlName="priority">
+                        <nz-option *ngFor="let priorities of billPriorities" [nzValue]="priorities.value"
+                            [nzLabel]="priorities.label"></nz-option>
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <nz-form-label>{{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+                </nz-form-label>
+                <nz-form-control nzErrorTip="Bill title is required">
+                    <textarea nz-input formControlName="title" placeholder=" {{
+                        'business-dashboard.bill-management.billCreate.billtitleplaceholder'
+                          | translate
+                      }}"></textarea>
+
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- its show when its login as a assistant -->
+    <ng-container *ngIf="currentUser.authorities.includes('assistant')">
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.question.portfolio" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="designationId" (ngModelChange)="getDepartments($event)"
+                            nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let minister of ministerDesignationList" [nzValue]="minister.id"
+                                [nzLabel]="minister.name"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "cpl.cplview.dep" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="departmentId" (ngModelChange)="getSubjects($event)"
+                            nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let dept of departmentList" [nzValue]="dept.id"
+                                [nzLabel]="dept.departmentName"></nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label>{{ "business-dashboard.question.ministersubject" | translate }}
+                    </nz-form-label>
+                    <nz-form-control>
+                        <nz-select nzShowSearch formControlName="subjectId" nzAllowSearch nzAllowClear='false'>
+                            <nz-option *ngFor="let subject of subjectList" [nzValue]="subject.id"
+                                [nzLabel]="subject.title">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </ng-container>
+    <!--end its show when its login as a assistant -->
+    <div class="row margnrtp-15">
+        <div class="col-md-12 align-right">
+            <button class="mr-6" nz-button (click)="cancelBill()">
+                {{"business-dashboard.bill-management.billCreate.cancelBill" | translate }}
+            </button>
+            <button nz-button (click)="createBill()">
+                <ng-container *ngIf='billId>0'>
+                    {{"business-dashboard.bill-management.billlist.updatebill"|translate}}
+                </ng-container>
+                <ng-container *ngIf='billId==null'>
+                    {{"business-dashboard.bill-management.billlist.create"|translate}}
+                </ng-container>
+            </button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,426 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item> {{ "cpl.actregistration.dash" | translate }} </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "bill-amendments.general-amendment.amendments" | translate }} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading">Amendments</h2>
+=======
+        <h3>{{ "pmbr.resolutions.list.amendments"| translate}}</h3>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+
+        <button nz-button nzType="primary" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+          nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttosubmitamendemnet" | translate }}'
+          (nzOnConfirm)="submitAmendments()" nzPopconfirmPlacement="bottomRight" [disabled]="disableActions"
+          *ngIf="rbsPermission.submission && !isView && isSubmitEnable">
+          {{ "Submit" | translate }}
+        </button>
+        &nbsp;
+        <button nz-button nzType="primary" class="mrgL6" 
+          *ngIf="this.currentUser.authorities.includes('assistant') && billDetails?.stage === 'SECOND_READING_COMPLETED'" 
+          nz-popconfirm nzPopconfirmTitle="Do you want to attach to the file?" (nzOnConfirm)="resubmitFile()"
+          >
+          <!-- <span>*ngIf="!(isMLA() || isPPO()) && allowOralAmendment && canAttachToFile"</span> -->
+         {{"pmbr.resolutions.list.attachtofile"|translate}}
+        </button>
+        &nbsp;
+        <button nz-button nzType="default" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+          nzPopconfirmTitle='{{ "bill.bill-clause.list.douwanttogoback" | translate }}' (nzOnConfirm)="backToList()"
+          *ngIf="!isView" nzPopconfirmPlacement="bottomRight">
+          <i nz-icon nzType="rollback" nzTheme="outline" class="baseline"></i>
+          {{ "Back" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-4" *ngIf="isPPO() || allowOralAmendment">
+    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="select a MLA" [(ngModel)]="primaryMemberId"
+      (ngModelChange)="getAmendmentsOfBill(billId, primaryMemberId)">
+      <nz-option *ngFor="let data of mlaList" [nzValue]="data.userId" [nzLabel]="data.details.fullName"></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-8" *ngIf="isPPO() || allowOralAmendment"></div>
+  <div class="col-md-8">
+    <nz-tabset>
+      <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-list.resolution" | translate }}' *ngIf="billDetails">
+        <ng-container *ngFor="let block of billDetails?.blocks; let i = index">
+          <div
+           class="row marginbtm-15 mainDiv" *ngIf="block.status === 'ACTIVE' || showPreview">
+            <div class="col number">
+              <span class="indexValue">{{ block.indexValue }}</span>
+            </div>
+            <div class="col">
+              <div class="row marginbtm-10">
+                <div class="col-md-12" *ngIf="showTitle(block.type.code)">
+                  <h4 class="align-center">{{block.type.name}}</h4>
+                </div>
+                <div class="col-md-12">
+                  <div id="{{ block.id }}" (mouseup)="onSelectText(block)" class="bill_div xoverflow"
+                    [class.bold-text]="block.type.bold == true" [class.underline-text]="block.type.underline == true"
+                    [class.italic-text]="block.type.italic == true" [style.fontSize]="block.type.fontSize + 'px'">
+                    <div *ngIf="!showPreview" [innerHtml]="getContent(block)"></div>
+                    <div *ngIf="showPreview" [innerHtml]="getAmendedContent(block)"></div>
+                  </div>
+                </div>
+                <div class="col-md-12 showDiv" *ngIf="!showPreview && ((isPPO() && primaryMemberId) || isMLA())">
+                  <nz-tag (click)="insertblockAmendment(block.index, 30, block.id, block, block, tags)"
+                  [nzColor]="'purple'">Paragraph</nz-tag> 
+                  <button *ngIf="isDeletAllowed(block.type.code, block.status)" nz-button nzSize="small"
+                    (click)="deleteAmendment(block.id)">{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div class="col-md-4">
+    <nz-tabset>
+      <nz-tab nzTitle='{{ "bill-amendments.general-amendment.amendments" | translate }}'>
+        <ng-container *ngFor="let item of amendments">
+          
+          <nz-card class="mrgB20" *ngIf="item.content">
+            <div class="width-100 d-flex" *ngIf="item.content">
+              <div class=" marginbtm-15 width-100">
+              <strong>  {{item.noticeNumber}}  {{item.amendmentType + ' ' +(item.clauseNumber > 0 ? item.clauseNumber: '')}}</strong>
+              </div>
+            </div>
+
+            <div class="row marginbtm-10">
+              <div class="col-md-12">
+                <span>{{ item.content }}</span>
+              </div>
+              <div class="col-md-12" *ngIf="item.edit">
+                <textarea [(ngModel)]="editedWord" class="amendcontent"></textarea>
+              </div>
+            </div>
+            <div class="row marginbtm-10">
+            <div class="col-md-12 d-flex justify-content-end"> <span>{{ item.status }}</span></div> 
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <button nz-button [nzSize]="'small'" (click)="editAmendment(item)" 
+                  [disabled]="item.applied" *ngIf="!item.edit && isEditable(item) && !disableActions && !item.applied">
+                    {{ "business-dashboard.question.edit" | translate }}
+                </button> &nbsp;
+                <button nzType="primary" (click)="updateAmendment(item.id)" *ngIf="item.edit && !disableActions" nz-button [nzSize]="'small'">
+                  {{ "cpl.docupload.update" | translate }}
+                </button> &nbsp;
+                <button nz-button [nzSize]="'small'" nz-popconfirm
+                  nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttodeleteamendement" | translate }}'
+                  *ngIf="item.status === 'SAVED' && !isView && !isAssistant()" nzType="primary" (nzOnConfirm)="deleteAmendments(item.id)"
+                  [disabled]="item.applied" class="mr2">
+                  {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}
+                </button>
+                <button *ngIf="item.edit && !disableActions" (click)="cancelEdit()" nz-button [nzSize]="'small'"><span class="mr2">
+                  {{ "business-dashboard.question.cancel" | translate }}</span>
+                </button>
+              </div>
+              <div class="col-md-4"></div>
+            </div>
+            <div class="row">
+              <div class="col-auto" *ngIf="!disableActions && this.currentUser.authorities.includes('assistant')">
+                <span class="mr2" *ngIf="rbsPermission.validation && !resolutionDetails.list2Id">
+                  {{ "bill.bills.markas" | translate }}
+                </span>
+                <button nz-button [nzSize]="'small'" [disabled]="item.applied" class="mr2"
+                  *ngIf="!(item.status === 'INVALID') && rbsPermission.validation && !isView && 
+                  !allowOralAmendment && !resolutionDetails.list2Id" nzType="default"
+                  (click)="updateStatus('INVALID', item.id)" >
+                  {{ "bill.bills.invalid" | translate }}
+                </button> 
+                <button nz-button [nzSize]="'small'" class="mr2"  [disabled]="item.applied"
+                  *ngIf="!(item.status === 'VALID') && rbsPermission.validation && !isView &&
+                  !allowOralAmendment && !resolutionDetails.list2Id" nzType="primary"(click)="updateStatus('VALID', item.id)">
+                  {{ "bill.bills.valid" | translate }}
+                </button>
+                <button nz-button [nzSize]="'small'" nzType="primary" class="mr2" nz-popconfirm
+                  nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttoapplyamendement" | translate }}'
+                  [disabled]="item.applied || item.temporaryApplied === true" 
+                  *ngIf="billDetails?.stage === 'SECOND_READING_COMPLETED'"
+                  (nzOnConfirm)="applyAmendment(item)">
+                  {{ "bill.bill-clause.list.makechanges" | translate }}
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12" *ngIf="!(isMLA() || isPPO())">
+                <label>{{ "dashboard.seatlayout.member" | translate }} : {{item.memberName}}</label>
+              </div>
+            </div>
+          </nz-card>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+
+<nz-modal nzMaskClosable="false" (nzOnCancel)="onCancelAmendModal()" nzClosable="true" nzTitle="" [nzFooter]="null"
+  [(nzVisible)]="amendModalVisible">
+  <div class="padding_15">
+    <ng-container *ngIf="!amendment.operation">
+      <div class="row">
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('INSERTBEFORE')" *ngIf="!isView">
+            {{ "Insert" }}
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('REPLACE')" *ngIf="!isView">
+            {{ "Substitute" }}
+          </button>
+        </div>
+        <div class="col-md-4">
+          <button nz-button (click)="onSelectAmendmentType('DELETE')" *ngIf="!isView">
+            {{ "Delete" }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="
+        amendment.operation == 'INSERTBEFORE' ||
+        amendment.operation == 'INSERTAFTER'
+      ">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+        </div>
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-2"><label for="">{{ "bill.bill-clause.list.insert" | translate }}</label></div>
+        <div class="col-md-6">
+          <nz-radio-group [(ngModel)]="amendment.operation">
+            <label nz-radio nzValue="INSERTBEFORE">{{ "bill.bill-clause.list.before" | translate }}</label>
+            <label nz-radio nzValue="INSERTAFTER">{{ "bill.bill-clause.list.after" | translate }}</label>
+          </nz-radio-group>
+        </div>
+        <div class="col-md-3 text-align-right">
+          <button nz-button [disabled]="!amendment.insertedWord" (click)="saveAmendment()" *ngIf="!isView">
+            {{ "bill.bill-clause.list.insert" | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <textarea name="insertedWord" id="insertedWord" cols="25" rows="5"
+            placeholder='{{ "bill.bill-clause.list.enterhere" | translate }}' [(ngModel)]="amendment.insertedWord">
+          </textarea>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'REPLACE' || amendment.operation == 'RECAST'">
+      <div class="row mrgB20">
+        <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-6"><label for="">{{ "bill.bill-clause.list.substitutewith" | translate }}</label></div>
+
+        <div class="col-md-5 text-align-right">
+          <button nz-button [disabled]="!amendment.insertedWord" (click)="saveAmendment()" *ngIf="!isView">
+            {{ "bill.bill-clause.list.substitute" | translate }}
+          </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <textarea name="insertedWord" id="insertedWord" cols="25" rows="5"
+            placeholder='{{ "bill.bill-clause.list.enterhere" | translate }}' [(ngModel)]="amendment.insertedWord">
+          </textarea>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'DELETE'">
+      <div class="row mrgB20">
+        <strong>{{ "Selected Text : " }}</strong> {{ amendment.selectedWord }}
+      </div>
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">{{ "bill.bill-clause.list.areusuredanttodeleteslectedtext" | translate }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()"
+            *ngIf="!isView">{{ "business-dashboard.question.questionrequestconsent.no" | translate }}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button (click)="saveAmendment()"
+            *ngIf="!isView">{{ "business-dashboard.question.questionrequestconsent.yes" | translate }}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation == 'WHOLE_DELETE'">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">{{ "bill.bill-clause.list.areusuredanttodeleteslectedblock" | translate }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()"
+            *ngIf="!isView">{{ "business-dashboard.question.questionrequestconsent.no" | translate }}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button (click)="saveAmendment()"
+            *ngIf="!isView">{{ "business-dashboard.question.questionrequestconsent.yes" | translate }}</button>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="amendment.operation === 'WHOLE_INSERT'">
+      <div class="row mrgB20">
+        <div class="col-md-12">
+          <label for="">{{ "cpl.amendmentview.content" | translate }}</label>
+          <textarea [(ngModel)]="amendment.insertedWord"></textarea>
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-2">
+          <button nz-button (click)="onCancelAmendModal()" *ngIf="!isView">{{ "Cancel" | translate }}</button>
+        </div>
+        <div class="col-md-2">
+          <button nz-button [disabled]="!(amendment.insertedWord)" (click)="saveAmendment()" *ngIf="!isView">{{ "Submit" | translate }}</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</nz-modal>
+<!-- approved bill list model -->
+<nz-modal [(nzVisible)]="showApprovedBillModel" [nzFooter]="null" [nzClosable]="false" nzWidth="1000"
+  [nzMaskClosable]="false">
+  <div class="pd">
+    <div class="row">
+      <div class="col-md-12 text-align-center">
+        <h4>{{ "bill.bills.searchandselectact" | translate }}</h4>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 marginbtm-15">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input type="text" (keyup)="searchApprovedBillList($event.target.value)" nz-input
+            placeholder='{{ "bill.bills.acttitlebillno" | translate }}' />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table #rowSelectionTable1 nzShowPagination nzShowSizeChanger [nzData]="approvedBillList">
+      <thead>
+        <tr>
+          <th></th>
+          <th>
+            {{
+              "business-dashboard.bill-management.billCreate.billtitle"
+                | translate
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rowSelectionTable1.data; let i = index">
+          <td>
+            <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="uncheckOtherCheckBox(data.billId)"></label>
+          </td>
+          <td>{{ data.title }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button nz-button class="mr6" nzType="default" (click)="showApprovedBillModel = false">
+          {{ "cpl.correspondencelist.cancel" | translate }}
+        </button>
+        <button nz-button nzType="primary" (click)="continueAndSelectSection()">
+          {{
+            "business-dashboard.bill-management.billCreate.continueandselect"
+              | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end  approved bill list model -->
+
+<!-- approved bill content import model -->
+<!-- approved bill content import model -->
+
+
+<!-- model for set table rows and column -->
+<nz-modal [(nzVisible)]="showRowColumnCountModel" [nzFooter]="null" nzWidth="500"
+  (nzOnCancel)="showRowColumnCountModel = false" [nzMaskClosable]="false">
+  <div class="padding-50 width-100 word-break ">
+    <form nz-form [formGroup]="validateForm">
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    {{ "bill.bills.numberofrows" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfRows" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    {{ "bill.bills.numberofcoloumns" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfColumns" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-9 d-flex justify-content-end" style="margin-top: 14px;">
+          <button nz-button (click)="showRowColumnCountModel = false" class="mr6" nzType="default">
+            {{ "cpl.correspondencelist.cancel" | translate }}
+          </button>
+          <button (click)="createTable()" nz-button nzType="primary">
+            {{ "business-dashboard.question.questioncreate.ok" | translate }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>
+
+<div class="rotateButton d-flex">
+  <label class="margnrgt-15" style="margin-bottom: 0px;"> {{ "noticeprocessing.notice.createnotice.prevew" | translate }}</label>
+  <nz-switch [(ngModel)]="showPreview"></nz-switch>
+</div> 

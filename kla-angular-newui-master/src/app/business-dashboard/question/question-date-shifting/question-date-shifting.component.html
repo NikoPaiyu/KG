@@ -1,0 +1,215 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.shiftquestiondate" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6 col-sm-6">
+    <h2 class="admin-page-heading">
+      {{"business-dashboard.question.shiftquestiondate" | translate}}
+    </h2>
+  </div>
+  <div class="col-md-6 col-sm-6 justify-content-end d-flex">
+    <button nz-button nzType="primary" (click)="transferDate()">
+      {{"business-dashboard.question.save" | translate}}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25">
+  <div
+    *ngIf="assemblySession['assembly']"
+    class="col-md-2 d-flex align-items-center whitespace"
+  >
+    {{"business-dashboard.question.assembly" | translate}}:
+    <span class="b_p">
+      {{
+        assemblySession["assembly"]
+          ? assemblySession["assembly"].currentassemblyLabel
+          : ""
+      }}</span
+    >
+  </div>
+  <div
+    *ngIf="assemblySession['session']"
+    class="col-md-2 d-flex align-items-center whitespace"
+  >
+  {{"business-dashboard.question.questionlist.session" | translate}}:
+    <span class="b_p">
+      <nz-select
+        nzShowSearch
+        nzPlaceHolder=""
+        [(ngModel)]="assemblySession['session'].currentsession"
+        (ngModelChange)="getAodDates()"
+        name="selectedsession"
+      >
+        <nz-option
+          *ngFor="let session of assemblySession['session']"
+          [nzLabel]="session.sessionId"
+          [nzValue]="session.id"
+        >
+        </nz-option> </nz-select
+    ></span>
+  </div>
+</div>
+<div class="row marginbtm-25">
+  <div class="col-md-12">
+    <nz-form-item>
+      <div class="row marginbtm-25">
+        <div class="col-md-3">
+          <nz-form-label>
+            {{"business-dashboard.question.whethersessionwasextended" | translate}}
+          </nz-form-label>
+        </div>
+        <div class="col-md-9">
+          <nz-form-control>
+            <nz-radio-group
+              nzName="radiogroup"
+              nzRequired
+              [(ngModel)]="sessionExtented"
+            >
+              <label nz-radio nzValue="yes">{{"business-dashboard.question.questionrequestconsent.yes" | translate}}</label>
+              <label nz-radio nzValue="no">{{"business-dashboard.question.questionrequestconsent.no" | translate}}</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </div>
+      </div>
+    </nz-form-item>
+    <nz-form-item>
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>
+            {{"business-dashboard.question.reasonfordateshifting" | translate}}
+          </nz-form-label>
+        </div>
+        <div class="col-md-9">
+          <nz-form-control nzErrorTip='{{"business-dashboard.question.questioncreate.placehldreason" | translate}}'>
+            <textarea
+              [(ngModel)]="reason"
+              placeholder='{{"business-dashboard.question.pleasementiontherulehere" | translate}}'
+              nz-input
+              [nzAutosize]="{ minRows: 1, maxRows: 6 }"
+              nzRequired
+              class="ant-select-selection"
+              nzRequired
+            ></textarea>
+          </nz-form-control>
+        </div>
+      </div>
+    </nz-form-item>
+  </div>
+</div>
+<div class="row marginbtm-25">
+  <div class="col-md-12 d-flex align-items-center whitespace">
+    <nz-radio-group nzName="radiogroup" nzRequired [(ngModel)]="dateShiftType">
+      <label nz-radio nzValue="dateshift" (click)="decideShift()"
+        >
+        {{"business-dashboard.question.dateshiftingtoanotherdate" | translate}}</label
+      >
+      <label nz-radio nzValue="serialshift" (click)="decideShift()"
+        >
+        {{"business-dashboard.question.serialdateshifting" | translate}}
+        </label
+      >
+    </nz-radio-group>
+  </div>
+</div>
+<nz-form-item>
+  <div class="row marginbtm-25" *ngIf="dateshift">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{"business-dashboard.question.currentquestiondate" | translate}}
+      </nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-control>
+        <nz-select
+          nzRequired
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'
+          [(ngModel)]="fromDate"
+          (ngModelChange)="disablenewQdate($event)"
+        >
+          <nz-option
+            *ngFor="let item of dates"
+            nzLabel="{{ item | date: 'dd-MM-yyyy' }}"
+            nzValue="{{ item }}"
+          >
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </div>
+    <div class="col-md-3">
+      <nz-form-label>
+        {{"business-dashboard.question.newquestiondate" | translate}}
+      </nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-control>
+        <nz-date-picker
+          [(ngModel)]="toDate"
+          [nzFormat]="dateFormat"
+          [nzDisabledDate]="disabledQuestionDate"
+          [nzShowToday]="false"
+          #picker
+        ></nz-date-picker>
+      </nz-form-control>
+    </div>
+  </div>
+  <div class="row marginbtm-25" *ngIf="serialshift">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{"business-dashboard.question.shiftingstartdate" | translate}}
+      </nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-control>
+        <nz-select
+          nzRequired
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'
+          [(ngModel)]="fromDate"
+          (ngModelChange)="disablenewQdate($event)"
+        >
+          <nz-option
+            *ngFor="let item of dates"
+            nzLabel="{{ item | date: 'dd-MM-yyyy' }}"
+            nzValue="{{ item }}"
+          >
+          </nz-option>
+        </nz-select>
+        <!-- <nz-date-picker
+          [(ngModel)]="fromDate"
+          [nzFormat]="dateFormat"
+          [nzDisabledDate]="disabledDate"
+          (ngModelChange)="disablenewQdate($event)"
+        ></nz-date-picker> -->
+      </nz-form-control>
+    </div>
+    <div class="col-md-3">
+      <nz-form-label>
+        {{"business-dashboard.question.shiftingenddate" | translate}}
+      </nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-control>
+        <nz-date-picker
+          [(ngModel)]="toDate"
+          [nzFormat]="dateFormat"
+          [nzDisabledDate]="disabledQuestionDate"
+        ></nz-date-picker>
+      </nz-form-control>
+    </div>
+  </div>
+</nz-form-item>

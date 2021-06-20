@@ -1,0 +1,15 @@
+{
+  "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
+  "dest": "../../dist/genericfile",
+  "lib": {
+    "entryFile": "src/public-api.ts",
+    "umdModuleIds": {
+      "ng-zorro-antd": "ng-zorro-antd",
+      "ngx-doc-viewer": "ngx-doc-viewer",
+      "ng-zorro-antd/steps": "ng-zorro-antd/steps",
+      "ngx-quill": "ngx-quill",
+      "@ngx-translate/core": "@ngx-translate/core",
+      "@ckeditor/ckeditor5-angular": "@ckeditor/ckeditor5-angular"
+    }
+  }
+}

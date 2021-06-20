@@ -1,0 +1,136 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.tables.pendingofcdoc.documentlist" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading">Document List</h2>
+=======
+        <h3>{{ "business-dashboard.tables.pendingofcdoc.documentlist" | translate }}</h3>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+</div>
+<nz-divider></nz-divider>
+<nz-tabset>
+    <nz-tab nzTitle='{{ "business-dashboard.tables.pendingofcdoc.pendingdoc" | translate }}'
+        (nzClick)="getAssemblySession();clearFilter();clearSearch();getPendingDocs()">
+        <div class="row marginbtm-15">
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.assembly" | translate }}
+                <nz-select nzAllowClear name="assemblyId" [(ngModel)]="assemblyId" (ngModelChange)="getSessionList()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace">
+                {{ "business-dashboard.question.questionlist.session" | translate }}
+                <nz-select nzAllowClear name="sessionId" [(ngModel)]="sessionId" (ngModelChange)="filterByAssemblyandSession()">
+                    <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 d-flex align-items-center">
+                <button class="plus-arrange" nz-button [nzType]="'primary'" (click)="showFilterModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+                <nz-modal [(nzVisible)]="isFilterVisible"
+                    nzTitle='{{ "business-dashboard.question.questionlist.filtercolumns" | translate }}'
+                    (nzOnCancel)="hideFilter()" (nzOnOk)="showFilter()">
+                    <div class="width-100 pading-all">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                                    <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="chooseFilter(box)"
+                                        [(ngModel)]="box.checked">{{ box.label }}</label>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </nz-modal>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end">
+                <button nz-button nzType="default" (click)="clearFilter();clearSearch()" (keyup.enter)="doNothing()">
+                    {{ "business-dashboard.bill-management.billlist.clearFilter" | translate }}
+                </button>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="search" (ngModelChange)="filtering()" name="search" nz-input
+                        placeholder='{{"business-dashboard.tables.pendingofcdoc.searchhere" | translate}}'/>
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end">
+                <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+                    <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+                     {{ "business-dashboard.tables.pendingofcdoc.cols" | translate }}
+                  </button>
+            </div>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <div>
+                  <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                    <li>
+                      <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                        (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                    </li>
+                  </ul>
+                </div>
+              </nz-dropdown-menu>
+        </div>
+        <nz-table #pendingTable nzShowPagination nzShowSizeChanger [nzData]="pendingDocuments" class="table-all">
+            <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr>
+                    <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">
+                        {{ "business-dashboard.tables.pendingofcdoc.documentsubject" | translate }}
+                    </th>
+                    <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="receivedFrom">
+                        {{ "business-dashboard.tables.pendingofcdoc.recievedfrom" | translate }}
+                    </th>
+                    <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="receivedDate">
+                        {{ "business-dashboard.tables.pendingofcdoc.recieveddate" | translate }}
+                    </th>
+                    <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="status">
+                        {{ "business-dashboard.tables.pendingofcdoc.status" | translate }}
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let list of pendingTable.data; let i = index">
+                    <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)">
+                <tr>
+                    {{
+                    list.title
+                    }}
+                </tr>
+                <tr *ngIf="list.viewLinks">
+                    <div>
+                        <td>
+                            <a class="viewlink" (click)="viewDoc(list.id)">
+                                {{"business-dashboard.swearing-in.view" | translate}}
+                            </a>
+                        </td>
+                    </div>
+                </tr>
+                </td>
+                <td *ngIf="colCheckboxes[1].check">{{ list.receivedFrom }}</td>
+                <td *ngIf="colCheckboxes[2].check">{{ list.receivedDate | date: 'dd/MM/yyy' }}</td>
+
+                <td *ngIf="colCheckboxes[3].check">
+                    <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+                </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </nz-tab>
+</nz-tabset>

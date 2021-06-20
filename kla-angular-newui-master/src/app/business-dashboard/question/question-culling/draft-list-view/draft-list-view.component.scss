@@ -1,0 +1,266 @@
+@import "~src/sass/utilities/variables";
+
+.mr-6 {
+  margin-right: 6px;
+}
+.align-right {
+  text-align: right;
+}
+.lob_form {
+  padding: 20px;
+}
+.mb-6 {
+  margin-bottom: 6px;
+}
+input {
+  width: 100%;
+}
+
+.m-tb-30 {
+  margin: 30px 0px;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.ml-2 {
+  margin-left: 30px;
+}
+.mr-15 {
+  margin-right: 15px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+// .ant-tag {
+//   background: $white;
+//   padding: 3px 7px;
+// }
+.nz-close-style {
+  color: $color-red-close;
+  cursor: pointer;
+}
+
+.editable-tag {
+  background: rgb(255, 255, 255);
+  border-style: dashed;
+}
+
+// .ant-tag {
+//   background: #fff;
+//   padding: 3px 7px;
+//   height: 45px;
+//   width: 100%;
+//   margin-bottom: 15px;
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+// }
+// .ant-tag {
+//   padding: 3px 7px;
+//   background: #eee;
+//   border-radius: 4px;
+//   margin: 3px;
+// }
+.ant-tag {
+  // background: $white;
+  padding: 3px 7px;
+}
+
+.ant-input-group-wrapper {
+  background-color: #eee;
+  padding: 8px;
+  margin: 20px 0;
+}
+.ant-input-group-addon {
+  background-color: #eee !important;
+}
+.ant-input {
+  background: #eee;
+}
+.ant-tag {
+  padding: 3px 7px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 3px;
+}
+.pr0 {
+  padding-right: 0px;
+}
+.pl0 {
+  padding-left: 0px;
+}
+
+.chat-footer {
+  margin-top: auto;
+  position: fixed;
+  bottom: 0px;
+  z-index: 99;
+  padding-top: 20px;
+  background: #fff;
+  width: 500px;
+}
+.chat-main-body {
+  overflow-y: auto;
+  height: calc(100vh - 173px);
+  overflow-x: hidden;
+}
+.txt-area-main {
+  margin-top: auto;
+}
+.ant-modal {
+  top: 5px !important;
+}
+
+.ant-tag-checkable {
+  color: #1890ff !important;
+}
+.custom_w {
+  max-width: 40%;
+  margin-left: 10px;
+}
+.first {
+  position: relative;
+}
+.first::after {
+  position: absolute;
+  content: "1st";
+  right: -25px;
+  color: #689fcb;
+  font-size: 14px;
+}
+// .tag_mla .ant-tag {
+//   float: left;
+//   clear: both;
+// }
+.mrgn-15 {
+  margin: 15px;
+}
+.mb-15 {
+  margin: 15px;
+}
+.mr-5 {
+  margin-right: 5px !important;
+}
+.font-w {
+  font-weight: 600;
+}
+.pr-0 {
+  padding-right: 0px !important;
+}
+.fix-btn {
+  position: fixed;
+  right: -30px;
+  top: 60vh;
+  transform: rotate(270deg);
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  z-index: 99;
+}
+.custom_note {
+  position: fixed;
+  background: #fff;
+  z-index: 999;
+  right: -501px;
+  top: 0px;
+  height: 100vh;
+  transition: All 1s ease;
+  -webkit-transition: All 1s ease;
+  -moz-transition: All 1s ease;
+  -o-transition: All 1s ease;
+
+  width: 500px;
+  box-shadow: #00000096 0px 1px 10px;
+}
+.ant-drawer-header-no-title {
+  background: #003c76 !important;
+  color: #fff !important;
+  border-radius: 0px;
+  height: 57px;
+}
+.ant-drawer-title {
+  color: #fff !important;
+}
+
+.shownote {
+  right: 0px !important;
+  transition: All 1s ease;
+  -webkit-transition: All 1s ease;
+  -moz-transition: All 1s ease;
+  -o-transition: All 1s ease;
+}
+.paddingT15 {
+  padding-top: 15px;
+}
+
+.vertical-line {
+  height: auto;
+}
+
+.border-right {
+  border-right: inset;
+}
+
+.color {
+  color: red;
+}
+
+.selection-vrsn {
+  padding: 10px 0px;
+  background: #eee;
+  display: flex;
+  margin: 0 0px;
+  align-items: center;
+}
+.width-auto {
+  width: auto;
+}
+
+.input-style {
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  margin: 0 5px 10px;
+}
+.tag-style {
+  border: 1px solid #eee;
+  padding: 6px;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+.paddingL0 {
+  padding-left: 0px !important;
+}
+
+.answer {
+  background: #eee;
+  margin-top: 5px;
+}
+
+.clause-style {
+  border: 1px solid #eee;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.back-color {
+  background: #f3f371;
+}
+
+.dropdown-option {
+  margin: 0;
+}
+.word-break {
+  word-break: break-word;
+  font-family: rachana;
+  font-size: 18px;
+}
+.plr {
+  padding-right: 25px;
+}
+.blank_block{background: #fff;height: 40px;width: 100%;}
+.mb40{margin-bottom: 40px;}
+.pl5{padding-left: 5px !important;}

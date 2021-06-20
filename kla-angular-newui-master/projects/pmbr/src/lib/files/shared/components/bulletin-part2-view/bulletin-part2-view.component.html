@@ -1,0 +1,30 @@
+<nz-collapse nzAccordion *ngIf="bulletinResponse">
+    <nz-collapse-panel *ngFor="let panel of bulletinResponse" [nzActive]="panel.fileStatus == 'SUBMITTED'"
+        [nzExtra]="extraTpl" nzHeader="{{ panel.bulletinNumber }} - {{ panel.title }}" [nzDisabled]="panel.disabled">
+        <!-- change description with htmlcontent template from API -->
+        <!-- <p [innerHTML]="panel.reportData | safeHtml"></p> -->
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button (click)="$event.stopPropagation()" 
+                *ngIf=" buttonControls.publish &&
+                panel.fileStatus == 'APPROVED' &&
+                panel.status != 'PUBLISHED'"
+                nz-popconfirm nzCancelText="No" nzOkText="Yes" 
+                nzPopconfirmTitle="Do you want to Circulate?"
+                (nzOnConfirm)="publishBulletin(panel)" 
+                nzPopconfirmPlacement="bottomLeft" 
+                nz-button nzType="primary"
+                class="mrgL6">
+                {{"pmbr.resolutions.list.circulate"|translate}}
+              </button>
+            </div>
+        </div>
+        <quill-view-html [content]="panel.reportData "></quill-view-html>
+        <ng-template #extraTpl>
+            <nz-tag *ngIf="panel.fileStatus">{{ panel.fileStatus.split('_').join(' ') }}</nz-tag>
+            <nz-tag [nzColor]="'red'" *ngIf="panel.status === 'PUBLISHED'">
+                {{ panel.status.split('_').join(' ') }}
+            </nz-tag>&nbsp;
+        </ng-template>
+    </nz-collapse-panel>
+</nz-collapse>

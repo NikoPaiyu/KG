@@ -1,0 +1,125 @@
+<!-- <p>resolution-balloting works!</p> -->
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "bill-amendments.bill.balloting" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h2 class="admin-page-heading">
+          {{ "business-dashboard.pmbr.resolution-ballot.ballotpresentresolution" | translate }}
+        </h2>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button nzType="secondary">
+          {{ "business-dashboard.pmbr.resolution-ballot.ballotlog" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row margnrtp-15">
+  <!-- left side -->
+  <div class="col-md-6">
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        {{ "business-dashboard.pmbr.resolution-ballot-list.presentationdate" | translate }}
+        <nz-select nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="presentation"
+          (ngModelChange)="presentDates()">
+          <nz-option *ngFor="let data of billPresentationDates" [nzLabel]="data.presentationDate" [nzValue]="data">
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-8">
+        <h5>
+          {{ "business-dashboard.pmbr.resolution-ballot.resolutionnoticesubmitted" | translate }}
+        </h5>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <button nz-button nzType="primary" *ngIf="!showballot && permissions.balloting && performbutton"
+          (click)="performLot()">
+          {{ "bill.performballo.performlot" | translate }}
+        </button>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-table #basicTable [nzData]="ballotList">
+          <thead>
+            <tr>
+              <th>{{ "business-dashboard.pmbr.resolution-ballot.ballotno" | translate }} </th>
+              <th>{{ "business-dashboard.question.member" | translate }}</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of basicTable.data; let i = index">
+              <td>{{ i+1 }}</td>
+              <td>{{ data.details?.fullName }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+  <!-- clciks  ballot log-->
+  <div class="col-md-6" *ngIf="showballot">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-4">
+            <h5>
+              {{ "bill.performballo.ballotresult" | translate }}
+            </h5>
+          </div>
+          <div class="col-md-8 d-flex justify-content-end align-items-center" *ngIf="conformButton">
+            <ng-container>
+              <button nz-button nzType="default" class="mr-6" (click)="cancle()"> {{ "cpl.correspondencelist.cancel" |
+                translate }}</button>
+              <button nz-button nzType="primary" class="mr-6" nz-popconfirm
+                nzPopconfirmTitle='{{ "pmbr.resolution-ballot.areyousureyouwanttoConfirm" | translate }}' nzCancelText="Cancel" nzOkText="Confirm"
+                (nzOnConfirm)="confirm()" (nzOnCancel)="cancel()">
+                {{ "bill.performballo.conform" | translate }}
+              </button>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-table #basicTable nzShowPagination [nzData]="performList">
+              <thead>
+                <tr>
+                  <th>{{ "business-dashboard.pmbr.resolution-ballot.ballotno" | translate }}</th>
+
+                  <th>{{ "business-dashboard.question.member" | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of basicTable.data; let i = index">
+                  <td>{{ i+1 }}</td>
+                  <td>{{ data.details?.fullName }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

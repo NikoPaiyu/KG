@@ -1,0 +1,128 @@
+<div class="row">
+    <div class="col-md-9">
+ <nz-card style="width:800px;" class="text-align-centre" nzTitle="Agriculture ,Animal Husbandry and Fisheries">
+     <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Type of committee</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+            <div>sub3</div>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Chairman</b></nz-form-label>
+        <nz-form-control [nzSm]="18" [nzXs]="24">
+                <div>
+                    Shri V.S.Sunil kumar
+                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                </div>
+               
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item *ngFor="let control of listOfControl; let i = index">
+        <nz-form-label [nzXs]="19" [nzSm]="4" *ngIf="i == 0" [nzFor]="control.controlInstance"><b>Ex.Officio Members</b></nz-form-label>
+        <nz-form-control
+          [nzXs]="24"
+          [nzSm]="20"
+          [nzOffset]="i ==0 ? 0 : 4"
+        >
+           <div
+            class="officiomem-input"
+            [attr.id]="control.id"
+            [formControlName]="control.controlInstance"
+          >
+           <p>Honabl'e minister for Forest,Animal Husbandry,zoos  
+               <i nz-icon nzType="delete" class="dynamic-delete-button" (click)="removeField(control, $event)"></i>
+           </p>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+          <button nz-button nzType="dashed" class="add-button" (click)="addField($event)">
+            <i nz-icon nzType="plus"></i>
+            Add Ex Officio
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item *ngFor="let control of listOfControls; let i = index">
+        <nz-form-label [nzXs]="20" [nzSm]="4" *ngIf="i == 0" [nzFor]="control.controlInstance"><b> Members</b> </nz-form-label>
+        <nz-form-control
+          [nzXs]="24"
+          [nzSm]="20"
+          [nzOffset]="i ==0 ? 0 : 4"
+        >
+           <div
+            class="member-input"
+            [attr.id]="control.id"
+            placeholder="placeholder"
+            [formControlName]="control.controlInstance"
+          >
+           <p>Shri A.P Anil Kumar 
+               <i nz-icon nzType="delete" class="dynamic-delete-button" (click)="removeField1(control, $event)"></i>
+           </p>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control [nzXs]="{ span: 24, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }">
+          <button nz-button nzType="dashed" class="add-button" (click)="addField1($event)">
+            <i nz-icon nzType="plus"></i>
+            Add Member
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+      <br/>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Officers</b></nz-form-label>
+        <nz-form-label class="ant-form-item-label1 ant-col-sm-5 " [nzSm]="6" [nzXs]="24"  nzFor=""><b>Joint Secretary</b></nz-form-label>
+        <nz-form-control class="ant-col-sm-14" [nzSm]="14" [nzXs]="24">
+                <div>
+                    Shri V.S.Sunil kumar
+                </div>
+               
+        </nz-form-control>
+        </nz-form-item>
+        <br/>
+        <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""></nz-form-label>
+        <nz-form-label class="ant-form-item-label1 ant-col-sm-7 " [nzSm]="6" [nzXs]="24"  nzFor=""><b>Deputy Secretary</b></nz-form-label>
+        <nz-form-control class="ant-col-sm-14" [nzSm]="14" [nzXs]="24">
+                <div>
+                    Shri V.S.Sunil kumar
+                </div>          
+        </nz-form-control>
+      </nz-form-item>
+        <br/>
+        <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""></nz-form-label>
+        <nz-form-label class="ant-form-item-label1 ant-col-sm-8 " [nzSm]="6" [nzXs]="24"  nzFor=""><b>Under Secretary</b></nz-form-label>
+        <nz-form-control class="ant-col-sm-14" [nzSm]="14" [nzXs]="24">
+                <div>
+                    Shri V.S.Sunil kumar
+                </div>               
+        </nz-form-control>
+    </nz-form-item>
+        <br/>
+        <nz-form-item>
+          <nz-form-label [nzSm]="6" [nzXs]="24"  nzFor=""><b>Contact</b></nz-form-label>
+          <nz-form-control [nzSm]="18" [nzXs]="24">
+                  <div>
+                     Subject Committee 'C' section: 0471-2512441
+                     subcc@niyamasabha.nic.in
+                  </div>
+          </nz-form-control>
+        </nz-form-item>
+    </nz-card>
+</div>
+<div class="col-md-3">
+    <div class="row">
+        <div class="col-md-3 text-align-righgt">
+    <button nz-button nzType="primary" class="mrgL6 ant-btnn">
+     Notes(20)
+    </button>
+</div>
+</div>
+  </div>
+</div>

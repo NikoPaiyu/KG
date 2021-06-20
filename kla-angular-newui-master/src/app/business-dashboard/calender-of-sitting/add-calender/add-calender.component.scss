@@ -1,0 +1,67 @@
+@import "~src/sass/utilities/variables";
+@import "~src/sass/utilities/mixin";
+
+.label-cos {
+  border: solid 1px;
+  padding: 5px 10px;
+  border-radius: $button-admin-radius;
+  color: $dark;
+  border: $border-dark solid 1px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  background: #fff;
+font-size: 15px;
+  label {
+    margin-bottom: 0px;
+  }
+  i {
+    margin-left: 10px;
+  }
+}
+.nbcard-cos {
+  width: 100%;
+  height: auto;
+  min-height: 350px;
+  border-radius: $button-admin-radius;
+  border: $border-dark solid 1px;
+}
+.button-cos {
+  float: right;
+}
+
+.calendar-of-sittings {
+  width: 100%;
+  font-size: $font-form;
+}
+.dateofsitting {
+  width: 100%;
+  margin-bottom: 15px;
+  li {
+    width: 100%;
+    border-radius: $button-admin-radius;
+    float: left;
+    color: $dark;
+    border: $border-dark solid 1px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+  }
+}
+
+.nz-close-style {
+  color: $color-red-close;
+  cursor: pointer;
+}
+.ml-6{margin-left: 6px;}
+
+ul {
+  li {
+    list-style: none;
+  }
+}
+.white_pd{background-color: #fff; padding: 20px;}

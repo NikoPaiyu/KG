@@ -1,0 +1,89 @@
+<div class="pading-all">
+  <!-- <nz-select
+    nzShowSearch
+    nzAllowClear
+    nzPlaceHolder="Select a Member"
+    [(ngModel)]="selectedValue"
+  >
+    <nz-option nzLabel="Anil" nzValue="Anil"></nz-option>
+    <nz-option nzLabel="Kumar" nzValue="Kumar"></nz-option>
+    <nz-option nzLabel="Prasad" nzValue="Prasad"></nz-option>
+  </nz-select> -->
+  <!-- <div class="row marginbtm-15">
+    <div class="col-md-12 text-align-right">
+      <span *ngIf="noOfChecked"> {{ noOfChecked }} Selected </span>
+    </div>
+  </div> -->
+
+  <div class="row" >
+    <div class="col-md-9">
+      <nz-card
+        [nzTitle]="null"
+        style="width: 100%; height: 300px; overflow-y: scroll"
+        class="committee_blk"
+      >
+        <!-- <ul nz-menu filterTable class="checkbox-style"> -->
+        <ul class="checklis" *ngIf="memberTab">
+          <li *ngFor="let box of allMembers; let i = index">
+            <label nz-checkbox [(ngModel)]="box.checked" 
+            name="checkbox{{ i }}" (ngModelChange)="disableMemeber()" [nzDisabled]="box.disable"
+            >{{ box.details.fullName }}</label>
+          </li>
+        </ul>
+        <ul class="checklis" *ngIf="ministerTab">
+          <p *ngFor="let box of allMinisters; let i = index">
+            <label nz-checkbox [(ngModel)]="box.checked" [nzDisabled]="box.disable"
+            name="checkbox{{ i }}" (ngModelChange)="disableMinister()"
+            >{{ box.details.fullName  }}</label>
+          </p>
+        </ul>
+        <ul class="checklis" *ngIf="exOfficeTab">
+          <li *ngFor="let box of allMinisters; let i = index">
+            <label nz-checkbox [(ngModel)]="box.checked"
+            name="checkbox{{ i }}" 
+            (ngModelChange)="disableExOffico()" [nzDisabled]="box.disable"
+            >{{ box.details.fullName  }}</label>
+          </li>
+        </ul>
+        <!-- </ul> -->
+      </nz-card>
+    </div>
+    <div class="col-md-3 text-align-left" style="padding-left: 0px">
+      <!-- <button [disabled]="!ministerTab"
+        nzType="'default'"
+        class="ant-btn ant-btn-default mrb-5 width-100"
+      >
+        Ministers
+      </button>
+      <button [disabled]="!memberTab"
+        nzType="'default'"
+        class="ant-btn ant-btn-default mrb-5 width-100"
+      >
+        Members
+      </button>
+      <button [disabled]="!exOfficeTab"
+        nzType="'default'"
+        class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+      >
+        Office Bearers
+      </button> -->
+
+      <div class="width-100" style="margin-top: 115px">
+        <button (click)="addMember()"
+          nzType="'default'"
+          class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+        >
+        {{addButtonLabel}}
+        </button>
+
+        <button
+          nzType="'default'"
+          class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+          (click)="handleCancel()"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

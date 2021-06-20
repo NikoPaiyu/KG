@@ -1,0 +1,24 @@
+<div class="pdng_can" style="background-color: white; border: 1px;">
+    <canvas #canvas id="s" class="can_style">
+    </canvas>
+</div>
+<div class="width-100 d-flex">
+<button class="mla-button margnrtp-15 d-flex align-items-center"  (click)="draw()">
+    <img src="../../assets/img/Draw.svg" alt="" width="25" style="margin-right: 10px;"/>
+    {{"dashboard.handwriting.draw" | translate}}
+</button>
+<button class="mla-button margnrtp-15 d-flex align-items-center" (click)="erase()">
+    <img src="../../assets/img/Erase.svg" alt="" width="25" style="margin-right: 10px;"/>
+    {{"dashboard.handwriting.erase" | translate}}
+</button>
+
+<button class="mla-button margnrtp-15 d-flex align-items-center " (click)="clear()">
+    <img src="../../assets/img/Clear.svg" alt="" width="25" style="margin-right: 10px;"/>
+    {{"dashboard.handwriting.clear" | translate}}
+</button>
+
+<button class="mla-button margnrtp-15 d-flex align-items-center" (click)="send()">
+    <img src="../../assets/img/Sendimage.svg" alt="" width="25" style="margin-right: 10px;" /> 
+    {{"dashboard.handwriting.send" | translate}}
+</button>
+</div>

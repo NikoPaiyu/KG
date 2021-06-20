@@ -1,0 +1,234 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="row padding5">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button nz-button [nzType]="'primary'" class="mrgL6" (click)="showUpdate=false;cancelModal()"
+                *ngIf="(disableDates && showUpdate) && !isAssistant()">
+                    {{ "Cancel" | translate }}
+                </button>
+                <button nz-button [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+                    nzPopconfirmTitle='{{ "bill.bill-clause.list.saveintialdays" | translate }}' (nzOnConfirm)="saveInitialDays()"
+                    nzPopconfirmPlacement="bottomLeft" *ngIf="((!disableDates) || (disableDates && showUpdate))  && !isAssistant()">
+                    {{ showUpdate? "Update" : "Save" | translate }}
+                </button>
+                <button nz-button [nzType]="'primary'" class="mrgL6" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+                    nzPopconfirmTitle='{{ "Do you want to attach to file?" | translate }}' (nzOnConfirm)="saveInitialDays()"
+                    nzPopconfirmPlacement="bottomLeft" *ngIf="(isAssistant() && permissions.createFile && priorityListResponse.initaialDateStatus === 'PENDING')">
+                    {{ "Attach to File" | translate }}
+                </button>
+                <button nz-button [nzType]="'primary'" class="mrgL6" (click)="showUpdate=true"
+                    *ngIf="disableDates && !showUpdate && 
+                    priorityListResponse.initaialDateStatus !== 'APPROVED' && withCurrentUser && !isAssistant()">
+                    {{ "Edit" | translate }}
+                </button>
+                <button
+              nz-button
+              [nzType]="'primary'"
+              class="mrgL6"
+              (click)="createBulletinPart2()"
+              *ngIf="priorityListResponse.initaialDateStatus === 'APPROVED' && permissions.createBulletin
+              && !priorityListResponse.initaialDateBulletinId"
+            >
+              {{ "Create Bulletin Part 2" | translate }}
+            </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mrgB20">
+        <nz-form-item>{{ "bill.prioritylist.listing.assembly" | translate }}:{{
+            priorityListResponse.assemblyValue
+          }}
+        </nz-form-item>
+    </div>
+    <div class="col-md-4 mrgB20">
+        <nz-form-item>{{ "bill.prioritylist.listing.session" | translate }}:
+            {{ priorityListResponse.sessionValue }}
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mrgB20">
+        <nz-form-item class="border">
+            <nz-form-control>
+                <p [innerHTML]="priorityListResponse.header | safeHtml"></p>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<ng-container *ngFor="let item of categorys">
+    <div class="row mrgB20">
+        <div class="col-md-9">
+            <strong>{{ item.description }}</strong>
+        </div>
+    </div>
+    <div class="row mrgB20" *ngIf="item.priorityList && item.priorityList.length > 0">
+        <!-- <div class="col-md-12" *ngFor="let list of item.priorityList">
+            <div class="col-md-12 border" id="{{ list.billId }}">
+                <div class="row padding5">
+                    <div class="col-md-8">
+                        <span>{{
+                                list.billTitle ? list.billTitle : list.id
+                                       }}
+                        </span>
+                    </div>
+                    <div class="col-md-4">
+                        <nz-date-picker #datepicker [nzDisabledDate]="disabledCosDates"
+                            [nzDisabled]="disableDates && !showUpdate" nzFormat="dd/MM/yyyy"
+                            [(ngModel)]="list.initialDate" (ngModelChange)="setDate(list.billId, $event)">
+                        </nz-date-picker>
+                    </div>
+                </div> 
+            </div>
+        </div> -->
+        <div class="col-md-12">
+        <nz-collapse class="nominee-collapse">
+            <ng-container class ="mrgT20" *ngFor="let list of item.priorityList">
+            <nz-collapse-panel *ngIf="list?.id > 0" [nzHeader]="list.billTitle ? list.billTitle : list.billId" 
+                [nzExtra]="extraTpl">
+                <ng-template #extraTpl>
+                    <button
+                    (click)="$event.stopPropagation();viewBill(list.billId)"
+                        nz-button
+                        nzType="primary"
+                        class="mrgL6"
+                      >
+                      {{"bill.bill-clause.list.viewbill"|translate}}
+                      </button>
+                  </ng-template>
+                <!-- <div class="col-md-4">
+                    <nz-date-picker #datepicker [nzDisabledDate]="disabledCosDates"
+                        [nzDisabled]="disableDates && !showUpdate" nzFormat="dd/MM/yyyy"
+                        
+                       >
+                    </nz-date-picker>
+                </div> -->
+                <div class="row padding5 ">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "Consideration of Bill by House" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker [nzDisabledDate]="disabledCosDates"
+                                [nzDisabled]="disableDates && !showUpdate || disableIfAdded('BILL_INTRODUCTION', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.billIntroduction"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>     
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "business-dashboard.bill-management.billlist.refertocommitiee" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker
+                                [nzDisabled]="disableDates && !showUpdate|| disableIfAdded('REFER_TO_COMMITTEE', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.referToCommittee"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>   
+                    </div>
+                </div> 
+                <div class="row padding5">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "Amendment to Minister's Motion" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker
+                                [nzDisabled]="(disableDates && !showUpdate) || !list.scheduleDtoForm.billIntroduction|| disableIfAdded('GENERAL_AMENDMENT_I', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.generalAmendmentI"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>     
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "bill.bill-clause.list.orddisapprovalmotion" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker
+                                [nzDisabled]="(disableDates && !showUpdate)  || !list.bill.ordinance || !list.scheduleDtoForm.billIntroduction|| disableIfAdded('ORDINANCE_DISAPPROVAL_MOTION', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.ordinanceDisapprovalMotion"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>   
+                    </div>
+                </div>   
+                <div class="row padding5">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "bill.bill-clause.list.secondReading" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker [nzDisabledDate]="disabledCosDates"
+                                [nzDisabled]="disableDates && !showUpdate|| disableIfAdded('SECOND_READING', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.secondReading"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>     
+                    </div>     
+                </div> 
+                <div class="row padding5">
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "bill.bill-clause.list.genamendoncommreport" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker
+                                [nzDisabled]="(disableDates && !showUpdate) || !list.scheduleDtoForm.secondReading|| disableIfAdded('GENERAL_AMENDMENT_II', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.generalAmendmentII"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>     
+                    </div>
+                    <div class="col-md-6">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-label>{{ "Consideration of Bill as Reported by the Committee" | translate }}</nz-form-label>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-date-picker #datepicker
+                                [nzDisabled]="(disableDates && !showUpdate) || !list.scheduleDtoForm.secondReading|| disableIfAdded('CALUSE_BY_CLAUSE', list.scheduleDtoForm)" nzFormat="dd/MM/yyyy"
+                                [(ngModel)]="list.scheduleDtoForm.calusebyClause"
+                               >
+                            </nz-date-picker>
+                            </div>
+                        </div>   
+                    </div>
+                </div> 
+            </nz-collapse-panel>
+          </ng-container>
+            </nz-collapse>  
+            </div>
+    </div>
+    <div class="row mrgB20" *ngIf="item.priorityList.length <= 0">
+        <div class="col-md-12">
+            <div class="col-md-12 border empty">
+                <div class="row padding5">
+                    <div class="col-md-12">
+                        <span>{{ "NIL" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle='{{ "bill.bill-clause.list.createbulletinpart2" | translate }}'
+    (nzOnCancel)="cancelBulletin()">
+    <lib-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)">
+    </lib-create-bulletin-form>
+</nz-modal>

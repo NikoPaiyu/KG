@@ -1,0 +1,62 @@
+<div class="p-20 width-100">
+    <form [formGroup]="attachFileForm">
+        <p>Attach to File</p>
+        <div class="row">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <nz-form-control>
+                        <input type="text" name="search" nz-input formControlName="searchParamForFiles" (ngModelChange)="onSearchFilesForAttach()" placeholder="Search FileNo/Subject" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <!-- <div class="row" *ngIf="advancedFiltersFlag">
+            <div class="col-md-8"></div>
+            <div class="col-md-4 text-align-right">
+                <button class="mrgTB10" nz-button nzType="default" (click)="onAdvancedFilterclick()">
+          Advanced Filter
+        </button>
+            </div>
+        </div> -->
+        <!-- <div class="row" *ngIf="!advancedFiltersFlag">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">File No</nz-form-label>
+                    <nz-form-control [nzSpan]="15">
+                        <input nz-input placeholder="" (ngModelChange)="onSearchFilesForAttach()" formControlName="fileNo" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">Subject</nz-form-label>
+                    <nz-form-control [nzSpan]="15">
+                        <input nz-input placeholder="" (ngModelChange)="onSearchFilesForAttach()" formControlName="subject" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div> -->
+        <nz-form-item>
+            <nz-form-control>
+                <nz-card class="marginbtm-15 card">
+                    <div>
+                        <nz-radio-group formControlName="fileId" nzName="fileNumber">
+                            <ng-container *ngFor="let item of listOfData">
+                                <label nz-radio [nzValue]="item.fileId" name="fileId">{{
+                  item.fileNumber
+                  }}</label>
+                            </ng-container>
+                        </nz-radio-group>
+                    </div>
+                </nz-card>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+    <div class="width-100">
+        <div class="d-flex justify-content-space-end text-align-right">
+            <button type="button" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle="Are you sure you want to Attach To File?" (nzOnConfirm)="attachToFile()" class="btn btn-primary primary-button" [disabled]="attachFileForm.invalid">
+        <span>Attach To File</span>
+      </button>
+        </div>
+    </div>
+</div>

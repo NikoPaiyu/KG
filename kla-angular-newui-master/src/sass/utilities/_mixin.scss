@@ -1,0 +1,123 @@
+@mixin maxRes($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 35.9375em) {
+      /*mx-width:575px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == tab {
+    @media (max-width: 47.9375em) {
+      /*mx-width:767px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == land {
+    @media (max-width: 61.9375em) {
+      /*mx-width:991px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == desktop {
+    @media (max-width: 74.9375em) {
+      /*mx-width:1199px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == lap {
+    @media (max-width: 85.375em) {
+      /*mx-width:1366px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == huge {
+    @media (max-width: 90em) {
+      /*mx-width:1440px*/
+      @content;
+    }
+  }
+}
+
+@mixin minRes($breakpoint) {
+  @if $breakpoint == tab {
+    @media (min-width: 48em) {
+      /*mi-width:768px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == land {
+    @media (min-width: 62em) {
+      /*mi-width:992px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == desktop {
+    @media (min-width: 75em) {
+      /*mi-width:1200px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == lap {
+    @media (min-width: 85.4375em) {
+      /*mi-width:1367px*/
+      @content;
+    }
+  }
+
+  @if $breakpoint == huge {
+    @media (min-width: 90.0625em) {
+      /*mi-width:1441px*/
+      @content;
+    }
+  }
+}
+
+@mixin minmaxRes($breakpoint) {
+  @if $breakpoint == tab-land {
+    @media (min-width: 48rem) and (max-width: 62em) {
+      /* mi-width: 768px > mx-width: 992px */
+      @content;
+    }
+  }
+  @if $breakpoint == land-desk {
+    @media (min-width: 62rem) and (max-width: 75em) {
+      /* mi-width: 992px > mx-width: 1200px */
+      @content;
+    }
+  }
+  @if $breakpoint == tab-lap {
+    @media (min-width: 48rem) and (max-width: 85.375em) {
+      /* mi-width: 768px > mx-width: 1366px */
+      @content;
+    }
+  }
+}
+
+@mixin clearfix {
+  &::before {
+    content: "";
+    visibility: hidden;
+    display: block;
+    clear: both;
+  }
+
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin prefix($property, $value, $prefixes) {
+  @each $prefix in $prefixes {
+    -#{$prefix}-#{$property}: $value;
+  }
+  #{$property}: $value;
+}

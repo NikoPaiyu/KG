@@ -1,0 +1,464 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"cpl.actregistration.dash"|translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+              {{"cpl.amendmentview.amendment"|translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">{{ versionArray?.type }} {{"cpl.amendmentview.amendment"|translate}}</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <button class="mr-6" nz-button nzType="default" (click)="goBack()">
+            {{"cpl.docupload.back"|translate}}
+        </button>
+        <!-- <button nz-button class="btn-color"
+        *ngIf="amendment?.amendmentDto?.status == 'ACCEPTED' || amendment?.amendmentDto?.status == 'REJECTED'" (click)="replyLetter()">
+        {{ "cpl.correspondence.reply" | translate}}
+       </button> -->
+        <!-- <nz-select style="width: 280px;" name="selectedRole" [(ngModel)]="selectedRole" placeholder="Select to forward"
+            nzAllowClear *ngIf="currentPool === currentPoolUser && versionArray?.status !== 'LIST_APPROVED'">
+            <ng-container *ngFor="let role of workFlowUsers">
+                <nz-option nzValue="{{
+                role.userId + '-' + role.actionRow + '-' + role.actionGroup
+                }}" nzLabel="{{ role.fullName + ' - ' + role.actionName }}">
+                </nz-option>
+            </ng-container>
+        </nz-select>
+        <button class="mr-6" nz-button nzType="primary"  nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to Forward?"
+        (nzOnConfirm)="forwardAmendment()"
+        (nzOnCancel)="cancel()"
+            *ngIf="currentPool === currentPoolUser && versionArray?.status !== 'LIST_APPROVED'">
+            Forward
+        </button> -->
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<!-- <div class="row marginbtm-25 margntp-25">
+    <div class="col-md-2">
+        <span class="workflowhd">Amendment Workflow</span>
+    </div>
+    <div class="col-md-10">
+        <div class="overflow">
+            <nz-steps nzSize="small">
+                <nz-step *ngFor="let status of stepStatus" [nzStatus]="getStatusByReason(status.reason)"
+                    [nzTitle]="status.taskDefinitionKeyName" [nzDescription]="status.reason"></nz-step>
+            </nz-steps>
+        </div>
+    </div>
+</div> -->
+
+
+<div class="row">
+    <div class="col-md-12">
+            <div class="row marginbtm-25">
+                <div class="col-md-12 d-flex justify-content-end">
+                  <div class="col-md-2 d-flex justify-content-end">
+                    <nz-select [(ngModel)]="currentVersion" (ngModelChange)="getVersion($event)" 
+                    *ngIf="!editMode && permissions.version"
+                        class="mr-6">
+                        <nz-option *ngFor="
+                      let versions of counter(
+                        amendment?.amendmentDto?.currentVersion
+                      );
+                      let i = index
+                    " [nzValue]="i + 1" [nzLabel]="'Version ' + (i + 1) + ''"></nz-option>
+                    </nz-select>
+                    </div>
+                    <!-- <button class="mr-6" nz-button nzType="default" (click)="editAmendment()"
+                        *ngIf="!editMode && currentPool === currentPoolUser && versionArray?.status !== 'LIST_APPROVED'">
+                        Edit
+                    </button>
+                    <button class="mr-6" nz-button nzType="default" (click)="cancel()" *ngIf="editMode">
+                        Cancel
+                    </button>
+                    <button class="mr-6" nz-button nzType="default" (click)="saveAmendment()" *ngIf="editMode">
+                        Update
+                    </button> -->
+                </div>
+            </div>            
+            <div class="row marginbtm-15">
+                <div class="col-md-2">
+                    {{"cpl.amendmentview.content"|translate}}:
+                  </div>
+                    <div class="col-md-10  blthd word-brk pd_content">
+                    <quill-view-html [content]="versionArray?.content" *ngIf="versionArray?.content && !editMode">
+                    </quill-view-html>
+                    <!-- <quill-editor #editor [(ngModel)]="versionArray.content"
+                        (onEditorCreated)="SaveEditorInstance($event)" (onEditorChanged)="SetCurrentIndex()" html="html"
+                        (onContentChanged)="setContentHtml($event)" [sanitize]="false"
+                        [styles]="{ height: '300px', width: '877px' }" *ngIf="editMode"></quill-editor> -->
+                        </div>
+                
+              <div class="col-md-10  blthd word-brk">
+                  <!-- <quill-view-html [content]="versionArray?.content" *ngIf="versionArray?.content && !editMode">
+                  </quill-view-html>
+                  <quill-editor #editor [(ngModel)]="versionArray.content"
+                      (onEditorCreated)="SaveEditorInstance($event)" (onEditorChanged)="SetCurrentIndex()" html="html"
+                      (onContentChanged)="setContentHtml($event)" [sanitize]="false"
+                      [styles]="{ height: '300px', width: '465px' }" *ngIf="editMode"></quill-editor> -->
+              </div>
+          </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-3">
+                  {{  "cpl.amendmentview.layingdate"|translate}}:
+              </div>
+              <div class="col-md-3 blthd word-brk"> 
+                  <!-- <ng-container *ngIf="!editMode"> -->
+                      {{ versionArray?.layingDate | date: "dd-MM-yyyy"}}
+                  <!-- </ng-container> -->
+                  <!-- <ng-container *ngIf="editMode"> -->
+                      <!-- <nz-date-picker [(ngModel)]="layingDate" nzFormat="dd-MM-yyyy"></nz-date-picker> -->
+                      <!-- <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="date" [(ngModel)]="layingDate">
+                          <nz-option *ngFor="let dates of dateList" [nzLabel]="dates | date: 'dd-MM-yyyy'"
+                              [nzValue]="dates"></nz-option>
+                      </nz-select>
+                  </ng-container> -->
+              </div>
+              <div class="col-md-3">
+                  {{"cpl.docamendments.status"|translate}}:
+              </div>
+              <div class="col-md-2 blthd word-brk">
+                {{ versionArray?.status.replace("_", " ") }}
+              </div>
+          </div>
+           
+            <div class="row marginbtm-15">
+                <div class="col-md-3" >
+                    {{ versionArray?.type }} {{"cpl.cplview.number"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk"  (click)="viewDocument( versionArray?.documentId)">
+                    {{ versionArray?.typeNumber }}
+                    <a
+                href="javascript:;"
+                class="sortable"
+                (click)="viewDocument( versionArray?.documentId)"
+              ></a>
+                </div>
+                <div class="col-md-3" *ngIf=" versionArray?.typeNumber !== null" >
+                  {{ versionArray?.type }} {{"cpl.cplview.number"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.typeNumber }}
+                </div>
+            </div>
+            <div class="row marginbtm-15">
+                <div class="col-md-3">
+                    {{"cpl.fileworkflow.noticenumber"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.noticeNumber }}
+                </div>
+                <div class="col-md-3">
+                    {{"cpl.fileworkflow.noticedate"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.noticeDate | date: "dd-MM-yyyy" }}
+                </div>
+            </div>
+
+            <div class="row marginbtm-15">
+                <div class="col-md-3">
+                    {{"cpl.amendmentview.noticepreview"|translate}}:
+                </div>
+                <div class="col-md-3" (click)="showPreview(versionArray?.noticeUrl)">
+                    <i class="preview-icon pointer" nz-icon style="cursor:pointer" nzType="file" nzTheme="outline"></i>
+                </div>
+                <div class="col-md-3">
+                    {{"cpl.amendmentview.membername"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.memberName }}
+                </div>
+            </div>
+            <!-- <div class="row marginbtm-15" *ngIf="editMode">
+                <div class="col-md-3">
+                    Assembly
+                </div>
+                <div class="col-md-3">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assemblyId"
+                        (ngModelChange)="getDateList()">
+                        <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-3">
+                    Session
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="sessionId"
+                        (ngModelChange)="getDateList()">
+                        <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+            </div> -->
+            
+            <div class="row marginbtm-15" *ngIf=" versionArray?.listFileNumber !== null">
+                <div class="col-md-3">
+                    {{"cpl.amendmentview.listfilenumber"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.listFileNumber }}
+                </div>
+                <div class="col-md-3">
+                    {{"cpl.amendmentview.listfileis"|translate}}:
+                </div>
+                <div class="col-md-3 blthd word-brk">
+                    {{ versionArray?.listFileId }}
+                </div>
+            </div>
+    </div>
+
+    <!-- <div class="col-md-6 note_log">
+        <nz-tabset>
+            <nz-tab [nzTitle]="'Notes'">
+                <nz-card class="mb-15">
+                    <div>
+                      <div class="overflow-blt">
+                        <div
+                          *ngFor="let note of notes"
+                          class="input-group brdr_nt"
+                          [ngClass]="{ yellowColor: note.temporary == true }"
+                        >
+                          <div
+                            class="d-flex justify-content-between mt-20 w-100 marginbtm-25"
+                          >
+                            <div class="col-md-7 pl0">
+                              <b class="width-100 fl marginbtm-5">{{
+                                note.user.details.fullName
+                              }}</b>
+                              <span class="width-100 fl">{{
+                                note.user.roles.roleName
+                              }}</span>
+                            </div>
+                            <div class="col-md-5 d-flex justify-content-between pr0">
+                              <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+                              <span>|</span>
+                              <span>{{ note.updatedDate | date: "dd-MM-yyyy" }}</span>
+                            </div>
+                          </div>
+                          <div class="width-100 marginbtm-15 word-brk">
+                            {{ note.note }}
+                          </div>
+                          <div
+                            class="fl width-100"
+                            *ngIf="note.temporary !== true"
+                          >
+                            <ng-container
+                              *ngIf="
+                                this.user.userId == note.user.userId &&
+                                versionArray?.status !== 'LIST_APPROVED' &&
+                                currentPool === currentPoolUser &&
+                                note.id === latestNote.id
+                              "
+                            >
+                              <button
+                                nz-button
+                                nzType="default"
+                                (click)="editNote(note.id, note.note)"
+                                class="mr-6"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                nz-button
+                                nzType="default"
+                                nz-popconfirm
+                                nzPopconfirmTitle="Are you sure you want to delete note?"
+                                (nzOnConfirm)="deleteNote(note.id)"
+                                (nzOnCancel)="cancel()"
+                              >
+                                Delete
+                              </button>
+                            </ng-container>
+                          </div> -->
+                          <!-- <ng-template #yellowNote>
+                            <div class="fl width-100">
+                              <ng-container
+                                *ngIf="
+                                  this.user.userId == note.user.userId &&
+                                  versionArray?.status !== 'LIST_APPROVED' &&
+                                  currentPool === currentPoolUser &&
+                                  note.noteId === latestNote.noteId
+                                "
+                              >
+                                <a
+                                  class="mr-6"
+                                  nz-popconfirm
+                                  nzPopconfirmTitle="Are you sure you want to convert note?"
+                                  (nzOnConfirm)="convertNote(note.noteId)"
+                                  (nzOnCancel)="cancel()"
+                                  >Convert to Normal</a
+                                >&nbsp;&nbsp; | &nbsp;&nbsp;
+                                <a
+                                  nz-popconfirm
+                                  nzPopconfirmTitle="Are you sure you want to delete note?"
+                                  (nzOnConfirm)="deleteNote(note.noteId)"
+                                  (nzOnCancel)="cancel()"
+                                  >Delete</a
+                                >
+                              </ng-container>
+                              <span class="note_num">{{ note.noteNumber }}</span>
+                            </div>
+                          </ng-template> -->
+                        <!-- </div>
+                      </div>
+                    </div> -->
+                    <!-- <div class="row" 
+                    *ngIf="
+                        versionArray?.status !== 'LIST_APPROVED' &&
+                        currentPool === currentPoolUser
+                      ">
+                      <div class="width-100 d-flex">
+                        <div class="col-md-12">
+                          <strong>Quick options: </strong> -->
+                          <!-- <nz-tag *ngFor="let tag of quickOptions; let i = index" nzMode="checkable"
+                            [nzChecked]="currentRuleStatement === tag.label" (nzCheckedChange)="CheckforRules($event, tag, i)">
+                            {{ tag.label }}
+                          </nz-tag> -->
+                          <!-- <nz-tag
+                            *ngFor="let tag of quickOptions; let i = index"
+                            nzMode="checkable"
+                            [nzChecked]="currentRuleStatement === tag.label"
+                            (nzCheckedChange)="CheckforRules($event, tag, i)"
+                          >
+                            {{ tag.label }}
+                          </nz-tag> -->
+                        <!-- </div>
+                      </div>
+                    </div> -->
+                    <!-- <div
+                      class="row"
+                      *ngIf="
+                        versionArray?.status !== 'LIST_APPROVED' &&
+                        currentPool === currentPoolUser
+                      "
+                    >
+                      <div class="width-100 d-flex bg_txtarea">
+                        <div
+                          class="col-md-12 d-flex justify-content-end flexwrap"
+                        > -->
+                          <!-- <div class="btn-notes" *ngIf="!update">
+                            <nz-radio-group [(ngModel)]="yellow" nzButtonStyle="solid">
+                              <label nz-radio-button nzValue="true">Yellow</label>
+                              <label nz-radio-button nzValue="false">Normal</label>
+                            </nz-radio-group>
+                          </div> -->
+                          
+                        <!-- </div>
+                      </div>
+                    </div>
+                    <div
+                      class="row"
+                      *ngIf="
+                        versionArray?.status !== 'LIST_APPROVED' &&
+                        currentPool === currentPoolUser
+                      "
+                    >
+                      <div class="width-100 d-flex bg_txtarea">
+                        <div class="col-md-12">
+                          <nz-mention
+                            [nzPrefix]="['#', '@']"
+                          >
+                            <textarea 
+                              class="textarea_nt"
+                              placeholder="Enter note here"
+                              nzMentionTrigger
+                              nz-input
+                              [(ngModel)]="inputValue"
+                            ></textarea>
+
+                          </nz-mention>
+                          <button
+                        nz-button
+                        [nzType]="'default'"
+                        class="save_btn"
+                        (click)="cancelEdit()"
+                        *ngIf="update"
+                      >
+                        Cancel
+                      </button>
+                     
+                        </div>
+                        <button
+                        style
+                          nz-button
+                          [nzType]="'default'"
+                          class="save_btn"
+                          (click)="addNote()"
+                          [disabled]="inputValue === ''"
+                        >
+                          {{ update ? "Update" : "Save" }}
+                        </button> -->
+                        <!-- <div
+                          class="col-md-5 d-flex align-items-center justify-content-end flexwrap"
+                        > -->
+                       
+                      <!-- </div> -->
+                        <!-- <div
+                          class="col-md-5 d-flex align-items-center justify-content-end flexwrap"
+                        > -->
+                          <!-- <div class="btn-notes" *ngIf="!update">
+                            <nz-radio-group [(ngModel)]="yellow" nzButtonStyle="solid">
+                              <label nz-radio-button nzValue="true">Yellow</label>
+                              <label nz-radio-button nzValue="false">Normal</label>
+                            </nz-radio-group>
+                          </div> -->
+                          <!-- <button
+                            nz-button
+                            [nzType]="'default'"
+                            class="save_btn"
+                            (click)="cancelEdit()"
+                            *ngIf="update"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            nz-button
+                            [nzType]="'default'"
+                            class="save_btn"
+                            (click)="addNote()"
+                            [disabled]="inputValue === ''"
+                          >
+                            {{ update ? "Update" : "Save" }}
+                          </button>
+                        </div> -->
+                      <!-- </div>
+                    </div>
+                  </nz-card>
+                </nz-tab> -->
+            <!-- <nz-tab [nzTitle]="'Logs'"> -->
+                <!--<div class="input-group">
+                    <div class="d-flex justify-content-between mt-20 w-100">
+                        <div class="brdr_log width-100">
+                            The victory remains the only occasion the trophy, which was
+                            previously known as the "English Cup", has been won by a team
+                            based outside England. Cardiff did not reac
+                        </div>
+                    </div>
+                </div>-->
+            <!-- </nz-tab> -->
+        <!-- </nz-tabset>
+    </div> -->
+</div>
+<!-- pdf viewer -->
+<nz-modal [(nzVisible)]="showPdfModal" [nzFooter]="null" (nzOnCancel)="hideModal()" nzWidth="800">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <ngx-doc-viewer [url]="noticeUrl" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of pdf viewer -->

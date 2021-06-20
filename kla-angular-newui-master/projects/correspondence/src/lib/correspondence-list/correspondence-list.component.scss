@@ -1,0 +1,48 @@
+@import "~src/sass/utilities/variables";
+
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+.mrgL6 {
+  margin-left: 6px;
+}
+
+.table-operations {
+  margin-bottom: 16px;
+}
+.btn-color {
+  background-color: #15db1b;
+}
+.accept-color {
+  color: #10b315;
+}
+.reject-color {
+  color: red;
+}
+.preview-icon {
+  width: 50%;
+  cursor: pointer;
+}
+.refresh-icon {
+  height: 100%;
+  width: 100%;
+}
+.pd {
+  padding: 20px;
+  width: 100%;
+}
+.mr6 {
+  margin-right: 6px;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+th {
+  text-align: left;
+  width: 1px;
+}

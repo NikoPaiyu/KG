@@ -1,0 +1,71 @@
+@import "~src/sass/utilities/variables";
+
+input {
+  width: 100%;
+}
+.row {
+  width: -webkit-fill-available;
+  width: -moz-available;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+.mr-15 {
+  margin-right: 15px !important;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+.ant-tag {
+  // background: $white;
+  padding: 3px 7px;
+}
+.text-end {
+  text-align: end;
+}
+
+.ant-input {
+  background: #eee;
+}
+.ant-tag {
+  padding: 3px 7px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 3px;
+}
+
+.word-break {
+  word-break: break-word;
+}
+
+.classname2 {
+  transition: All 1s ease;
+  -webkit-transition: All 1s ease;
+  -moz-transition: All 1s ease;
+  -o-transition: All 1s ease;
+  display: none;
+  height: 0px;
+  width: 100%;
+}
+
+.classname {
+  transition: All 1s ease;
+  -webkit-transition: All 1s ease;
+  -moz-transition: All 1s ease;
+  -o-transition: All 1s ease;
+  min-height: 50px !important;
+}
+
+.match-container {
+  border: 1px solid lightgrey;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+.text-area {
+  width: 100%;
+  border: none;
+}
+.baseline {
+  vertical-align: baseline;
+}

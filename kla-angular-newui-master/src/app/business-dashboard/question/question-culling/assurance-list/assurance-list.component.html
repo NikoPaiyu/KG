@@ -1,0 +1,449 @@
+<div class="row marginbtm-10 margnrtp-15">
+  <div class="col-md-12">
+    <div
+      class="row"
+      *ngIf="assemblySession['assembly'] && assemblySession['session']"
+    >
+      <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10">
+        {{ "business-dashboard.question.assembly" | translate }}
+        <nz-select
+          nzShowSearch
+          nzPlaceHolder=""
+          [(ngModel)]="assemblySession['assembly'].currentassembly"
+          name="selectedAssembly"
+          (ngModelChange)="findSessionListByAssembly(assemblySession['assembly'].currentassembly)"
+        >
+          <nz-option
+            *ngFor="let assembly of assemblySession['assembly']"
+            [nzLabel]="assembly.assemblyId"
+            [nzValue]="assembly.id"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+
+      <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10">
+        {{ "business-dashboard.question.questionlist.session" | translate }}
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="assemblySession['session'].currentsession"
+          name="selectedSession"
+          (ngModelChange)="loadQuestionByAssemblySession()"
+        >
+          <nz-option
+            *ngFor="let session of assemblySession['session']"
+            [nzLabel]="session.sessionId"
+            [nzValue]="session.id"
+          >
+          </nz-option> </nz-select
+        >&nbsp;
+      </div>
+      <div class="col-md-3 d-flex align-items-center marginbtm-10">
+        <button
+          class="plus-arrange mr-6 d-flex justify-content-center align-items-center"
+          nz-button
+          [nzType]="'primary'"
+          (click)="showModal()"
+        >
+          <i nz-icon nzType="plus"></i>
+        </button>
+        <nz-modal
+          [(nzVisible)]="isVisibleFilter"
+          nzTitle="{{
+            'business-dashboard.questionbank.filtercolumns'
+              | translate
+          }}"
+          (nzOnCancel)="_hideFilter()"
+          (nzOnOk)="_showFilter()"
+        >
+          <div class="pading-all">
+            <p
+              *ngFor="let box of filterCheckboxes; let i = index"
+              class="checkbox-style"
+            >
+              <label
+                nz-checkbox
+                name="checkbox{{ i }}"
+                (ngModelChange)="_chooseFilter(box)"
+                [(ngModel)]="box.checked"
+                >{{ box.label }}</label
+              >
+            </p>
+          </div>
+        </nz-modal>
+
+        <button
+          nz-button
+          nzType="default"
+          (click)="clearFilter()"
+          (keyup.enter)="DoNothing()"
+        >
+          {{
+            "business-dashboard.question.questionlist.clearfilter" | translate
+          }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row fltr">
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.showQNo">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{
+          "business-dashboard.question.questionlist.questionnumber" | translate
+        }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['questionNumber']"
+          name="noticeNumber"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let num of tablefiltrParams.data.questionNumber"
+            nzLabel="{{ num }}"
+            nzValue="{{ num }}"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(1)"
+        ></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.showheading">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{
+          "business-dashboard.question.questionlist.questionheading" | translate
+        }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['heading']"
+          name="heading"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let heading of tablefiltrParams.data.heading"
+            nzLabel="{{ heading }}"
+            nzValue="{{ heading }}"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(2)"
+        ></i>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.showdate">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{ "business-dashboard.question.questiondate" | translate }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['questionDate']"
+          name="subjectName"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let date of tablefiltrParams.data.questionDate"
+            nzLabel="{{ date | date: 'dd-MM-yyyy' }}"
+            nzValue="{{ date }}"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(3)"
+        ></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.showmember">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{ "business-dashboard.question.questionlist.submittedby" | translate }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['primaryMeberName']"
+          name="subjectName"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let member of tablefiltrParams.data.primaryMeberName"
+            nzLabel="{{ member }}"
+            nzValue="{{ member }}"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(4)"
+        ></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.shownoAssurance">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{ "business-dashboard.question.assurances.noOfAssurance" | translate }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['numberOfAssurance']"
+          name="status"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let no of tablefiltrParams.data.numberOfAssurance"
+            nzLabel="{{ no }}"
+            nzValue="{{ no }}"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(5)"
+        ></i>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3" *ngIf="tablefiltrParams.show.showstatus">
+    <div class="row align-items-center">
+      <div class="col-md-5 wordbreak">
+        {{ "business-dashboard.question.questionlist.status" | translate }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filterSelected['assuranceStatus']"
+          name="assuranceStatus"
+          (ngModelChange)="searchCol(filterSelected)"
+        >
+          <nz-option
+            *ngFor="let s of tablefiltrParams.data.assuranceStatus"
+            nzLabel="{{ s }}"
+            nzValue="{{ s }}"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(6)"
+        ></i>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row margnrtp-15 justify-content-end">
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchParam"
+            name="search"
+            nz-input
+            placeholder="{{
+              'business-dashboard.question.questionlist.inputsearch' | translate
+            }}"
+            (ngModelChange)="onSearchUser()"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-1 text-align-right">
+    <a
+      class="abs_btn"
+      nzType="default"
+      nz-dropdown
+      nzTrigger="click"
+      [nzDropdownMenu]="menu"
+    >
+      <i nz-icon nzType="layout" nzTheme="outline" class="mr-6"></i>
+      <span>cols</span>
+    </a>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <div>
+        <ul nz-menu filterTable class="checkbox-style">
+          <li
+            *ngFor="let box of filterCheckboxes; let i = index"
+            class="pading-5"
+          >
+            <label nz-checkbox [(ngModel)]="box.colchecked" name="i">{{
+              box.label
+            }}</label>
+          </li>
+        </ul>
+      </div>
+    </nz-dropdown-menu>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row margntp-25">
+  <div class="col-md-2">
+    {{ numberOfChecked }}
+    {{ "business-dashboard.question.questionlist.selected" | translate }}
+  </div>
+  <div class="col-md-2">
+    <button
+      *ngIf="rbsService.doIHaveAnAccess('CREATE_ASSURANCE_LIST', 'READ') && _canShowCreateList()"
+      nz-button
+      nzType="default"
+      nz-popconfirm
+      nzPopconfirmTitle="Are you sure you want to create List?"
+      (nzOnConfirm)="createAssuranceList()"
+      nzCancelText="No"
+      nzOkText="Yes"
+      nzPopconfirmPlacement="bottomLeft"
+      class="mr-6"
+    >
+      {{ "business-dashboard.question.assurances.createlist" | translate }}
+    </button>
+  </div>
+</div>
+<nz-table
+  #filterTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="listOfData"
+  (nzCurrentPageDataChange)="currentPageDataChange($event)"
+  class="table-all"
+>
+  <thead *ngIf="isChecked" (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th
+        nzShowCheckbox
+        [(nzChecked)]="isAllDisplayDataChecked"
+        (nzCheckedChange)="_checkAllRows($event)"
+      ></th>
+      <th
+        *ngIf="filterCheckboxes[0].colchecked"
+        nzShowSort
+        nzSortKey="questionNumber"
+      >
+        {{
+          "business-dashboard.question.questionlist.questionnumber" | translate
+        }}
+      </th>
+      <th *ngIf="filterCheckboxes[1].colchecked" nzShowSort nzSortKey="heading">
+        {{
+          "business-dashboard.question.questionlist.questionheading" | translate
+        }}
+      </th>
+      <th
+        *ngIf="filterCheckboxes[2].colchecked"
+        nzShowSort
+        nzSortKey="questionDate"
+      >
+        {{ "business-dashboard.question.questiondate" | translate }}
+      </th>
+      <th
+        *ngIf="filterCheckboxes[3].colchecked"
+        nzShowSort
+        nzSortKey="primaryMemberName"
+      >
+        {{ "business-dashboard.question.questionlist.submittedby" | translate }}
+      </th>
+      <th
+        *ngIf="filterCheckboxes[4].colchecked"
+        width="10%"
+        nzShowSort
+        nzSortKey="numberOfAssurance"
+      >
+        {{ "business-dashboard.question.assurances.noOfAssurance" | translate }}
+      </th>
+      <th *ngIf="filterCheckboxes[5].colchecked" nzShowSort nzSortKey="assuranceStatus">
+        {{ "business-dashboard.question.questionlist.status" | translate }}
+      </th>
+      <!-- <th>
+        {{ "has assurance" }}
+      </th> -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data">
+      <td
+        nzShowCheckbox
+        [(nzChecked)]="mapOfCheckedId[list.id]"
+        (nzCheckedChange)="refreshStatus()"
+      ></td>
+      <td *ngIf="filterCheckboxes[0].colchecked">{{ list.questionNumber }}</td>
+      <td *ngIf="filterCheckboxes[1].colchecked">
+        <a
+          (click)="viewAssurance(list)"
+          href="javascript:void(0);"
+          class="td_heading"
+          >{{ list.heading }}</a
+        >
+      </td>
+      <td *ngIf="filterCheckboxes[2].colchecked">
+        {{ list.questionDate | date: "dd-MM-yyyy" }}
+      </td>
+      <td *ngIf="filterCheckboxes[3].colchecked">
+        {{ list.primaryMeberName }}
+      </td>
+      <td *ngIf="filterCheckboxes[4].colchecked">
+        {{ list.numberOfAssurance ? list.numberOfAssurance : 0 }}
+      </td>
+      <td *ngIf="filterCheckboxes[5].colchecked">
+        <nz-tag>{{ list.assuranceStatus }}</nz-tag>
+      </td>
+      <!-- <td>
+        {{ list.hasAssurance ? 'YES' : 'NO' }}
+      </td> -->
+    </tr>
+  </tbody>
+</nz-table>

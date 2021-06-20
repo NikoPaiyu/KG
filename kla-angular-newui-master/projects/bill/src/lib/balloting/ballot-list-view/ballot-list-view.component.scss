@@ -1,0 +1,58 @@
+.report-holder {
+    width: fit-content;
+    border:0px;
+    padding: 15px;
+  }
+  .table {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+  .table td {
+    width: auto;
+    padding: 5px;
+    line-height: 22px;
+    border-top: 0px;
+  }
+  .tl {
+    text-align: left;
+  }
+  .tc {
+    text-align: center;
+  }
+  .tr {
+    text-align: right;
+  }
+  .pt {
+    padding-top: 10px !important;
+  }
+  .width100 {
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+  }
+  .border td {
+    border: #ccc solid 1px;
+  }
+  .border th {
+    border: #ccc solid 1px;
+    padding: 5px;
+  }
+  .no-brder-head th{border: none !important;padding-bottom: 10px;text-align: left;}
+  .vertical_t{vertical-align: top;width: 70px !important;}
+
+  .maximise {
+    height: auto; 
+    width: 100vw;
+    z-index: 99;
+    overflow-y: auto;
+    background-color: #fff !important;
+    max-width: 100vw;
+    padding: 20px;
+  }
+  .listname {
+    float: right;
+    padding-right: 35px;
+    font-weight: 900;
+    text-decoration: underline;
+  }

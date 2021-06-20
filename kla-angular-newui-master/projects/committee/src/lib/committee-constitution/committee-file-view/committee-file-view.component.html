@@ -1,0 +1,318 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b>
+            {{ "committee.committe-mgmnt" | translate}}
+          </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">3432/legi-03/2020/ni.se</h2>
+          <nz-tag nzColor="red">{{ "committee.committe-files.priority.urgent" | translate}}</nz-tag>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+            <button nz-button nzType="primary" class="mrgL6">
+               ...
+               </button>
+               <button nz-button nzType="primary" class="mrgL6">
+                {{ "cpl.uploadedlist.return" | translate}}
+               </button>
+               <button nz-button nzType="primary" class="mrgL6">
+                {{ "table.listga.submit" | translate}}
+               </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+  <div class="row marginbtm-25 margntp-25">
+    <div class="col-md-6">
+      <nz-tabset>
+       <nz-tab  [nzTitle]="index">
+            <div
+              class="row bg_block" (click)="showContent('')"
+            >
+              <ng-container>
+                <div class="col-md-6">
+                  <h6>{{ "committee.committee-constitution.lettertoppo" | translate}}</h6>
+                  <small>Assigned to Assigne name on 20/12/2020</small>
+                </div>
+                <div class="col-md-6 text-align-right">
+                  <nz-tag
+                    [ngClass]=""
+                    >{{ "business-dashboard.question.questionlist.status" | translate}}</nz-tag
+                  >
+                </div>
+              </ng-container>
+            </div>
+              <div
+              class="row bg_block"
+            >
+              <ng-container >
+                <div class="col-md-6">
+                  <h6>{{ "committee.attendence.attendencelist.committeedetails" | translate}}</h6>
+                  <small>Assigned to Assigne name on 20/12/2020</small>
+                </div>
+                <div class="col-md-6 text-align-right">
+                  <nz-tag
+                    [ngClass]=""
+                    >{{ "business-dashboard.question.questionlist.status" | translate}}</nz-tag
+                  >
+                </div>
+              </ng-container>
+              </div>
+              <div
+              class="row bg_block"
+            >
+              <ng-container >
+                <div class="col-md-6">
+                  <h6>{{ "business-dashboard.question.ballotdatereport.bulletin" | translate}}</h6>
+                  <small>Assidned to Assigne name on 20/12/2020</small>
+                </div>
+                <div class="col-md-6 text-align-right">
+                  <nz-tag
+                    [ngClass]=""
+                    >{{ "business-dashboard.question.questionlist.status" | translate}}</nz-tag
+                  >
+                </div>
+              </ng-container>
+              </div>
+            <ng-template #index>
+                <i nz-icon nzType="appstore" nzTheme="outline"></i>
+                {{ "committee.committee-files.index" | translate}}
+              </ng-template>
+        </nz-tab>
+        <ng-template #fullScreen>
+            <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+              <i *ngIf="!fullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+              <i *ngIf="fullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+            </button>
+          </ng-template>
+      </nz-tabset>
+    </div>
+    <div class="col-md-6 maximise" [ngClass]="{
+          enlarge: fullScreenMode == true
+        }">
+      <nz-tabset [nzTabBarExtraContent]="fullScreen">
+        <nz-tab nzTitle="Notes">
+            <div
+            class="chat-main-body"
+            #scrollme
+            [scrollTop]="scrollme.scrollHeight"
+          >
+          <nz-card
+          class="margin-12 notesp"
+          
+        >
+        <div class="row">
+            <div class="col-md-12">
+             <div class="row">
+            <div class="col-md-7">
+              <p>
+                <b>{{ "committee.attendence.attendencelist.username" | translate}}</b>
+              </p>
+              <small>
+                <span>{{ "committee.attendence.attendencelist.klaroles" | translate}}</span>
+              </small>
+            </div>
+            <div class="col-md-5 d-flex justify-content-flex-end">
+              <p>10:20 am | 12/10/2020</p>
+              
+            </div>
+         </div>   
+          <div class="row">&nbsp;</div>
+            <div class="row">
+              <div class="col-md-12">
+                {{ "noticeprocessing.noticeprocess.note" | translate}}
+              </div>
+            </div>
+            <div class="row">&nbsp;</div>
+            <div class="row">
+                <div class="col-md-9">
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="m-r5"
+                  >
+                  {{ "committee.committe-mgmnt.edit" | translate}}
+                  </button>
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="m-r5"
+                    nzType="info"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{ "business-dashboard.cpl.view.delete" | translate}}'
+                  >
+                  {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate}}
+                  </button>
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="m-r5"
+                    nzType="info"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{ "business-dashboard.calendarofsittings.douwantconvertnotetonornote" | translate}}'
+                  >
+                  {{ "cpl.filelistflow.converttonormal" | translate}}
+                  </button>
+                </div>
+                <div class="col-md-3">
+                  <span class="note_num">#3442-01</span>
+                </div>
+              </div>
+            </div>
+        </div>
+              </nz-card>
+            </div>
+            <div class="row">
+                <form [formGroup]="" class="width-100">
+                    <div class="footer-chat">
+                        <div class="col-md-12 d-flex">
+                          <div class="col-md-8">
+                            <textarea
+                              rows="2"
+                              nz-input
+                              placeholder='{{ "business-dashboard.question.typeamessage" | translate}}'
+                              name="note"
+                              formControlName="note"
+                            ></textarea>
+                          </div>
+                          <div class="col-md-4 justify-content-end pl0">
+                            <!-- <div class="row">
+                      <div class="col-md-6"> -->
+                            <nz-form-item>
+                              <nz-form-control>
+                                <nz-radio-group
+                                  formControlName="tempFlag"
+                                  nzName="radiogroup"
+                                  nzButtonStyle="solid"
+                                >
+                                  <label nz-radio-button style="background-color: yellow;" nzValue="true">Yellow</label>
+                                  <label
+                                    nz-radio-button
+                                    nzValue="false"
+                                    >{{ "cpl.docamendments.normal" | translate}}</label
+                                  >
+                                </nz-radio-group>
+                              </nz-form-control>
+                            </nz-form-item>
+                            <div class="width-100">
+                              <button
+                                type="submit"
+                                nz-button
+                                nzType="primary"
+                                class="send-btn-style p-R15"
+                              >
+                              {{ "business-dashboard.question.save" | translate}}
+                              </button>
+                              <button
+                                nz-button
+                                nzType="primary"
+                                class="send-btn-style p-R15"
+                                nzDisabled="!hideNormal"
+
+                              >
+                              {{ "cpl.docupload.update" | translate}}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                </form>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle="Logs">
+          <ng-container>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="bg_block">
+                  <div class="col-md-7 pdzero">
+                    <div class="width-100 d-flex marginbtm-15">
+                      <div class="overflow-blt">
+                        {{ "log1" | titlecase }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+          &nbsp;&nbsp;
+        </nz-tab>
+        <nz-tab nzTitle="File Info
+          "> 
+          <div class="row">
+            <div class="col-md-3">
+              <span class="workflowhd">{{ "business-dashboard.aod.file-tracking.fileinfo" | translate}}
+                </span>
+            </div>
+            <div class="col-md-9">
+              <div class="overflownote">
+                <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                  <nz-step [nzStatus]="'process'" [nzTitle]="'test2'" [nzDescription]="'test222'"></nz-step>
+                  <nz-step [nzStatus]="'process'" [nzTitle]="'test2'" [nzDescription]="'test222'"></nz-step>
+                  <nz-step [nzStatus]="'process'" [nzTitle]="'test2'" [nzDescription]="'test222'"></nz-step>
+
+
+                </nz-steps>
+              </div>
+            </div>
+          </div>
+          <div class="row bg_block">
+            <div class="col-md-12">
+              <div class="row flex-end mrB10">
+                <div class="col-md-3">{{ "committee.committe-files.filesubject" | translate}}:</div>
+                <div class="blthd col-md-9">
+                  {{ "ttttt" }}
+                </div>
+              </div>
+              <div class="row flex-end mrB10">
+                <div class="col-md-3">{{ "cpl.filelistflow.createddate" | translate}}:</div>
+                <div class="blthd col-md-9">
+                  {{ "uuuuuu" }}
+                </div>
+              </div>
+              <div class="row flex-end mrB10">
+                <div class="col-md-3">{{ "cpl.docamendments.filepriority" | translate}}:</div>
+                <div class="blthd col-md-9">
+                  <nz-tag [nzColor]="'red'">
+                    {{ "tttttt" }}
+                  </nz-tag>
+                </div>
+              </div>
+              <div class="row flex-end">
+                <div class="col-md-3">{{ "committee.files.fileview.section" | translate}}:</div>
+                <div class="blthd col-md-9">
+                  {{ "hhhhh" }}
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          &nbsp;&nbsp;
+        </nz-tab>
+        
+      </nz-tabset>
+    </div>
+  </div>
+  <!-- <ng-template #showButtons>
+    <ng-container *ngIf="tabParams.showVersionEdit"> <button (click)="viewVersion()" nz-button class="mr-6"> {{
+      "business-dashboard.table-section.versions" | translate
+    }}</button> <button (click)="enableEdit()" nz-button class="mr-6"><i nz-icon nzType="form" nzTheme="outline"></i>{{
+      'business-dashboard.table-section.edit' | translate
+    }}</button></ng-container>
+  
+  </ng-template> -->
+

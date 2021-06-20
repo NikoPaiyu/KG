@@ -1,0 +1,288 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "committee.dashboard" | translate}}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    Members Time Allocation
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">
+                Members Time Allocation
+            </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div></div>
+            <div class="d-flex justify-content-between">
+                <button *ngIf="!canSetToLOB && timeAllocationForm && timeAllocationForm.value && timeAllocationForm.value.partyArray.length > 0" class="d-flex align-items-center mr-6" nz-button nzType="default" nz-popconfirm nzPopconfirmTitle='{{"Are you sure you want to submit?" | translate}}'
+                    nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="submitTimeAllocation()">
+                Submit /Attach To File
+            </button>
+                <button *ngIf="canSetToLOB" class="d-flex align-items-center mr-6" nz-button nzType="default" nz-popconfirm nzPopconfirmTitle='{{"Are you sure you want to set to LOB?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="setTAToLOB()">
+            Set To LOB
+        </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+</ng-container>
+<nz-card>
+    <div class="col-md-8" *ngIf="!isFileView">
+        <div class="row">
+            <div class="col-md-4">
+                <nz-form-label>{{"Select Type"}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+                <nz-select [(ngModel)]="timeObj.type" [ngModelOptions]="{standalone: true}" (ngModelChange)="showDropdown()" nzShowSearch>
+                    <nz-option *ngFor="let option of timeObj.typeArr" [nzLabel]="option.label" [nzValue]="option.value">
+                    </nz-option>
+                </nz-select>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8" *ngIf="timeObj.type">
+        <div class="row">
+            <div class="col-md-4">
+                <nz-form-label>{{!isFileView ? this.timeObj?.selectLbl : this.removeUnderScore(this.timeObj?.type)}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+                <nz-select *ngIf="!isFileView else showViewTitle" [(ngModel)]="timeObj.masterObj" [ngModelOptions]="{standalone: true}" (ngModelChange)="getTABySdfgId()" nzShowSearch>
+                    <nz-option *ngFor="let option of timeObj.dataList" [nzLabel]="option.title" [nzValue]="option">
+                    </nz-option>
+                </nz-select>
+                <ng-template #showViewTitle>
+                    {{timeObj?.masterObj['title']}}
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</nz-card>
+<nz-card *ngIf="timeObj.masterObj" style="margin-top: 35px;">
+    <form [formGroup]="timeAllocationForm">
+        <div class="row margnrtp-5">
+            <div class="col-md-8">
+                <!-- <div class="row margnrtp-5">
+                    <div class="col-md-4">
+                        Session :
+                    </div>
+                    <div class="col-md-8">
+                        {{assemblySessionObj.currentSession}}
+                    </div>
+                </div> -->
+                <div class="row margnrtp-5">
+                    <div class="col-md-4">
+                        Day :
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select type="text" formControlName="timeAllocatedDay" name="dateTime" nz-input placeholder="Select Date" (ngModelChange)="getTimeAllocation($event)" nzAllowClear>
+                            <nz-option *ngFor="let item of getDateList|keyvalue" nzLabel="Day {{item.key}} - {{item.value|date:'dd/MM/yyyy'}}" [nzValue]="item">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <!-- <div class="row margnrtp-5">
+                <div class="col-md-4">
+                    Allocation For :
+                </div>
+                <div class="col-md-8">
+                    <form-item>
+                         <nz-form-control [nzSpan]="15" nzErrorTip="Select Total Time">
+                            <nz-select nzAllowClear name="sessionId" formControlName="allocation">
+                                <nz-option *ngFor="let item of assemblySessionObj.session" [nzLabel]="item.sessionId"
+                                    [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control> 
+                    </form-item>
+                </div>
+            </div> -->
+            </div>
+            <!-- <div class="col-md-4 d-flex justify-content-flex-end">
+            <div class="rotated">
+                <button nz-button nzType="default" (click)="drawer()" class="mrgR6">
+                    Notes(20)
+                </button>
+            </div>
+        </div> -->
+        </div>
+        <ng-container formArrayName="partyArray">
+            <div class="width-100" style="overflow: auto;display: flex;margin-top: 20px;padding:10px 0px;">
+                <ng-container *ngFor="let party of getPartyData.controls; let i = index">
+                    <ng-container [formGroupName]="i">
+
+                        <div class="col-md-6">
+                            <div class="row margnrtp-5">
+                                <div class="col-md-12 ">
+                                    <nz-form-item>
+                                        <nz-form-control>
+                                            <strong>{{ party.value.partyName  }}</strong>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                            </div>
+                            <div class="row margnrtp-5">
+                                <div class="col-md-12">
+                                    <ngx-nestable [(list)]="party.value.memberList" [template]="itemTemplate">
+                                    </ngx-nestable>
+                                    <ng-template #itemTemplate let-row>
+                                        <div class="border width-100 marginbtm-10" style="padding:10px;">
+                                            <div class="row">
+                                                <!-- <div class="col-md-1">
+                                                <i nz-icon nzType="drag" class="baseline" nzTheme="outline"
+                                                    [ngxNestableDragHandle]="row"></i>
+                                            </div> -->
+                                                <div class="col-md-7">
+                                                    <span>{{
+                                                    row.item.memberName ? row.item.memberName : ''
+                                                    }}</span>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <span>{{row.item.time ? row.item.time : 0}}</span>
+                                                </div>
+                                                <!-- <div class="col-md-2 d-flex justify-content-end">
+                                                <button nz-button nzSize="small" nzType="default" class="mrgL6"
+                                                    (click)="deleteMember(party.value, row.item.id)">
+                                                    <i nz-icon nzType="delete" nzTheme="outline" class="baseline"></i>
+                                                </button>
+                                            </div> -->
+                                            </div>
+                                        </div>
+                                    </ng-template>
+                                </div>
+                                <!-- <div class="col-md-12">
+                                <button nz-button nzType="dashed"
+                                    class="add-button width-75 d-flex align-items-center justify-content-center marginbtm-15 "
+                                    (click)="showMemberPopup(party.value)">
+                                    <i nz-icon nzType="plus" nzTheme="outline"></i>
+                                    Add Member
+                                </button>
+                            </div> -->
+                            </div>
+                            <div class="row margnrtp-5">
+                                <div class="col-md-12">
+                                    <nz-card class="width-100 bg_block" nzTitle="For the Day">
+                                        <div class="d-flex width-100">
+                                            <p class="width-100 mrzero">Total time available: <br>
+                                                <strong>{{party.value.timeAllocatedInMinutes}} Minutes</strong>
+                                            </p>
+                                            <p class="width-100 mrzero">Allocated time: <br>
+                                                <strong> {{party.value.allocatedTimeForMembers}} Minutes </strong>
+                                            </p>
+                                            <p class="width-100 mrzero">UnAllocated time: <br>
+                                                <strong> {{party.value.unAllocatedtime}} Minutes </strong>
+                                            </p>
+                                        </div>
+                                    </nz-card>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </div>
+        </ng-container>
+
+        <!-- <nz-drawer [nzWidth]="510" [nzClosable]="true" [nzVisible]="visible" nzPlacement="right" nzTitle="Notes"
+        (nzOnClose)="drawer()"> -->
+        <!-- <div>
+            <div class="row marginbtm-10 margnlft-10">
+                <nz-alert nzType="warning" nzMessage="Please Ratify this File by adding a Note!" nzShowIcon></nz-alert>
+            </div>
+            <div class="overflow-blt">
+                <div *ngFor="let note of notesInfo.notes; let i = index" class="input-group brdr_nt" [ngClass]="{ yellowColor: note.temporary == true }">
+                    <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+                        <div class="col-md-6 pl0">
+                            <b class="width-100 fl marginbtm-5">{{
+                  note?.user?.details?.fullName
+                }}</b>
+                            <span class="width-100 fl">{{ note?.user?.roles[0]?.roleName }}</span>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-between">
+                            <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+                            <span>|</span>
+                            <span>{{ note.updatedDate | date: "dd/MM/yyyy" }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!note.isEdit; else editNotes" class="width-100 marginbtm-15">
+                        {{ note.note }}
+                    </div>
+                    <ng-template #editNotes>
+                        <input type="text" nzSize="large" nz-input [(ngModel)]="note.note" name="editedNote" nz-input placeholder="Type your comments & notes" />
+
+                        <div class="btn-notes">
+                            <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid">
+                                <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+                                <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+                            </nz-radio-group>
+                        </div>
+                    </ng-template>
+                    <div class="fl width-100">
+                        <ng-container *ngIf="this.userId == note.user.userId &&
+                  (fileResponse?.status !== 'APPROVED' ||
+                  ratificationStatus === 'PENDING') &&
+                  (this.userId === assignee ||
+                  ratificationStatus === 'PENDING')">
+                            <a *ngIf="note.isEdit; else addNote" class="mr-6" (click)="updateNote(note)">Update</a>
+                            <ng-template #addNote><a class="mr-6" *ngIf="note.user.userId==this.userId && latestNote.noteId == note.noteId && assignee == this.userId" (click)="editNote(note)">Edit</a></ng-template>
+                            &nbsp;&nbsp; &nbsp;&nbsp;
+                            <a nz-popconfirm nzPopconfirmTitle="Do you want to delete this note?" (nzOnConfirm)="deleteNote(note.noteId)" *ngIf="note.user.userId==this.userId && latestNote.noteId == note.noteId && assignee == this.userId" nzPopconfirmPlacement="bottomLeft">Delete</a>
+                        </ng-container>
+                        <span class="note_num">{{ note.noteNumber }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row grey-border" *ngIf="(fileResponse?.status !== 'APPROVED' ||ratificationStatus === 'PENDING') &&
+              (userId === assignee || ratificationStatus === 'PENDING')">
+            <div class="width-100 d-flex bg_txtarea">
+                <div class="col-md-8">
+                    <textarea class="textarea_nt" placeholder="Enter note here..." nz-input [(ngModel)]="newNote"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-notes d-flex align-items-center justify-content-end flexwrap">
+                        <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid" class="d-flex">
+                            <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+                            <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+                        </nz-radio-group>
+                    </div>
+                    <button nz-button [nzType]="'default'" class="save_btn" (click)="saveNote()" [disabled]="!newNote">
+              Save
+            </button>
+                </div>
+            </div>
+        </div> -->
+        <!-- </nz-drawer> -->
+    </form>
+</nz-card>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showPopup" [nzClosable]="false" nzTitle="Add Member" nzWidth="650">
+    <div class="pading-all width-100">
+        <div class="row">
+            <div class="col-md-8">
+                <nz-select nzAllowClear nzPlaceHolder="Select Member" [(ngModel)]="addPopup.member">
+                    <nz-option *ngFor="let member of memberList" [nzLabel]="member.title" [nzValue]="member">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-4">
+                <input [(ngModel)]="addPopup.timeAlloted" nz-input placeholder="Alloted Time" />
+            </div>
+        </div>
+        <div class="row margnrtp-10">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button class="ml-6" nz-button [nzType]="'default'" (click)="hidePopup()">
+                    Cancel
+                </button>
+                <button class="ml-6" nz-button [nzType]="'primary'" (click)="addMember()" [disabled]="!addPopup.member && !addPopup.timeAlloted">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

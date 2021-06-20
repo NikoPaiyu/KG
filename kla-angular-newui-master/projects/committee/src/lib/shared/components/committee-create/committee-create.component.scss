@@ -1,0 +1,58 @@
+.text-align-centre {
+    text-align: center;
+  }
+
+.ant-col-sm-14 {
+    display: block;
+    box-sizing: border-box;
+    width: 120.33333333%;
+}
+.ant-form-item-label1 {
+    text-align: right;
+    white-space: normal !important;
+    line-height: unset !important;
+}
+.ant-col-sm-5 {
+    display: block;
+    box-sizing: border-box;
+    width: 42%;
+}
+.ant-col-sm-7 {
+    display: block;
+    box-sizing: border-box;
+    width: 42%;
+}
+.ant-col-sm-8 {
+    display: block;
+    box-sizing: border-box;
+    width: 42%;
+}
+.mrgL6 {
+    margin-left: 190px;
+  }
+  .ant-btnn {
+    line-height: 1.5;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    height: 32px;
+    padding: 0 15px;
+    transform: rotateZ(270deg);
+    font-size: 14px;
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border-color: #d9d9d9;
+}

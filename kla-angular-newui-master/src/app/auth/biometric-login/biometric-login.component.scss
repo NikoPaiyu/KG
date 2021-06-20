@@ -1,0 +1,21 @@
+@import '~src/sass/utilities/variables';
+.login-user {
+	h2 {
+		color: $mla-font-color;
+		font-weight: 500;
+	}
+	p {
+		width: 100%;
+		text-align: center;
+		color: $mla-font-color;
+	}
+	input {
+		font-size: font-form;
+		background: $white;
+		height: 45px;
+	}
+}
+
+.bg-shadow {
+	box-shadow: $inner-shadow-mla;
+}

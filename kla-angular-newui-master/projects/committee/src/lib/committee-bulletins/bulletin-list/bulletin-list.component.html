@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item> {{ "committee.dashboard" | translate}} </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "committee.attendence.attendencelist.bulletins" | translate}} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <h2 class="admin-page-heading">{{ "committee.attendence.attendencelist.bulletins" | translate}}</h2>
+  </div>
+</div>
+<nz-tabset>
+  <nz-tab nzTitle="Part 2"><lib-bulletin-part2></lib-bulletin-part2> </nz-tab>
+  <!-- <nz-tab nzTitle="Part 1"> <lib-bulletin-part1></lib-bulletin-part1></nz-tab> -->
+</nz-tabset>

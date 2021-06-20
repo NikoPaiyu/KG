@@ -1,0 +1,16 @@
+.notification-wrapper {
+    .notification-list {
+        padding: 0;
+        margin: 0;
+        list-style-type: none;
+        height: 300px;
+        .notification-list-item {
+            padding: 16px;
+            border-bottom: 2px solid #eee;
+        }
+    }
+}
+
+.text-primary {
+    color : #198cf0;
+}

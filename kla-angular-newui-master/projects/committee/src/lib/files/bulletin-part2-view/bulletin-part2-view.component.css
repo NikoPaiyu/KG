@@ -1,0 +1,12 @@
+.text-align-right {
+    text-align: right;
+  }
+  .maximise {
+    height: auto;
+    width: 100vw;
+    z-index: 99;
+    overflow-y: auto;
+    background-color: #fff !important;
+    max-width: 100vw;
+    padding: 20px;
+  }

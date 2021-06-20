@@ -1,0 +1,783 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.notice" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">
+      {{ "business-dashboard.question.notice" | translate }}
+    </h2>
+  </div>
+  <div class="col-md-6 d-flex justify-content-between">
+    
+    <div class="d-flex justify-content-between">
+      <button nz-button nzType="primary" (click)="goBack()">
+        {{ "business-dashboard.question.questionview.back" | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-6 border-right">
+    <div class="row paddingT15 selection-vrsn">
+      <div class="col-md-6">
+        {{ "business-dashboard.question.versioning.selectversion" | translate }}
+      </div>
+      <div class="col-md-6">
+        <!-- MLA Version -->
+        <nz-select
+          (ngModelChange)="getV1VersionDetailsById($event)"
+          [(ngModel)]="selectedVersionV1"
+        >
+          <nz-option
+            *ngFor="let version of versionsCombo"
+            nzCustomContent
+            nzLabel="{{ version.ROLE }}"
+            [nzValue]="version.id"
+          >
+            <div class="row dropdown-option">
+              <div class="col-md-12">
+                <div class="row">
+                  <strong>{{ version.ROLE }}</strong>
+                </div>
+                <div class="row">
+                  {{ version.cretationDate | date: "dd-MM-yyyy hh:mm a" }}
+                </div>
+              </div>
+            </div>
+          </nz-option>
+        </nz-select>
+        <!-- nzLabel="{{ 'Ver ' + version.version }}" <strong>{{ "Ver " + version.version }}</strong> -->
+
+        <!-- <div class="col-md-6">
+                <div class="row">
+                  <strong>Sugathan P</strong>
+                </div>
+                <div class="row">
+                  Section Officer
+                </div>
+              </div> -->
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.assembly" | translate }} :
+      </div>
+      <div
+        class="col-md-2"
+        id="assemblyV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.assemblyId,
+            v2.question.assemblyId
+          )
+        }"
+      >
+        <span>{{ v1.question.assemblyId }}</span>
+      </div>
+      <div class="col-md-4">
+        {{ "business-dashboard.question.session" | translate }} :
+      </div>
+      <div
+        class="col-md-2"
+        id="assemblySessionV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.sessionId,
+            v2.question.sessionId
+          )
+        }"
+      >
+        <span>{{ v1.question.sessionId }}</span>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.mlaName" | translate }} :
+      </div>
+      <div class="col-md-8">
+        <div
+          class="row input-style"
+          [ngClass]="{
+            'back-color': compareTwoValues(
+              i >= v1.question.clubbingDetails.length
+                ? ''
+                : v1.question.clubbingDetails[i].memberName,
+              i >= v2.question.clubbingDetails.length
+                ? ''
+                : v2.question.clubbingDetails[i].memberName
+            )
+          }"
+          *ngFor="let ma of v1.question.clubbingDetails; let i = index"
+        >
+          <span>{{ ma.memberName }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticeno" | translate }} :
+      </div>
+      <div class="col-md-8">
+        <div
+          [ngClass]="{
+            'back-color': compareTwoValues(
+              v1.question.clubbingDetails[i]
+                ? v1.question.clubbingDetails[i].noticeNumber
+                : '',
+              v2.question.clubbingDetails[i]
+                ? v2.question.clubbingDetails[i].noticeNumber
+                : ''
+            )
+          }"
+          *ngFor="let ma of v1.question.clubbingDetails; let i = index"
+        >
+          <span>{{ ma.noticeNumber }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.dateofreg" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="regDateV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.registrationDate,
+            v2.question.registrationDate
+          )
+        }"
+      >
+        <span>{{ v1.question.registrationDate }}</span>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.questiondate" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="questionDateV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.questionDate,
+            v2.question.questionDate
+          )
+        }"
+      >
+        <span>{{ v1.question.questionDate }}</span>
+      </div>
+    </div>
+    <div
+      class="row paddingT15"
+      *ngIf="v1.question && v1.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.qcategory" | translate }}:
+      </div>
+      <div
+        class="col-md-8"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.category,
+            v2.question.category
+          )
+        }"
+      >
+        <span>{{ v1.question.category }}</span>
+      </div>
+    </div>
+    <div
+      class="row paddingT15"
+      *ngIf="v1.question && v1.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticepriority" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="priorityV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.priority,
+            v2.question.priority
+          )
+        }"
+      >
+        <span>{{ v1.question.priority }}</span>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.ministersubject" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="ministerSubjectV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.subjectName,
+            v2.question.subjectName
+          )
+        }"
+      >
+        <span>{{ v1.question.subjectName }}</span>
+      </div>
+    </div>
+    <div
+      class="row paddingT15"
+      *ngIf="
+        v1.question &&
+        (v1.question.subSubjectName ||
+          (v2.question && v2.question.subSubjectName))
+      "
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.ministersubsubject" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="ministerSubSubjectV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.subSubjectName,
+            v2.question.subSubjectName
+          )
+        }"
+      >
+        <span>{{ v1.question.subSubjectName }}</span>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.versioning.minister" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="ministerV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.portfolioName,
+            v2.question.portfolioName
+          )
+        }"
+      >
+        <span>{{ v1.question.portfolioName }}</span>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticeheading" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="noticeHeadingV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(
+            v1.question.heading,
+            v2.question.heading
+          )
+        }"
+      >
+        <span>{{ v1.question.heading }}</span>
+      </div>
+    </div>
+    <!-- <div
+      class="row paddingT15"
+      *ngIf="v1.question && v1.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.reason" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        id="noticeReasonV1"
+        [ngClass]="{
+          'back-color': compareTwoValues(v1.question.reason, v2.question.reason)
+        }"
+      >
+        <span>{{ v1.question.reason }}</span>
+      </div>
+    </div> -->
+    <div class="row paddingT15" *ngIf="v1.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.versioning.tags" | translate }} :
+      </div>
+      <div class="col-md-8">
+        <div class="row">
+          <div
+            class="col-auto tag-style"
+            *ngFor="let tag of v1.question.tags; let i = index"
+            [ngClass]="{
+              'back-color': compareTwoValues(
+                i >= v1.question.tags.length ? '' : v1.question.tags[i].tag,
+                i >= v2.question.tags.length ? '' : v2.question.tags[i].tag
+              )
+            }"
+          >
+            <span>{{ tag.tag }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="paddingT15" *ngIf="v1.question">
+      <div class="col-md-12 clause-style">
+        <ng-container *ngFor="let clause of v1.question.clauses; let i = index">
+          <div class="row paddingT15">
+            <div class="col-md-4">{{ "Clause " + clauseNo[i] }} :</div>
+
+            <div class="col-md-8">
+              <div
+                id="clauseV1"
+                [ngClass]="{
+                  'back-color': compareTwoValues(
+                    i >= v1.question.clauses.length
+                      ? ''
+                      : v1.question.clauses[i].clause,
+                    i >= v2.question.clauses.length
+                      ? ''
+                      : v2.question.clauses[i].clause
+                  )
+                }"
+              >
+                <span class="word-break">{{ clause.clause }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row paddingT15">
+            <div class="col-md-4" *ngIf="clause.subSubjectName">
+              {{ "business-dashboard.question.ministersubject" | translate }}:
+            </div>
+
+            <div class="col-md-8" *ngIf="clause.subSubjectName">
+              <div
+                id="clauseV1"
+                [ngClass]="{
+                  'back-color': compareTwoValues(
+                    i >= v1.question.clauses.length
+                      ? ''
+                      : v1.question.clauses[i].subSubjectName,
+                    i >= v2.question.clauses.length
+                      ? ''
+                      : v2.question.clauses[i].subSubjectName
+                  )
+                }"
+              >
+                <span class="word-break">{{ clause.subSubjectName }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top: 30px;"></div>
+        </ng-container>
+
+        <!-- <div class="row paddingT15 answer">
+              <div class="col-md-4">
+                {{
+                  "business-dashboard.question.versioning.answer" | translate
+                }}:
+              </div>
+
+              <div class="col-md-8">
+                <div
+                  class="row"
+                  id="answerV1"
+                  [ngClass]="{
+                    'back-color': compareTwoValues(
+                      v1.answer.answer,
+                      v2.answer.answer
+                    )
+                  }"
+                >
+                  <span>{{ v1.answer.answer }}</span>
+                </div>
+                <div class="row paddingT15">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.versioning.tags" | translate
+                    }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    <div class="row">
+                      <div
+                        class="col-md-4 tag-style"
+                        *ngFor="let tag of v1.answer.tags; let i = index"
+                        [ngClass]="{
+                          'back-color': compareTwoValues(
+                            v1.answer.tags[i],
+                            v2.answer.tags[i]
+                          )
+                        }"
+                      >
+                        <span>{{ tag }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row paddingT15">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.versioning.finalorInterim"
+                        | translate
+                    }}:
+                  </div>
+                  <div
+                    class="col-md-8"
+                    [ngClass]="{
+                      'back-color': compareTwoValues(
+                        v1.answer.finalOrInterim,
+                        v2.answer.finalOrInterim
+                      )
+                    }"
+                  >
+                    <span>{{ v1.answer.finalOrInterim }}</span>
+                  </div>
+                </div>
+              </div>
+            </div> -->
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="row paddingT15 selection-vrsn">
+      <div class="col-md-6">
+        {{ "business-dashboard.question.versioning.selectversion" | translate }}
+      </div>
+      <div class="col-md-6">
+        <nz-select
+          (ngModelChange)="getV2VersionDetailsById($event)"
+          [(ngModel)]="selectedVersionV2"
+        >
+          <nz-option
+            *ngFor="let version of versionsCombo"
+            nzCustomContent
+            nzLabel="{{ version.ROLE }}"
+            [nzValue]="version.id"
+          >
+            <div class="row dropdown-option">
+              <div class="col-md-12">
+                <div class="row">
+                  <!-- <strong>{{ "Ver " + version.version }}</strong> -->
+                  <strong>{{ version.ROLE }}</strong>
+                </div>
+                <div class="row">
+                  {{ version.cretationDate | date: "dd-MM-yyyy hh:mm a" }}
+                </div>
+              </div>
+              <!-- <div class="col-md-6">
+            <div class="row">
+              <strong>Sugathan P</strong>
+            </div>
+            <div class="row">
+              Section Officer
+            </div>
+          </div> -->
+            </div>
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.assembly" | translate }} :
+      </div>
+      <div
+        class="col-md-2"
+        [innerHTML]="
+          getData('assemblyV2', v1.question.assemblyId, v2.question.assemblyId)
+        "
+        id="assemblyV2"
+      ></div>
+      <div class="col-md-4">
+        {{ "business-dashboard.question.session" | translate }} :
+      </div>
+      <div
+        class="col-md-2"
+        [innerHTML]="
+          getData(
+            'assemblySessionV2',
+            v1.question.sessionId,
+            v2.question.sessionId
+          )
+        "
+        id="assemblySessionV2"
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.mlaName" | translate }} :
+      </div>
+      <div
+        class="col-md-8 paddingL0"
+        id="mla"
+        [innerHTML]="
+          getMLAData(
+            'mla',
+            v1.question.clubbingDetails,
+            v2.question.clubbingDetails
+          )
+        "
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticeno" | translate }} :
+      </div>
+      <div
+        class="col-md-8 paddingL0"
+        id="noticeNo"
+        [innerHTML]="
+          getNoticeNoData(
+            'noticeNo',
+            v1.question.clubbingDetails,
+            v2.question.clubbingDetails
+          )
+        "
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.dateofreg" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getData(
+            'regDateV2',
+            v1.question.registrationDate,
+            v2.question.registrationDate
+          )
+        "
+        id="regDateV2"
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.questiondate" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getMinisterData(
+            'questionDateV2',
+            v1.question.questionDate,
+            v2.question.questionDate
+          )
+        "
+        id="questionDateV2"
+      ></div>
+    </div>
+    <div
+      class="row paddingT15"
+      *ngIf="v1.question && v2.question && v2.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.qcategory" | translate }}:
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getData(
+            'questionCategoryV2',
+            v1.question.category,
+            v2.question.category
+          )
+        "
+        id="questionCategoryV2"
+      ></div>
+    </div>
+    <div
+      class="row paddingT15"
+      *ngIf="v1.question && v2.question && v2.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticepriority" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getData('priorityV2', v1.question.priority, v2.question.priority)
+        "
+        id="priorityV2"
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.ministersubject" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getMinisterData(
+            'ministerSubjectV2',
+            v1.question.subjectName,
+            v2.question.subjectName
+          )
+        "
+        id="ministerSubjectV2"
+      ></div>
+    </div>
+
+    <div
+      class="row paddingT15"
+      *ngIf="
+        v1.question &&
+        v2.question &&
+        (v1.question.subSubjectName || v2.question.subSubjectName)
+      "
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.ministersubsubject" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getMinisterData(
+            'ministerSubSubjectV2',
+            v1.question.subSubjectName,
+            v2.question.subSubjectName
+          )
+        "
+        id="ministerSubSubjectV2"
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.versioning.minister" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getMinisterData(
+            'ministerV2',
+            v1.question.portfolioName,
+            v2.question.portfolioName
+          )
+        "
+        id="ministerV2"
+      ></div>
+    </div>
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.noticeheading" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getData('noticeHeadingV2', v1.question.heading, v2.question.heading)
+        "
+        id="noticeHeadingV2"
+      ></div>
+    </div>
+    <!-- <div
+      class="row paddingT15"
+      *ngIf="v1.question && v2.question && v1.question.type !== 'SHORT_NOTICE'"
+    >
+      <div class="col-md-4">
+        {{ "business-dashboard.question.reason" | translate }} :
+      </div>
+      <div
+        class="col-md-8"
+        [innerHTML]="
+          getData('noticeReasonV2', v1.question.reason, v2.question.reason)
+        "
+        id="noticeReasonV2"
+      ></div>
+    </div> -->
+    <div class="row paddingT15" *ngIf="v1.question && v2.question">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.versioning.tags" | translate }} :
+      </div>
+      <div class="col-md-8">
+        <div
+          class="row"
+          [innerHTML]="
+            getTagData('mainTagV2', v1.question.tags, v2.question.tags)
+          "
+          id="mainTagV2"
+        ></div>
+      </div>
+    </div>
+    <div class="paddingT15" *ngIf="v1.question && v2.question">
+      <div
+        class="col-md-12 word-break clause-style plr"
+        [innerHTML]="
+          getClauseData('clauseV2', v1.question.clauses, v2.question.clauses)
+        "
+        id="clauseV2"
+      >
+        <!-- <div class="row paddingT15 answer">
+              <div class="col-md-4">
+                {{
+                  "business-dashboard.question.versioning.answer" | translate
+                }}:
+              </div>
+
+              <div class="col-md-8">
+                <div
+                  class="row"
+                  [innerHTML]="
+                    getData('answerV2', v1.answer.answer, v2.answer.answer)
+                  "
+                  id="answerV2"
+                ></div>
+                <div class="row paddingT15">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.versioning.tags" | translate
+                    }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    <div
+                      class="row"
+                      [innerHTML]="
+                        getTagData(
+                          'answerTagV2',
+                          v1.answer.tags,
+                          v2.answer.tags
+                        )
+                      "
+                      id="answerTagV2"
+                    ></div>
+                  </div>
+                </div>
+                <div class="row paddingT15">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.versioning.finalorInterim"
+                        | translate
+                    }}:
+                  </div>
+                  <div
+                    class="col-md-8"
+                    [innerHTML]="
+                      getData(
+                        'finalOrInterimV2',
+                        v1.answer.finalOrInterim,
+                        v2.answer.finalOrInterim
+                      )
+                    "
+                    id="finalOrInterimV2"
+                  ></div>
+                </div>
+              </div>
+            </div> -->
+      </div>
+    </div>
+  </div>
+</div>

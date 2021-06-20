@@ -1,0 +1,145 @@
+<form nz-form [formGroup]="validateForm">
+<div class="row ">
+  <div class="col-md-8">
+    <label> <strong> {{ "committee.meeting.agenda" | translate}} </strong></label>
+  </div>
+</div>
+<div class="row marginbtm-25">
+  <div class="col-md-8">
+    <nz-form-item>
+      <nz-form-control [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectagenda" | translate}}'>
+          <nz-select nzAllowClear='false' nzPlaceHolder="" name="assemblyId" formControlName="agendaType">
+          <nz-option *ngFor="let data of agendaType" [nzLabel]="data.name" [nzValue]="data.code">
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-8">
+    <label> <strong> List</strong></label> 
+    
+  </div>
+  
+</div>
+
+<div class="row marginbtm-25">
+  <div class="col-md-8">
+    <nz-table [nzShowPagination]="false"
+[nzData]="agendaType">
+<thead>
+    <tr>
+        <th>Sl.No</th>
+        <th>Resolution Name</th>
+        <th>Time</th>
+        <th>Status</th>
+    </tr>
+</thead>
+<tbody formArrayName="assemblyRelatedAgenda">
+    <ng-container  *ngFor="let itemrow of validateForm.get('assemblyRelatedAgenda')['controls'] ;let i=index;"
+    [formGroupName]="i">
+       
+    <tr *ngIf="itemrow.value.operationType!=='DELETE'">
+      <td>{{i+1}}</td>
+      <td>
+        <nz-select nzAllowClear='false' nzPlaceHolder="" name="assemblyId" formControlName="resolutionName" *ngIf="!resolution[i]; else labelMemberName">
+          <nz-option *ngFor="let data of resolutionList.pmbrResolutionLottingResultDto" [nzLabel]="data.resolutionTitle" [nzValue]="data">
+          </nz-option>
+        </nz-select>
+          <ng-template #labelMemberName>
+            {{itemrow?.value?.resolutionName?.fileStatus}}
+          </ng-template>
+      </td>
+      <td>
+        <nz-form-item>
+          <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"committee.meetingdetails.selecttime" | translate}}'>
+            <nz-time-picker formControlName="sessionTimeTable" [nzUse12Hours]="true" nzFormat="h:mm a"></nz-time-picker>
+          </nz-form-control>
+        </nz-form-item>
+  </td>
+      <td>
+          <button nz-button nzType="default" *ngIf="!resolution[i]; else deleteRowButton" class="mr-6" nzTooltipTitle="Save"
+              (click)="saveMember(i, itemrow)">
+              {{ "bill.prioritylist.create.save" | translate }}
+          </button>
+          <ng-template #deleteRowButton>
+              <button nz-button nzType="default" class="mr-6" nzTooltipTitle="Delete"
+                  nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.cpl.view.surewanttodelete" | translate }}'
+                  (nzOnConfirm)="deleteMember(i, itemrow)" (nzOnCancel)="cancel()">
+                  {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}
+              </button>
+              <button nz-button nzType="default" class="mr-6" nzTooltipTitle="Delete"
+                  nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.cpl.view.surewanttodelete" | translate }}'
+                   (nzOnCancel)="cancel()">
+                  Edit
+              </button>
+          </ng-template>
+      </td>
+  </tr>
+</ng-container>
+<tr>
+  <td colSpan="5">
+      <button nz-button nzType="primary" (click)="addMember()"
+          [disabled]="validateForm.get('assemblyRelatedAgenda')['controls'].length !== resolution.length">
+          Add
+      </button>
+  </td>
+</tr>
+   
+</tbody>
+</nz-table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <label><strong>Date & Time</strong></label>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-4">
+    <label>{{"committee.meetingdetails.suggesteddate" | translate}}</label>
+  </div>
+  <div class="col-md-4">
+    <label>{{"committee.meetingdetails.suggestedtime" | translate}}</label>
+  </div>
+</div>
+<div class="row marginbtm-25">
+  <div class="col-md-4">
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+        <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="sessionDate" [nzDisabledDate]="disabledDate">
+        </nz-date-picker>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+  <div class="col-md-4">
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"committee.meetingdetails.selecttime" | translate}}'>
+        <nz-time-picker formControlName="sessionTime" [nzUse12Hours]="true" nzFormat="h:mm a"></nz-time-picker>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-8">
+    <label><strong>{{ "committee.meeting.venue" | translate}}</strong> </label>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-8">
+    <nz-form-item>
+      <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectavenue" | translate}}'>
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{ "committee.meetingdetails.selectavenue" | translate}}' formControlName="venueType">
+          <nz-option *ngFor="let data of typesofVenues" [nzValue]="data.name" [nzLabel]="data.code"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+  </div>
+</div>
+
+</form>

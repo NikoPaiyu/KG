@@ -1,0 +1,26 @@
+<div class="padding_25" *ngIf="bulletinData">
+    <form nz-form>
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <nz-form-label>{{ "Bulletin title" }}</nz-form-label>
+                    <nz-form-control>
+                        <input nz-input placeholder="here goes the bulletin title" [(ngModel)]="bulletinData.title"
+                            name="bulletinTitle" />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <button class="mr-6" nz-button (click)="cancel()">
+                    {{ "Cancel" }}
+                </button>&nbsp;
+                <button nz-button [disabled]="!bulletinData.title" nzType="primary" (click)="create()">
+                    {{ "Create" }}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

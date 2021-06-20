@@ -1,0 +1,678 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-12">
+    
+        <nz-breadcrumb>
+          <nz-breadcrumb-item>
+            <a>Dashboard</a>
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            <a>User Management</a>
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+  </div>
+  <div class="sticky_action_bar">
+      <div class="row">
+        <div class="col-md-12">
+        <h2 class="admin-page-heading">
+          User Details
+        </h2>
+      </div>
+    </div>
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <form name="userEditForm" #userEditForm="ngForm">
+        <div class="row table-filters-container">
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>User Name</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input nz-input type="text" name="username" id="username"
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      placeholder="Username" [(ngModel)]="user.userName" #username="ngModel" pattern="[a-zA-Z0-9_]*"
+                      [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && username.invalid) ||
+                          (username.invalid && username.touched)
+                      }" required maxlength="12" />
+                    <span *ngIf="!user.userName" class="danger invalid-feedback">
+                      Username is required!
+                    </span>
+                    <span *ngIf="user.userName" class="danger invalid-feedback">
+                      Enter Valid User Name.
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Email ID</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input nz-input type="text" name="email" id="email" placeholder="Enter Email ID"
+                      [(ngModel)]="user.email"
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      #email="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && email.invalid) ||
+                          (email.invalid && email.touched)
+                      }" pattern="[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,3}$" required />
+                    <span *ngIf="!user.email" class="danger invalid-feedback">
+                      Email ID required!
+                    </span>
+
+                    <span *ngIf="user.email" class="danger invalid-feedback">
+                      Enter Valid Email.
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>First Name</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input type="text" name="firstname" id="firstname" nz-input
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      placeholder="Enter First Name" [(ngModel)]="user.firstName" #firstname="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && firstname.invalid) ||
+                          (firstname.invalid && firstname.touched)
+                      }" required />
+                    <span class="danger invalid-feedback">
+                      First Name required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Last Name</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input type="text" name="lastname" id="lastname" nz-input
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      placeholder="Enter Last Name" [(ngModel)]="user.lastName" #lastname="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && lastname.invalid) ||
+                          (lastname.invalid && lastname.touched)
+                      }" required />
+                    <span class="danger invalid-feedback">
+                      Last Name required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Display Name (In English)</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input nz-input type="text" name="fullname" id="fullname"
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      placeholder="Full Name" [(ngModel)]="user.fullName" #fullname="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && fullname.invalid) ||
+                          (fullname.invalid && fullname.touched)
+                      }" required />
+                    <span class="danger invalid-feedback">
+                      Display Name required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Display Name (In Malayalam)</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input nz-input type="text"
+                      oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                      name="fullnamemalayalam" id="fullnamemalayalam" placeholder="Full Name"
+                      [(ngModel)]="user.fullNameMalayalam" #fullnamemalayalam="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted &&
+                            fullnamemalayalam.invalid) ||
+                          (fullnamemalayalam.invalid &&
+                            fullnamemalayalam.touched)
+                      }" />
+                    <span class="danger invalid-feedback">
+                      Display Name required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Mobile Number</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <input nz-input type="text" name="mobile" id="mobile" placeholder="Enter Mobile Number"
+                      [(ngModel)]="user.mobileNumber" #mobile="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && mobile.invalid) ||
+                          (mobile.invalid && mobile.touched)
+                      }" required maxlength="10" pattern="^[1-9]{1}[0-9]{9}$" />
+                    <span *ngIf="!user.mobileNumber" class="danger invalid-feedback">
+                      Mobile Number required!
+                    </span>
+
+                    <span *ngIf="user.mobileNumber" class="danger invalid-feedback">
+                      Enter Valid Mobile Number.
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Role</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                    <nz-select nzMode="multiple" nzShowSearch nzAllowClear name="role_id" id="role_id"
+                      [(ngModel)]="user.role" #role_id="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && role_id.invalid) ||
+                          (role_id.invalid && role_id.touched)
+                      }" required (ngModelChange)="Hide()">
+                      <nz-option *ngFor="let role of roles" [nzLabel]="role.label" [nzValue]="role.value">
+                        {{ role.value }}
+                      </nz-option>
+                    </nz-select>
+                    <span class="danger invalid-feedback">
+                      Role required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="IsEnabled">
+                    <nz-form-label>Party</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="IsEnabled">
+                    <nz-select name="party_id" nzShowSearch nzAllowClear id="party_id" placeholder="Enter Party ID"
+                      [(ngModel)]="user.partyId" #party_id="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && party_id.invalid) ||
+                          (party_id.invalid && party_id.touched)
+                      }" required>
+                      <nz-option *ngFor="let party of parties" [nzValue]="party.value" [nzLabel]="party.label">
+                      </nz-option>
+                    </nz-select>
+                    <span class="danger invalid-feedback">
+                      Party required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="user.userType == 'MEMBER' && IsEnabled">
+                    <nz-form-label>Constituency</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'MEMBER' && IsEnabled">
+                    <nz-select name="memberdetails" id="memberdetails" placeholder="Enter Member Details"
+                      [(ngModel)]="user.constituencyId" #memberdetails="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && memberdetails.invalid) ||
+                          (memberdetails.invalid && memberdetails.touched)
+                      }" required nzShowSearch nzAllowClear (ngModelChange)="HideRadio()">
+                      >
+                      <nz-option *ngFor="let contituency of contituencies" [nzValue]="contituency.value"
+                        [nzLabel]="contituency.label"></nz-option>
+                    </nz-select>
+                    <span class="danger invalid-feedback">
+                      Constituency required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="user.userType == 'NON_MEMBER' && !IsEnabled">
+                    <nz-form-label>Section Type</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'NON_MEMBER' && !IsEnabled">
+                      <nz-radio-group name="sectiontype" id="sectiontype" [(ngModel)]="sectionType">
+                        <label nz-radio [nzValue]="sectionType.value"
+                          *ngFor="let sectionType of sectionTypes">{{ sectionType.label }}</label>
+                      </nz-radio-group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="sectionType === 'KLA_SECTION'">
+              <div class="col-md-6">
+                <div class="row">
+                  <div
+                    class="col-md-4 paddingT15"
+                    *ngIf="user.userType == 'NON_MEMBER'"
+                  >
+                    <nz-form-label>KLA Section</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'NON_MEMBER'">
+                    <nz-select name="klaDepartmentId" nzShowSearch nzAllowClear id="klaDepartmentId"
+                      placeholder="Enter Member Details" [(ngModel)]="user.klaDepartmentId" #klaDepartmentId="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && klaDepartmentId.invalid) ||
+                          (klaDepartmentId.invalid && klaDepartmentId.touched)
+                      }" required>
+                      <nz-option *ngFor="let departments of klaDepartments" [nzValue]="departments.value"
+                        [nzLabel]="departments.label"></nz-option>
+                    </nz-select>
+                    <!-- <input type="text" > -->
+                    <span class="danger invalid-feedback">
+                      KLA Section required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="user.userType == 'NON_MEMBER'">
+                    <nz-form-label>KLA Role</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'NON_MEMBER'">
+                    <nz-select name="klaRoleId" nzShowSearch nzAllowClear id="klaRoleId" placeholder="Enter Party ID"
+                      [(ngModel)]="user.klaRoleId" #klaRoleId="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && klaRoleId.invalid) ||
+                          (klaRoleId.invalid && klaRoleId.touched)
+                      }" required>
+                      <nz-option *ngFor="let klarole of klaRoles" [nzValue]="klarole.value" [nzLabel]="klarole.label">
+                      </nz-option>
+                    </nz-select>
+                    <!-- <input type="text" > -->
+                    <span class="danger invalid-feedback">
+                      KLA Role required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="(sectionType === 'OTHERS' && !IsEnabled) || this.isMinister()">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="(user.userType == 'NON_MEMBER' ||this.isMinister())">
+                    <nz-form-label>Minister For</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="(user.userType == 'NON_MEMBER' ||this.isMinister())">
+                    <nz-select
+                      name="portfolioId"
+                      nzShowSearch
+                      nzAllowClear
+                      id="portfolioId"
+                      nzPlaceHolder="Minister For"
+                      [(ngModel)]="user.portfolioId"
+                      (ngModelChange)="getMinisterDepartments()"
+                      #portfolioId="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && portfolioId.invalid) ||
+                          (portfolioId.invalid && portfolioId.touched)
+                      }"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let portfolio of minPortfolios"
+                        [nzValue]="portfolio.id"
+                        [nzLabel]="portfolio.name+'('+portfolio.ministerName+')'"
+                      ></nz-option>
+                    </nz-select>
+                    <!-- <input type="text" > -->
+                    <span class="danger invalid-feedback">
+                      Minster For required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="user.userType == 'NON_MEMBER'">
+                    <nz-form-label>Department</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'NON_MEMBER'">
+                    <nz-select
+                      nzPlaceHolder="Department"
+                      name="departmentId"
+                      nzShowSearch
+                      nzAllowClear
+                      nzMode="default"
+                      [(ngModel)]="user.departmentId"
+                      #departmentId="ngModel"
+                      [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && departmentId.invalid) ||
+                          (departmentId.invalid && departmentId.touched)
+                      }"
+                      required
+                    >
+                      <nz-option
+                        *ngFor="let dept of ministerDept"
+                        [nzValue]="dept.id"
+                        [nzLabel]="dept.departmentName"
+                      >
+                      </nz-option>
+                    </nz-select>
+                    <!-- <input type="text" > -->
+                    <span class="danger invalid-feedback">
+                      Department required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="IsEnabled">
+                    <nz-form-label>Member Group</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="IsEnabled">
+                    <nz-select name="membergroup" id="membergroup" nzShowSearch nzAllowClear
+                      nzPlaceHolder="Member Group" [(ngModel)]="user.memberGroup" #membergroup="ngModel" [ngClass]="{
+                        'is-invalid':
+                          (userEditForm.submitted && membergroup.invalid) ||
+                          (membergroup.invalid && membergroup.touched)
+                      }" required>
+                      <nz-option *ngFor="let membergroup of memberGroups" [nzLabel]="membergroup.label"
+                        [nzValue]="membergroup.value"></nz-option>
+                    </nz-select>
+                    <span class="danger invalid-feedback">
+                      Member Group required!
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="
+                      user.userType == 'MEMBER' && IsEnableRadio && IsEnabled
+                    ">
+                    <nz-form-label>Member Type</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="
+                      user.userType == 'MEMBER' && IsEnableRadio && IsEnabled
+                    ">
+                    <nz-radio-group name="membertype" id="membertype" [(ngModel)]="user.memberType">
+                      <label nz-radio [nzValue]="memberType.value"
+                        *ngFor="let memberType of memberTypes">{{ memberType.label }}</label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6" *ngIf="!IsEnabled">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="user.userType == 'MEMBER'">
+                    <nz-form-label>Member Designation</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="user.userType == 'MEMBER'">
+                    <nz-select name="memberDesignation" id="memberDesignationId" nzShowSearch nzAllowClear
+                      nzPlaceHolder="Member Designation" [(ngModel)]="user.memberDesignationId"
+                      #memberDesignation="ngModel">
+                      <nz-option *ngFor="let designation of memberDesignations" [nzLabel]="designation.label"
+                        [nzValue]="designation.value"></nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15" *ngIf="IsEnabled">
+                    <nz-form-label>Kerala Party Front</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15" *ngIf="IsEnabled">
+                    <nz-select name="kerlaPartyFront" id="kerlaPartyFrontId" nzShowSearch nzAllowClear
+                      nzPlaceHolder="Kerala Party Front" [(ngModel)]="user.keralaPartyFrontId"
+                      #memberDesignation="ngModel">
+                      <nz-option *ngFor="let keralaPartyFront of keralaPartyFrontIds" [nzLabel]="keralaPartyFront.label"
+                        [nzValue]="keralaPartyFront.value"></nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>RBS Role</nz-form-label>
+                  </div>
+                  <div class="col-md-8 paddingT15">
+                  <div class="width-100 margnlt-5">
+                    <button
+                      nz-button
+                      [nzType]="'default'"
+                      (click)="showRoleModal()"
+                      class="margnrgt-15 marginbtm-10"
+                    >
+                      <span>Add Role</span>
+                    </button>
+                  </div>
+                    <nz-modal
+                      [(nzVisible)]="isRoleVisible"
+                      [nzFooter]="null"
+                      [nzClosable]="false"
+                    >
+                      <div class="width-100 pading-all">
+                        <div class="row">
+                          <div class="col-md-12">
+                            <h6 class="rolehd">Add new role to user</h6>
+                          </div>
+                        </div>
+                        <div class="row margnrtp-15">
+                          <div class="col-md-3">
+                            <nz-form-label>Role</nz-form-label>
+                          </div>
+                          <div class="col-md-9">
+                            <nz-select
+                              [(ngModel)]="selectedValue"
+                              name="selectedValue"
+                              nzAllowClear
+                              nzShowSearch
+                              nzPlaceHolder="Select Role"
+                            >
+                              <nz-option
+                                *ngFor="let role of listOfDisplayData"
+                                [nzValue]="role"
+                                nzLabel="{{ role.name }}"
+                              ></nz-option>
+                            </nz-select>
+                          </div>
+                        </div>
+                        <div class="row margnrtp-15">
+                          <div class="col-md-3">
+                            <nz-form-label>Start Date</nz-form-label>
+                          </div>
+                          <div class="col-md-9">
+                            <nz-date-picker
+                              [(ngModel)]="startValue"
+                              name="startValue"
+                              (ngModelChange)="onStartChange($event)"
+                              nzPlaceHolder="Start Date"
+                            ></nz-date-picker>
+                          </div>
+                        </div>
+                        <div class="row margnrtp-15">
+                          <div class="col-md-3">
+                            <nz-form-label>End Date</nz-form-label>
+                          </div>
+                          <div class="col-md-9">
+                            <nz-date-picker
+                              [(ngModel)]="endValue"
+                              name="endValue"
+                              (ngModelChange)="onEndChange($event)"
+                              nzPlaceHolder="End Date"
+                            ></nz-date-picker>
+                          </div>
+                        </div>
+                        <div class="row mrt-50">
+                          <div class="col-md-12 d-flex justify-content-end">
+                            <button
+                              type="button"
+                              nz-button
+                              nzType="default"
+                              (click)="handleCancel()"
+                              class="margnrt-5"
+                            >
+                              {{ "Cancel" | translate }}
+                            </button>
+                            <button
+                              type="button"
+                              (click)="addRole()"
+                              nz-button
+                              nzType="primary"
+                            >
+                              {{ "Assign Role" | translate }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </nz-modal>
+                    <nz-tag 
+                    Class="marginbtm-10"
+                      *ngFor="let tag of memberRoles"
+                      nzMode="closeable"
+                      (nzAfterClose)="handleClose(tag)"
+                    >
+                      {{ sliceTagName(tag.roleName) }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 paddingT15">
+                    <nz-form-label>Image</nz-form-label>
+                  </div>
+                  <div class="col-md-4 paddingT15">
+                    <div class="clearfix">
+                      <nz-upload nzAccept="image/jpeg" [nzAction]="uploadURL" nzListType="picture-card"
+                        [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 1"
+                        [nzShowUploadList]="showUploadList" [nzBeforeUpload]="beforeUpload" [nzPreview]="handlePreview"
+                        [nzRemove]="handleRemove" (nzChange)="handleChange($event)">
+                        <i nz-icon nzType="plus"></i>
+                        <div class="ant-upload-text">Upload</div>
+                      </nz-upload>
+                      <nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null"
+                        (nzOnCancel)="previewVisible = false">
+                        <ng-template #modalContent>
+                          <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+                        </ng-template>
+                      </nz-modal>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        &nbsp;
+
+        <div class="col-md-12">
+          <button type="submit" class="ant-btn ant-btn-primary" (click)="updateUser(userEditForm)">
+            Update User
+          </button>
+          &nbsp;
+          <button type="button" class="ant-btn ant-btn-primary" (click)="onesetPasswordClick()">
+            Reset Password
+          </button>
+          &nbsp;
+          <button mwlConfirmationPopover (confirm)="deleteUser()" popoverTitle="Delete Confirmation"
+            popoverMessage="Are you sure you want to delete this user ?" appendToBody="true" type="button"
+            class="ant-btn ant-btn-primary">
+            Remove User
+          </button>
+          &nbsp;
+          <button type="submit" class="ant-btn ant-btn-default" (click)="onCancelEditForm()">
+            Back
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  &nbsp;
+  <div class="row" *ngIf="resetPword">
+    <div class="col-md-12">
+      <form name="userPasswordEditForm" #userPasswordEditForm="ngForm">
+        <div class="row">
+          <div class="col-md-4 paddingT15">
+            <nz-form-label>New Password</nz-form-label>
+            <input nz-input type="password" name="password" id="password"
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+              placeholder="Enter Password" [(ngModel)]="user.password" #password="ngModel" [ngClass]="{
+                'is-invalid':
+                  (userPasswordEditForm.submitted && password.invalid) ||
+                  (password.invalid && password.touched)
+              }" required maxlength="12" />
+            <span class="danger invalid-feedback">
+              Password is required!
+            </span>
+          </div>
+          <div class="col-md-4 paddingT15">
+            <nz-form-label>Confirm Password</nz-form-label>
+            <input nz-input type="password" name="confirmpassword" id="confirmpassword"
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+              placeholder="Confirm Password" [(ngModel)]="user.cpassword" #confirmpassword="ngModel" [ngClass]="{
+                'is-invalid':
+                  (userPasswordEditForm.submitted && confirmpassword.invalid) ||
+                  (confirmpassword.invalid && confirmpassword.touched)
+              }" required pattern="{{ user.password }}" maxlength="12" />
+            <span *ngIf="!user.cpassword" class="danger invalid-feedback">
+              Confirm Password required!
+            </span>
+            <span *ngIf="user.cpassword" class="danger invalid-feedback">
+              Password does not match!
+            </span>
+          </div>
+          <div class="col-md-4" style="padding-top: 44px;">
+            <br />
+            <button type="submit" class="ant-btn ant-btn-primary" (click)="updatePassword(userPasswordEditForm)">
+              Submit
+            </button>
+            &nbsp;
+            <button type="submit" class="ant-btn ant-btn-default" (click)="onCancelResetPword()">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

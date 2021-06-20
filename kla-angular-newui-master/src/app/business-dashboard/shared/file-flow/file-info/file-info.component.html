@@ -1,0 +1,230 @@
+<ng-container>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="bg_block">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row marginbtm-15">
+                  <div class="overflow-blt col-md-3">File Subject:</div>
+                  <span class="blthd col-md-9">{{
+                    fileDetails.subject
+                  }}</span>
+                </div>
+                <div class="row marginbtm-15">
+                  <div class="overflow-blt col-md-3">Created Date:</div>
+                  <span class="blthd col-md-9">{{
+                    fileDetails.createdDate | date: "dd/MM/yyyy"
+                  }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row marginbtm-15">
+                  <div class="overflow-blt col-md-3">File Priority:</div>
+                  <span class="blthd col-md-9">
+                    <nz-tag [nzColor]="'red'">
+                      {{ fileDetails.priority }}
+                    </nz-tag></span
+                  >
+                </div>
+                <div class="row">
+                  <div class="overflow-blt col-md-3">Section:</div>
+                  <span class="blthd col-md-9">Question</span>
+                </div>
+                
+
+                <nz-modal
+                  [(nzVisible)]="isVisible"
+                  nzTitle="File Info"
+                  (nzOnCancel)="handleCancel()"
+                  [nzOkLoading]="isOkLoading"
+                  [nzFooter]="null"
+                >
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>File No</p>
+                        </div>
+                        <div class="col-md-6">
+                          {{ fileDetails.fileNumber }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6"></div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>File Subject</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p>{{ fileDetails.subject }}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>File Priority</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p>{{ fileDetails.priority }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Created date</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>From Whom</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Section</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p></p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Back File</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <p>Description</p>
+                        </div>
+                        <div class="col-md-6">
+                          <p>{{ fileDetails.description }}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </nz-modal>
+              </div>
+            </div>
+            <button class="abs_btn" (click)="showModal()" *ngIf="fileDetails.currentAssignee">Update</button>
+          </div>
+          <nz-modal
+                  [(nzVisible)]="isVisible1"
+                  nzTitle="File info"
+                  (nzOnCancel)="handleCancel()"
+                  [nzOkLoading]="isOkLoading"
+                  [nzFooter]="null"
+                >
+                <form [formGroup]="createFileForm" class="pading-all">
+                  <div class="row marginbtm-15">
+                    <div class="col-md-12">
+                      <nz-form-item>
+                        <nz-form-label [nzSpan]="24">
+                          File Subject
+                        </nz-form-label>
+                        <nz-form-control [nzSpan]="24">
+                          <input
+                            nz-input
+                            placeholder="FileSubject goes here"
+                            formControlName="subject"
+                          />
+                        </nz-form-control>
+                      </nz-form-item>
+                    </div>
+                  </div>
+                  <div class="row marginbtm-15">
+                    <div class="col-md-12">
+                      <div class="row">
+                        <nz-form-item>
+                          <div class="col-md-12">
+                            <nz-form-label>
+                              File Priority
+                            </nz-form-label>
+                          </div>
+                          <div class="col-md-12">
+                            <nz-form-control>
+                              <nz-radio-group
+                                formControlName="priority"
+                                nzName="radiogroup"
+                              >
+                                <label nz-radio nzValue="URGENT">Urgent</label>
+                                <label nz-radio nzValue="NORMAL">Normal</label>
+                                <label nz-radio nzValue="ACTION_TODAY"
+                                  >Action Today</label
+                                >
+                                <label nz-radio nzValue="ASSEMBLY_URGENT"
+                                  >Assembly Urgent</label
+                                >
+                              </nz-radio-group>
+                            </nz-form-control>
+                          </div>
+                        </nz-form-item>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="row">
+                      <div class="overflow-blt col-md-3">Section:</div>
+                      <span class="blthd col-md-9">Question</span>
+                    </div> 
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="row">
+                          <div class="col-md-12 d-flex justify-content-end">
+                            <button
+                              nz-button
+                              [nzType]="'primary'"
+                              style="margin-right: 6px;"
+                              (click)="handleCancel()"
+                            >
+                              <span>Cancel</span>
+                            </button>
+                            <button
+                              nz-button
+                              [nzType]="'primary'"
+                              [disabled]="createFileForm.invalid"
+                              (click)="updateFile()"
+                            >
+                              <span>Update</span>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+                </nz-modal>
+        </div>
+      </div>
+    </div>
+  </ng-container>

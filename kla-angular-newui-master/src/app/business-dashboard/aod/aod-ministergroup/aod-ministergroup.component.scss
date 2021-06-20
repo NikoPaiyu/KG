@@ -1,0 +1,36 @@
+@import "~src/sass/utilities/variables";
+
+.button-cs {
+  display: block;
+  width: 70%;
+  margin: 2px;
+  text-align: center;
+}
+.admin-page-heading {
+  padding-top: 10%;
+}
+.button-hs {
+  text-align: center;
+  border: none !important;
+
+}
+.sitting-view-details .ant-card-body{  border-radius: 5px !important;}
+.sitting-view-details .ant-card-body{  border-radius: 5px !important;}
+.mr-6{margin-right: 6px;}
+.list_min{width: 100%;padding: 10px;}
+.list_min li{width: 100%;list-style: none;margin-bottom: 10px;}
+.pr_hd{width: 100%;width: 100%;
+  background: #ececec;
+  padding: 10px;}
+.minblock{float: left; width: 100%;border: 1px solid #e8e8e8;}
+.contspan{border: #ccc solid 1px;float: left;
+  padding: 5px 10px;}
+.mr-6{margin-right: 6px;}
+.ml-8{margin-left: 8px;}
+.listy{list-style: none;}
+.slbx{min-width: 65px;
+  border: none;
+  border-bottom: 1px solid #d9d9d9;
+  color: #3e3d3d;}
+  .slbx option{padding: 5px;}
+  .slbx:focus{border-bottom: 1px solid #d9d9d9;}

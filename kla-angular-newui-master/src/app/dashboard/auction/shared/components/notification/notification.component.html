@@ -1,0 +1,12 @@
+<div class="notification-wrapper">
+    <ul class="notification-list">
+        <p>Nikhil</p>
+        <li class="notification-list-item" *ngFor="let notification of notifications">
+            <div class="icon"></div>
+            <div class="content">
+                <span>{{notification.id}}</span>
+                <span>{{notification.dashboardName}}</span>
+            </div>
+        </li>
+    </ul>
+</div>

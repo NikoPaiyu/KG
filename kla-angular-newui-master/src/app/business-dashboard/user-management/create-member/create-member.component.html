@@ -1,0 +1,252 @@
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <nz-breadcrumb>
+                    <nz-breadcrumb-item>
+                        <a>{{'Dashboard'| translate}}</a>
+                    </nz-breadcrumb-item>
+                    <nz-breadcrumb-item>
+                        <a>{{'Users'|translate}}</a>
+                    </nz-breadcrumb-item>
+                </nz-breadcrumb>
+            </div>
+        </div>
+        <div class="sticky_action_bar">
+        <div class="row">
+            <div class="col-md-10">
+                <h2 class="admin-page-heading">
+                   {{'usermanagement.createmember.createuser'|translate}}
+                </h2>
+            </div>
+            <div class="col-md-2">
+                <button nz-button nzType="default">
+                    ...
+                </button>
+                &nbsp;
+                <button type="submit" nz-button nzType="primary">
+                    {{'usermanagement.createmember.save'|translate}}
+                </button>
+            </div>
+        </div>
+        <nz-divider></nz-divider>
+        </div>
+
+        <form nz-form [formGroup]="roleForm">
+        <div class="row">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                     
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.fname'|translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                    <input nz-input type="text" name="username" id="username" placeholder="First Name of the user">
+                    
+                    </div>
+              
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+                
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.lname'|translate}}</nz-form-label>
+                      <!-- <strong>Email ID</strong> -->
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                       
+                      <input nz-input type="text" name="text" id="text" placeholder="LastName of the user">
+                    </div>
+               
+                  </div>
+                </div>
+              </div>
+      
+      
+      
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.phone'|translate}}</nz-form-label>
+                    </div>
+                    <!-- <strong>Password</strong> -->
+                    <div class="col-md-8 paddingT15">
+                    
+                      <input nz-input type="text" name="text" id="text" placeholder="phone">
+                    
+                    </div>
+              
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+      
+                
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.email'|translate}}</nz-form-label>
+                    
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                    
+                      <input nz-input type="email" autocomplete="false" name="email" id="email" placeholder="Email">
+                   
+                    </div>
+                
+                  </div>
+                </div>
+      
+              </div>
+    
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.kladept'|translate}}</nz-form-label>
+                      <!--  <strong>First Name</strong> -->
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Choose KLA Dept" 
+                        name="userType">
+                          <nz-option nzLabel="mla" nzValue="mla"></nz-option>
+                          <nz-option nzLabel="minister" nzValue="minister"></nz-option>
+                          <nz-option nzLabel="Speaker" nzValue="speaker"></nz-option>
+                      </nz-select>
+                    
+                    </div>
+                
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+               
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.klarole'|translate}}</nz-form-label>
+                      <!-- <strong>Last Name</strong> -->
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                        
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Choose KLA Role" 
+                        name="userType">
+                          <nz-option nzLabel="mla" nzValue="mla"></nz-option>
+                          <nz-option nzLabel="minister" nzValue="minister"></nz-option>
+                          <nz-option nzLabel="Speaker" nzValue="speaker"></nz-option>
+                      </nz-select>
+                        
+                    </div>
+               
+                  </div>
+                </div>
+              </div>
+    
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.username'|translate}}</nz-form-label>
+                      <!--  <strong>Display Name (In English)</strong> -->
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                       
+                      <input nz-input type="text" name="fullname" id="fullname" placeholder="Username">
+                    
+                    </div>
+                
+                  </div>
+
+      
+                </div>
+      
+                <div class="col-md-6">
+                </div>
+              </div>
+    
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                     
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'usermanagement.createmember.password'|translate}}</nz-form-label>
+                    </div>
+                    <!-- <strong>Password</strong> -->
+                    <div class="col-md-8 paddingT15">
+                        
+                      <input nz-input type="password" name="password" id="password" placeholder="password"
+                        autocomplete="false"/>
+                   
+                    </div>
+               
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="row">
+      
+            
+                    <div class="col-md-4 paddingT15">
+                      <nz-form-label>{{'auth.confirmpassword'|translate}}</nz-form-label>
+                      <!-- <strong>Confirm Password</strong> -->
+                    </div>
+                    <div class="col-md-8 paddingT15">
+                       
+                      <input nz-input type="password" autocomplete="false" name="confirmpassword" id="confirmpassword"
+                        placeholder="confirm password"/>
+                    
+                      <!-- <span class="danger small" *ngIf="user.cpassword && invalidPword">
+                                                        Password does not match!
+                                                    </span> -->
+                    </div>
+                
+                  </div>
+                </div>
+      
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+          
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="row">
+                          
+                        <div class="col-md-4 paddingT15">
+                          <nz-form-label>{{'usermanagement.createmember.roles'|translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8 paddingT15">
+                           
+                            <nz-tag nzMode="closeable" (nzOnClose)="onClose()">Role 1 starts:11/12/2019 Ends:14/12/2020</nz-tag>
+                            <nz-tag nzMode="closeable" (nzOnClose)="onClose()">Role 2 Ends:14/12/2020</nz-tag>
+                            <nz-tag nzMode="closeable" (nzOnClose)="onClose()">Role 3</nz-tag>
+                      
+                        </div>
+               
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                          <div class="row">
+                              
+                            <div class="col-md-4 paddingT15">
+                              <nz-form-label>{{'usermanagement.createmember.tags'|translate}}</nz-form-label>
+                            </div>
+                            <div class="col-md-8 paddingT15">
+                             
+                                <nz-tag nzMode="closeable" (nzOnClose)="onClose()">tag</nz-tag>
+                                <nz-tag nzMode="closeable" (nzOnClose)="onClose()">tag</nz-tag>
+                                <nz-tag nzMode="closeable" (nzOnClose)="onClose()">tag</nz-tag>
+                               
+                            </div>
+                       
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          </div>
+                        </div>
+                    

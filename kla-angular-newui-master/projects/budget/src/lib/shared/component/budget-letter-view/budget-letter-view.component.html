@@ -1,0 +1,24 @@
+<div *ngIf="correspondenceId">
+    <div class="padding_15">
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <button class="ml-6" nz-button nzType="primary" (click)="viewCorrespondence(correspondenceId)">
+            Full View
+           </button>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <div class="preview-main">
+                    <div class="mrgT20 preview-main-text">
+
+                        <div>
+                            <quill-view-html [content]="letterContent" *ngIf="letterContent">
+                            </quill-view-html>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

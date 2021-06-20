@@ -1,0 +1,17 @@
+@font-face {
+  font-family: "Rachana";
+  src: url("~src/assets/fonts/rachana/regular/Rachana-Regular.woff2")
+      format("woff2"),
+    url("~src/assets/fonts/rachana/regular/Rachana-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("~src/assets/fonts/roboto/regular/Roboto-Regular.woff2")
+      format("woff2"),
+    url("~src/assets/fonts/roboto/regular/Roboto-Regular.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}

@@ -1,0 +1,198 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "committee.dashboard" | translate}}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{"budget.budgetspeech.budtitle" |translate}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">
+                {{"table.listga.ta" |translate}}
+            </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div></div>
+            <div class="d-flex justify-content-between" *ngIf="partyTimeDetails">
+                <button *ngIf="!timeObj.canEdit" class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="onEdit()">
+                    {{"business-dashboard.table.assembly-elected-member.edit" |translate}}
+                </button>
+                <button *ngIf="timeObj.canEdit" class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="save('save')">
+                    {{"table.listga.save" |translate}}
+                </button>
+                <button *ngIf="timeObj.canSubmit" class="d-flex align-items-center mr-6" nz-button nzType="default" nz-popconfirm nzPopconfirmTitle='{{"Are you sure you want to submit?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="save('SUBMIT')">
+                    {{"business-dashboard.tables.time-allocation.generate-time-allocation.attach-to-file" | translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+</ng-container>
+    <form [formGroup]="TimeallocationForm">
+        <div class="row margnrtp-5">
+            <div class="col-md-10">
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                       {{"business-dashboard.swearing-in.assembly" | translate}} :
+                    </div>
+                    <div class="col-md-8">
+                        {{ buisnessDetails?.assembly}}
+                    </div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"table.listga.session" |translate}} :
+                    </div>
+                    <div class="col-md-8">
+                        {{ buisnessDetails?.session}}
+                    </div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-6">
+                        {{"business-dashboard.tables.time-allocation.generate-time-allocation.business-reference" | translate}} :
+                        {{ buisnessDetails?.referenceType}}
+                    </div>
+                    <div class="col-md-6">
+                        {{"business-dashboard.tables.time-allocation.generate-time-allocation.business-reference-title" | translate}} :
+                        {{ buisnessDetails?.referenceTitle}}
+                    </div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"table.listga.day" |translate}} :
+                    </div>
+                    <div class="col-md-8">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <nz-form-item>
+                                <nz-form-control *ngIf="timeObj.canEdit else showDay" [nzSpan]="24" nzErrorTip="Select Day">
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" formControlName="timeAllocatedDay" (ngModelChange)="getByBusinessIdAndDay($event)">
+                                        <!-- <nz-option *ngFor="let day of days; let j = index" [nzLabel]="day" [nzValue]="j+1">
+                                        </nz-option> -->
+                                        <nz-option *ngFor="let item of allocatedDates|keyvalue" nzLabel="Day {{item.key}}" [nzValue]="item.key">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                                </nz-form-item>
+                                <ng-template #showDay>
+                                    {{TimeallocationForm.value.timeAllocatedDay}} {{"table.listga.day" | translate}}
+                                </ng-template>
+                            </div>
+                            <div class="col-md-6">
+                                <nz-form-item>
+                                <!-- <nz-form-control *ngIf="timeObj.canEdit else showDate" [nzSpan]="24" nzErrorTip="Select Allocation Date">
+                                    <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="timeAllocatedDate" [nzDisabledDate]="disabledDate">
+                                    </nz-date-picker>
+                                </nz-form-control> -->
+                               {{"dashboard.summary.date" | translate}} :  {{  TimeallocationForm?.value?.timeAllocatedDate | date: "dd-MM-yyyy"}}
+                                </nz-form-item>
+                                <!-- <ng-template #showDate> -->
+                                    <!-- {{TimeallocationForm.value.timeAllocatedDate | date: "dd-MM-yyyy"}} -->
+                                <!-- </ng-template> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"table.listga.totaltime" |translate}} :
+                    </div>
+                    <div class="col-md-5">
+                        <nz-form-item *ngIf="timeObj.canEdit else showtotalTime">
+                            <nz-form-control nzErrorTip="Enter Total Time">
+                                <input nz-input type='number' min="1" max="3" placeholder="Enter Total Time in Minutes" nzSize="small" formControlName="totalTime" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <ng-template #showtotalTime>
+                            {{TimeallocationForm.value.totalTime}}
+                        </ng-template>
+                    </div>
+                    <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"table.listga.movertime" |translate}} :
+                    </div>
+                    <div class="col-md-5">
+                        <nz-form-item *ngIf="timeObj.canEdit else showmoverTime">
+                            <nz-form-control nzErrorTip="Enter Mover Time in minutes">
+                                <input nz-input type='number' min="1" max="3" placeholder="Entet Mover Time in minutes" formControlName="moverTime" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <ng-template #showmoverTime>
+                            {{TimeallocationForm.value.moverTime}}
+                        </ng-template>
+                    </div>
+                    <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"table.listga.replytime" |translate}} :
+                    </div>
+                    <div class="col-md-5">
+                        <nz-form-item *ngIf="timeObj.canEdit else showministersReplyTime">
+                            <nz-form-control nzErrorTip="Enter Reply Time in minutes">
+                                <input nz-input type='number' min="1" max="3" placeholder="Enter Reply Time in minutes" formControlName="ministersReplyTime" />
+                            </nz-form-control>
+                        </nz-form-item>
+                        <ng-template #showministersReplyTime>
+                            {{TimeallocationForm.value.ministersReplyTime}}
+                        </ng-template>
+                    </div>
+                    <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+                </div>
+                <div class="row margnrtp-5 marginbtm-15">
+                    <div class="col-md-4"></div>
+                    <div class="col-md-8">
+                        <button *ngIf="!isFileView && timeObj.canEdit" class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="generateTA()" [disabled]="!(TimeallocationForm.valid)">
+            {{"table.listga.generate" |translate}}
+        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row margnrtp-5" *ngIf="partyTimeDetails">
+        <div class="col-md-8">
+            <div class="row margnrtp-5">
+                <div class="col-md-6"><b style="color:blue;">{{ "table.listga.partyname" |translate}}</b></div>
+                <div class="col-md-3"><b style="color:blue;">{{ "table.listga.strength" |translate}}</b></div>
+                <div class="col-md-3"><b style="color:blue;">{{ "table.listga.timeallocated" |translate}} 
+                    {{"business-dashboard.tables.time-allocation.generate-time-allocation.in-minutes" | translate}}
+                </b></div>
+            </div>
+            <div class="row">
+                <nz-divider></nz-divider>
+            </div>
+            <div class="row margnrtp-10">
+                <div class="col-md-9"><strong>{{ "table.listga.ruling" |translate}}</strong></div>
+                <div class="col-md-3"><b>{{rulingParty?.totalTime}}</b></div>
+            </div>
+            <div class="row margnrtp-10" *ngFor="let data of rulingParty.parties">
+                <div class="col-md-6"><span>{{data.partyName}}</span></div>
+                <div class="col-md-3"><span>{{data.partyCount}}</span></div>
+                <div class="col-md-3"><span>{{data.timeAllocated}}</span></div>
+            </div>
+            <div class="row margnrtp-20">
+                <div class="col-md-9"><strong> {{"table.listga.opposition" |translate}}</strong></div>
+                <div class="col-md-3"><b>{{oppositionParty?.totalTime}}</b></div>
+            </div>
+            <div class="row margnrtp-10" *ngFor="let data of oppositionParty.parties">
+                <div class="col-md-6"><span>{{data.partyName}}</span></div>
+                <div class="col-md-3"><span>{{data.partyCount}}</span></div>
+                <div class="col-md-3"><span>{{data.timeAllocated}}</span></div>
+            </div>
+        </div>
+    </div>
+
+    <nz-modal [nzFooter]="null" [(nzVisible)]="filePopup" (nzOnCancel)="onCancelFilePopup()">
+        <tables-attach-to-file *ngIf="filePopup" [timeAllocBusinessId]="businessId" typeOfFile='TIME_ALLOCATION_FILE'
+         (closePopup)="onCancelFilePopup()"></tables-attach-to-file>
+      </nz-modal>   

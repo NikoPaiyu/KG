@@ -1,0 +1,63 @@
+<div class="row mrgB20">
+  <div class="col-md-12">
+    <h4 *ngIf="!oldActEntry">Select section to import</h4>
+    <h4 *ngIf="oldActEntry">Enter section to import</h4>
+  </div>
+</div>
+<hr />
+<!-- <div class="row marginbtm-25">
+  <div class="col-md-12">
+    <h6>safffffffffffffffffffffffff dfdfd</h6>
+  </div>
+</div> -->
+<ng-container *ngIf="billDetails.length > 0 && !oldActEntry">
+  <div class="row mrgB20" *ngFor="let block of billDetails">
+    <div class="col checkbx">
+      <label
+        nz-checkbox
+        [(ngModel)]="block.checked"
+        (ngModelChange)="uncheckOtherCheckbox(block.id)"
+        *ngIf="checkCheckBoxPermission(block.type.code)"
+      ></label>
+    </div>
+    <!-- <div class="col nmber"><span>1</span></div> -->
+    <div class="col">
+      <div class="row">
+        <div class="col-md-12 marginbtm-10 indent-10">
+          {{ block.indexValue }} {{ block.content }}
+        </div>
+        <div
+          class="col-md-12 marginbtm-10 indent-20"
+          *ngFor="let subBlock1 of block.subBlockDto"
+        >
+          {{ subBlock1.indexValue }} {{ subBlock1.content }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-empty *ngIf="billDetails.length == 0"></nz-empty>
+</ng-container>
+<ng-container *ngIf="oldActEntry || billDetails.length < 1">
+  <form [formGroup]="ActForm">
+    <label><span *ngIf="ActForm.get('typeId').value == 8">Section</span><span *ngIf="ActForm.get('typeId').value == 10">Subsection</span> Number</label>
+    <input nz-input formControlName="indexValue" [min]="1"/>
+    <label>Act</label>
+    <textarea rows="4" nz-input formControlName="actContent"></textarea>
+  </form>
+</ng-container>
+<hr />
+<div class="row margnrtp-15">
+  <div class="col-md-12 d-flex justify-content-end">
+    <button nz-button class="mr6" nzType="default" (click)="onCancel()">
+      {{ "cpl.correspondencelist.cancel" | translate }}
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      [disabled]="ActForm?.invalid && oldActEntry"
+      (click)="import()"
+    >
+      {{ "business-dashboard.bill-management.billCreate.import" | translate }}
+    </button>
+  </div>
+</div>

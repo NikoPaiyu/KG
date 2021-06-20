@@ -1,0 +1,15 @@
+.filter {
+    gap: 10px;
+    .filter-status {
+        width: 200px;
+    }
+
+    ::ng-deep {
+        .ant-select-selection{
+            margin-bottom: 0;
+        }
+        .ant-calendar-picker-input  {
+            margin-bottom: 0;
+        }
+    }
+}

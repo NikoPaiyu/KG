@@ -1,0 +1,1106 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "committee.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "committee.committe-mgmnt" | translate }} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-3">
+        <h3 style="word-break: break-all; font-size: 20px">
+          {{ notesInfo?.fileNumber }}
+        </h3>
+      </div>
+      <div class="col-md-3">
+        <nz-tag [nzColor]="'red'">
+          {{ fileDetails?.fileResponse?.priority?.split("_").join(" ") }}
+        </nz-tag>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <committee-buttons
+          *ngIf="responseAvailable && _canshowCommiteeButtons()"
+          [allWorkflowUsers]="allWorkflowUsers"
+          [notesInfo]="notesInfo"
+          [currentPoolUser]="currentPoolUser"
+          [assignee]="assignee"
+          [fileResponse]="fileDetails"
+          [fileId]="fileId"
+          (fileForwarded)="getFile($event)"
+          (fileClosureInitiated)="getFile($event)"
+          [selectedMeetingDetails]="selectedMeetingDetails"
+        >
+        </committee-buttons>
+        <button
+          *ngIf="
+            common.doIHaveAnAccess('CREATE_COMMITTEE_FILE', 'READ') &&
+            fileDetails?.letter == null &&
+            fileDetails?.fileResponse?.activeSubTypes?.includes(
+              'COMMITTEE_FILE'
+            ) &&
+            fileDetails?.fileResponse?.status == 'APPROVED'
+          "
+          class="ml-6 m-r5"
+          nz-button
+          [nzType]="'default'"
+          (click)="showCreateNominee(true)"
+        >
+          {{ "committee.create-nominee" | translate }}
+        </button>
+        <button
+          *ngIf="
+            common.doIHaveAnAccess('CREATE_COMMITTEE_FILE', 'READ') &&
+            fileDetails?.letter?.status == 'RESPONSE_PENDING' &&
+            fileDetails?.memberDetailDto == null
+          "
+          class="ml-6 m-r5"
+          nz-button
+          nzType="primary"
+          (click)="selectCreateNominee()"
+        >
+          {{ "committee.files.fileview.createcommittee" | translate }}
+        </button>
+        <!-- <button
+          class="ml-6 m-r5"
+          nz-button
+          nzType="primary"
+          *ngIf="
+            common.doIHaveAnAccess('CREATE_COMMITTEE_FILE', 'READ') &&
+            fileDetails?.fileResponse?.status == 'APPROVED' &&
+            fileDetails?.memberDetailDto == null &&
+            fileDetails.fileResponse.activeSubTypes.includes('COMMITTEE_FILE')
+          "
+          (click)="createPmbrCommittee()"
+        >
+          {{ "committee.files.fileview.createcommittee" | translate }}
+        </button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="row"
+  *ngIf="
+    showWarning &&
+    assignee == user.userId &&
+    fileDetails?.fileResponse?.activeSubTypes.includes('MEETING_DETAIL')
+  "
+>
+  <div class="col-md-12 d-flex justify-content-end">
+    <nz-alert
+      nzType="warning"
+      nzMessage="There is no one clear day in between the day of reference of a Bill to the Subject Committee and the date of a committee meeting!"
+    ></nz-alert>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-7">
+    <div
+      class="row marginbtm-25"
+      *ngIf="fileDetails?.fileResponse?.subtype === 'COMMITTEE_MEETING'"
+    >
+      <div
+        class="meeting_block"
+        *ngFor="let meeting of fileDetails?.meetings"
+        (click)="selectedMeeting(meeting)"
+        [ngClass]="{ selected_meeting: selectedMeetingDetails == meeting }"
+      >
+        {{ meeting.meetingDetails.title }}
+      </div>
+    </div>
+    <nz-tabset
+      [nzSelectedIndex]="tabParams['showIndex']"
+      [nzTabBarExtraContent]="showButtons"
+    >
+      <nz-tab [nzTitle]="tabIcon" (nzClick)="setTabfilters()">
+        <ng-container id="file-tiles">
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.letter"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('letter-to-ppo', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{ "committee.committee-constitution.lettertoppo" | translate }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: fileDetails['letter']?.status === 'SUBMITTED'
+                }"
+              >
+                {{
+                  fileDetails["letter"]?.status?.split("_").join(" ")
+                }}</nz-tag
+              >
+            </div>
+            <!-- <div class="col-md-12">
+              <p>Assigned to <b>Assignee Name</b> on 29/08/2020</p>
+            </div> -->
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.memberDetailDto"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('memberDetailDto', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{ "committee.files.fileview.committeedetails" | translate }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    fileDetails['memberDetailDto']?.memberFileStatus ===
+                    'SUBMITTED'
+                }"
+              >
+                {{
+                  fileDetails["memberDetailDto"]?.memberFileStatus
+                    ?.split("_")
+                    .join(" ")
+                }}</nz-tag
+              >
+            </div>
+            <!-- <div class="col-md-12">
+              <p>Assigned to <b>Assignee Name</b> on 29/08/2020</p>
+            </div> -->
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.meetingReport"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('meetingReport', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{ "committee.files.fileview.meetingreports" | translate }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: fileDetails?.meetingReport[0]?.status === 'SUBMITTED'
+                }"
+              >
+                {{
+                  fileDetails?.meetingReport[0]?.status?.split("_").join(" ")
+                }}</nz-tag
+              >
+            </div>
+            <!-- <div class="col-md-12">
+        <p>Assigned to <b>Assignee Name</b> on 29/08/2020</p>
+      </div> -->
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.bulletins"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('bulletins', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "bill.bill-clause.list.bulletins" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: fileDetails['bulletins']?.status === 'SUBMITTED'
+                }"
+              >
+                {{ fileDetails["bulletins"][0]?.status }}</nz-tag
+              >
+            </div>
+            <!-- <div class="col-md-12">
+                  <p>Assigned to <b>Assignee Name</b> on 29/08/2020</p>
+                </div> -->
+          </div>
+
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.meetingDetails"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('meeting-details', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "Meeting Details" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails?.meetingDetails?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{
+                  selectedMeetingDetails?.meetingDetails?.status
+                    ?.split("_")
+                    .join(" ")
+                }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.staffAllocation"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('staffAllocation', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "committee.list.staffallocation" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails['staffAllocation']?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{ selectedMeetingDetails["staffAllocation"]?.status }}</nz-tag
+              >
+            </div>
+            <!-- <div class="col-md-12">
+        <p>Assigned to <b>Assignee Name</b> on 29/08/2020</p>
+      </div> -->
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.specialInvite"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('specialInvite', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{ "committee.files.fileview.specialinvitee" | translate }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails['specialInvite']?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{
+                  selectedMeetingDetails["specialInvite"]?.status
+                    ?.split("_")
+                    .join(" ")
+                }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.meetingNotice"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('meetingNotice', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{
+                  "committee.files.fileview.committeemeetingnotice" | translate
+                }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <!-- <nz-tag [ngClass]="{ bold: selectedMeetingDetails['meetingNotice']?.status === 'SUBMITTED' }">
+                                {{ selectedMeetingDetails['meetingNotice']?.status.split('_').join(' ') }}</nz-tag> -->
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    getmeetingNoticeStatus(
+                      selectedMeetingDetails?.meetingNotice
+                    ) === 'SUBMITTED'
+                }"
+              >
+                {{
+                  getmeetingNoticeStatus(selectedMeetingDetails?.meetingNotice)
+                }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.meetingLetter"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('meetingLetter', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{
+                  "committee.files.fileview.committeemeetingletter" | translate
+                }}
+              </h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails['meetingLetter']?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{
+                  selectedMeetingDetails["meetingLetter"]?.status
+                    ?.split("_")
+                    .join(" ")
+                }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.supportingDocumentLetter"
+            (click)="
+              $event.stopPropagation();
+              showCurrentTab('supportingDocumentLetter', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>
+                {{
+                  "committee.files.fileview.letterforaskingsupporting"
+                    | translate
+                }}
+              </h6>
+            </div>
+            <div
+              class="col-md-6 text-align-right"
+              *ngIf="selectedMeetingDetails?.supportingDocumentLetter"
+            >
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    getSupportDocStatus(
+                      selectedMeetingDetails?.supportingDocumentLetter
+                    ) === 'SUBMITTED'
+                }"
+              >
+                {{
+                  getSupportDocStatus(
+                    selectedMeetingDetails?.supportingDocumentLetter
+                  )
+                }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.minutes"
+            (click)="$event.stopPropagation(); showCurrentTab('minutes', false)"
+          >
+            <div class="col-md-6">
+              <h6>{{ "Minutes" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: selectedMeetingDetails?.minutes?.status === 'SUBMITTED'
+                }"
+              >
+                {{ selectedMeetingDetails?.minutes?.status }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.questionnaire"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('questionnaire', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "Questionnaire" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails['questionnaire']?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{ selectedMeetingDetails["questionnaire"]?.status }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="selectedMeetingDetails?.attendance"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('attendance', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "Attendance" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold:
+                    selectedMeetingDetails['attendance'][0]?.status ===
+                    'SUBMITTED'
+                }"
+              >
+                {{ selectedMeetingDetails["attendance"][0]?.status }}</nz-tag
+              >
+            </div>
+          </div>
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.ministerReading"
+            (click)="
+              $event.stopPropagation(); showCurrentTab('ministerReading', false)
+            "
+          >
+            <div class="col-md-6">
+              <h6>{{ "Minister Reading" | translate }}</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: fileDetails['ministerReading'][0].status === 'SUBMITTED'
+                }"
+              >
+                {{ fileDetails["ministerReading"][0].status }}</nz-tag
+              >
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #tabIcon>
+          <i nz-icon nzType="appstore" nzTheme="outline"></i>
+          {{ "committee.committee-files.index" | translate }}
+        </ng-template>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'meeting-details'"
+        nzTitle="{{ 'Meeting Details' | translate }}"
+      >
+        <ng-container>
+          <committee-meeting-view
+            *ngIf="selectedMeetingDetails?.meetingDetails"
+            [isFileView]="true"
+            [fileMeetingDetails]="selectedMeetingDetails.meetingDetails"
+            [meetingid]="selectedMeetingDetails.meetingId"
+            (updatedMeeting)="getFileByFileId(fileId)"
+            (updateConsent)="updateConsent($event)"
+          ></committee-meeting-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'minutes'"
+        nzTitle="{{ 'Minutes' | translate }}"
+      >
+        <ng-container>
+          <div class="row">
+            <div class="col-md-12">
+              <button
+                class="ml-6 m-r5"
+                style="margin: 5px"
+                nz-button
+                [nzType]="'default'"
+                (click)="showMinutePopup()"
+              >
+                {{ "table.createminute.preview" | translate }}
+              </button>
+            </div>
+          </div>
+          <committee-minutes-file-view
+            [minutes]="selectedMeetingDetails?.minutes"
+            [meetingId]="selectedMeetingDetails?.meetingId"
+            [isFileView]="true"
+            (updatedMinutes)="getFileByFileId(fileId)"
+          ></committee-minutes-file-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'letter-to-ppo'"
+        nzTitle="{{
+          'committee.committee-constitution.lettertoppo' | translate
+        }}"
+      >
+        <ng-container>
+          <committee-letter-to-ppo
+            *ngIf="fileDetails.letter"
+            [letterDetails]="fileDetails.letter"
+            [userDetails]="user"
+            [fileDetails]="fileDetails"
+          ></committee-letter-to-ppo>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'memberDetailDto'"
+        nzTitle="Committe Details"
+      >
+        <ng-container>
+          <committee-subject-committee-fileview
+            *ngIf="
+              fileDetails?.committeeDetails?.category?.code ==
+              'SUBJECT_COMMITTEE'
+            "
+            [category]="fileDetails?.committeeDetails?.category?.code"
+            [isFileView]="true"
+            [memberDetailDto]="fileDetails.memberDetailDto"
+            [userDetails]="user"
+            [assignee]="assignee"
+          ></committee-subject-committee-fileview>
+          <committee-select-committee-fileview
+            *ngIf="
+              fileDetails?.committeeDetails?.category?.code ==
+              'SELECT_COMMITTEE'
+            "
+            [category]="fileDetails?.committeeDetails?.category?.code"
+            [isFileView]="true"
+            [memberDetailDto]="fileDetails.memberDetailDto"
+            [userDetails]="user"
+            [assignee]="assignee"
+          ></committee-select-committee-fileview>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'bulletins'"
+        nzTitle="Bulletins"
+      >
+        <ng-container>
+          <committee-bulletin-part2-view
+            [bulletinResponse]="fileDetails?.bulletins[0]"
+          ></committee-bulletin-part2-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'staffAllocation'"
+        nzTitle="Staff Allocation"
+      >
+        <ng-container>
+          <committee-staff-allocation
+            *ngIf="selectedMeetingDetails?.staffAllocation"
+            [staffDetail]="selectedMeetingDetails?.staffAllocation?.staffRoles"
+            [meeting]="selectedMeetingDetails?.staffAllocation?.meeting"
+            [fileView]="true"
+          ></committee-staff-allocation>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'specialInvite'"
+        nzTitle="Special Invitee"
+      >
+        <ng-container>
+          <committee-special-invitee
+            *ngIf="selectedMeetingDetails?.specialInvite"
+            [specialInvite]="selectedMeetingDetails?.specialInvite"
+            [meeting]="selectedMeetingDetails?.specialInvite?.meeting"
+            [fileView]="true"
+          ></committee-special-invitee>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'questionnaire'"
+        nzTitle="Questionnaire"
+      >
+        <ng-container>
+          <committee-questionnaire-view
+            *ngIf="selectedMeetingDetails?.questionnaire"
+            [fileQuestionnaire]="selectedMeetingDetails?.questionnaire"
+            [isFileView]="true"
+          ></committee-questionnaire-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'meetingNotice'"
+        nzTitle="Committee Meeting Notice"
+      >
+        <ng-container>
+          <committee-meeting-notice
+            [noticeDetails]="selectedMeetingDetails?.meetingNotice"
+            [userDetails]="user"
+            [meetingId]="selectedMeetingDetails?.meetingId"
+          ></committee-meeting-notice>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'meetingLetter'"
+        nzTitle="Committee Meeting Letter"
+      >
+        <ng-container>
+          <committee-meeting-letter
+            [noticeDetails]="selectedMeetingDetails?.meetingLetter"
+            [userDetails]="user"
+            [meetingId]="selectedMeetingDetails?.meetingId"
+          ></committee-meeting-letter>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'supportingDocumentLetter'"
+        nzTitle="Letter For Asking Supporting Documents"
+      >
+        <ng-container>
+          <committee-letterfor-supporting-doc
+            [letterDetails]="selectedMeetingDetails?.supportingDocumentLetter"
+            [userDetails]="user"
+            [meetingId]="selectedMeetingDetails?.meetingId"
+          ></committee-letterfor-supporting-doc>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'attendance'"
+        nzTitle="Attendance"
+      >
+        <committee-attendence-file-view
+          [listOfDatas]="selectedMeetingDetails?.attendance"
+          [meetingId]="selectedMeetingDetails?.meetingDetails?.id"
+          [meetingDetails]="selectedMeetingDetails?.meetingDetails"
+          [showEdit]="assignee == user.userId"
+          (updatedAtt)="getFileByFileId(fileId)"
+        ></committee-attendence-file-view>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'meetingReport'"
+        nzTitle="Meeting Report"
+      >
+        <ng-container *ngIf="fileDetails?.meetingReport">
+          <nz-collapse class="erratum-collapse">
+            <nz-collapse-panel
+              *ngFor="let panel of fileDetails?.meetingReport"
+              [nzActive]="true"
+            >
+              <div class="row">
+                <div
+                  class="col-md-12 maximise"
+                  [ngClass]="{ enlarge: fullScreenMode == true }"
+                >
+                  <div class="col-md-12 align-center">
+                    <button
+                      (click)="addClass()"
+                      nz-button
+                      title="fullscreen"
+                      nzType="default"
+                      class="mrgL6"
+                    >
+                      <i
+                        *ngIf="!fullScreenMode"
+                        nz-icon
+                        nzType="fullscreen"
+                        nzTheme="outline"
+                        class="baseline"
+                      ></i>
+                      <i
+                        *ngIf="fullScreenMode"
+                        nz-icon
+                        nzType="fullscreen-exit"
+                        nzTheme="outline"
+                        class="baseline"
+                      ></i>
+                    </button>
+                  </div>
+                  <div class="overflow-blt row">
+                    <committee-meeting-report-preview
+                      *ngIf="panel.reportData"
+                      [isFileView]="true"
+                      [reportPreview]="panel.reportData"
+                    >
+                    </committee-meeting-report-preview>
+                  </div>
+                </div>
+              </div>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </ng-container>
+      </nz-tab>
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'ministerReading'"
+        nzTitle="Minister Reading"
+      >
+        <p [innerHTML]="fileDetails.ministerReading[0].content | safeHtml"></p>
+      </nz-tab>
+      <nz-tab
+        *ngIf="
+          tabParams['CurrentTab'] === 'meeting-details' &&
+          selectedMeetingDetails?.meetingDetails?.consents.length > 0
+        "
+        nzTitle="View Consent"
+      >
+        <ng-container>
+          <div class="width-100 white_pd">
+            <div class="row">
+              <h4 style="text-align: center">
+                {{ "committee.files.fileview.consentrequestwith" | translate }}
+              </h4>
+            </div>
+            <div
+              class="row d-flex align-items-center"
+              *ngFor="
+                let item of selectedMeetingDetails.meetingDetails.consents
+              "
+            >
+              <div
+                class="col-md-12"
+                style="text-align: center"
+                *ngIf="item.type"
+              >
+                <b
+                  ><u>{{ item.type }}</u></b
+                >
+              </div>
+              <div class="col-md-12">
+                <nz-table
+                  #filterTable
+                  [nzShowPagination]="false"
+                  [nzData]="item.members"
+                  class="table-all"
+                >
+                  <thead>
+                    <tr>
+                      <th>
+                        {{ "committee.files.fileview.membername" | translate }}
+                      </th>
+                      <th>
+                        {{
+                          "business-dashboard.question.portfolio" | translate
+                        }}
+                      </th>
+                      <th>
+                        {{ "noticeprocessing.noticeprocess.time" | translate }}
+                      </th>
+                      <th>
+                        {{
+                          "noticeprocessing.notice.listnotice.status"
+                            | translate
+                        }}
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr *ngFor="let data of filterTable.data">
+                      <td>
+                        {{ data?.memberName }}
+                      </td>
+                      <td>
+                        {{ data?.roleName }}
+                      </td>
+                      <td>
+                        {{ data?.time | date: "hh:mm a" }}
+                      </td>
+                      <td>
+                        {{ data?.status }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+              <div class="col-md-12">
+                <nz-divider> </nz-divider>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div class="col-md-5">
+    <nz-tabset>
+      <nz-tab nzTitle="{{ 'committee.committe-files.notes' | translate }}">
+        <committee-notes
+          *ngIf="responseAvailable"
+          [notesInfo]="notesInfo"
+          [assignee]="assignee"
+          [latestNote]="latestNote"
+          [ratificationStatus]="ratificationStatus"
+          [fileResponse]="fileDetails.fileResponse"
+          (fileApproved)="getFileByFileId(this.fileId)"
+        >
+        </committee-notes>
+      </nz-tab>
+      <nz-tab nzTitle="{{ 'committee.committe-files.logs' | translate }}">
+        <ng-container *ngFor="let log of logDetails.slice(); index as i">
+          <div class="bg_block">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-7 pdzero">
+                  <div class="width-100 d-flex marginbtm-15">
+                    <div class="overflow-blt">
+                      {{ 1 + i + "." + log.action | titlecase }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        &nbsp;&nbsp;
+      </nz-tab>
+
+      <nz-tab nzTitle="File Info">
+        <div class="row">
+          <div class="col-md-3">
+            <span class="workflowhd">{{
+              "cpl.filelistflow.fileworkflow" | translate
+            }}</span>
+          </div>
+          <div class="col-md-9">
+            <div class="overflownote">
+              <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                <nz-step
+                  *ngFor="let status of stepStatusDetail"
+                  [nzStatus]="getStatusByReason(status.reason)"
+                  [nzTitle]="status.taskDefinitionKeyName"
+                  [nzDescription]="status.reason"
+                ></nz-step>
+              </nz-steps>
+            </div>
+          </div>
+        </div>
+        <div class="row bg_block">
+          <div class="col-md-12">
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{ "business-dashboard.cpl.view.filesubject" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.subject }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{
+                  "business-dashboard.cpl.view.filesdescription" | translate
+                }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.description }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{
+                  "business-dashboard.question.questionlist.createdat"
+                    | translate
+                }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{
+                  fileDetails?.fileResponse?.createdDate | date: "dd/MM/yyyy"
+                }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10" *ngIf="!isEditPrio">
+              <div class="col-md-6">
+                {{ "cpl.docamendments.filepriority" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                <nz-tag [nzColor]="'red'">
+                  {{
+                    fileDetails?.fileResponse?.priority?.split("_").join(" ")
+                  }}
+                </nz-tag>
+              </div>
+            </div>
+            <div class="row flex-end mrB10" *ngIf="isEditPrio">
+              <div class="col-md-6"></div>
+              <div class="blthd col-md-6">
+                <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+                  <label nz-radio nzValue="URGENT">{{
+                    "cpl.docamendments.urgent" | translate
+                  }}</label>
+                  <label nz-radio nzValue="NORMAL">{{
+                    "cpl.docamendments.normal" | translate
+                  }}</label>
+                  <label nz-radio nzValue="ACTION_TODAY">{{
+                    "cpl.docamendments.actiontoday" | translate
+                  }}</label>
+                  <label nz-radio nzValue="ASSEMBLY_URGENT">{{
+                    "cpl.docamendments.assemblyurgent" | translate
+                  }}</label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="row flex-end">
+              <div class="col-md-6">
+                {{ "committee.files.fileview.section" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.type }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{ "cpl.fileworkflow.filestatus" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                <nz-tag>
+                  {{ fileDetails?.fileResponse?.status }}
+                </nz-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row text-align-right">
+          <div class="col-md-12">
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="editFile()"
+              *ngIf="!isEditPrio"
+            >
+              {{ "noticeprocessing.noticeprocess.edit" | translate }}
+            </button>
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="updateFile()"
+              *ngIf="isEditPrio"
+            >
+              {{ "cpl.docupload.update" | translate }}</button
+            >&nbsp;
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="onCancel()"
+              *ngIf="isEditPrio"
+            >
+              {{ "business-dashboard.question.cancel" | translate }}
+            </button>
+          </div>
+        </div>
+
+        &nbsp;&nbsp;
+        <ng-container
+          *ngIf="
+            fileDetails?.fileResponse?.subFile &&
+            fileDetails?.fileResponse?.subFile.length > 0
+          "
+        >
+          <div class="row">
+            <div class="col-md-12">
+              <strong>Sub-Files</strong>
+            </div>
+          </div>
+          <div
+            class="row flex-end mrB10"
+            *ngFor="
+              let file of fileDetails?.fileResponse?.subFile;
+              let i = index
+            "
+          >
+            <div class="blthd col-md-6">{{ i + 1 }}.{{ file?.subject }}</div>
+            <div class="blthd col-md-6">
+              <a
+                href="javascript:;"
+                (click)="viewSubFile(file?.fileId, file?.filType)"
+              >
+                {{ file?.fileNumber }}</a
+              >
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+<ng-template #showButtons>
+  <ng-container *ngIf="tabParams['showVersionEdit']">
+    <button nz-button class="mr-6">
+      {{ "committee.committe-mgmnt.version" | translate }}
+    </button>
+    <button nz-button class="mr-6">
+      <i nz-icon nzType="form" nzTheme="outline"></i
+      >{{ "committee.committe-mgmnt.edit" | translate }}
+    </button></ng-container
+  >
+</ng-template>
+<nz-modal
+  [(nzVisible)]="createNomineeModel"
+  [nzFooter]="null"
+  [nzClosable]="false"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>{{
+          "committee.files.fileview.createcommitterequest" | translate
+        }}</b>
+        <div class="row margnrtp-15">
+          <div class="col-md-2">{{ "cpl.registration.title" | translate }}</div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="{{
+                'committee.committe-files.title.err' | translate
+              }}"
+              [(ngModel)]="nomineeTitle"
+            />
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="showCreateNominee(false)"
+            >
+              {{ "committee.committe-files.cancel" | translate }}
+            </button>
+            <button
+              [disabled]="!nomineeTitle"
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="{{
+                'committee.create-nominee.cnfrm' | translate
+              }}"
+              (nzOnConfirm)="createNominee()"
+              class="btn btn-primary primary-button"
+            >
+              {{ "committee.create-nominee" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="minutePop"
+  [nzFooter]="null"
+  (nzOnCancel)="closeMinutePopup()"
+  nzWidth="1000"
+>
+  <div class="width-100 pading-all">
+    <div class="row mr-tp15">
+      <div class="col-md-12">
+        <committee-minutes-file-view
+          [minutes]="selectedMeetingDetails.minutes"
+          [meetingId]="selectedMeetingDetails?.meetingId"
+          *ngIf="selectedMeetingDetails?.minutes && minutePop"
+          [isFileView]="true"
+          [isPreview]="true"
+          (updatedMinutes)="getFileByFileId(fileId)"
+        ></committee-minutes-file-view>
+      </div>
+    </div>
+  </div>
+</nz-modal>

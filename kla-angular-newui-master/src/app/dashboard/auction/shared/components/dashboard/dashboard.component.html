@@ -1,0 +1,59 @@
+<div class="dashboard d-flex flex-column">
+
+    <div class="dashboard-top">
+        <div class="dashboard-breadcum mb-1">
+            <app-breadcum [breadCumSource]="dashboardBreadcums"></app-breadcum>
+        </div>
+        <div class="dashboard-header d-flex flex-row justify-content-between align-items-center">
+            <div class="dashboard-header-title font-weight-bold admin-page-heading d-flex align-items-center">
+               <span class="admin-page-heading text-primary">{{dashboardTitle}}</span> 
+            </div>
+            <div class="dashboard-header-action d-flex flex-row justify-content-between align-items-center">
+                <ng-content select=".header-action"></ng-content>
+                <i nz-icon nzType="notification" style="cursor: pointer;" nzTheme="outline" class="ml-3 mr-3" (click)="showModal()"></i>
+            </div>
+        </div> 
+    </div>
+    <nz-divider></nz-divider>
+    <div class="dashboard-bottom">
+        <div class="dashboard-action mb-3 d-flex flex-row justify-content-between align-items-center">
+            <div class="dashboard-action-left">
+                <ng-content select=".grid-action-left"></ng-content>
+            </div>
+            <div class="dashboard-action-right">
+                <div class="search">
+                    <nz-input-group [nzPrefix]="prefixTemplateUser" *ngIf="isDashboardSearch">
+                        <input type="text" nz-input [placeholder]="dashboardSearchPlaceholder" (input)="onSearch($event.target.value)"/>
+                    </nz-input-group>
+                    <ng-template #prefixTemplateUser><i nz-icon nzType="search" nzTheme="outline"></i></ng-template>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <ng-content select=".grid-content"></ng-content>
+        </div>
+
+    </div>
+
+</div>
+
+<nz-modal [(nzVisible)]="isVisible" nzTitle="Notifications" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
+    <ng-container>
+        <div class="notification-wrapper">
+            <ul class="notification-list">
+    
+                <li class="notification-list-item d-flex flex-row justify-content-start align-items-center" *ngFor="let notification of auctionService.notifications">
+                    <div class="icon mr-4 d-flex">
+                        <i nz-icon nzType="notification" nzTheme="outline"></i>
+                    </div>
+                    <div class="content d-flex flex-row justify-content-start align-items-center">
+                        <span style="text-decoration: underline;color:blue;cursor: pointer" (click)="navigateToEditRequest(notification.id)" class="mr-2">{{notification.id}}</span>
+                        <span >{{notification.name}}</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </ng-container>
+  </nz-modal>
+

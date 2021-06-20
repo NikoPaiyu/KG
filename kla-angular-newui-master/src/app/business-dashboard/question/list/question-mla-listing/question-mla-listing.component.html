@@ -1,0 +1,729 @@
+<ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+<form nz-form>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.questionmlalisting.mladetails" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row">
+        <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">
+            {{
+              "business-dashboard.question.questionmlalisting.mladetails"
+                | translate
+            }}
+          </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-flex-end">
+          <button
+            type="button"
+            class="ant-btn ant-btn-primary"
+            (click)="printableScreen()"
+          >
+            <i nz-icon nzType="printer" nzTheme="outline" class="white"></i> {{"business-dashboard.question.print" | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-flex-start">
+        <div
+          class="col-md-4 d-flex align-items-center icon-color whitespace"
+          *ngIf="assemblydisable"
+        >
+          {{ "business-dashboard.question.assembly" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="selectedAssemblyValue"
+            name="selectedValue"
+            (ngModelChange)="findSessionListByAssembly($event)"
+          >
+            <nz-option *ngFor="let assembly of assemblyList;" [nzLabel]="assembly.assemblyId" [nzValue]="assembly.id"></nz-option>
+          </nz-select>
+        </div>
+
+        <div
+          class="col-md-5 d-flex align-items-center icon-color  whitespace"
+          *ngIf="sessiondisable"
+        >
+          {{ "business-dashboard.question.session" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="selectSessionValue"
+            name="selectedValue"
+          >
+          <nz-option *ngFor="let session of sessionList;" [nzLabel]="session.sessionId" [nzValue]="session.id"></nz-option>
+          </nz-select>
+        </div>
+      
+
+        <div class="col-md-1 d-flex align-items-center">
+          <button
+            class="plus-arrange ant-btn ant-btn-default ant-btn-icon-only"
+            type="button"
+            (click)="showModal()"
+          >
+            <i nz-icon nzType="plus" class="white"></i>
+          </button>
+
+          <nz-modal
+            [(nzVisible)]="isVisible"
+            nzTitle=""
+            (nzOnCancel)="handleCancel()"
+            (nzOnOk)="handleOk()"
+          >
+            <div class="padding_15">
+              <p *ngFor="let box of filterCheckboxes; let i = index">
+                <label
+                  nz-checkbox
+                  name="checkbox{{ i }}"
+                  (ngModelChange)="onCheckBoxChange(box)"
+                  [(ngModel)]="box.checked"
+                  >{{ box.label | translate }}</label
+                >
+              </p>
+            </div>
+          </nz-modal>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-flex-end">
+        <div class="col-md-4 d-flex align-items-center">
+          <button type="button" class="ant-btn ant-btn-default" (click)="clearFilter()">
+            {{
+              "business-dashboard.question.questionlist.clearfilter" | translate
+            }}
+          </button>
+        </div>
+        <div class="col-md-8 d-flex align-items-center">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              [(ngModel)]="searchParam"
+              name="search"
+              nz-input
+              placeholder="{{
+                'business-dashboard.question.questionlist.inputsearch'
+                  | translate
+              }}"
+              (ngModelChange)="onSearchUser()"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="row margnrtp-15 ma d-flex justify-content-space-between icon-color"
+  >
+    <div class="col-md-4" *ngIf="constituencydisable">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">
+          {{
+            "business-dashboard.question.questionmlalisting.constituency"
+              | translate
+          }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filterSelected.constituencyName"
+            name="constituency"
+            (ngModelChange)="searchCol(filterSelected)"
+          >
+            <nz-option
+              *ngFor="let constituency of filterconstituency"
+              nzLabel="{{ constituency }}"
+              nzValue="{{ constituency }}"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(1)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="rulingdisable">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">
+          {{
+            "business-dashboard.question.questionmlalisting.partySide"
+              | translate
+          }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filterSelected.memberGroup"
+            name="Party Side"
+            (ngModelChange)="searchCol(filterSelected)"
+          >
+            <nz-option nzLabel="Ruling" nzValue="ruling"></nz-option>
+            <nz-option nzLabel="Opposition" nzValue="opposition"></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(2)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="partysidedisable">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">
+          {{
+            "business-dashboard.question.questionmlalisting.mlaministerspeaker"
+              | translate
+          }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filterSelected.roleDisplay"
+            name="User Type"
+            (ngModelChange)="searchCol(filterSelected)"
+          >
+            <nz-option nzLabel="MLA" nzValue="mla"></nz-option>
+            <nz-option nzLabel="Minister" nzValue="minister"></nz-option>
+            <nz-option nzLabel="Speaker" nzValue="speaker"></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(3)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="listOfMla"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzShowSort nzSortKey="firstName">
+          {{
+            "business-dashboard.question.questionmlalisting.name" | translate
+          }}
+        </th>
+        <th nzShowSort nzSortKey="constituencyName">
+          {{
+            "business-dashboard.question.questionmlalisting.constituency"
+              | translate
+          }}
+        </th>
+        <th nzShowSort nzSortKey="memberGroup">
+          {{
+            "business-dashboard.question.questionmlalisting.partySide"
+              | translate
+          }}
+        </th>
+
+        <th nzShowSort nzSortKey="mobileNumber">
+          {{
+            "business-dashboard.question.questionmlalisting.phone" | translate
+          }}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td>
+          <a (click)="viewMember(list)" href="javascript:void(0);"
+            >{{ list.firstName }} {{ list.lastName }}</a
+          >
+        </td>
+        <td>{{ list.constituencyName }}</td>
+        <td>{{ list.memberGroup }}</td>
+        <td>{{ list.mobileNumber }}</td>
+        <td>
+          <div *ngIf="list.status === 'ACTIVE'">
+            <nz-tag [nzColor]="'blue'">
+              {{
+                "business-dashboard.question.questionmlalisting.active"
+                  | translate
+              }}</nz-tag
+            >
+          </div>
+          <div *ngIf="list.status === 'INACTIVE'">
+            <nz-tag [nzColor]="'magenta'">
+              {{
+                "business-dashboard.question.questionmlalisting.inactive"
+                  | translate
+              }}
+            </nz-tag>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-modal
+    [(nzVisible)]="printable"
+    nzTitle="{{
+      'business-dashboard.question.questionmlalisting.mladetails'
+        | translate
+    }}"
+    nzOkText="print"
+    nzCancelText="Cancel"
+    (nzOnOk)="captureScreen()"
+    (nzOnCancel)="cancelPrint()"
+    nzWidth="1000"
+  >
+  <div class="table_blkp">
+    <table id="mladata" class="mlatablefull">
+      <thead>
+        <tr class="mlatable">
+          <th class="mlatable">
+            {{
+              "business-dashboard.question.questionmlalisting.name" | translate
+            }}
+          </th>
+          <th class="mlatable">
+            {{
+              "business-dashboard.question.questionmlalisting.constituency"
+                | translate
+            }}
+          </th>
+          <th class="mlatable">
+            {{
+              "business-dashboard.question.questionmlalisting.partySide"
+                | translate
+            }}
+          </th>
+
+          <th class="mlatable">
+            {{
+              "business-dashboard.question.questionmlalisting.phone" | translate
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of listOfMla" class="mlatable">
+          <td class="mlatable">{{ list.firstName }} {{ list.lastName }}</td>
+          <td class="mlatable">{{ list.constituencyName }}</td>
+          <td class="mlatable">{{ list.memberGroup }}</td>
+          <td class="mlatable">{{ list.mobileNumber }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </nz-modal>
+</form>
+</ng-container>
+<ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+  <form nz-form>
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-12 col-sm-12 mb-2 margntp-25 inhouse">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+            {{ "business-dashboard.question.dashboard" | translate }}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            {{ "business-dashboard.question.notice" | translate }}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+  
+      <div class="col-md-12 inhouse">
+        <div class="row d-flex justify-content-space-between">
+          <div class="col-md-6">
+            <h2 class="admin-page-heading">
+              {{
+                "business-dashboard.question.questionmlalisting.mladetails"
+                  | translate
+              }}
+            </h2>
+          </div>
+          <div class="col-md-6 d-flex justify-content-flex-end">
+            <button
+              type="button"
+              class="ant-btn ant-btn-primary"
+              (click)="printableScreen()"
+            >
+              <i nz-icon nzType="printer" nzTheme="outline"></i> {{"business-dashboard.question.print" | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <nz-divider></nz-divider>
+  
+    <div class="row inhouse margnrtp-10 marginbtm-10">
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-flex-start">
+          <div
+            class="col-md-4 d-flex align-items-center icon-color whitespace"
+            *ngIf="assemblydisable"
+          >
+            {{ "business-dashboard.question.assembly" | translate }}
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="selectedAssemblyValue"
+              name="selectedValue"
+            >
+              <nz-option *ngFor="let assembly of assemblyList;" [nzLabel]="assembly.assemblyId" [nzValue]="assembly.id"></nz-option>
+            </nz-select>
+          </div>
+  
+          <div
+            class="col-md-5 d-flex align-items-center icon-color  whitespace"
+            *ngIf="sessiondisable"
+          >
+            {{ "business-dashboard.question.session" | translate }}
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="selectSessionValue"
+              name="selectedValue"
+            >
+            <nz-option *ngFor="let session of sessionList;" [nzLabel]="session.sessionId" [nzValue]="session.id"></nz-option>
+            </nz-select>
+          </div>
+        
+  
+          <div class="col-md-1 d-flex align-items-center">
+            <button
+              class="plus-arrange ant-btn ant-btn-primary ant-btn-icon-only"
+              type="button"
+              (click)="showModal()"
+            >
+              <i nz-icon nzType="plus"></i>
+            </button>
+  
+            <nz-modal
+              [(nzVisible)]="isVisible"
+              nzTitle=""
+              (nzOnCancel)="handleCancel()"
+              (nzOnOk)="handleOk()"
+            >
+              <div class="padding_15">
+                <p *ngFor="let box of filterCheckboxes; let i = index">
+                  <label
+                    nz-checkbox
+                    name="checkbox{{ i }}"
+                    (ngModelChange)="onCheckBoxChange(box)"
+                    [(ngModel)]="box.checked"
+                    >{{ box.label | translate }}</label
+                  >
+                </p>
+              </div>
+            </nz-modal>
+          </div>
+        </div>
+      </div>
+  
+      <div class="col-md-6 inhouse">
+        <div class="row d-flex justify-content-flex-end">
+          <div class="col-md-5 d-flex align-items-center">
+            <button type="button" class="ant-btn ant-btn-default" (click)="clearFilter()">
+              {{
+                "business-dashboard.question.questionlist.clearfilter" | translate
+              }}
+            </button>
+          </div>
+          <div class="col-md-7 d-flex align-items-center">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input
+                type="text"
+                [(ngModel)]="searchParam"
+                name="search"
+                nz-input
+                placeholder="{{
+                  'business-dashboard.question.questionlist.inputsearch'
+                    | translate
+                }}"
+                (ngModelChange)="onSearchUser()"
+              />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="row margnrtp-15 ma d-flex justify-content-space-between icon-color inhouse"
+    >
+      <div class="col-md-4 inhouse" *ngIf="constituencydisable">
+        <div class="row align-items-center">
+          <div class="col-md-4 wordbreak">
+            {{
+              "business-dashboard.question.questionmlalisting.constituency"
+                | translate
+            }}
+          </div>
+          <div class="col-md-7">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="filterSelected.constituencyName"
+              name="constituency"
+              (ngModelChange)="searchCol(filterSelected)"
+            >
+              <nz-option
+                *ngFor="let constituency of filterconstituency"
+                nzLabel="{{ constituency }}"
+                nzValue="{{ constituency }}"
+              >
+              </nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableFilter(1)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 inhouse" *ngIf="rulingdisable">
+        <div class="row align-items-center">
+          <div class="col-md-4 wordbreak">
+            {{
+              "business-dashboard.question.questionmlalisting.partySide"
+                | translate
+            }}
+          </div>
+          <div class="col-md-7">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="filterSelected.memberGroup"
+              name="Party Side"
+              (ngModelChange)="searchCol(filterSelected)"
+            >
+              <nz-option nzLabel="Ruling" nzValue="ruling"></nz-option>
+              <nz-option nzLabel="Opposition" nzValue="opposition"></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableFilter(2)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 inhouse" *ngIf="partysidedisable">
+        <div class="row align-items-center">
+          <div class="col-md-4 wordbreak">
+            {{
+              "business-dashboard.question.questionmlalisting.mlaministerspeaker"
+                | translate
+            }}
+          </div>
+          <div class="col-md-7">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="filterSelected.roleDisplay"
+              name="User Type"
+              (ngModelChange)="searchCol(filterSelected)"
+            >
+              <nz-option nzLabel="MLA" nzValue="mla"></nz-option>
+              <nz-option nzLabel="Minister" nzValue="minister"></nz-option>
+              <nz-option nzLabel="Speaker" nzValue="speaker"></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableFilter(3)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 inhouse">
+    <div class="table_holder">
+    <nz-table
+      #filterTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="listOfMla"
+      class="table-all"
+    >
+      <thead (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+          <th nzShowSort nzSortKey="firstName">
+            {{
+              "business-dashboard.question.questionmlalisting.name" | translate
+            }}
+          </th>
+          <th nzShowSort nzSortKey="constituencyName">
+            {{
+              "business-dashboard.question.questionmlalisting.constituency"
+                | translate
+            }}
+          </th>
+          <th nzShowSort nzSortKey="memberGroup">
+            {{
+              "business-dashboard.question.questionmlalisting.partySide"
+                | translate
+            }}
+          </th>
+  
+          <th nzShowSort nzSortKey="mobileNumber">
+            {{
+              "business-dashboard.question.questionmlalisting.phone" | translate
+            }}
+          </th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of filterTable.data">
+          <td>
+            <a (click)="viewMember(list)" href="javascript:void(0);"
+              >{{ list.firstName }} {{ list.lastName }}</a
+            >
+          </td>
+          <td>{{ list.constituencyName }}</td>
+          <td>{{ list.memberGroup }}</td>
+          <td>{{ list.mobileNumber }}</td>
+          <td>
+            <div *ngIf="list.status === 'ACTIVE'">
+              <nz-tag [nzColor]="'blue'">
+                {{
+                  "business-dashboard.question.questionmlalisting.active"
+                    | translate
+                }}</nz-tag
+              >
+            </div>
+            <div *ngIf="list.status === 'INACTIVE'">
+              <nz-tag [nzColor]="'magenta'">
+                {{
+                  "business-dashboard.question.questionmlalisting.inactive"
+                    | translate
+                }}
+              </nz-tag>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  </div>
+</div>
+
+    <nz-modal
+      [(nzVisible)]="printable"
+      nzTitle="{{
+        'business-dashboard.question.questionmlalisting.mladetails'
+          | translate
+      }}"
+      nzOkText="print"
+      nzCancelText="Cancel"
+      (nzOnOk)="captureScreen()"
+      (nzOnCancel)="cancelPrint()"
+      nzWidth="1000"
+    >
+    <div class="table_blkp">
+      <table id="mladata" class="mlatablefull">
+        <thead>
+          <tr class="mlatable">
+            <th class="mlatable">
+              {{
+                "business-dashboard.question.questionmlalisting.name" | translate
+              }}
+            </th>
+            <th class="mlatable">
+              {{
+                "business-dashboard.question.questionmlalisting.constituency"
+                  | translate
+              }}
+            </th>
+            <th class="mlatable">
+              {{
+                "business-dashboard.question.questionmlalisting.partySide"
+                  | translate
+              }}
+            </th>
+  
+            <th class="mlatable">
+              {{
+                "business-dashboard.question.questionmlalisting.phone" | translate
+              }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let list of listOfMla" class="mlatable">
+            <td class="mlatable">{{ list.firstName }} {{ list.lastName }}</td>
+            <td class="mlatable">{{ list.constituencyName }}</td>
+            <td class="mlatable">{{ list.memberGroup }}</td>
+            <td class="mlatable">{{ list.mobileNumber }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    </nz-modal>
+  </form>
+  </ng-container>
+

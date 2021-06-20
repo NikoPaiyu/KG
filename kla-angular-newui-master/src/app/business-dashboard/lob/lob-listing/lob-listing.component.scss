@@ -1,0 +1,74 @@
+@import "~src/sass/utilities/variables";
+
+.text-align-right {
+  text-align: right;
+}
+
+.select {
+  min-width: 100px;
+}
+.table-striped tbody > tr:nth-child(odd) > td,
+.table-striped tbody > tr:nth-child(odd) > th {
+  background-color: $white !important;
+}
+
+.ant-table-thead > tr > th {
+  background: $white !important;
+}
+.nt-table-row .ng-star-inserted {
+  background: $white !important;
+}
+.bg-head {
+  background: $white !important;
+}
+.ant-input {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+}
+.m-r-20 {
+  margin-left: 20px;
+}
+.m-t-30 {
+  margin-top: 30px;
+}
+
+.sts-Complete {
+  background-color: $btn-success;
+  color: $btn-success-color;
+  border-radius: 5px;
+}
+.sts-Pending {
+  background-color: $btn-pending;
+  color: $btn-pending-color;
+  border-radius: 5px;
+}
+.sts-Ongoing {
+  background-color: $btn-going;
+  color: $btn-going-color;
+  border-radius: 5px;
+}
+
+.bg-head {
+  background: $white !important;
+}
+.ant-input {
+  border-top: 1px solid #fff;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+}
+.ant-btn {
+  border: none;
+  box-shadow: none;
+}
+
+tr:nth-child(even) {
+  background: $color-gray-2;
+}
+tr:nth-child(odd) {
+  background: $white;
+}
+
+.ant-form-item-label {
+  text-align: left;
+}

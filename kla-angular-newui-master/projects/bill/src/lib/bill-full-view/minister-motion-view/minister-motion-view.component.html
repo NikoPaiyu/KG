@@ -1,0 +1,67 @@
+<div class="row d-flex align-items-center">
+    <div class="col-md-12 d-flex justify-content-end">
+        <button nz-button nzType="primary" (click)="createBulletinPart2(billDetails.status)"
+        *ngIf="isAssistant() && billDetails.status === 'APPROVED' && !billDetails.motion.bulletinId">
+        {{ "bill.bill-clause.list.generatebulletinandattach" | translate }}
+        </button>
+    </div>
+</div>
+<div class="row d-flex align-items-center mrglft-5 mrgB20">
+    <div class="col-md-3">
+        {{ "bill.bill-clause.list.committetype" | translate }}:
+    </div>
+    <div class="col-md-9">
+        <b>{{billDetails.motion.committeeType.split('_').join(' ') | titlecase }}</b>
+    </div>
+</div>
+<!-- <div class = "row" *ngIf="isMinister()">
+    <div class ="col-md-12">
+        <div class="row d-flex align-items-center mrglft-5 mrgB20" *ngIf=" this.billDetails.motion.user.length != 0 &&
+        !showAddMem">
+        <div class="col-md-3">
+            Members:
+        </div>
+        <div class="col-md-4">
+            <div class="row"  *ngFor="let member of membersList">
+                <div class="col-md-12">
+                    {{member.details.fullName}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center mrglft-5 mrgB20" *ngIf="!showAddMem && canAddMembers">
+        <div class="col-md-6">
+            <button nz-button nzType="default" (click)="showAddMember()">
+                <i nz-icon nzType="plus" nzTheme="outline"></i>
+                Add Members
+            </button>
+        </div>
+    </div>
+    <div class="row d-flex align-items-center mrglft-5 mrgB20" *ngIf="canAddMembers && showAddMem">
+        <div class="col-md-6">
+            <nz-select [(ngModel)]="selectedMember" nzMode="tags" nzPlaceHolder="Select Members">
+                <nz-option *ngFor="let option of filteredMembers" 
+                    [nzLabel]="option.details.fullName" [nzValue]="option.userId">
+                </nz-option>
+            </nz-select>
+        </div>
+        <button nz-button nzType="primary" (click)="addMember()">
+            Add
+        </button>&nbsp;
+        <button nz-button nzType="default" (click)="cancel()">
+            Cancel
+        </button>
+    </div>
+    </div>
+</div> -->
+
+<div class="row d-flex align-items-center">
+    <div class="col-md-12">
+        <quill-view-html [content]="billDetails.motion.content"></quill-view-html>
+    </div>
+</div>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle='{{ "bill.bill-clause.list.createbulletinpart2" | translate }}'
+  (nzOnCancel)="cancelBulletin()">
+  <lib-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)">
+  </lib-create-bulletin-form>
+</nz-modal>

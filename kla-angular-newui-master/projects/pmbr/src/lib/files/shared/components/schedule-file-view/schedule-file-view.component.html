@@ -1,0 +1,109 @@
+<div class="row">
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-5">
+                <nz-form-item>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-select nzDisabled [(ngModel)]="scheduleData.assemblyId" (ngModelChange)="getSessionForAssembly()">
+                            <nz-option *ngFor="let data of assemblyList" [nzValue]="data.id"
+                                [nzLabel]="data.assemblyId">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-5">
+                <nz-form-item>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <nz-select nzDisabled [(ngModel)]="scheduleData.sessionId">
+                            <nz-option *ngFor="let data of sessionList" [nzValue]="data.id" [nzLabel]="data.sessionId">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-2">
+                <div class="row d-flex justify-content-end ">
+                    <button nz-button nzType="default" class= "mrgR10"
+                    [disabled]="scheduleData.status === 'APPROVED'||
+                    scheduleData.status === 'ACTIVE'" 
+                    (click)="editSchedule('edit',scheduleData.id)">
+                    {{ "pmbr.resolutions.editschedule" | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mrg-top-20">
+    <div class="col-md-8">
+        <b>For Bills</b>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <nz-table [nzShowPagination]="false" [nzData]="scheduleData.pmbrScheduleBill" #pmbrScheduleBill>
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Date for Pvt Member Bill</th>
+                    <th>Last date for Adding Bill for lotting</th>
+                    <th>Date of lotting</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of pmbrScheduleBill.data; let i = index">
+                    <td>{{i+1}}</td>
+                    <td>
+                        {{ data.presentationDate }}
+                    </td>
+                    <td>
+                        {{ data.submissionDate}}
+                    </td>
+                    <td>
+                        {{ data.lottingDate }}
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<div class="row mrg-top-20">
+    <div class="col-md-8">
+        <b>For Resolution</b>
+    </div>
+</div>
+<br>
+<div class="row">
+    <div class="col-md-12">
+        <nz-table [nzShowPagination]="false" [nzData]="this.scheduleData.pmbrScheduleResolution" #pmbrScheduleResolution>
+            <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Date for Non official Resolution</th>
+                    <th>Last date for Adding Name for lotting</th>
+                    <th>Date of lotting</th>
+                    <th>Last date for Submission of resolution by lot winner</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of pmbrScheduleResolution.data; let j=index">
+                    <td>{{j+1}}</td>
+                    <td>
+                        {{ data.presentationDate }}
+                    </td>
+                    <td>
+                        {{ data.submissionDate }}
+                    </td>
+                    <td>
+                        {{ data.lottingDate }}
+                    </td>
+                    <td>
+                        {{ data.noticeSubmissionDate }}
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>

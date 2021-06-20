@@ -1,0 +1,543 @@
+<div class="row">
+  <div class="col-md-12 maximise" [ngClass]="{
+      enlarge: fullScreenMode == true
+    }">
+    <div class="row mrgB20">
+      <div class="col-md-12 text-align-right">
+        <nz-select [nzDisabled]="true" class="col-md-3" [(ngModel)]="billDetails.language">
+          <nz-option *ngFor="let item of billLanguage" [nzLabel]="item.language" [nzValue]="item.code"></nz-option>
+        </nz-select>
+        <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+          <i *ngIf="!fullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+          <i *ngIf="fullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+        </button>
+      </div>
+    </div>
+
+    <ng-container *ngFor="let block of billDetails.blocks; let i = index; last as l">
+      <nz-divider *ngIf="block.type.code == 'STATEMENT_OF_OBJECTS_AND_REASONS'"></nz-divider>
+
+      <div class="row marginbtm-15">
+        <div class="col number">
+          <ng-container *ngIf='block.type.code!="CHAPTER"'>
+            {{ block.indexSerial }}
+          </ng-container>
+
+        </div>
+        <div class="col myDiv">
+          <div class="row marginbtm-10">
+            <div *ngIf="isHeaderRequiredBlock(block.type.code)" class="col-md-12 marginbtm-10">
+              <h5 class="text-align-center" *ngIf="block.type.code !== 'EXTRACT'">
+                {{ block.type.name }} <ng-container *ngIf='block.type.code=="CHAPTER"'> {{ block.indexValue }}
+                </ng-container>
+              </h5>
+              <h5 *ngIf="block.type.code == 'EXTRACT'">
+                Extract from {{ block.referencedBillTitle }}
+              </h5>
+            </div>
+            <div class="col-md-12" *ngIf='block.type.code!="A_BILL"'>
+              <textarea class="bill_textarea" [readOnly]="isTextAreaReadOnly(block.type.code)"
+                [class.bold-text]="block.type.bold == true && false" [class.underline-text]="block.type.underline == true"
+                [class.italic-text]="block.type.italic == true"
+                [placeholder]='block.type.code=="CLAUSE"?"Add Marginal Heading":"Add"+ block.type.name'
+                [(ngModel)]="block.content" (ngModelChange)="blockValueChange()" #row
+                (focusout)="textAreaFocusOut(block)"></textarea>
+            </div>
+            <div *ngIf='block.type.code=="A_BILL"' class='col-md-12 align-center margnrtp-15 font-wbold'>
+              {{block.type.name}} <br /> {{block.content}}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-10 only-show-on-hover">
+              <ng-container *ngIf="
+                  block.id > 0 &&
+                  block.content &&
+                  showAddBlockButtons(block.type.code)
+                ">
+                <nz-tag *ngFor="let tags of listOfHoverButton(block.type.code)"
+                  (click)="addBlocks(block,null,null,null,null,1, tags)" [nzColor]="tags.color">{{
+                  tags.title }}</nz-tag>
+              </ng-container>
+            </div>
+            <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+              <nz-tag class='height-25' *ngIf="showRemoveBlockButtons(block.type.code)" [nzColor]="'#f4364c'"
+                nz-popconfirm nzPopconfirmTitle="Are you sure delete this block?"
+                (nzOnConfirm)="removeBlock(block, block, i,1)">Remove
+              </nz-tag>
+              <!-- <nz-tag [nzColor]="'#87d068'" (click)="textAreaFocusOut(block)">
+                <ng-container *ngIf="!block.id">Save</ng-container>
+                <ng-container *ngIf="block.id">Update</ng-container>
+              </nz-tag> -->
+            </div>
+          </div>
+        </div>
+        <div class="col labels" [class.color-white]="isTypeNameNotRequiredBlock(block.type.code)">
+          {{returnBlockTypeAndIndexValue(block)}}
+        </div>
+      </div>
+      <ng-container *ngFor="let suBlock1 of block.subBlockDto; let j = index">
+        <div class="row marginbtm-15 indent-10">
+          <div class="col number">
+            {{ suBlock1.indexSerial }}
+          </div>
+          <div class="col myDiv">
+            <div class="row marginbtm-10">
+              <div class="col-md-12" *ngIf="!isTableRequiredBlock(suBlock1.type.code)">
+                <textarea [readOnly]="isTextAreaReadOnly(suBlock1.type.code)" class="bill_textarea"
+                  [class.bold-text]="suBlock1.type.bold == true && false"
+                  [class.underline-text]="suBlock1.type.underline == true"
+                  [class.italic-text]="suBlock1.type.italic == true" placeholder="Add {{ suBlock1.type.name }}"
+                  [(ngModel)]="suBlock1.content" (ngModelChange)="blockValueChange()" #row
+                  (focusout)="textAreaFocusOut(suBlock1)"></textarea>
+              </div>
+              <div class="col-md-12 width-100" *ngIf="isTableRequiredBlock(suBlock1.type.code)">
+                <div class="txtwidget">
+                  <div class="widget_btns">
+                    <button class="ant-btn ant-btn-default" (click)="saveBlock(suBlock1)"> Save</button>
+                  </div>
+
+                  <table class="width-100 tbl">
+                    <tr *ngFor="let row of suBlock1.content;let rowIndex = index ">
+                      <td *ngFor="let column of row.columns;let cellIndex = index" [attr.colSpan]="column.colSpan"
+                        [attr.rowSpan]="column.rowSpan" nz-popover nzPopoverTrigger="click"
+                        [nzPopoverContent]="contentTemplate">
+                        <div class="d-flex width-100 text-align-center pdn">
+                          <textarea [(ngModel)]="column.content" class="bodr_cls"></textarea>
+                        </div>
+                        <ng-template #contentTemplate>
+                          <a nz-dropdown [nzDropdownMenu]="menu">
+                            Merge Cell
+                            <i nz-icon nzType="down"></i>
+                          </a>
+                          <a nz-dropdown [nzDropdownMenu]="menu1">
+                            Add Cell
+                            <i nz-icon nzType="down"></i>
+                          </a>
+                          <nz-dropdown-menu #menu="nzDropdownMenu">
+                            <ul nz-menu nzSelectable>
+                              <li nz-menu-item (click)="mergeColumn(row,column,cellIndex)">Merge Column
+                              </li>
+                              <li nz-menu-item (click)="mergeRow(suBlock1.content,column,rowIndex,cellIndex)">Merge
+                                Row</li>
+                            </ul>
+                          </nz-dropdown-menu>
+                          <nz-dropdown-menu #menu1="nzDropdownMenu">
+                            <ul nz-menu nzSelectable>
+                              <li nz-menu-item (click)="addColumn(suBlock1.content,column,'Right')">Add Column Right
+                              </li>
+                              <li nz-menu-item (click)="addColumn(suBlock1.content,column,'Left')">Add Column Left</li>
+                              <li nz-menu-item (click)="addRow(suBlock1.content,rowIndex,'Down')">Add Row Down
+                              </li>
+                              <li nz-menu-item (click)="addRow(suBlock1.content,rowIndex,'Up')">Add Row Up</li>
+                            </ul>
+                          </nz-dropdown-menu>
+                        </ng-template>
+                      </td>
+
+                    </tr>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-10 only-show-on-hover">
+                <ng-container *ngIf="
+                    suBlock1.id > 0 &&
+                    suBlock1.content &&
+                    showAddBlockButtons(suBlock1.type.code)
+                  ">
+                  <nz-tag *ngFor="let tags of listOfHoverButton(suBlock1.type.code)"
+                    (click)="addBlocks(block,suBlock1,null,null,null,2, tags)" [nzColor]="tags.color">{{
+                    tags.title }}</nz-tag>
+                </ng-container>
+              </div>
+              <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+                <nz-tag class='height-25' *ngIf="showRemoveBlockButtons(suBlock1.type.code)" [nzColor]="'#f4364c'"
+                  nz-popconfirm nzPopconfirmTitle="Are you sure delete this block?"
+                  (nzOnConfirm)="removeBlock(block, suBlock1, j,2)">
+                  Remove</nz-tag>
+                <!-- <nz-tag
+                  [nzColor]="'#87d068'"
+                  (click)="textAreaFocusOut(suBlock1)"
+                >
+                  <ng-container *ngIf="!suBlock1.id">Save</ng-container>
+                  <ng-container *ngIf="suBlock1.id">Update</ng-container>
+                </nz-tag> -->
+              </div>
+            </div>
+          </div>
+          <div class="col labels" [class.color-white]="isTypeNameNotRequiredBlock(suBlock1.type.code)">
+            {{returnBlockTypeAndIndexValue(suBlock1)}}
+          </div>
+        </div>
+        <ng-container *ngFor="let suBlock2 of suBlock1.subBlockDto; let k = index">
+          <div class="row marginbtm-15 indent-20">
+            <div class="col number">
+              {{ suBlock2.indexSerial }}
+            </div>
+            <div class="col myDiv">
+              <div class="row marginbtm-10">
+                <div class="col-md-12" *ngIf="!isTableRequiredBlock(suBlock2.type.code)">
+                  <textarea [readOnly]="isTextAreaReadOnly(suBlock2.type.code)" class="bill_textarea"
+                    [class.bold-text]="suBlock2.type.bold == true && false"
+                    [class.underline-text]="suBlock2.type.underline == true"
+                    [class.italic-text]="suBlock2.type.italic == true" placeholder="Add {{ suBlock2.type.name }}"
+                    [(ngModel)]="suBlock2.content" (ngModelChange)="blockValueChange()" #row
+                    (focusout)="textAreaFocusOut(suBlock2)"></textarea>
+                </div>
+                <div class="col-md-12 width-100" *ngIf="isTableRequiredBlock(suBlock2.type.code)">
+                  <div class="txtwidget">
+                    <div class="widget_btns">
+                      <button class="ant-btn ant-btn-default" (click)="saveBlock(suBlock2)"> Save</button>
+                    </div>
+
+                    <table class="width-100 tbl">
+                      <tr *ngFor="let row of suBlock2.content;let rowIndex = index ">
+                        <td *ngFor="let column of row.columns let cellIndex = index" [attr.colSpan]="column.colSpan"
+                          [attr.rowSpan]="column.rowSpan" nz-popover nzPopoverTrigger="click"
+                          [nzPopoverContent]="contentTemplate">
+                          <div class="d-flex width-100 text-align-center pdn">
+                            <textarea [(ngModel)]="column.content" class="bodr_cls"></textarea>
+                          </div>
+                          <ng-template #contentTemplate>
+                            <a nz-dropdown [nzDropdownMenu]="menu">
+                              Merge Cell
+                              <i nz-icon nzType="down"></i>
+                            </a>
+                            <a nz-dropdown [nzDropdownMenu]="menu1">
+                              Add Cell
+                              <i nz-icon nzType="down"></i>
+                            </a>
+                            <nz-dropdown-menu #menu="nzDropdownMenu">
+                              <ul nz-menu nzSelectable>
+                                <li nz-menu-item (click)="mergeColumn(row,column,cellIndex)">Merge Column
+                                </li>
+                                <li nz-menu-item (click)="mergeRow(suBlock2.content,column,rowIndex,cellIndex)">Merge
+                                  Row</li>
+                              </ul>
+                            </nz-dropdown-menu>
+                            <nz-dropdown-menu #menu1="nzDropdownMenu">
+                              <ul nz-menu nzSelectable>
+                                <li nz-menu-item (click)="addColumn(suBlock2.content,column,'Right')">Add Column Right
+                                </li>
+                                <li nz-menu-item (click)="addColumn(suBlock2.content,column,'Left')">Add Column Left
+                                </li>
+                                <li nz-menu-item (click)="addRow(suBlock2.content,rowIndex,'Right')">Add Row Right
+                                </li>
+                                <li nz-menu-item>Add Row Left</li>
+                              </ul>
+                            </nz-dropdown-menu>
+                          </ng-template>
+                        </td>
+
+                      </tr>
+                    </table>
+
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-10 only-show-on-hover">
+                  <ng-container *ngIf="
+                      suBlock2.id > 0 &&
+                      suBlock2.content &&
+                      showAddBlockButtons(suBlock2.type.code)
+                    ">
+                    <nz-tag *ngFor="let tags of listOfHoverButton(suBlock2.type.code)"
+                      (click)="addBlocks(block,suBlock1,suBlock2,null,null,3, tags)" [nzColor]="tags.color">{{
+                      tags.title }}</nz-tag>
+                  </ng-container>
+                </div>
+                <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+                  <nz-tag class='height-25' *ngIf="showRemoveBlockButtons(suBlock2.type.code)" [nzColor]="'#f4364c'"
+                    nz-popconfirm nzPopconfirmTitle="Are you sure delete this block?"
+                    (nzOnConfirm)="removeBlock(suBlock1, suBlock2, k,3)">Remove</nz-tag>
+                  <!-- <nz-tag
+                    [nzColor]="'#87d068'"
+                    (click)="textAreaFocusOut(suBlock2)"
+                  >
+                    <ng-container *ngIf="!suBlock2.id">Save</ng-container>
+                    <ng-container *ngIf="suBlock2.id">Update</ng-container>
+                  </nz-tag> -->
+                </div>
+              </div>
+            </div>
+            <div class="col labels">
+              {{returnBlockTypeAndIndexValue(suBlock2)}}
+            </div>
+          </div>
+          <ng-container *ngFor="let suBlock3 of suBlock2.subBlockDto; let l = index">
+            <div class="row marginbtm-15 indent-30">
+              <div class="col number">{{ suBlock3.indexSerial }}</div>
+              <div class="col myDiv">
+                <div class="row marginbtm-10">
+                  <div class="col-md-12">
+                    <textarea [readOnly]="isTextAreaReadOnly(suBlock3.type.code)" class="bill_textarea"
+                      [class.bold-text]="suBlock3.type.bold == true && false"
+                      [class.underline-text]="suBlock3.type.underline == true"
+                      [class.italic-text]="suBlock3.type.italic == true" placeholder="Add {{ suBlock3.type.name }}"
+                      [(ngModel)]="suBlock3.content" (ngModelChange)="blockValueChange()" #row
+                      (focusout)="textAreaFocusOut(suBlock3)"></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-10 only-show-on-hover">
+                    <ng-container *ngIf="
+                        suBlock3.id > 0 &&
+                        suBlock3.content &&
+                        showAddBlockButtons(suBlock3.type.code)
+                      ">
+                      <nz-tag *ngFor="
+                          let tags of listOfHoverButton(suBlock3.type.code)
+                        " (click)="addBlocks(block,suBlock1,suBlock2, suBlock3,null,4, tags)" [nzColor]="tags.color">{{
+                        tags.title }}
+                      </nz-tag>
+                    </ng-container>
+                  </div>
+                  <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+                    <nz-tag class='height-25' *ngIf="showRemoveBlockButtons(suBlock3.type.code)" [nzColor]="'#f4364c'"
+                      nz-popconfirm nzPopconfirmTitle="Are you sure delete this block?"
+                      (nzOnConfirm)="removeBlock(suBlock2, suBlock3, l,4)">Remove</nz-tag>
+                    <!-- <nz-tag
+                      [nzColor]="'#87d068'"
+                      (click)="textAreaFocusOut(suBlock3)"
+                    >
+                      <ng-container *ngIf="!suBlock3.id">Save</ng-container>
+                      <ng-container *ngIf="suBlock3.id">Update</ng-container>
+                    </nz-tag> -->
+                  </div>
+                </div>
+              </div>
+              <div class="col labels">
+                {{returnBlockTypeAndIndexValue(suBlock3)}}
+              </div>
+            </div>
+            <ng-container *ngFor="let suBlock4 of suBlock3.subBlockDto; let m = index">
+              <div class="row marginbtm-15 indent-40">
+                <div class="col number">{{ suBlock4.indexSerial }}</div>
+                <div class="col myDiv">
+                  <div class="row marginbtm-10">
+                    <div class="col-md-12">
+                      <textarea [readOnly]="isTextAreaReadOnly(suBlock4.type.code)" class="bill_textarea"
+                        [class.bold-text]="suBlock4.type.bold == true && false"
+                        [class.underline-text]="suBlock4.type.underline == true"
+                        [class.italic-text]="suBlock4.type.italic == true" placeholder="Add {{ suBlock4.type.name }}"
+                        [(ngModel)]="suBlock4.content" (ngModelChange)="blockValueChange()" #row
+                        (focusout)="textAreaFocusOut(suBlock4)"></textarea>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-10 only-show-on-hover">
+                      <ng-container *ngIf="
+                          suBlock4.id > 0 &&
+                          suBlock4.content &&
+                          showAddBlockButtons(suBlock4.type.code)
+                        ">
+                        <nz-tag *ngFor="
+                            let tags of listOfHoverButton(suBlock4.type.code)
+                          " (click)="addBlocks(block,suBlock1,suBlock2,suBlock3,suBlock4,5,tags)"
+                          [nzColor]="tags.color">{{ tags.title }}
+                        </nz-tag>
+                      </ng-container>
+                    </div>
+                    <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+                      <nz-tag class='height-25' *ngIf="showRemoveBlockButtons(suBlock4.type.code)" [nzColor]="'#f4364c'"
+                        nz-popconfirm nzPopconfirmTitle="Are you sure delete this block?"
+                        (nzOnConfirm)="removeBlock(suBlock3, suBlock4, m,5)">Remove</nz-tag>
+                      <!-- <nz-tag
+                        [nzColor]="'#87d068'"
+                        (click)="textAreaFocusOut(suBlock4)"
+                      >
+                        <ng-container *ngIf="!suBlock4.id">Save</ng-container>
+                        <ng-container *ngIf="suBlock4.id">Update</ng-container>
+                      </nz-tag> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="col labels">
+                  {{returnBlockTypeAndIndexValue(suBlock4)}}
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+      <nz-divider *ngIf="block.type.code == 'MEMORANDUM_REGARDING_DELEGATED_LEGISLATION'"></nz-divider>
+    </ng-container>
+    <button *ngIf='this.billDetails.type=="AMENDING_BILL"' nz-button nzType="default" class="mrgL6" style="float: right"
+      (click)="getApprovedBillList(billDetails.blocks.length+1, 25,'EXTRACT')">
+      <span>Import Extract</span>
+    </button>
+  </div>
+</div>
+
+<!-- approved bill list model -->
+<nz-modal [(nzVisible)]="showApprovedBillModel" [nzFooter]="null" [nzClosable]="false" nzWidth="1000"
+  [nzMaskClosable]="false">
+  <nz-tabset>
+    <nz-tab [nzTitle]="'New Acts'">
+      <div class="pd">
+        <div class="row">
+          <div class="col-md-12 text-align-center">
+            <h4>Search and Select Act</h4>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 marginbtm-15">
+            <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+              <input type="text" (keyup)="searchApprovedBillList($event.target.value)" nz-input
+                placeholder="act title/bill no" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+        <nz-table #rowSelectionTable1 nzShowPagination nzShowSizeChanger [nzData]="approvedBillList">
+          <thead>
+            <tr>
+              <th></th>
+              <th>
+                {{
+                "business-dashboard.bill-management.billCreate.billtitle"
+                | translate
+                }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of rowSelectionTable1.data; let i = index">
+              <td>
+                <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="uncheckOtherCheckBox(data.billId, 'new')"></label>
+              </td>
+              <td>{{ data.title }}</td>
+            </tr>
+          </tbody>
+        </nz-table>
+        <div class="row margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button nz-button class="mr6" nzType="default" (click)="showApprovedBillModel = false">
+              {{ "cpl.correspondencelist.cancel" | translate }}
+            </button>
+            <button nz-button nzType="primary" (click)="continueAndSelectSection('new')">
+              {{
+              "business-dashboard.bill-management.billCreate.continueandselect"
+              | translate
+              }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab [nzTitle]="'Old Acts'" *ngIf="oldReferenceActs && oldReferenceActs.length > 0">
+      <div class="pf">
+        <div class="row">
+          <div class="col-md-12 marginbtm-15">
+            <nz-table #rowSelectionTable2 nzShowPagination nzShowSizeChanger [nzData]="oldReferenceActs">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>
+                    {{
+                    "business-dashboard.bill-management.billCreate.billtitle"
+                    | translate
+                    }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of rowSelectionTable2.data; let i = index">
+                  <td>
+                    <label nz-checkbox [(ngModel)]="data.checked" (ngModelChange)="uncheckOtherCheckBox(data.title, 'old')"></label>
+                  </td>
+                  <td>{{ data.title }}</td>
+                </tr>
+              </tbody>
+            </nz-table>
+            <div class="row margnrtp-15">
+              <div class="col-md-12 d-flex justify-content-end">
+                <button nz-button class="mr6" nzType="default" (click)="hideActPopup()">
+                  {{ "cpl.correspondencelist.cancel" | translate }}
+                </button>
+                <button nz-button nzType="primary" (click)="continueAndSelectSection('old')">
+                  {{
+                  "business-dashboard.bill-management.billCreate.continueandselect"
+                  | translate
+                  }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</nz-modal>
+<!-- end  approved bill list model -->
+
+<!-- approved bill content import model -->
+<nz-modal [(nzVisible)]="showApprovedBillSelectModel" [nzFooter]="null" nzWidth="1000"
+  (nzOnCancel)="showApprovedBillSelectModel = false" [nzMaskClosable]="false">
+  <div class="pading-all width-100 word-break">
+    <div class="col-md-12">
+      <lib-create-bill-content-select #billcontentSelect [billDetails]="approvedBillContent" [purpose]="'CREATE_BILL'"
+        (isImported)="importOrCancel($event)">
+      </lib-create-bill-content-select>
+    </div>
+  </div>
+</nz-modal>
+<!-- approved bill content import model -->
+
+
+<!-- model for set table rows and column -->
+<nz-modal [(nzVisible)]="showRowColumnCountModel" [nzFooter]="null" nzWidth="500"
+  (nzOnCancel)="showRowColumnCountModel = false" [nzMaskClosable]="false">
+  <div class="padding-50 width-100 word-break ">
+    <form nz-form [formGroup]="validateForm">
+      <div class="row">
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    Number Of Rows</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfRows" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-form-label>
+                    Number Of Columns</nz-form-label>
+                </div>
+                <div class="col-md-3">
+                  <input (keydown)="onKeydown($event)" type="number" min="1" placeholder="" nz-input
+                    formControlName="numberOfColumns" />
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+        <div class="col-md-9 d-flex justify-content-end" style="margin-top: 14px;">
+          <button nz-button (click)="showRowColumnCountModel = false" class="mr6" nzType="default">
+            {{ "cpl.correspondencelist.cancel" | translate }}
+          </button>
+          <button (click)="createTable()" nz-button nzType="primary">
+            OK
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</nz-modal>
+<!-- end model for set table rows and columns -->

@@ -1,0 +1,52 @@
+.max-num {
+  max-width: 25px;
+  padding-right: 0px !important;
+}
+.max-clause {
+  max-width: 150px;
+  color: #689fcb;
+  font-size: 12px;
+}
+.indent-10 {
+  padding-left: 15px !important;
+}
+.indent-20 {
+  padding-left: 30px !important;
+}
+.indent-30 {
+  padding-left: 45px !important;
+}
+.preamble {
+  max-width: 100px;
+}
+.td-bil {
+  width: 100%;
+  margin: 15px 0px;
+}
+.td-bil td {
+  border: #ccc dashed 1px;
+  padding: 5px;
+}
+.bil_mainhd {
+  font-size: 22px;
+  margin-bottom: 15px;
+}
+.ml6 {
+  margin-left: 6px;
+}
+.maximise {
+  height: auto;
+  width: 100vw;
+  z-index: 99;
+  overflow-y: auto;
+  background-color: #fff !important;
+  max-width: 100vw;
+  padding: 20px;
+}
+.custom_tb {
+  margin-top: 5px;
+}
+.custom_tb td {
+  padding: 5px;
+  border: #b8cee1 solid 1px;
+}

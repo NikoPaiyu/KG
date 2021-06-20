@@ -1,0 +1,423 @@
+<div class="row" *ngIf="!cabNoteDetails">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.election-management.view-registered-document.view" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row d-flex justify-content-between"  *ngIf="!cabNoteDetails">
+    <div class="col-md-5">
+        <h2 class="admin-page-heading">
+            {{"business-dashboard.election-management.view-registered-document.view" | translate}}
+        </h2>
+    </div>
+    <div class="col-md-7 d-flex justify-content-between">
+        <div class="d-flex justify-content-between">
+            <button nzType="default" nz-button (click)="onBackClick()">
+                {{ "cpl.docupload.back" | translate }}
+            </button>
+            <!-- <button nzType="primary"  nz-button class="ml-6" (click)="showProtemPopup()"
+            *ngIf="docDetails?.typeCode === 'CABINET_NOTE' && permission.createProtemSpeaker
+            && docDetails?.businessTags.length === 0">
+                {{ "business-dashboard.election-management.view-registered-document.create-protem-speaker" | translate }}
+            </button>
+            <button nzType="primary"  nz-button class="ml-6" (click)="showSpkElectionPopup('SPEAKER')"
+            *ngIf="docDetails?.typeCode === 'CABINET_NOTE' && permission.createSpeakerElection
+            && docDetails?.businessTags.length === 0">
+                {{ "business-dashboard.election-management.view-registered-document.create-speaker-election" | translate }}
+            </button>
+            <button nzType="primary"  nz-button class="ml-6" (click)="showSpkElectionPopup('DEPUTY_SPEAKER')"
+            *ngIf="docDetails?.typeCode === 'SPEAKER_ORDER' && permission.createSpeakerElection
+            && docDetails?.businessTags.length === 0">
+                {{ "business-dashboard.election-management.view-registered-document.create-deputy-speaker-election" | translate }}
+            </button> -->
+        </div>
+    </div>
+</div>
+<nz-divider  *ngIf="!cabNoteDetails"></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "cpl.docupload.assembly" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{assembly?.assemblyId}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "cpl.docupload.session" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{session?.sessionId}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "cpl.docupload.receivedfrom" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{docDetails?.receivedFrom}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.election-management.pending -document.list.received-date" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{docDetails?.receivedDate | date: 'dd/MM/yyyy'}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.swearing-in.subject" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{docDetails?.title}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-12">
+        <div class="col-md-4">
+            <nz-form-label>
+                {{"cpl.correspondence.attachments" | translate}}
+            </nz-form-label>
+        </div>
+        <nz-form-item>
+            <div class="row">
+
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <ng-container *ngFor="let docs of docDetails?.attachments">
+                            <div class="row margnrtp-15">
+                                <div class="col-md-3">
+                                    {{"business-dashboard.question.type" | translate}}: {{docs?.attachmentType}}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ "business-dashboard.election-management.view-registered-document.title" | translate }}: 
+                                    {{docs?.title}}
+                                </div>
+                                <div class="col-md-3">
+                                    {{ "business-dashboard.election-management.view-registered-document.preview" | translate }}:
+                                    <i (click)="showPdfModal(docs.documentUrl)" class="preview-icon pointer" nz-icon
+                                        nzType="file" nzTheme="outline"></i>
+                                </div>
+                            </div>
+
+                        </ng-container>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "cpl.docupload.coveringletter" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <ng-container *ngFor="let cover of docDetails?.attachments">
+                            <i *ngIf="cover.type == 'COVERING_LETTER'" (click)="showPdfModal(cover.documentUrl)"
+                                class="preview-icon pointer" nz-icon nzType="file" nzTheme="outline"></i>
+                        </ng-container>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{
+                        "cpl.docupload.otherdocuments" | translate
+                        }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <ng-container *ngFor="let cover of docDetails?.attachments">
+                            <i *ngIf="cover.type == 'OTHERS'" (click)="showPdfModal(cover.documentUrl)"
+                                class="preview-icon pointer" nz-icon nzType="file" nzTheme="outline"></i>
+                        </ng-container>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+
+<!-- document viewer modal -->
+<nz-modal [(nzVisible)]="isPdfVisible" [nzFooter]="null" (nzOnCancel)="hideModal()" nzWidth="800">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <ngx-doc-viewer [url]="docUrl" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of document viewer modal -->
+
+<!-- create protem speaker modal -->
+<nz-modal [(nzVisible)]="isProtemVisible" [nzFooter]="null" nzWidth="500" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{ "business-dashboard.election-management.view-registered-document.protem-speaker-name" | translate }}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <nz-select [(ngModel)]="protemSpeaker" name="protemSpeaker" nzAllowClear nzShowSearch nzPlaceHolder="Select Protem Speaker">
+                            <nz-option *ngFor="let member of memberList" [nzLabel]="member.details.fullName" [nzValue]="member.userId"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button nzType="default" nz-button (click)="hideProtemModal()">
+                            {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                        </button>
+                        <button nzType="primary" class="ml-6" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to create protem speaker?"
+                            (nzOnConfirm)="createProtemSpeaker()" [disabled]="!protemSpeaker">
+                            {{ "business-dashboard.election-management.view-registered-document.create-protem-speaker" | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of create protem speaker modal -->
+
+<!-- create speaker election modal -->
+<nz-modal [(nzVisible)]="isSpkVisible" [nzFooter]="null" nzWidth="600" [nzClosable]="false" 
+nzTitle="Create &nbsp;{{electionType?.split('_')?.join(' ')|titlecase}}&nbsp; Election">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <form nz-form [formGroup]="createSpeakerForm" *ngIf="isSpkVisible">
+                    <div class="row">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "cpl.docupload.assembly" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control nzErrorTip="assembly required">
+                                  <nz-select
+                                    nzAllowClear
+                                    nzPlaceHolder="{{ 'cpl.docupload.selassembly' | translate }}"
+                                    formControlName="assemblyId"
+                                    (ngModelChange)="getSessionList()"
+                                  >
+                                  <ng-container *ngFor="let item of assemblyList">
+                                    <nz-option
+                                      *ngIf="item.id !== 0"
+                                      [nzLabel]="item.assemblyId"
+                                      [nzValue]="item.id"
+                                    >
+                                    </nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "cpl.docupload.session" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control nzErrorTip="session required">
+                                  <nz-select
+                                    nzAllowClear
+                                    nzPlaceHolder="{{ 'cpl.docupload.selsession' | translate }}"
+                                    formControlName="sessionId"
+                                    (ngModelChange)="OnAssemblySessionChange()"
+                                  >
+                                  <ng-container *ngFor="let item of sessionList">
+                                    <nz-option
+                                      *ngIf="item.id !== 0"
+                                      [nzLabel]="item.sessionId"
+                                      [nzValue]="item.id"
+                                    >
+                                    </nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                      <div class="row mt-6">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.nomination-end-date" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="nomination end date required">
+                                    <nz-date-picker
+                                      [nzFormat]="'dd-MM-yyyy'"
+                                      formControlName="nominationEndDate"
+                                      [nzDisabledDate]="disabledDate"
+                                    ></nz-date-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.nomination-end-time" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="nomination end time required">
+                                    <nz-time-picker formControlName="nominationEndTime" 
+                                    ></nz-time-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                      <div class="row mt-6">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.election-date" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="election date required">
+                                    <nz-date-picker
+                                      [nzFormat]="'dd-MM-yyyy'"
+                                      formControlName="electionDate"
+                                      [nzDisabledDate]="disabledElectionDate"
+                                      [nzDisabled]="createSpeakerForm.get('nominationEndDate').value === null ||
+                                      createSpeakerForm.get('nominationEndTime').value === null"
+                                    ></nz-date-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.election-time" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="election time required">
+                                    <nz-time-picker formControlName="electionTime" 
+                                    [nzDisabled]="createSpeakerForm.get('nominationEndDate').value === null ||
+                                      createSpeakerForm.get('nominationEndTime').value === null"
+                                    ></nz-time-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                </form>
+                <div class="row mt-20">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button nzType="default" nz-button (click)="hideModal()">
+                           {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                        </button>
+                        <button nzType="primary" class="ml-6" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to create &nbsp;{{electionType?.split('_')?.join(' ')|lowercase}}&nbsp; election?"
+                            (nzOnConfirm)="createSpeakerElection()">
+                            Create &nbsp;{{electionType?.split('_')?.join(' ')|titlecase}}&nbsp; Election
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of create speaker election modal -->

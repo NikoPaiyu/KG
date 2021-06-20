@@ -1,0 +1,110 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.tables.protemspkrauthlist.psal" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+<<<<<<< HEAD
+      <h2 class="admin-page-heading">Protem Speaker Auth List</h2>
+=======
+        <h3>{{ "business-dashboard.tables.protemspkrauthlist.psal" | translate }}</h3>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-4">
+    </div>
+    <div class="col-md-8">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input type="text" [(ngModel)]="search" name="search" nz-input placeholder='{{ "business-dashboard.tables.protemspkrauthlist.searchhere" | translate }}'
+              (ngModelChange)="searchProtemList()" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+            {{ "business-dashboard.tables.protemspkrauthlist.cols" | translate }}
+          </button>
+        </div>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+              <li>
+                <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                  (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+<div class="row marginbtm-15">
+    <nz-table #pendingTable nzShowPagination nzShowSizeChanger [nzData]="proTemSpeakerauthList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check">
+                    {{ "business-dashboard.tables.protemspkrauthlist.slno" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="fileNumber">
+                   {{ "business-dashboard.tables.protemspkrauthlist.filenumber" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[3].check">
+                    {{ "business-dashboard.tables.protemspkrauthlist.content" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{ "business-dashboard.tables.protemspkrauthlist.protemspeaker" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.tables.protemspkrauthlist.status" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of pendingTable.data; let i = index" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                <td *ngIf="colCheckboxes[0].check">{{ i+1 }}</td>
+                <td *ngIf="colCheckboxes[2].check"  class="viewlink" (click)="viewFile(list.fileId)">{{ list.fileNumber }}</td>
+                <td *ngIf="colCheckboxes[3].check">
+                  <tr>
+                    <i (click)="showContent(list.content)" class="preview-icon pointer" nz-icon
+                      nzType="file" nzTheme="outline"></i>
+                  </tr>
+                  <tr *ngIf="list.viewLinks">
+                    <a nz-button nzType="link" class="viewlink" (click)="createBulletinPart2(list)"
+                    *ngIf="!list.bulletinId && list.status === 'APPROVED' && permission.createBulletin">
+                      {{ "business-dashboard.tables.protemspkrauthlist.createbulletin" | translate }}
+                    </a>
+                </tr>
+                </td>
+                <td *ngIf="colCheckboxes[4].check" class="viewlink" (click)="viewProtemSpeaker(list.proTemSpeakerId)">{{ "business-dashboard.tables.protemspkrauthlist.view" | translate }}</td>
+                <td *ngIf="colCheckboxes[5].check">
+                    <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</div>
+
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle=' {{ "business-dashboard.tables.protemspkrauthlist.createbulletinpart" | translate }}' (nzOnCancel)="cancelBulletin()">
+  <tables-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)">
+  </tables-create-bulletin-form>
+</nz-modal>
+
+<nz-modal [nzFooter]="null" [(nzVisible)]="showContentPopup" nzTitle=' {{ "business-dashboard.tables.protemspkrauthlist.protemspeakeroath" | translate }}' (nzOnCancel)="cancelBulletin()">
+  <quill-view-html [content]="oathContent" *ngIf="oathContent"></quill-view-html>
+</nz-modal>

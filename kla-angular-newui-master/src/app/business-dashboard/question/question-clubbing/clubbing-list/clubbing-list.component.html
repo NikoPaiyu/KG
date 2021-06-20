@@ -1,0 +1,75 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="['/business-dashboard/question/question-dept-dashboard']"
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.qclubbing.request" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h3>
+      {{ "business-dashboard.question.qclubbing.request" | translate }}
+    </h3>
+  </div>
+</div>
+
+<nz-divider></nz-divider>
+<div class="row margnrtp-15 justify-content-end">
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchParam"
+            name="search"
+            nz-input
+            placeholder="{{
+              'business-dashboard.question.questionlist.inputsearch' | translate
+            }}"
+            (ngModelChange)="onSearchUser()"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-table
+  #filterTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="listOfData"
+  class="table-all"
+>
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th nzShowSort nzSortKey="fromQuestion">
+        {{ "business-dashboard.question.qclubbing.reqon" | translate }}
+      </th>
+      <th nzShowSort nzSortKey="toQuestion">
+        {{ "business-dashboard.question.qclubbing.reqwith" | translate }}
+      </th>
+      <th nzShowSort nzSortKey="requestedDate">
+        {{ "business-dashboard.question.qclubbing.requestedon" | translate }}
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data" (click)="view(list)">
+      <td>{{ list.fromQuestion }}</td>
+      <td>{{ list.toQuestion }}</td>
+      <td>{{ list.requestedDate | date: "dd-MM-yyyy" }}</td>
+    </tr>
+  </tbody>
+</nz-table>

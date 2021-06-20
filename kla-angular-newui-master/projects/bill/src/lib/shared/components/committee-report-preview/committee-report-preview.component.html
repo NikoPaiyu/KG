@@ -1,0 +1,17 @@
+
+    <div class="padding_25">
+        <div  class="row margnrtp-15">
+          <div class="col-md-12 align-right">
+            <button *ngIf="!isFileView" class="mr-6" nz-button (click)="cancelPreview()">Cancel</button>
+            <button *ngIf="!isFileView" class="mr-6" nzType="primary" nz-button (click)="downloadReport()">Download Report</button>
+
+            <!-- <button *ngIf="!isFileView && billDetails && billDetails?.committeReportStatus == 'SAVED'" class="mr-6" nzType="primary" nz-button (click)="generateReport()">Attach to File</button> -->
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+       <div [innerHtml]="previewContent"></div>
+      </div>
+      </div>
+    </div>
+      

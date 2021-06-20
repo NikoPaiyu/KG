@@ -1,0 +1,61 @@
+<app-dashboard dashboardTitle="Disposal Dashboard" [dashboardBreadcums]="disposalBreadCums" [dashboardSearchPlaceholder]="'Search Request'" (dashboardSearchEvent)="onDashboardSearch($event)">
+        <div class="header-action">
+            <button nz-button nzType="primary" (click)="navigateToCreateRequest()">Create Request</button>
+        </div>
+        <div class="grid-action-left">
+        <form [formGroup]="disposalFilterForm">
+            <div class="d-flex flex-row justify-content-between align-items-center">
+                <div class="filter d-flex flex-row justify-content-between align-items-center">
+                    <div class="filter-datepicker mr-2 d-flex flex-row justify-content-between align-items-center flex-fill">
+                        <span class="filter-label">Disposal Date</span>
+                        <nz-range-picker formControlName="date" [nzPlaceHolder]="['Disposal Start Date','Disposal End Date']"></nz-range-picker>
+                    </div>
+                    <div class="filter-status d-flex flex-row justify-content-between align-items-center flex-fill">
+                        <span class="filter-label">Disposal Status</span>
+                        <nz-select formControlName="status">
+                            <nz-option nzValue="{{status}}" nzLabel="{{status}}" *ngFor="let status of disposalStatusList"></nz-option>
+                        </nz-select>
+                    </div>
+                    <div class="filter-reset">
+                        <button nz-button nzType="default"(click)="resetFilter()" class="ml-4">Clear Filter</button>
+                    </div>
+            </div>  
+            </div>
+        </form>
+        </div>
+
+        <div class="grid-action-right">
+
+        </div>
+        <div class="grid-content">
+            <nz-table #basicTable [nzData]="disposalList$ | async" nzShowPagination
+            nzShowSizeChanger>
+                <thead>
+                    <tr>
+                        <th>Request No.</th>
+                        <th nzShowSort nzSortKey="dateForDisposal">Disposal Date</th>
+                        <th>Reason For Disposal</th>
+                        <th>Expected Disposal Value</th>
+                        <th>Disposal Method</th>
+                        <th>Remarks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let request of basicTable.data">
+                        <td>
+                            <span class="text-decoration-link" (click)="navigateToEditRequest(request)">{{request.id}}</span>
+                        </td>
+                        <td>{{request.dateForDisposal | date: 'dd/MM/yyyy'}}</td>
+                        <td>{{request.reasonForDisposal}}</td>
+                        <td>{{request.expectedDisposalValue}}</td>
+                        <td>{{request.disposalMethod}}</td>
+                        <td>{{request.remarks}}</td>
+                        <td [ngStyle]="{'color': request.statusOfDisposal === 'AWAITING_APPROVAL' ? '#FF8000' : 'Blue' }" class="font-weight-bold">{{request.statusOfDisposal | uppercase}}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>  
+
+
+</app-dashboard>

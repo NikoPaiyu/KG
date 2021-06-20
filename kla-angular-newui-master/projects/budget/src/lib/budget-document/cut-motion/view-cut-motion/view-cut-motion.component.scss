@@ -1,0 +1,35 @@
+.input {
+    padding: 8px 16px;
+    //border: 1px solid #ddd;
+    width: 150px;
+}
+
+.orstyle {
+    background-color: #919191;
+    width: 35px;
+    height: 35px;
+    display: block;
+    position: absolute;
+    left: 45%;
+    top: -17px;
+    border-radius: 100%;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+}
+
+.border_style {
+    width: 100%;
+    position: relative;
+    border-bottom: #919191 solid 1px;
+    margin: 30px 0px;
+}
+
+.disabledDiv {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.ml-6 {
+    margin-left: 6px;
+}

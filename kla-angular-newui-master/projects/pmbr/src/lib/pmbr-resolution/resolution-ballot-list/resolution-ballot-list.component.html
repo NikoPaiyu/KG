@@ -1,0 +1,183 @@
+<!-- <p>resolution-ballot-list works!</p> -->
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "bill-amendments.bill.balloting" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading"> {{ "bill-amendments.bill.balloting" | translate }}</h2>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+
+  <nz-tabset>
+    <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-ballot-list.ballotlist" | translate }}'>
+      <div class="row marginbtm-15">
+        <div class="col-md-2 d-flex align-items-center whitespace">
+            {{ "business-dashboard.question.assembly" | translate }}
+            <nz-select nzAllowClear name="assemblyId" [(ngModel)]="assemblyId" 
+            (ngModelChange)="getSessionForAssembly()">
+                <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                </nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-2 d-flex align-items-center whitespace">
+            {{ "business-dashboard.question.questionlist.session" | translate }}
+            <nz-select nzAllowClear name="sessionId" [(ngModel)]="sessionId"
+                (ngModelChange)="ballotlistforSection()">
+                <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                </nz-option>
+            </nz-select>
+        </div>
+        </div>
+    <nz-table #fileTable nzShowPagination  [nzData]="ballotListing" class="table-all">
+      <thead nzSingleSort>
+        <tr>
+          <th>
+            {{ "business-dashboard.pmbr.resolution-ballot-list.lottingtype" | translate }}
+          </th>
+          <th>
+            {{ "business-dashboard.pmbr.resolution-ballot-list.lottingdate" | translate }}
+          </th>
+          <th>
+            {{ "business-dashboard.pmbr.resolution-ballot-list.presentationdate" | translate }}
+          </th>
+          <th>
+            {{ "business-dashboard.question.view" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr (click)="ViewBallotResult(list.id)">
+          <td  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+            <tr>{{ list.lottingType }}</tr>
+            <tr *ngIf="list.viewLinks && list.lottingType === 'RESOLUTION'">
+              <td *ngIf="list.fileId && !list.resolutionBulletinId && createBulletinPermission && list.createBulletin">
+                <a class="viewlink" 
+                (click)="createBulletin(list)">{{ "business-dashboard.pmbr.resolution-ballot-list.createbulletin" | translate }}</a>
+              </td>
+              <td *ngIf="list.resolutionBulletinId">
+                <a class="viewlink"  (click)="viewBulletin(list.resolutionBulletinId)">{{ "business-dashboard.pmbr.resolution-ballot-list.viewbulletin" | translate }}</a>
+              </td>
+            </tr>
+          </td>
+          <td>
+            {{ list.lottingDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td>
+            {{ list.presentationDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td>
+            <a href="javascript:;" class="viewlink" (click)="ViewBallotResult(list.id)">
+              {{ "cpl.correspondencelist.view" | translate }}</a>
+          </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+    </nz-tab>
+
+    <!-- <nz-tab nzTitle="Bills">
+        <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="ballotListingForDepartment" class="table-all">
+          <thead nzSingleSort>
+            <tr>
+              <th></th>
+              <th>
+               Assembly
+              </th>
+              <th>
+                Session
+              </th>
+              <th>
+                Presentation date
+              </th>
+              <th>
+               View
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let list of fileTable.data; let i = index">
+              <tr>
+            
+              <td>
+                {{ list.type }}
+              </td>
+              <td>
+                {{ list.language }}
+              </td>
+              <td>
+                {{ list.minister }}
+              </td>
+              <td>
+                {{ list.department }}
+              </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </nz-table>
+        </nz-tab> -->
+    </nz-tabset>
+
+
+
+<!--     
+    <nz-modal [nzFooter]="null" [(nzVisible)]="createFilePopUp" (nzOnCancel)="onCancelCreateFilePopup()">
+
+          <div class="row margnrtp-15">
+            <div class="col-md-4">File Subject</div>
+            <div class="col-md-8">
+              <input nz-input placeholder="File subject" [(ngModel)]="file.subject"/>
+            </div>
+            </div>
+            <div class="row margnrtp-15">
+            <div class="col-md-4">Priority</div>
+            <div class="col-md-8">
+              <nz-radio-group [(ngModel)]="file.priority">
+              <label nz-radio nzValue="URGENT">Urgent</label>
+              <label nz-radio nzValue="NORMAL">Normal</label>
+              <label nz-radio nzValue="ACTION_TODAY"> Action Today</label>
+              <label nz-radio nzValue="ASSEMBLY_URGENT">Assembly Urgent</label>
+              </nz-radio-group>
+            </div>
+            </div>
+            <div class="row margnrtp-15">
+            <div class="col-md-4">Description</div>
+            <div class="col-md-8">
+              <textarea nz-input rows="2" placeholder="File description" [(ngModel)]="file.description"></textarea>
+            </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font"
+              (click)="onCancelCreateFilePopup()">
+              Cancel
+              </button>
+              <button type="button" nz-button nzType="primary" nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to create file?" (nzOnConfirm)="createFile()"
+              class="btn btn-primary primary-button">
+              Create File
+              </button>
+            </div>
+            </div>
+       
+      
+      </nz-modal> -->
+
+      <nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" 
+      nzTitle=' {{ "Create Bulletin Part 2" | translate }}' (nzOnCancel)="cancelBulletin()">
+      <pmbr-create-bullettin-form *ngIf="bulletinData" [bulletinData]="bulletinData"  
+        (afterCreate)="afterCreateBulletin($event)">
+      </pmbr-create-bullettin-form>
+    </nz-modal>

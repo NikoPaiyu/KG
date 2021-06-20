@@ -1,0 +1,398 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.forms.form-list.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.election-management.speaker-election-list" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+<<<<<<< HEAD
+    <div class="col-md-12">
+        <h2 class="admin-page-heading">Election List</h2>
+=======
+    <div class="col-md-6">
+        <h3>
+            {{"business-dashboard.election-management.speaker-election-list" | translate}}
+        </h3>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button nzType="primary" (click)="showSpeakerElectionPopup('SPEAKER')"
+        *ngIf="permission.createSpeakerElection"
+           class="mrgL6">
+            {{"business-dashboard.election-management.view-registered-document.create-speaker-election" | translate}}
+        </button>
+        <button nzType="primary"  nz-button class="ml-6" 
+        *ngIf="permission.createSpeakerElection"
+        (click)="showSpeakerElectionPopup('DEPUTY_SPEAKER')">
+                {{ "business-dashboard.election-management.view-registered-document.create-deputy-speaker-election" | translate }}
+        </button>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-3">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                {{"business-dashboard.question.assembly" | translate}}:
+            </div>
+            <div class="col-md-6">
+                <nz-select [(ngModel)]="assemblyId" (ngModelChange)="getElectionSpeakerList()" name="assembly">
+                    <nz-option *ngFor="let assembly of assemblyList" [nzValue]="assembly.id" [nzLabel]="assembly.assemblyId"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+      </div>
+    <div class="col-md-3">
+      <div class="row d-flex justify-content-end">
+          <div class="col-md-6">
+              <ng-container *ngIf="!permission.createNomination">{{"business-dashboard.forms.form-list.status" | translate}}:</ng-container>
+          </div>
+          <div class="col-md-6">
+              <nz-select [(ngModel)]="speakerStatus" (ngModelChange)="getElectionSpeakerList()" name="speakerStatus"
+              *ngIf="!permission.createNomination">
+                  <nz-option *ngFor="let type of speakerStatusList" [nzValue]="type" [nzLabel]="type"></nz-option>
+              </nz-select>
+          </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                {{"business-dashboard.swearing-in.election-type" | translate}}:
+            </div>
+            <div class="col-md-6">
+                <nz-select [(ngModel)]="electionType" (ngModelChange)="getElectionSpeakerList()" name="electionType">
+                    <nz-option nzValue="SPEAKER" nzLabel="Speaker"></nz-option>
+                    <nz-option nzValue="DEPUTY_SPEAKER" nzLabel="Deputy Speaker"></nz-option>
+                </nz-select>
+            </div>
+        </div>
+      </div>
+    <div class="col-md-3">
+      <div class="row d-flex justify-content-end">
+          <div class="col-md-6">
+              <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                <input type="text" [(ngModel)]="search" name="search" nz-input 
+                placeholder= '{{ "business-dashboard.forms.form-list.search-here" | translate }}'
+                (ngModelChange)="searchProtemList()" />
+              </nz-input-group>
+              <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search"></i>
+              </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{"business-dashboard.election-management.protem-speaker-auth-list.cols" | translate}}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+      </div>
+    </div>
+</div>
+<div class="row marginbtm-15">
+    <nz-table #speakerTable nzShowPagination nzShowSizeChanger [nzData]="electionList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+            <th *ngIf="colCheckboxes[0].check" nzShowSort>
+                {{"business-dashboard.forms.form-list.sl-no" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="nominationEndDate">
+                {{"business-dashboard.election-management.speaker-election-list.nomination-end-date" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[2].check">
+                {{"business-dashboard.election-management.speaker-election-list.nomination-end-time" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="electionDate">
+                {{"business-dashboard.election-management.speaker-election-list.election-date" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[4].check">
+                {{"business-dashboard.election-management.speaker-election-list.election-time" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[8].check">
+                {{"business-dashboard.swearing-in.election-type" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[5].check">
+                {{"business-dashboard.election-management.speaker-election-list.CosId" | translate}} 
+            </th>
+            <th *ngIf="colCheckboxes[6].check && permission.viewFile">
+                {{"business-dashboard.election-management.protem-speaker-auth-list.file-number" | translate}}
+            </th>
+            <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+                {{"business-dashboard.forms.form-list.status" | translate}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let list of speakerTable.data; let i=index">
+              <td *ngIf="colCheckboxes[0].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                  {{i+1}}
+                 </td>
+              <td *ngIf="colCheckboxes[1].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                  <tr>{{list.nominationEndDate | date: "dd-MM-yyyy"}}</tr>
+                  <tr *ngIf="list.viewLinks">
+                    <div>
+                        <td>
+                            <a class="viewlink" (click)="showCreateFileModal(list)" *ngIf="!list.fileId && permission.createFile">
+                                {{"cpl.docpreparion.createfile" | translate}}
+                            </a>
+                        </td>
+                        <td>
+                            <a class="viewlink"  (click)="createBulletinPart2(list)" *ngIf="list.status === 'APPROVED' 
+                            && permission.createBulletin &&
+                            !list.bulletinId">
+                            {{"business-dashboard.election-management.speaker-election-list.create-bulletin" | translate}}
+                        </a>
+                            <a class="viewlink"  (click)="viewBulletin(list.bulletinId)" *ngIf="list.bulletinId && permission.viewBulletin">
+                                {{"business-dashboard.election-management.speaker-election-list.view-bulletin" | translate}}
+                            </a>
+                            <a class="viewlink"  (click)="viewNominations(list.id)" *ngIf="list.status === 'APPROVED'">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                                &nbsp;</a>
+                        </td>
+                        <!-- <td>
+                            <a class="viewlink"  (click)="createNominationPopup(list)" *ngIf="list.status === 'APPROVED' 
+                            && permission.createNomination && list.bulletinId">&nbsp;Create Nomination</a>
+                        </td> -->
+                    </div>
+                </tr>
+              </td>
+              <td *ngIf="colCheckboxes[2].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{list.nominationEndTime}}</td>
+              <td *ngIf="colCheckboxes[3].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{list.electionDate | date: "dd-MM-yyyy"}}</td>
+              <td *ngIf="colCheckboxes[4].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{list.electionTime}}</td>
+              <td *ngIf="colCheckboxes[8].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{list.electionType?.split('_')?.join(' ')}}</td>
+              <td *ngIf="colCheckboxes[5].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)"><a class="viewlink" (click)="showCOS(list.cosId)">
+                {{"business-dashboard.swearing-in.view" | translate}}
+              </a></td>
+              <td *ngIf="colCheckboxes[6].check && permission.viewFile"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)"><a class="viewlink" 
+                (click)="viewFile(list.fileId)">{{list.fileNumber}}</a></td>
+              <td *ngIf="colCheckboxes[7].check"  (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+            </td>
+          </tr>
+        </tbody>
+    </nz-table>
+</div>
+
+<nz-modal [(nzVisible)]="showFileModal" [nzFooter]="null" nzWidth="550" [nzClosable]="false">
+    <tables-attach-to-file *ngIf="speakerElectionDetails" [typeOfFile]="speakerElectionDetails?.electionType"
+    [electionDetails]="speakerElectionDetails"
+(closePopup)="getElectionSpeakerList();hideFileModal()"></tables-attach-to-file>
+</nz-modal>
+
+<nz-modal [nzFooter]="null" [(nzVisible)]="bulletin.showBulletinPart2Popup" nzTitle=' {{ "business-dashboard.election-management.protem-speaker-auth-list.create-bulletin-part-2" | translate }}' (nzOnCancel)="cancelBulletin()">
+    <tables-create-bulletin-form [bulletinData]="bulletin.bulletinData" (afterCreate)="afterCreateBulletin($event)">
+    </tables-create-bulletin-form>
+  </nz-modal>
+
+  <nz-modal [nzFooter]="null" [(nzVisible)]="speakerNomination.showPopup" nzTitle=' {{ "business-dashboard.election-management.speaker-election-list.create-nomination" | translate }}' 
+  (nzOnCancel)="cancelNomination()" nzWidth="850">
+    <tables-create-election-nomination *ngIf="speakerNomination.nominationDetails" (afterCreate)="cancelNomination()" 
+    [nominationData]="speakerNomination.nominationDetails"></tables-create-election-nomination>
+</nz-modal>
+<nz-modal [(nzVisible)]="viewBulletinModal" nzTitle="Bulletin Preview" [nzFooter]="null" nzWidth="1050"
+    (nzOnCancel)="hidePreview()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button nz-button nzType="primary" nz-popconfirm
+                    *ngIf="permission.publishBulletin && bulletinData?.status === 'APPROVED'"
+                    nzPopconfirmTitle='{{"Do you want to publish bulletin?" | translate}}'
+                    (nzOnConfirm)="publishBulletin()" nzPopconfirmPlacement="leftTop">
+                    {{ "business-dashboard.election-management.speaker-election-list.publish-bulletin" | translate }}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p [innerHTML]="bulletinData?.reportData | safeHtml"></p>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<!-- create speaker election modal -->
+<nz-modal [(nzVisible)]="isSpkPopupVisible" [nzFooter]="null" nzWidth="600" [nzClosable]="false" 
+nzTitle="Create &nbsp;{{registerElectionType?.split('_')?.join(' ')|titlecase}}&nbsp; Election">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <form nz-form [formGroup]="createSpeakerForm" *ngIf="isSpkPopupVisible">
+                    <div class="row">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "cpl.docupload.assembly" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control nzErrorTip="assembly required">
+                                  <nz-select
+                                    nzAllowClear
+                                    nzPlaceHolder="{{ 'cpl.docupload.selassembly' | translate }}"
+                                    formControlName="assemblyId"
+                                    (ngModelChange)="getSessionList()"
+                                  >
+                                  <ng-container *ngFor="let item of assemblyList">
+                                    <nz-option
+                                      *ngIf="item.id !== 0"
+                                      [nzLabel]="item.assemblyId"
+                                      [nzValue]="item.id"
+                                    >
+                                    </nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "cpl.docupload.session" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control nzErrorTip="session required">
+                                  <nz-select
+                                    nzAllowClear
+                                    nzPlaceHolder="{{ 'cpl.docupload.selsession' | translate }}"
+                                    formControlName="sessionId"
+                                    (ngModelChange)="OnAssemblySessionChange();getCOSDates()"
+                                  >
+                                  <ng-container *ngFor="let item of sessionList">
+                                    <nz-option
+                                      *ngIf="item.id !== 0"
+                                      [nzLabel]="item.sessionId"
+                                      [nzValue]="item.id"
+                                    >
+                                    </nz-option>
+                                  </ng-container>
+                                  </nz-select>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                      <div class="row mt-6">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.nomination-end-date" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="nomination end date required">
+                                    <nz-date-picker
+                                      [nzFormat]="'dd-MM-yyyy'"
+                                      formControlName="nominationEndDate"
+                                      [nzDisabledDate]="disabledDate"
+                                      (ngModelChange)="electionDateValidation()"
+                                    ></nz-date-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.nomination-end-time" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="nomination end time required">
+                                    <nz-time-picker formControlName="nominationEndTime" 
+                                    ></nz-time-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                      <div class="row mt-6">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.election-date" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="election date required">
+                                    <nz-date-picker
+                                      [nzFormat]="'dd-MM-yyyy'"
+                                      formControlName="electionDate"
+                                      [nzDisabledDate]="disabledElectionDate"
+                                      (ngModelChange)="nominationDateValidation()"
+                                      [nzDisabled]="createSpeakerForm.get('nominationEndDate').value === null ||
+                                      createSpeakerForm.get('nominationEndTime').value === null || createSpeakerForm.get('sessionId').value === null"
+                                    ></nz-date-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <div class="row">
+                              <div class="col-md-4">
+                                <nz-form-label>{{
+                                  "business-dashboard.election-management.speaker-election-list.election-time" | translate
+                                }}</nz-form-label>
+                              </div>
+                              <div class="col-md-8">
+                                <nz-form-control  nzErrorTip="election time required">
+                                    <nz-time-picker formControlName="electionTime" 
+                                    [nzDisabled]="createSpeakerForm.get('nominationEndDate').value === null ||
+                                      createSpeakerForm.get('nominationEndTime').value === null || createSpeakerForm.get('sessionId').value === null"
+                                    ></nz-time-picker>
+                                </nz-form-control>
+                              </div>
+                            </div>
+                          </nz-form-item>
+                        </div>
+                      </div>
+                </form>
+                <div class="row mt-20">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button nzType="default" nz-button (click)="hideModal()">
+                           {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                        </button>
+                        <button nzType="primary" class="ml-6" nz-button nz-popconfirm nzPopconfirmTitle="Do you want to create &nbsp;{{registerElectionType?.split('_')?.join(' ')|lowercase}}&nbsp; election?"
+                            (nzOnConfirm)="createSpeakerElection()">
+                            Create &nbsp;{{registerElectionType?.split('_')?.join(' ')|titlecase}}&nbsp; Election
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of create speaker election modal -->

@@ -1,0 +1,84 @@
+<nz-table
+  #filterTable
+  nzShowPagination
+  nzShowSizeChanger
+  class="table-all"
+  [nzData]="electedMember?.electionDetails"
+>
+  <thead nzSingleSort>
+    <tr>
+      <th>{{"business-dashboard.question.assembly" | translate}}</th>
+      <th>{{"business-dashboard.swearing-in.constituency"|translate}}</th>
+      <!-- <th>
+        ElectionDate
+      </th> -->
+      <th>{{"business-dashboard.question.questionmlalisting.party"|translate}}</th>
+      <!-- <th>
+        Result Date
+      </th> -->
+      
+      <th>{{"business-dashboard.question.questionlist.status"|translate}}</th>
+      <th>{{"business-dashboard.swearing-in.oath-from"|translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data">
+      <td>
+        {{ list?.assemblyValue }}
+      </td>
+      <td>{{ list?.constituencyName }}</td>
+      <!-- <td >{{ list?.electionDate }}</td> -->
+      <td>{{ list?.partyName }}</td>
+      <!-- <td >{{ list?.resulDate }}</td> -->
+     
+      <td>
+        <nz-tag> {{ list?.status?.split('_').join(' ') }}</nz-tag>
+      </td>
+      <td>
+        {{list?.oathForm?.split('_').join(' ') | titlecase}}
+        <button
+          *ngIf="list?.status == 'ELECTED' && list?.oathForm == null"
+          nz-button
+          nzType="primary"
+         
+          (click)="showOath(list)"
+        >
+        {{"business-dashboard.swearing-in.submit-oath-from" | translate}}
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<nz-modal
+  [(nzVisible)]="oathPopup"
+  nzTitle="{{'business-dashboard.swearing-in.submit-oath-from' | translate}}"
+  nzClosable="false"
+  [nzFooter]="null"
+  nzWidth="600"
+>
+  <div class="padding_25">
+    <div class="row  margnrtp-15">
+      <div Class="col-md-4">{{"business-dashboard.swearing-in.form-of-oath"|translate}}</div>
+      <div Class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="selected">
+          <nz-option
+            *ngFor="let oath of oathList"
+            [nzValue]="oath.code"
+            nzLabel="{{ translate.getDefaultLang()=='mal' ?  oath.nameMl :  oath.name}}"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+
+    <div class="row  margnrtp-15">
+      <div Class="col-md-12 align-right">
+        <button class="mr-6" nz-button nzType="default" (click)="cancel()">{{"business-dashboard.question.cancel"|translate}}</button>
+        <button nz-button nzType="primary" (click)="submitAOth()">
+          {{"business-dashboard.swearing-in.submit-oath-from" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

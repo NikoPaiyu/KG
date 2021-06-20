@@ -1,0 +1,1113 @@
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          <a>{{
+            "noticeprocessing.notice.createnotice.dashboard" | translate
+          }}</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.selectnoticetype.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-8">
+      <h4>
+        {{ "noticeprocessing.notice.selectnoticetype.notice" | translate }}
+        {{ noticeDetails?.notice?.noticeNumber }}
+      </h4>
+    </div>
+    <div class="col-md-4">
+      <!-- <button nz-button nzType="default" class="mrgL6">...</button> -->
+     
+      <!-- <button nz-button nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"><span class="mrgR6">Attachments</span></button> -->
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu nzSelectable>
+          <li nz-menu-item>
+            {{"business-dashboard.question.questionview.attachment" | translate}}1<i nz-icon nzType="download"></i
+            ><i nz-icon nzType="delete"></i>
+          </li>
+          <li nz-menu-item>
+            {{"business-dashboard.question.questionview.attachment" | translate}}2<i nz-icon nzType="download"></i
+            ><i nz-icon nzType="delete"></i>
+          </li>
+          <li nz-menu-divider></li>
+          <li nz-menu-item (click)="showModal()">
+            <i nz-icon nzType="paper-clip"></i>{{"business-dashboard.notice-proc.newattachment" | translate}}
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+    </div>
+    <nz-modal
+      [(nzVisible)]="isVisibleAttachFiles"
+      nzTitle="New notice attachment"
+      (nzOnCancel)="handleCancel()"
+      [nzFooter]="null"
+    >
+      <div class="row">
+        <div class="col-md-6">
+          <nz-upload nzType="drag" [nzMultiple]="true" nzRequired>
+            <p class="ant-upload-drag-icon">
+              <i nz-icon nzType="inbox"></i>
+            </p>
+            <p class="ant-upload-text">{{"business-dashboard.notice-proc.addattachments" | translate}}</p>
+            <p class="ant-upload-hint">
+              {{"business-dashboard.notice-proc.drag&dropclickbrowfiles" | translate}}
+            </p>
+            <button nz-button nz-type="default">{{"business-dashboard.notice-proc.browsefile" | translate}}</button>
+          </nz-upload>
+        </div>
+        <div class="col-md-6">
+          &nbsp;&nbsp;
+          <p>
+            {{"business-dashboard.notice-proc.filenameext" | translate}}<i
+              nz-icon
+              nzType="delete"
+              class="col-md-6 text-align-right"
+            ></i>
+          </p>
+          <nz-divider></nz-divider>
+          <p>
+            {{"business-dashboard.notice-proc.filenameext" | translate}}<i
+              nz-icon
+              nzType="delete"
+              class="col-md-6 text-align-right"
+            ></i>
+          </p>
+        </div>
+      </div>
+      <br />
+      <div class="width-100">
+        <div class="d-flex justify-content-space-end text-align-right">
+          <button nz-button [nzType]="'primary'">
+            <span>{{"business-dashboard.notice-proc.Attach" | translate}}</span>
+          </button>
+        </div>
+      </div>
+    </nz-modal>
+  </div>
+  <div class="row mrgT10">
+    
+    <div class="col-md-12 d-flex justify-content-flex-end">
+      <div
+        class="col-md-4"
+        *ngIf="noticeButtons.Forward && noticeDetails.notice.currentAssignee"
+      >
+        <nz-select
+          nzAllowClear
+          [(ngModel)]="userRoleId"
+          *ngIf="processRoles.length > 0"
+        >
+          <nz-option
+            *ngFor="let item of processRoles"
+            [nzValue]="item.code"
+            [nzLabel]="item.name"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <button
+      (click)="onVersionClick()"
+      nz-button
+      nz-dropdown
+      class="mrgR6"
+      *ngIf="noticeButtons.Version && noticeDetails?.versionOptions?.length > 1"
+    >
+      {{ "noticeprocessing.noticeprocess.version" | translate }}({{
+        noticeDetails?.versionOptions?.length
+      }})
+      <!-- <i nz-icon nzType="down"></i> -->
+    </button>
+      <button
+      nz-button
+      nzType="default"
+      (click)="drawer()"
+      class="mrgR6"
+      *ngIf="
+        notice.doIHaveAnAccess('NOTE', 'TEMPORARY') ||
+        notice.doIHaveAnAccess('NOTE', 'PERMANENT')
+      "
+    >
+      {{ "noticeprocessing.noticeprocess.note" | translate }}({{
+        noticeDetails?.notice?.numberOfNotes
+      }})
+    </button>
+    <button
+    nz-button
+    nzType="default"
+    class="mrgL6"
+    nz-popconfirm
+    nzPopconfirmTitle='Do you want to forward to the minister?'
+    (nzOnConfirm)="sendMinisterConvenience()"
+    *ngIf="noticeButtons.Approve && templateCode === 'ADJOURNMENT_MOTION'"
+    >
+   Send Minister Convenience
+  </button>
+      <button
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        [disabled]="fileid"
+        *ngIf="
+          noticeButtons.Forward &&
+          processRoles.length > 0 &&
+          noticeDetails.notice.currentAssignee
+        "
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.notice-proc.douwantfornot" | translate}}'
+        (nzOnConfirm)="forwardNotice()"
+        (nzOnCancel)="cancel()"
+      >
+        {{ "noticeprocessing.noticeprocess.forward" | translate }}
+      </button>
+      <nz-modal
+        [(nzVisible)]="popupvisible"
+        [nzOkDisabled]="true"
+        (nzOnCancel)="popupCancel()"
+        [nzFooter]="null"
+        nzTitle='{{"business-dashboard.notice-proc.SendNotification" | translate}}'
+      >
+        <form nz-form [formGroup]="notificationForm" class="p-20">
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-control>
+                  <label>{{"business-dashboard.question.member" | translate}}</label>
+                  <div *ngIf="!fileid">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      formControlName="mlaId"
+                    >
+                      <nz-option
+                        *ngFor="let item of mlaList"
+                        [nzLabel]="item.label"
+                        [nzValue]="item.value"
+                      ></nz-option>
+                    </nz-select>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </form>
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-8">
+            <button
+              nz-button
+              nzType="primary"
+              class="margnrtp-15"
+              (click)="addConsent()"
+              [disabled]="notificationForm.invalid"
+            >
+              {{"cpl.docupload.submit" | translate}}
+            </button>
+            &nbsp;
+            <!-- <button 
+   nz-button
+    type="button"
+    (click)="handleCancelApprovalForm()"
+    class="margnrtp-15"
+  >
+    Cancel
+  </button> -->
+          </div>
+        </div>
+      </nz-modal>
+      <button nz-button nzType="default" class="mrgL6" (click)="backToList()">
+        {{"cpl.docupload.back" | translate}}
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        [disabled]="fileid"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.bullettin-details.douwanttoapprove" | translate}}'
+        (nzOnConfirm)="
+          onApproveButtonClick(this.noticeDetails.notice.templateId)
+        "
+        (nzOnCancel)="cancel()"
+        *ngIf="noticeButtons.Approve && noticeDetails.notice.currentAssignee"
+      >
+        {{ "noticeprocessing.noticeprocess.approve" | translate }}
+      </button>
+      <button
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.notice-proc.areusurewantwithdrawnotice" | translate}}'
+        (nzOnConfirm)="withdrawNotice()"
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        *ngIf="noticeButtons.Withdraw"
+        [disabled]="fileid"
+      >
+        {{ "noticeprocessing.noticeprocess.withdraw" | translate }}
+      </button>
+
+      <button
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        [disabled]="fileid"
+        *ngIf="noticeButtons.Disallow && noticeDetails.notice.currentAssignee"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.calendarofsittings.douwanttodisallow" | translate}}'
+        (nzOnConfirm)="disallowNotice()"
+        (nzOnCancel)="cancel()"
+      >
+        {{ "noticeprocessing.noticeprocess.disallow" | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        [disabled]="fileid"
+        *ngIf="notice.doIHaveAnAccess('FILE', 'CREATE') && isFileFlow"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.notice-proc.douwantattthenottofile" | translate}}'
+        (nzOnConfirm)="attachTofile()"
+        (nzOnCancel)="cancel()"
+      >
+        {{"cpl.documents.attachtofile" | translate}}
+      </button>
+      <!-- <button
+        nz-button
+        nzType="default"
+        class="mrgL6"
+        *ngIf="noticeButtons.Revoke"
+      >
+        {{ "noticeprocessing.noticeprocess.revoke" | translate }}
+      </button> -->
+      <button
+        nz-button
+        nzType="primary"
+        class="mrgL6"
+        *ngIf="
+          ((noticeDetails.notice.currentAssignee) ||  
+          (noticeDetails.notice.status === 'APPROVED' && noticeDetails.notice.workflowCode === 'NOTICE_RULE_275'))
+          &&
+          notice.doIHaveAnAccess('SAVE_CHANGES', 'READ')
+        "
+        (click)="saveNotice()"
+      >
+        {{ "noticeprocessing.noticeprocess.savechanges" | translate }}
+      </button>
+    </div>
+  </div>
+  <div class="row mrgT10">
+    <div class="col-md-12">
+    
+    </div>
+  </div>
+
+  <nz-divider></nz-divider>
+  <div class="row" *ngIf="isSpeaker() && ministerConvenienceMessage && ministerConvenienceMessage.length > 0">
+    <div class="col-md-12">
+      <nz-alert
+        nzType="info"
+        nzMessage="Minister Convenience"
+        [nzDescription]="ministerMessage"
+        nzShowIcon
+      >
+      </nz-alert>
+    </div>
+  </div>
+  <ng-template #ministerMessage>
+    <p *ngFor="let item of ministerConvenienceMessage">{{
+      item.note
+    }}</p>
+  </ng-template>
+  <div class="row marginbtm-25 margntp-25" [hidden]="showMinisterConvenience">
+    <div class="col-md-1">
+      <h5>{{ "noticeprocessing.noticeprocess.stage" | translate }}</h5>
+    </div>
+    <div class="col-md-11">
+      <nz-steps nzSize="small">
+        <nz-step
+          *ngFor="let status of stepStatus"
+          [nzStatus]="getStatusByReason(status.reason)"
+          [nzTitle]="status.taskDefinitionKeyName"
+          [nzDescription]="status.reason"
+        ></nz-step>
+      </nz-steps>
+    </div>
+  </div>
+  <div class="row mrgT20">
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <!-- <label class="col-md-4"
+          >{{ "noticeprocessing.noticeprocess.subject" | translate }}:
+        </label> -->
+        <label class="col-md-4">{{"cpl.docupload.assembly" | translate}}:</label>
+        <span class="col-md-8">{{ getAssembly(noticeDetails?.notice?.assemblyId) }}</span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4">{{"cpl.docupload.session" | translate}}:</label>
+        <span class="col-md-8">{{ getSession(noticeDetails?.notice?.sessionId) }}</span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4">
+          {{
+            "noticeprocessing.noticetemplate.listtemplate.status" | translate
+          }}:
+        </label>
+        <span class="col-md-8">
+          {{ noticeDetails?.notice?.status }}
+        </span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4"
+          >{{
+            "noticeprocessing.notice.createnotice.creationdate" | translate
+          }}:
+        </label>
+        <span class="col-md-8">{{
+          noticeDetails?.notice?.createdDate | date: "dd/MM/yyyy"
+        }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row mrgT20">
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <!-- <label class="col-md-4"
+          >{{ "noticeprocessing.noticeprocess.subject" | translate }}:
+        </label> -->
+        <label class="col-md-4">{{"business-dashboard.question.noticeheading" | translate}}</label>
+        <span class="col-md-8">{{ noticeDetails?.notice?.title }}</span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4"
+          >{{ "noticeprocessing.notice.listnotice.noticetype" | translate }}:
+        </label>
+        <span class="col-md-8">{{ noticeDetails?.notice?.templateName }}</span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4">
+          {{
+            "noticeprocessing.noticetemplate.listtemplate.status" | translate
+          }}:
+        </label>
+        <span class="col-md-8">
+          {{ noticeDetails?.notice?.status }}
+        </span>
+      </div>
+    </div>
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4"
+          >{{
+            "noticeprocessing.notice.createnotice.creationdate" | translate
+          }}:
+        </label>
+        <span class="col-md-8">{{
+          noticeDetails?.notice?.createdDate | date: "dd/MM/yyyy"
+        }}</span>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4"
+          >{{ "noticeprocessing.noticeprocess.member" | translate }}:</label
+        >
+        <label class="col-md-8">
+          {{ noticeDetails?.notice?.primaryMember?.details?.fullName }}
+        </label>
+      </div>
+    </div>
+    <div class="col-md-6" marginbtm-15>
+      <nz-alert
+        *ngIf="noticeDetails.notice.status === 'DISALLOWED'"
+        nzType="warning"
+        nzMessage="Notice disallowed as per the following rule"
+        nzDescription="Rule: {{ noticeDetails.notice.disallowRule.englishDescription }}"
+        nzShowIcon
+      >
+      </nz-alert>
+    </div>
+  </div>
+  <div class="row" *ngIf="showMinisterConvenience">
+    <div class="col-md-12 marginbtm-15">
+      <label>{{"business-dashboard.notice-proc.minConvienience" | translate}}</label>
+      <div class="demo-full-width">
+        <textarea
+          [formControl]="ministerConvenience"
+          [disabled]="disableConvenienceEntry"
+          nz-input
+        ></textarea>
+      </div>
+      <button
+        nz-button
+        nzType="default"
+        class="m-r5"
+        [disabled]="ministerConvenience.invalid || disableConvenienceEntry"
+        (click)="responseConvenience()"
+      >
+        {{"business-dashboard.question.submit" | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="row" *ngIf="noticeDetails && noticeDetails.notice">
+    <div
+      class="col-md-2"
+      *ngIf="noticeDetails?.notice?.tags?.length > 0 || noticeButtons.tags"
+    >
+      {{"usermanagement.createmember.tags" | translate }}
+    </div>
+    <div class="col-md-10">
+      <nz-tag
+        *ngFor="let tags of noticeDetails.notice.tags; let i = index"
+        [nzMode]="noticeButtons.tags ? 'closeable' : 'default'"
+        (nzAfterClose)="_removeTag(tags)"
+      >
+        {{ _sliceTagName(tags) }}
+      </nz-tag>
+      <nz-tag
+        *ngIf="!showAddTag && noticeButtons.tags"
+        class="editable-tag"
+        nzNoAnimation
+        (click)="_showAddTag()"
+      >
+        <i nz-icon nzType="plus"></i> {{"business-dashboard.question.questionlist.newtag" | translate}}
+      </nz-tag>
+      <input
+        oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        #tagInput
+        nz-input
+        nzSize="small"
+        *ngIf="showAddTag"
+        type="text"
+        [(ngModel)]="tags"
+        style="width: 78px;"
+        (blur)="addTag()"
+        (keydown.enter)="addTag()"
+        maxlength="20"
+      />
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 marginbtm-15">
+      <div class="row">
+        <label class="col-md-4"
+          >{{ "cpl.correspondence.attachments" | translate }}:</label
+        >
+        <label class="col-md-8">
+          <div class="row" *ngFor="let doc of  noticeDetails?.notice?.attachments; let i = index">
+            <div class="col-md-12 mrgT6">
+              {{i+1}}.   <a
+              href="javascript:;"
+              (click)="showAttachment(doc.url)"
+              >{{ doc.name }}
+            </a>
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="preview-main">
+    <div
+      class="form p-TB30"
+      *ngIf="notice.doIHaveAnAccess('SAVE_CHANGES', 'READ')"
+    >
+      <div *ngIf="FinalcomponentArray?.length > 0">
+        <app-dynamic-form
+          [fields]="FinalcomponentArray"
+          [status]="this.noticeDetails?.notice?.status"
+          (changes)="ShowForm($event)"
+          *ngIf="
+            FinalcomponentArray?.length > 0 &&
+            (noticeDetails.notice.currentAssignee ||
+            (noticeDetails.notice.status === 'APPROVED' && noticeDetails.notice.workflowCode === 'NOTICE_RULE_275'))
+          "
+        >
+        </app-dynamic-form>
+      </div>
+    </div>
+    <div class="preview-main-text p-L0">
+      <h4>{{ "noticeprocessing.notice.createnotice.prevew" | translate }}</h4>
+      <div>
+        <quill-view-html
+          [content]="viewContent"
+          *ngIf="viewContent"
+        ></quill-view-html>
+      </div>
+    </div>
+  </div>
+  <nz-drawer
+    [nzWidth]="510"
+    [nzClosable]="true"
+    [nzVisible]="visible"
+    nzPlacement="right"
+    nzTitle='{{"business-dashboard.notice-proc.notes&Comments" | translate}}'
+    (nzOnClose)="drawer()"
+  >
+    <div class="chat-main-body" #scrollme [scrollTop]="scrollme.scrollHeight">
+      <nz-card
+        class="margin-10 notesp"
+        *ngFor="let item of notesList; let index; of: i"
+      >
+        <div class="row">
+          <div class="col-md-7">
+            <h6>{{ item?.owner?.details?.fullName }}</h6>
+            <p *ngFor="let role of item?.owner?.roles; index as i">
+              <span *ngIf="i === 0">{{ getRoles(item.owner.roles) }}</span>
+            </p>
+          </div>
+          <div class="col-md-5 d-flex justify-content-flex-end">
+            <button
+              *ngIf="item.ownerId === currentUserID && noticeDetails.notice.currentAssignee && latestNote?.id === item.id"
+              nz-button
+              nzType="default"
+              class="m-r5"
+              (click)="editNote(item)"
+              [disabled]="!noticeButtons.Note"
+            >
+              {{ "noticeprocessing.noticeprocess.edit" | translate }}
+            </button>
+            <button
+              *ngIf="item.ownerId === currentUserID && noticeDetails.notice.currentAssignee && latestNote?.id === item.id"
+              nz-button
+              nzType="info"
+              nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.soa.douwanttodelete" | translate}}'
+              (nzOnConfirm)="deleteNoteById(item.id)"
+              (nzOnCancel)="cancel()"
+              [disabled]="!noticeButtons.Note"
+            >
+              {{ "noticeprocessing.noticeprocess.delete" | translate }}
+            </button>
+          </div>
+        </div>
+        <div class="row marginbtm-25 margnrtp-15">
+          <div class="col-md-12">
+            <p>
+              {{ item.note }}
+            </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <p>
+              {{ "noticeprocessing.noticeprocess.version" | translate
+              }} {{ item.noticeVersion }}
+            </p>
+          </div>
+          <div class="col-md-3 text-align-right">
+            <p>
+              {{ item.updatedDate | date: "dd/MM/yyyy" }}
+            </p>
+          </div>
+          <div class="col-md-3 text-align-right">
+            <p>{{ item.updatedDate | date: "hh:mm a" }}</p>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div class="footer-chat">
+      <form [formGroup]="noteForm" (ngSubmit)="saveNote()">
+        <div class="txt-area-main">
+          <div class="col">
+            <strong *ngIf="noticeDetails.notice.currentAssignee"
+              >{{"cpl.fileworkflow.quickoptions" | translate}}:
+            </strong>
+            <ng-container *ngIf="noticeDetails.notice.currentAssignee">
+              <nz-tag
+                *ngFor="let tag of quickOptions; let i = index"
+                nzMode="checkable"
+                [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+                (nzCheckedChange)="CheckforRules($event, tag, i)"
+              >
+                {{ tag.label }}
+              </nz-tag>
+            </ng-container>
+          </div>
+        </div>
+        <div class="type_msg col-md-12 p-L0">
+          <div class="col-md-9">
+            <textarea
+              rows="2"
+              nz-input
+              placeholder='{{"business-dashboard.question.typeamessage" | translate}}'
+              name="note"
+              formControlName="note"
+              [disabled]="!noticeDetails?.notice?.currentAssignee"
+            ></textarea>
+          </div>
+          <div class="col-md-3">
+            <button
+              *ngIf="!isEdit && noticeDetails.notice.currentAssignee"
+              type="submit"
+              nz-button
+              nzType="primary"
+              class="send-btn-style p-R15"
+              [disabled]="!noticeButtons.Note"
+            >
+              {{ "usermanagement.createmember.save" | translate }}
+            </button>
+            <button
+              *ngIf="isEdit"
+              type="submit"
+              nz-button
+              nzType="primary"
+              class="send-btn-style p-R15"
+              [disabled]="!noticeButtons.Note"
+            >
+              {{ "Update" | translate }}
+            </button> <br/>
+            <button
+              *ngIf="isEdit"
+              type="reset"
+              nz-button
+              nzType="default"
+              class="send-btn-style p-R15"
+              (click)="resetNote()"
+              [disabled]="!noticeButtons.Note"
+            >
+              {{ "Cancel" | translate }}
+            </button>
+          </div>
+        </div>
+        <div class="">
+          <nz-modal
+            [(nzVisible)]="ShowRules"
+            nzTitle='{{"business-dashboard.question.rulesanddirections" | translate}}'
+            (nzOnCancel)="cancelRuleSelection()"
+            (nzOnOk)="applyRule()"
+            [nzOkDisabled]="isChecked"
+          >
+            <div class="width-100 pading-all">
+              <nz-table #rulesForNotes [nzData]="allRules" [nzPageSize]="5">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>{{"business-dashboard.question.ruleno" | translate}}</th>
+                    <th>{{"business-dashboard.question.description" | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let data of rulesForNotes.data">
+                    <td
+                      nzShowCheckbox
+                      [(nzChecked)]="data.checked"
+                      (nzCheckedChange)="onChecked($event)"
+                    ></td>
+                    <td>{{ data.code }}</td>
+                    <td>{{ data.englishDescription }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </div>
+          </nz-modal>
+        </div>
+      </form>
+    </div>
+  </nz-drawer>
+</div>
+
+<nz-modal
+  [(nzVisible)]="isVisibleApprovalForm"
+  nzTitle='{{"business-dashboard.calendarofsittings.ApproveNotice" | translate}}'
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancelApprovalForm()"
+>
+  <div class="lob_form">
+    <form
+      nz-form
+      [formGroup]="approvalForm"
+      (ngSubmit)="handleSubmitApprovalForm(approvalForm.value)"
+    >
+      <nz-form-item class="width-100 pading-all" *ngIf="isBac">
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <label
+            nz-checkbox
+            formControlName="checked"
+            #checkbox
+            (click)="datepicker.nzValue = null"
+            >{{"business-dashboard.calendarofsittings.forwardtoBAC" | translate}}</label
+          >
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="width-100 pading-all">
+        <nz-form-label [nzSpan]="10" nzRequired>{{"business-dashboard.calendarofsittings.ScheduledDate" | translate}}</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <!-- <input type="date" nz-input formControlName="date" /> -->
+          <nz-date-picker
+            #datepicker
+            [nzDisabledDate]="disabledDate"
+            nzFormat="dd/MM/yyyy"
+            formControlName="date"
+          >
+          </nz-date-picker>
+          <!-- <nz-select  nzPlaceHolder="select the date" formControlName="date">
+          <nz-option *ngFor="let date of dateList" [nzLabel]="date"
+          [nzValue]="date"></nz-option>
+        </nz-select> -->
+          <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              {{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item
+        class="width-100 pading-all"
+        *ngIf="showConveniencePending"
+      >
+        <nz-alert nzType="warning" nzMessage="Minister concent Pending">
+        </nz-alert>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-control [nzOffset]="7" [nzSpan]="12">
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="!approvalForm.valid"
+            class="margnrtp-15"
+          >
+            {{"business-dashboard.question.submit" | translate}}
+          </button>
+          &nbsp;
+          <button
+            nz-button
+            type="button"
+            (click)="handleCancelApprovalForm()"
+            class="margnrtp-15"
+          >
+            {{"business-dashboard.question.cancel" | translate}}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzOkDisabled]="true"
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+>
+  <div class="p-20 width-100">
+    <nz-tabset>
+      <nz-tab nzTitle='{{"cpl.documents.attachtofile" | translate}}'>
+        <form [formGroup]="attachFileForm">
+          <p>{{"business-dashboard.notice-proc.searchexisfile" | translate}}</p>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-control>
+                  <input
+                    type="text"
+                    name="search"
+                    nz-input
+                    formControlName="searchParamForFiles"
+                    (ngModelChange)="onSearchFilesForAttach()"
+                    placeholder='{{"business-dashboard.notice-proc.FileNo/Subject" | translate}}'
+                    style="background: white !important;"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row" *ngIf="advancedFiltersFlag">
+            <div class="col-md-8"></div>
+            <div class="col-md-4 text-align-right">
+              <button
+                class="mrgTB10"
+                nz-button
+                nzType="default"
+                (click)="onAdvancedFilterclick()"
+              >
+                {{"cpl.documents.advancedfilter" | translate}}
+              </button>
+            </div>
+          </div>
+          <div class="row" *ngIf="!advancedFiltersFlag">
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9"></nz-form-label>
+                <nz-form-control [nzSpan]="15">{{"cpl.documents.fileno" | translate}}
+                  <input
+                    nz-input
+                    placeholder='{{"cpl.docamendments.fileno" | translate}}'
+                    style="background: white !important;"
+                    (ngModelChange)="onSearchFilesForAttach()"
+                    formControlName="fileNo"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">{{"cpl.docupload.subject" | translate}}</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <input
+                    nz-input
+                    placeholder='{{"cpl.docupload.subject" | translate}}'
+                    style="background: white !important;"
+                    (ngModelChange)="onSearchFilesForAttach()"
+                    formControlName="subject"
+                  />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <!-- <div class="row" *ngIf="!advancedFiltersFlag">
+            <div class="col-md-6 marginbtm-15">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">Section</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder=""
+                    formControlName="section"
+                  >
+                    <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6 marginbtm-15">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">User</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder=""
+                    formControlName="any"
+                  >
+                    <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div> -->
+          <nz-form-item>
+            <nz-form-control>
+              <nz-card
+                class="marginbtm-15"
+                style="
+                  width: 100%;
+                  align-self: center;
+                  height: 300px;
+                  overflow-y: scroll;
+                "
+              >
+                <div>
+                  <!-- <input type="radio" name="" id="">
+              <span>{{item.fileNumber}}</span> -->
+                  <nz-radio-group formControlName="fileId" nzName="fileNumber">
+                    <ng-container *ngFor="let item of fileList">
+                      <label nz-radio [nzValue]="item.fileId" name="fileId">{{
+                        item.fileNumber
+                      }}</label>
+                    </ng-container>
+                  </nz-radio-group>
+                </div>
+              </nz-card>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+
+        <div class="width-100">
+          <div class="d-flex justify-content-space-end text-align-right">
+            <button
+              nz-button
+              [nzType]="'primary'"
+              [disabled]="attachFileForm.invalid"
+              (click)="attachFile()"
+            >
+              <span>{{"cpl.documents.attachtofile" | translate}}</span>
+            </button>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle='{{"cpl.docpreparion.createfile" | translate}}'>
+        <div>
+          <form [formGroup]="createFileForm">
+            <div class="row marginbtm-15">
+              <div class="col-md-12" *ngIf="false">
+                <nz-form-item>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-radio-group
+                      [formControl]="TypeSelection"
+                      nzName="radiogroup"
+                      style="display: flex;"
+                    >
+                      <label nz-radio nzValue="0">{{"business-dashboard.notice-proc.curNoforFileNo" | translate}}</label>
+                      <!-- <label nz-radio nzValue="B">Arising File</label> -->
+                    </nz-radio-group>
+
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      name="No"
+                      [nzDisabled]="TypeSelection?.value != 0"
+                      formControlName="currentNumber"
+                    >
+                      <nz-option
+                        [nzLabel]="10001"
+                        [nzValue]="10001"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-radio-group
+                      [formControl]="TypeSelection"
+                      nzName="radiogroup"
+                      style="display: flex;"
+                    >
+                      <!-- <label nz-radio nzValue="A">Current No for File No</label> -->
+                      <label nz-radio nzValue="1">Arising File</label>
+                    </nz-radio-group>
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      name="No"
+                      [nzDisabled]="TypeSelection?.value != 1"
+                      formControlName="currentNumber"
+                    >
+                      <nz-option
+                        [nzLabel]="arisingFileNumber"
+                        [nzValue]="arisingFileNumber"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    {{"cpl.docamendments.filesubject" | translate}}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input
+                      nz-input
+                      placeholder='{{"business-dashboard.calendarofsittings.FileSubjectgoeshere" | translate}}'
+                      formControlName="subject"
+                      style="background: white !important;"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <div class="row">
+                  <nz-form-item>
+                    <div class="col-md-12">
+                      <nz-form-label>
+                        {{"cpl.docamendments.filepriority" | translate}}
+                      </nz-form-label>
+                    </div>
+                    <div class="col-md-12">
+                      <nz-form-control>
+                        <nz-radio-group
+                          formControlName="priority"
+                          nzName="radiogroup"
+                        >
+                          <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                          <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                          <label nz-radio nzValue="ACTION_TODAY"
+                            >{{"cpl.docamendments.actiontoday" | translate}}</label
+                          >
+                          <label nz-radio nzValue="ASSEMBLY_URGENT"
+                            >{{"cpl.docamendments.assemblyurgent" | translate}}</label
+                          >
+                        </nz-radio-group>
+                      </nz-form-control>
+                    </div>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    {{"cpl.docamendments.description" | translate}}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input
+                      nz-input
+                      placeholder='{{"business-dashboard.notice-proc.filedesgoeshere" | translate}}'
+                      formControlName="description"
+                      style="background-color: white !important;"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    {{"business-dashboard.notice-proc.backfileReference" | translate}}
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input
+                      nz-input
+                      placeholder='{{"business-dashboard.notice-proc.backfileReference" | translate}}'
+                      formControlName="backFileReference"
+                      style="background: white !important;"
+                    />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </form>
+          <div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button
+                      nz-button
+                      [nzType]="'primary'"
+                      style="margin-right: 6px;"
+                      (click)="handleCancel()"
+                    >
+                      <span>{{"cpl.correspondencelist.cancel" | translate}}</span>
+                    </button>
+                    <button
+                      nz-button
+                      [nzType]="'primary'"
+                      (click)="createFile()"
+                      [disabled]="createFileForm.invalid"
+                    >
+                      <span>{{"cpl.docamendments.create" | translate }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</nz-modal>

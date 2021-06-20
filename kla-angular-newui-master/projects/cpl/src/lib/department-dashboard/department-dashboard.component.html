@@ -1,0 +1,49 @@
+<div class="col-md-6" *ngIf="fromMainDash else elseBlock">
+    <h4>{{"cpl.actregistration" | translate}}</h4>
+</div>
+<ng-template #elseBlock>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{"cpl.actregistration.dash" | translate}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <h3>{{"cpl.actregistration.dash" | translate}}</h3>
+        </div>
+        <div class="col-md-6">
+            <span class="d-flex justify-content-end">{{"cpl.dashboard.welcome" | translate}}</span>
+        </div>
+    </div>
+</ng-template>
+<nz-divider></nz-divider>
+
+<div class="container" class="card1">
+    <div class="row">
+        <div class="col-md-3 mrgb-6" *ngFor="let docType of dashboardDetails |  keyvalue">
+            <nz-card class="marginbtm-15 sortable">
+                <h4>
+                    <a class="sortable" routerLink="/business-dashboard/cpl/documents/{{docType.key}}">
+                        {{ docType.value.value }}
+                    </a>
+                </h4>
+                <p>{{ docType.key }}</p>
+                <div class="button_grp">
+                    <button [class]="buttonColors[i]"
+                        *ngFor="let type of docType.value.elements |  keyvalue; let i = index">
+                        <!-- <a routerLink="/business-dashboard/cpl/documents/{{docType.key}}"
+                            [queryParams]="{status: type.key}">{{ type.key }}
+                            {{ type.value.value }}</a> -->
+                        <a (click)="routeToDocs(docType.key, type.key)">{{ type.key.split('_').join(' ') }}
+                            {{ type.value.value }}</a>
+                    </button>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+</div>

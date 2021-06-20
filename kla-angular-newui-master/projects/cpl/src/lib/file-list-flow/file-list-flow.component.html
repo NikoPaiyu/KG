@@ -1,0 +1,373 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"cpl.amendmentview.cpldocreg" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6">
+    <h3>{{ fileByListId?.fileNumber }}</h3>
+  </div>
+  <div class="col-md-6 d-flex justify-content-end">
+    <!-- <button class="mr-6" nz-button nzType="default">
+      Return
+    </button> -->
+    <button class="mr-6" nz-button nzType="default" *ngIf="cplButtons.Approve"
+      (click)="approveFile(fileByListId.fileResponse?.fileId)">
+      {{"cpl.filelistflow.approve" | translate}}
+    </button>
+    <div class="col-md-5 mr-6">
+      <nz-select name="selectedRole" [(ngModel)]="selectedRole" nzPlaceHolder='{{"business-dashboard.bullettin-details.selecttoforward" | translate}}' nzAllowClear>
+        <ng-container *ngFor="let role of roles">
+          <nz-option *ngIf="role.name !== fromGroup" [nzValue]="role" [nzLabel]="role.name"></nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+    <button class="mr-6" nz-button nzType="primary" [disabled]="(selectedRole === null)"
+      (click)="forwardFile(selectedRole, fileByListId.fileResponse?.fileId)" *ngIf="cplButtons.Forward">
+      {{"cpl.filelistflow.forward" | translate}}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-6">
+    <div class="row align-items-center">
+      <div class="col-md-3">
+        <span class="workflowhd">{{"cpl.filelistflow.fileworkflow" | translate}}</span>
+      </div>
+      <div class="col-md-9 d-flex align-items-center">
+        <div class="overflow">
+          <nz-steps nzSize="small">
+            <nz-step *ngFor="let status of fileByListId?.tracker" [nzStatus]="getStatusByReason(status.reason)"
+              [nzTitle]="status.taskDefinitionKey" [nzDescription]="status.reason"></nz-step>
+          </nz-steps>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="bg_block">
+        <div class="col-md-7 pdzero">
+          <div class="width-100 d-flex marginbtm-15">
+            <div class="overflow-blt">{{"cpl.docamendments.filesubject" | translate}}:</div>
+            <span class="blthd">{{ fileByListId.fileResponse?.subject }}</span>
+          </div>
+          <div class="width-100 d-flex">
+            <div class="overflow-blt">{{"cpl.filelistflow.createddate" | translate}}:</div>
+            <span class="blthd">{{ fileByListId.fileResponse?.createdDate |  date: "dd-MM-yyyy" }}</span>
+          </div>
+        </div>
+        <div class="col-md-5">
+          <div class="width-100 d-flex marginbtm-15">
+            <div class="overflow-blt">{{"cpl.docamendments.filepriority" | translate}}:</div>
+            <span class="blthd">
+              <nz-tag [nzColor]="'red'">{{ fileByListId.fileResponse?.priority }}</nz-tag>
+            </span>
+          </div>
+          <div class="width-100 d-flex">
+            <div class="overflow-blt">{{"cpl.cplview.section" | translate}}:</div>
+            <span class="blthd">{{"cpl.actregistration.cpl" | translate}}</span>
+          </div>
+          <button class="abs_btn" (click)="fileInfo()">{{"cpl.filelistflow.viewmore" | translate}}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="overflow-blt">
+      <nz-tabset [nzTabBarExtraContent]="dropDown">
+        <nz-tab [nzTitle]="fileByListId.fileResponse?.subject">
+          <div class="row marginbtm-25">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button class="mr-6" nz-button nzType="default">{{"cpl.filelistflow.version" | translate}}</button>
+              <button class="mr-6" nz-button nzType="default" *ngIf="cplButtons.Edit"
+                (click)="editDoc(fileByListId?.id)">{{"cpl.cplview.edit" | translate}}</button>
+            </div>
+          </div>
+          <ng-container *ngFor="let docTable of fileByListId?.documentsByPortfolioDtos">
+            <div class="row">
+              <div class="col-md-6">
+                {{"cpl.actregistration.doctype" | translate }}: {{ docTable.type }}
+              </div>
+              <div class="col-md-6">
+                {{"cpl.docpreparion.minister" | translate}}: {{ docTable.minister }}
+              </div>
+            </div>
+            <nz-table #docListTable [nzData]="docTable.documentMetaDatas" class="table-all marginbtm-15">
+              <thead nzSingleSort>
+                <tr>
+                  <th nzShowSort nzSortKey="nameOfInst">
+                    {{"cpl.filelistflow.nameofinstitution" | translate}}
+                  </th>
+                  <th nzShowSort nzSortKey="year">
+                    {{"cpl.filelistflow.year" | translate}}
+                  </th>
+                  <th>
+                    {{"cpl.docpreparion.withdelaystatement" | translate}}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let document of docListTable.data">
+                  <td>
+                    {{ document.title }}
+                  </td>
+                  <td>
+                    {{ document.createdDate | date: 'yyyy'}}
+                  </td>
+                  <td>
+                    <nz-tag [nzColor]="document.isDelayed ? 'green' : 'red'"> {{ document.isDelayed ? 'Yes' : 'No'}}
+                    </nz-tag>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+          </ng-container>
+        </nz-tab>
+      </nz-tabset>
+      <ng-template #dropDown>
+        <button nz-button nz-dropdown [nzDropdownMenu]="menu"><i nz-icon nzType="down"></i></button>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <ul nz-menu>
+            <li>
+              <a href="javascript:;" (click)="showAttachModal()">{{"cpl.filelistflow.newdocument" | translate}}</a>
+            </li>
+          </ul>
+        </nz-dropdown-menu>
+      </ng-template>
+    </div>
+  </div>
+  <div class="col-md-6 note_log">
+    <nz-tabset>
+      <nz-tab [nzTitle]="'Notes'">
+        <nz-card class="mb-15">
+          <div>
+            <div class="overflow-blt">
+              <div *ngFor="let note of fileByListId.fileResponse?.notes" class="input-group brdr_nt"
+                [ngClass]="{ yellowColor: note.temporary == true }">
+                <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+                  <div class="col-md-7 pl0">
+                    <b class="width-100 fl marginbtm-5">{{ note.user.details.fullName }}</b>
+                    <span class="width-100 fl">{{ note.user.roles.roleName }}</span>
+                  </div>
+                  <div class="col-md-5 d-flex justify-content-between pr0">
+                    <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+                    <span>|</span>
+                    <span>{{ note.updatedDate | date: "dd-MM-yyyy" }}</span>
+                  </div>
+                </div>
+                <div class="width-100 marginbtm-15">
+                  {{ note.note }}
+                </div>
+                <ng-container *ngIf="this.user.userId == note.user.userId">
+                  <div class="fl width-100" *ngIf="note.temporary !== true; else yellowNote">
+                    <button nz-button nzType="default" (click)="editNote(note.noteId, note.note, 'false')"
+                      class="mr-6">{{"cpl.cplview.edit" | translate}}</button>
+                    <button nz-button nzType="default" nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.correspondence.delnote" | translate }}'
+                      (nzOnConfirm)="deleteNote(note.noteId)"
+                      (nzOnCancel)="cancel()">{{"cpl.docpreparion.delete" | translate}}</button>
+                    <span class="note_num">{{ note.noteNumber }}</span>
+                  </div>
+                  <ng-template #yellowNote>
+                    <div class="fl width-100">
+                      <a class="mr-6" nz-popconfirm  nzPopconfirmTitle='{{"business-dashboard.correspondence.convertnote" | translate }}'
+                        (nzOnConfirm)="convertNote(note.noteId, note.note)" (nzOnCancel)="cancel()">{{"cpl.filelistflow.converttonormal" | translate}}</a>&nbsp;&nbsp; |
+                      &nbsp;&nbsp;
+                      <a nz-popconfirm  nzPopconfirmTitle='{{"business-dashboard.correspondence.delnote" | translate }}'
+                        (nzOnConfirm)="deleteNote(note.noteId)" (nzOnCancel)="cancel()">{{"cpl.cplview.delete" | translate}}</a>
+                      <span class="note_num">{{ note.noteNumber }}</span>
+                    </div>
+                  </ng-template>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="width-100 d-flex bg_txtarea">
+              <div class="col-md-12">
+                <strong>Quick options: </strong>
+                <nz-tag *ngFor="let tag of quickOptions; let i = index" nzMode="checkable"
+                  [nzChecked]="selectedTags.indexOf(tag.label) > -1" (nzCheckedChange)="CheckforRules($event, tag, i)">
+                  {{ tag.label }}
+                </nz-tag>
+              </div>
+            </div>
+          </div> -->
+          <div class="row">
+            <div class="width-100 d-flex bg_txtarea">
+              <div class="col-md-8">
+                <nz-mention [nzPrefix]="['#', '@']" [nzSuggestions]="suggestions">
+                  <textarea class="textarea_nt" placeholder='{{"business-dashboard.notice-proc.enternotehere" | translate}}' nzMentionTrigger nz-input
+                    [(ngModel)]="inputValue"></textarea>
+                </nz-mention>
+              </div>
+              <div class="col-md-4 d-flex align-items-center justify-content-end flexwrap">
+                <div class="btn-notes">
+                  <nz-radio-group [(ngModel)]="yellow" nzButtonStyle="solid">
+                    <label nz-radio-button nzValue="true">{{"cpl.filelistflow.yellow" | translate}}</label>
+                    <label nz-radio-button nzValue="false">{{"cpl.docamendments.normal" | translate}}</label>
+                  </nz-radio-group>
+                </div>
+                <button nz-button [nzType]="'default'" class="save_btn" (click)="addNote()"
+                  [disabled]="inputValue === null">{{"cpl.docupload.save" | translate}}</button>
+              </div>
+            </div>
+          </div>
+        </nz-card>
+      </nz-tab>
+      <nz-tab [nzTitle]="'Logs'">
+        <div class="input-group" *ngFor="let log of fileByListId.fileResponse?.logs">
+          <div class="d-flex justify-content-between mt-20 w-100">
+            <div class="brdr_log width-100">
+              {{ log.action }}
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+<nz-modal [(nzVisible)]="isAttachVisible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <h6 class="rolehd">{{"cpl.filelistflow.newdocument" | translate}}</h6>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        {{"cpl.documents.documenttitle" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <input type="text" nz-input />
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        {{"cpl.filelistflow.documenttemplate" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <nz-select nzAllowClear>
+          <nz-option nzValue="Letter" nzLabel="Letter"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="row margntp-25">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button type="button" nz-button nzType="default" (click)="handleCancel()" class="margnrt-5">
+          {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+        <button type="button" nz-button nzType="primary" (click)="handleCancel()">
+          {{"cpl.docamendments.create" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isfileVisible" [nzFooter]="null" (nzOnCancel)="handleCancel()">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <h6 class="rolehd">{{"cpl.filelistflow.newdocument" | translate}}</h6>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.documents.fileno" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-9">
+        <span class="blthd">{{ fileByListId.fileResponse?.fileNumber }}</span>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.docamendments.filesubject" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <span class="blthd">{{ fileByListId.fileResponse?.subject }}</span>
+      </div>
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.docamendments.filepriority" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <nz-tag [nzColor]="'red'">{{ fileByListId.fileResponse?.priority }}</nz-tag>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.filelistflow.createddate" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <span class="blthd">{{ fileByListId.fileResponse?.createdDate |  date: "dd-MM-yyyy" }}</span>
+      </div>
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.docupload.fromwhom" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <span class="blthd"></span>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.cplview.section" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <span class="blthd">{{
+          "cpl.actregistration.cpl" | translate}}</span>
+      </div>
+      <div class="col-md-3">
+        <nz-form-label>{{"cpl.filelistflow.backfile" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-3">
+        <span class="blthd"></span>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-4">
+        <nz-form-label>{{"cpl.docamendments.filedescription" | translate}}</nz-form-label>
+      </div>
+      <div class="col-md-8">
+        <span class="blthd">{{ fileByListId.fileResponse?.description }}</span>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- <nz-modal [(nzVisible)]="ShowRules" nzTitle="Rules And Directions" (nzOnCancel)="cancelRuleSelection()"
+  (nzOnOk)="applyRule()">
+  <div class="width-100 pading-all">
+    <nz-table #rulesForNotes [nzData]="allRules" [nzPageSize]="5">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Rule No</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of rulesForNotes.data">
+          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+          <td>{{ data.code }}</td>
+          <td>{{ data.englishDescription }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</nz-modal> -->

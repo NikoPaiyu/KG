@@ -1,0 +1,267 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "committee.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "committee.committe-mgmnt" | translate }} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-3">
+        <h3 style="word-break: break-all; font-size: 20px">
+          {{ fileDetails?.fileResponse?.fileNumber }}
+        </h3>
+      </div>
+      <div class="col-md-3">
+        <nz-tag [nzColor]="'red'">
+          {{ fileDetails?.fileResponse?.priority?.split("_").join(" ") }}
+        </nz-tag>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <committee-buttons
+          *ngIf="fileDetails && _canshowCommiteeButtons()"
+          [allWorkflowUsers]="allWorkflowUsers"
+          [currentPoolUser]="currentPoolUser"
+          [assignee]="assignee"
+          [fileResponse]="fileDetails?.fileResponse"
+          (fileForwarded)="getFile($event)"
+          (fileClosureInitiated)="getFile($event)"
+        >
+        </committee-buttons>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-7">
+    <nz-tabset
+      [nzSelectedIndex]="tabParams['showIndex']"
+      [nzTabBarExtraContent]="showButtons"
+    >
+      <nz-tab [nzTitle]="tabIcon" (nzClick)="setTabfilters()">
+        <ng-container id="file-tiles">
+          <div
+            class="row bg_block"
+            *ngIf="fileDetails?.committeeDetails"
+            (click)="showCurrentTab('committeeDetails')"
+          >
+            <div class="col-md-6">
+              <h6>Committee Details</h6>
+            </div>
+            <div class="col-md-6 text-align-right">
+              <nz-tag
+                [ngClass]="{
+                  bold: fileDetails['committeeDetails']?.status === 'SUBMITTED'
+                }"
+              >
+                {{
+                  fileDetails["committeeDetails"]?.status?.split("_").join(" ")
+                }}
+              </nz-tag>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #tabIcon>
+          <i nz-icon nzType="appstore" nzTheme="outline"></i>
+          {{ "committee.committee-files.index" | translate }}
+        </ng-template>
+      </nz-tab>
+
+      <nz-tab
+        *ngIf="tabParams['CurrentTab'] === 'committeeDetails'"
+        nzTitle="Committe Details"
+      >
+        <ng-container>
+          <committee-pmbr-committee-fileview
+            *ngIf="fileDetails?.committeeDetails"
+            [committeeDetails]="fileDetails.committeeDetails"
+            [userDetails]="currentUser"
+            [assignee]="assignee"
+          ></committee-pmbr-committee-fileview>
+        </ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  <div class="col-md-5">
+    <nz-tabset>
+      <nz-tab nzTitle="{{ 'committee.committe-files.notes' | translate }}">
+        <committee-notes
+          *ngIf="fileDetails"
+          [assignee]="assignee"
+          [fileResponse]="fileDetails?.fileResponse"
+          (fileApproved)="getFileByFileId(this.fileId)"
+        >
+        </committee-notes>
+      </nz-tab>
+      <nz-tab
+        nzTitle="{{ 'committee.committe-files.logs' | translate }}"
+        *ngIf="logDetails"
+      >
+        <ng-container *ngFor="let log of logDetails.slice(); index as i">
+          <div class="bg_block">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-7 pdzero">
+                  <div class="width-100 d-flex marginbtm-15">
+                    <div class="overflow-blt">
+                      {{ 1 + i + "." + log.action | titlecase }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="File Info">
+        <div class="row">
+          <div class="col-md-3">
+            <span class="workflowhd">{{
+              "cpl.filelistflow.fileworkflow" | translate
+            }}</span>
+          </div>
+          <div class="col-md-9">
+            <div class="overflownote">
+              <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                <nz-step
+                  *ngFor="let status of stepStatusDetail"
+                  [nzStatus]="getStatusByReason(status.reason)"
+                  [nzTitle]="status.taskDefinitionKeyName"
+                  [nzDescription]="status.reason"
+                ></nz-step>
+              </nz-steps>
+            </div>
+          </div>
+        </div>
+        <div class="row bg_block">
+          <div class="col-md-12">
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{ "business-dashboard.cpl.view.filesubject" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.subject }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{
+                  "business-dashboard.cpl.view.filesdescription" | translate
+                }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.description }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{
+                  "business-dashboard.question.questionlist.createdat"
+                    | translate
+                }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{
+                  fileDetails?.fileResponse?.createdDate | date: "dd/MM/yyyy"
+                }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10" *ngIf="!isEditPrio">
+              <div class="col-md-6">
+                {{ "cpl.docamendments.filepriority" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                <nz-tag [nzColor]="'red'">
+                  {{
+                    fileDetails?.fileResponse?.priority?.split("_").join(" ")
+                  }}
+                </nz-tag>
+              </div>
+            </div>
+            <div class="row flex-end mrB10" *ngIf="isEditPrio">
+              <div class="col-md-6"></div>
+              <div class="blthd col-md-6">
+                <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+                  <label nz-radio nzValue="URGENT">{{
+                    "cpl.docamendments.urgent" | translate
+                  }}</label>
+                  <label nz-radio nzValue="NORMAL">{{
+                    "cpl.docamendments.normal" | translate
+                  }}</label>
+                  <label nz-radio nzValue="ACTION_TODAY">{{
+                    "cpl.docamendments.actiontoday" | translate
+                  }}</label>
+                  <label nz-radio nzValue="ASSEMBLY_URGENT">{{
+                    "cpl.docamendments.assemblyurgent" | translate
+                  }}</label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{ "committee.files.fileview.section" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                {{ fileDetails?.fileResponse?.type }}
+              </div>
+            </div>
+            <div class="row flex-end mrB10">
+              <div class="col-md-6">
+                {{ "cpl.fileworkflow.filestatus" | translate }}:
+              </div>
+              <div class="blthd col-md-6">
+                <nz-tag>
+                  {{ fileDetails?.fileResponse?.status }}
+                </nz-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row text-align-right">
+          <div class="col-md-12">
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="editFile()"
+              *ngIf="!isEditPrio"
+            >
+              {{ "noticeprocessing.noticeprocess.edit" | translate }}
+            </button>
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="updateFile()"
+              *ngIf="isEditPrio"
+            >
+              {{ "cpl.docupload.update" | translate }}</button
+            >&nbsp;
+            <button
+              nz-button
+              class="abs_btn"
+              (click)="cancel()"
+              *ngIf="isEditPrio"
+            >
+              {{ "business-dashboard.question.cancel" | translate }}
+            </button>
+          </div>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+<ng-template #showButtons>
+  <ng-container *ngIf="tabParams['showVersionEdit']">
+    <button nz-button class="mr-6">
+      {{ "committee.committe-mgmnt.version" | translate }}
+    </button>
+    <button nz-button class="mr-6">
+      <i nz-icon nzType="form" nzTheme="outline"></i
+      >{{ "committee.committe-mgmnt.edit" | translate }}
+    </button>
+  </ng-container>
+</ng-template>

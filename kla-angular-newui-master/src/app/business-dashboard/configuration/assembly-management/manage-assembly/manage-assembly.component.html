@@ -1,0 +1,323 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"Dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b>{{"Assembly-Session" | translate}} </b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+        <h4>{{"Assembly-Session Management" | translate}}</h4>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-between">
+            <div class="col-md-4">
+                {{"Assembly" | translate}}
+            </div>
+            <div class="col-md-4">
+                <nz-select nzAllowClear nzPlaceHolder="Choose assembly" [(ngModel)]="assemblyId" name="allAssembly"
+                    (ngModelChange)="getSessionForAssembly()">
+                    <nz-option *ngFor="let type of assemblyList" [nzValue]="type" [nzLabel]="type.assemblyId">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-4">
+                <button nz-button [nzType]="'primary'" (click)="showDissolveModal()"
+                    [disabled]="assemblyId?.status !== 'ACTIVE'">
+                    {{"Dissolve" | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-between">
+            <div class="col-md-3">
+                <button nz-button [nzType]="'primary'"
+                (click)="showActivateModal()"
+                *ngIf="assemblyId?.status === 'DRAFT' && !activeAssembly">
+                    {{"Activate" | translate }}
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="plus-arrange" nz-button [nzType]="'primary'"
+                    [disabled]="(activeAssembly && activeAssembly?.assemblyId + 1 === maxValues.assembly?.assemblyId) || (!activeAssembly && maxValues.assembly?.status !== 'DISSOLVED')"
+                    (click)="assemblyModel()">
+                    <i nz-icon nzType="plus"></i>{{"Assembly" | translate }}
+                </button>
+            </div>
+            <div class="col-md-3">
+                <button class="plus-arrange" nz-button [nzType]="'primary'"
+                    [disabled]="(assemblyId?.status === 'DISSOLVED') || (assemblyId?.status === 'DRAFT') ||  (assemblyId?.status === 'ACTIVE' && activeSession)"
+                    (click)="creatSessionModel()">
+                    <i nz-icon nzType="plus"></i>{{"Session" | translate }}
+                </button>
+            </div>
+            <div class="col-md-3">
+                <!-- <nz-input-group [nzSuffix]="suffixIconSearch">
+                      <input type="text" name="search" [(ngModel)]="search" (ngModelChange)="onSearch()" nz-input
+                          placeholder="Search here" />
+                  </nz-input-group>
+                  <ng-template #suffixIconSearch>
+                      <i nz-icon nzType="search"></i>
+                  </ng-template> -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mrTp-20">
+    <div class="col-md-4">
+      Status: <nz-tag>{{assemblyId?.status}}</nz-tag>
+    </div>
+    <div class="col-md-4">
+        Constitution Date: <b>{{assemblyId?.startDate | date: 'dd/MM/yyyy'}}</b>
+    </div>
+    <div class="col-md-4" *ngIf="assemblyId?.status === 'DISSOLVED'">
+        Dissolution Date: <b>{{assemblyId?.endDate | date: 'dd/MM/yyyy'}}</b>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row marginbtm-15">
+            <nz-table #sessionsTable nzShowPagination nzShowSizeChanger [nzData]="sessionList" class="table-all">
+                <thead>
+                    <tr>
+                        <th>
+                            Sl.No
+                        </th>
+                        <th>
+                            Session
+                        </th>
+                        <th>
+                            Active
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let list of sessionsTable.data; let i = index">
+                        <ng-container *ngIf="list.sessionId != 0">
+                            <td>{{i+1}}</td>
+                            <td>{{list.sessionId}}</td>
+                            <td>
+                                <nz-switch [(ngModel)]="list.isActive" [nzControl]="true" 
+                                    (click)="showDissolveSesssionModal()"
+                                    [nzDisabled]="!list.isActive">
+                                </nz-switch>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</div>
+<!-- start assemblymodel -->
+<nz-modal [(nzVisible)]="isAssemblyVisibleModal" nzTitle="Create Draft Assembly" [nzFooter]="null"
+    (nzOnCancel)="handleCancel()">
+    <div class="padding_25">
+        <div class="row">
+            <div class="col-md-6">
+                <p>{{"Draft Assembly" | translate}}:</p>
+            </div>
+            <div class="col-md-6">
+                {{activeAssembly ? activeAssembly?.assemblyId + 1 : maxValues.assembly?.assemblyId + 1}}
+            </div>
+        </div>
+        <!-- <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Date of Constitution</div>
+                    <div class="col-md-8">
+                        <nz-date-picker [(ngModel)]="constitutionDate" nzFormat="dd/MM/yyyy"
+                            [nzDisabledDate]="disabledDate"></nz-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="handleCancel()">
+                    Cancel
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure want to Create Draft Assembly?" (nzOnConfirm)="createAssembly()"
+                    class="btn btn-primary primary-button">
+                    Create Assembly
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end assemblyModel -->
+<!-- start sessionModel -->
+<nz-modal [(nzVisible)]="isSessionVisibleModal" nzTitle=" Create Session" [nzFooter]="null"
+    (nzOnCancel)="handleCancel()">
+    <div class="padding_25">
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{"Assembly" | translate}}:</p>
+            </div>
+            <div class="col-md-8">
+                {{assemblyId?.assemblyId}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <p>{{"Session" | translate}}:</p>
+            </div>
+            <div class="col-md-8">
+                {{maxValues?.session ? maxValues?.session?.sessionId + 1 : 1}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Constitution Date</div>
+                    <div class="col-md-8">
+                        <nz-date-picker [(ngModel)]="constitutionDate" nzFormat="dd/MM/yyyy"
+                            [nzDisabledDate]="disabledDate"></nz-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="handleCancel()">
+                    Cancel
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure want to Create New Session?" (nzOnConfirm)="createSession()"
+                    class="btn btn-primary primary-button">
+                    Create Session
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end sessionModel -->
+<nz-modal [(nzVisible)]="isDissolveVisible" nzTitle="Dissolve Assembly" [nzFooter]="null"
+    (nzOnCancel)="handleDissolveCancel()">
+    <div class="padding_25">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Dissolution Date</div>
+                    <div class="col-md-8">
+                        <nz-date-picker [(ngModel)]="dissolutionDate" [nzFormat]="'dd/MM/yyyy'"
+                            [nzDisabledDate]="disabledEndDate"></nz-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="handleDissolveCancel()">
+                    Cancel
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure want to Dissolve Assembly?" (nzOnConfirm)="dissolveAssembly()"
+                    class="btn btn-primary primary-button">
+                    Dissolve
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isActivateAssemblyVisible" nzTitle="Activate Assembly" [nzFooter]="null"
+    (nzOnCancel)="handleActivateCancel()">
+    <div class="padding_25">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Assembly</div>
+                    <div class="col-md-8">
+                        {{assemblyId?.assemblyId}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Date of Constitution</div>
+                    <div class="col-md-8">
+                        <nz-date-picker [(ngModel)]="constitutionDate" [nzFormat]="'dd/MM/yyyy'"
+                            [nzDisabledDate]="disabledDate"></nz-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="handleActivateCancel()">
+                    Cancel
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure want to activate assembly {{assemblyId?.assemblyId}}?" (nzOnConfirm)="activateAssembly()"
+                    class="btn btn-primary primary-button">
+                    Activate
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="isDissolveSessionVisible" nzTitle="Dissolve Session" [nzFooter]="null"
+    (nzOnCancel)="closeDissolveSesssionModal()">
+    <div class="padding_25">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Assembly</div>
+                    <div class="col-md-8">
+                        {{assemblyId?.assemblyId}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Session</div>
+                    <div class="col-md-8">
+                        {{activeSession?.sessionId}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">Dissolution Date</div>
+                    <div class="col-md-8">
+                        <nz-date-picker [(ngModel)]="dissolutionDate" [nzFormat]="'dd/MM/yyyy'"
+                            [nzDisabledDate]="disabledEndDate"></nz-date-picker>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="closeDissolveSesssionModal()">
+                    Cancel
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure want to dissolve session {{activeSession?.sessionId}}?" (nzOnConfirm)="dissolveSession()"
+                    class="btn btn-primary primary-button">
+                    Dissolve
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

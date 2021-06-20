@@ -1,0 +1,36 @@
+<nz-collapse class="erratum-collapse" *ngIf="erratadetails.length > 0">
+  <nz-collapse-panel
+    *ngFor="let panel of erratadetails"
+    [nzHeader]="panel.createdDate | date: 'dd/MM/yyyy'"
+    [nzActive]="panel.status == 'APPROVED' && rbsPermission.applyErrata"
+    [nzExtra]="extraTpl"
+    [nzDisabled]="panel.disabled"
+  >
+    <div [innerHtml]="panel.content"></div>
+    <button nz-button nzType="default" 
+      *ngIf="panel.correspondenceId"
+      (click)="viewCorrespondance(panel.correspondenceId)">
+      {{ "business-dashboard.bill-management.erratalist.viewletter" | translate }}
+    </button> &nbsp;
+    <button nz-button nzType="default" 
+      *ngIf="panel.correspondenceId && panel.status == 'APPROVED' && panel.applied"
+      nz-popconfirm
+      nzPopconfirmTitle='Do you want to circulate erratum?'
+      (nzOnConfirm)="publishErratum(panel.id)"
+      >
+      {{ "Circulate Erratum" | translate }}
+    </button>
+    <ng-template #extraTpl>
+      <button *ngIf="panel.status == 'APPROVED' && fromEdit && rbsPermission.applyErrata"
+      nz-button nzType="default" nz-popconfirm
+      nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttoapplyerrata" | translate }}'
+      (nzOnConfirm)="applyErrata(panel.id)"
+      >
+      {{ "bill.bill-clause.list.apply" | translate }}
+       </button>
+      <nz-tag>{{panel.status.split('_').join(' ')}}</nz-tag>
+    </ng-template>
+  </nz-collapse-panel>
+</nz-collapse>
+<nz-empty *ngIf="erratadetails.length == 0"></nz-empty>
+

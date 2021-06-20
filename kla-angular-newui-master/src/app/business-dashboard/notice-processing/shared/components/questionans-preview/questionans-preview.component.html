@@ -1,0 +1,168 @@
+<div class="pading-all width-100 word-break">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12 align-center">
+        <h5 class="fnt">
+          {{ assembly }}
+          {{ " -ാം കേരള നിയമസഭ" }}
+        </h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        <h5 class="fnt">
+          {{ session }}
+          {{ "-ാം സമ്മേളനം" }}
+        </h5>
+      </div>
+    </div>
+    <div class="row marginbtm-25" *ngIf="qDetail.questionDate">
+      <div class="col-md-12 align-center">
+        <h5 class="fnt">
+          {{ qDetail.questionDate | date: "dd-MMMM-yyyy, EEEE" }}
+        </h5>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-6">
+        {{
+          qDetail.category == "UNSTARRED"
+            ? "നക്ഷത്രചിഹ്നമിടാത്തത് "
+            : "നക്ഷത്രചിഹ്നമിട്ടത്"
+        }}
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <span class="minw"> {{ "നോട്ടീസ് നമ്പർ" }}:</span>
+        <span>
+          <ng-container
+            *ngFor="let data of qDetail.clubbingDetails; let q = index"
+          >
+            <span> {{ data.noticeNumber }}</span
+            ><span *ngIf="q < qDetail.clubbingDetails.length - 1">,</span>
+          </ng-container>
+        </span>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-6">
+        <span *ngIf="qDetail.priority"
+          >{{ "മുൻഗണന" }}: {{ qDetail.priority }}</span
+        >
+      </div>
+      <div
+        class="col-md-6 d-flex justify-content-end"
+        *ngIf="questionNumber || qDetail.questionNumber"
+      >
+        <span class="minw">{{ "ചോദ്യ നമ്പർ" }}:</span>
+        <span>{{ qDetail.questionNumber }}</span>
+      </div>
+    </div>
+    <div class="row paddingT20 marginbtm-15">
+      <div class="col-md-12 align-center">
+        <span
+          ><U
+            ><strong>
+              <h5>{{ qDetail.heading }}</h5></strong
+            ></U
+          ></span
+        >
+      </div>
+    </div>
+    <br />
+    <div class="row paddingT20">
+      <div class="col-md-6">
+        <span
+          ><U
+            ><strong>{{ "നോട്ടീസ് നൽകിയ സാമാജികർ" }}</strong></U
+          ></span
+        >
+        <div class="width100">
+          <div class="data-column">
+            <ng-container
+              *ngFor="let data of qDetail.clubbingDetails"
+              [ngClass]="{ first: data.primaryMember }"
+            >
+              <span>
+                {{
+                  data.memberNameInMalayalam
+                    ? data.memberNameInMalayalam
+                    : data.memberName
+                }}</span
+              ><br
+            /></ng-container>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 tr">
+        <span
+          ><U
+            ><strong>{{ "മറുപടി നൽകേണ്ട മന്ത്രി " }}</strong></U
+          ></span
+        >
+
+        <div class="width100">
+          <div class="data-column">
+            <ng-container *ngIf="portFolio">
+              <span *ngIf="portFolio.ministerName">
+                {{ portFolio.ministerName }}<br
+              /></span>
+              <span>
+                {{
+                  portFolio.nameInMalayalam
+                    ? portFolio.nameInMalayalam
+                    : portFolio.name
+                }} </span
+              ><br />
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <br />
+    <div
+      class="row paddingT20"
+      *ngFor="let i = index; let clause; of: qDetail.clauses"
+    >
+      <div class="col-md-12">
+        <div class="width-100 d-flex">
+          <div class="count-column mr15">
+            <span
+              ><strong>{{ lower[i] }}</strong></span
+            >
+          </div>
+          <div class="data-column">
+            <div class="width-100 mb10">
+              <span>{{ clause.clause }} </span>
+            </div>
+            <div class="width-100 d-flex">
+              <div class="clouse_txt">
+                <ng-container *ngIf="clause.answer && showAnswer()">
+                  <span><b>മറുപടി : </b>{{ clause.answer.answer }}</span
+                  ><br
+                /></ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-md-12">
+        <div class="data-column">
+          <ng-container>
+            <span>
+              <b>{{ lower[i] }}</b
+              >{{ clause.clause }}</span
+            ><br /><br
+          /></ng-container>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="data-column">
+          <ng-container *ngIf="clause.answer">
+            <span><b>Answer :</b>{{ clause.answer.answer }}</span
+            ><br
+          /></ng-container>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,69 @@
+<!-- <nz-collapse nzAccordion *ngIf="ballotId">
+  <pmbr-ballot-view [ballotId1]="ballotId.id"></pmbr-ballot-view> 
+      
+  </nz-collapse> -->
+  <nz-collapse nzAccordion *ngIf="ballotDetails">
+    <nz-collapse-panel
+      *ngFor="let panel of ballotDetails; let i = index"
+      [nzActive]="panel.fileStatus == 'SUBMITTED'"
+      [nzExtra]="extraTpl"
+      nzHeader="Ballot {{i+1}}"
+      [nzDisabled]="panel.disabled"
+    >
+    <!-- nzHeader="{{ panel.bulletinNumber }} - {{ panel.title }}" -->
+      <!-- change description with htmlcontent template from API -->
+      <!-- <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button nz-button  nzType="secondary"
+          *ngIf="!panel.correspondenceId && panel.fileStatus==='APPROVED'" 
+          (click)="ballotResultById(panel)">
+             Create Letter for Won Members
+          </button>
+          <button nz-button  nzType="secondary"
+          *ngIf="panel.correspondenceId" 
+          (click)="viewLetter(panel)">
+             View Letter
+          </button>
+        </div>
+      </div> -->
+      <pmbr-ballot-view [ballotId]="panel.id" (showLetter)="viewLetter($event)"
+      [fileStatus]="fileStatus"></pmbr-ballot-view> 
+      <ng-template #extraTpl>
+        <nz-tag *ngIf="panel.fileStatus">{{ panel.fileStatus.split('_').join(' ') }}</nz-tag>
+      </ng-template>
+    </nz-collapse-panel>
+  </nz-collapse>
+  <nz-collapse nzAccordion *ngIf="ballotDetail">
+    <nz-collapse-panel
+      *ngFor="let panel of ballotDetail; let i = index"
+      [nzActive]="panel.fileStatus == 'SUBMITTED'"
+      [nzExtra]="extraTpl"
+      nzHeader="Ballot"
+      [nzDisabled]="panel.disabled"
+    >
+    <!-- nzHeader="{{ panel.bulletinNumber }} - {{ panel.title }}" -->
+      <!-- change description with htmlcontent template from API -->
+      <!-- <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button nz-button  nzType="secondary"
+          *ngIf="!panel.correspondenceId && panel.fileStatus==='APPROVED'" 
+          (click)="ballotResultById(panel)">
+             Create Letter for Won Members
+          </button>
+          <button nz-button  nzType="secondary"
+          *ngIf="panel.correspondenceId" 
+          (click)="viewLetter(panel)">
+             View Letter
+          </button>
+        </div>
+      </div> -->
+      <pmbr-resolution-ballot-view 
+        [isFileView]="true" 
+        [ballotId]="panel.id" 
+        (showLetter)="viewLetter($event)">
+      </pmbr-resolution-ballot-view> 
+      <ng-template #extraTpl>
+        <nz-tag *ngIf="panel.fileStatus">{{ panel.fileStatus.split('_').join(' ') }}</nz-tag>
+      </ng-template>
+    </nz-collapse-panel>
+  </nz-collapse>

@@ -1,0 +1,104 @@
+<div class="width-100  pading-all">
+    <form [formGroup]="SDGForm">
+        <div class="row margnrtp-5">
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">{{"table.listga.assembly" |translate}}</nz-form-label>
+                    <nz-form-control [nzSpan]="15" nzErrorTip="Select Assembly">
+                        {{ assemblySession["assembly"]?.currentassemblyVal}}
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <nz-form-label [nzSpan]="9">{{"table.listga.session" |translate}}</nz-form-label>
+                    <nz-form-control [nzSpan]="15" nzErrorTip="Select Session">
+                        {{assemblySession["session"]?.currentsessionVal}}
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>  
+        <div class="row margnrtp-5">
+            <div class="col-md-8">
+                <nz-form-item>
+                        <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+                            <div class="row">
+                                <div class="col-md-12">
+                                     Type :
+                                     <nz-radio-group formControlName="nature">
+                                        <label nz-radio nzValue="SDG">SDG</label>
+                                        <label nz-radio nzValue="EG">EG</label>
+                                      </nz-radio-group>
+                                </div>
+                            </div>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+        </div>
+        <div class="row margnrtp-5">
+            <!-- <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-form-label> Request Title
+                            </nz-form-label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input nz-input formControlName="title" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';" />                  
+                        </div>
+                    </div>
+                </nz-form-control>
+            </nz-form-item> -->
+            <div class="col-md-8">
+            <nz-form-item>
+                    <nz-form-control nzErrorTip='{{ "bill.bill-clause.list.selectthedate" | translate }}'>
+                        <div class="row">
+                            <div class="col-md-12">
+                                 Note : 
+                                <textarea nz-input formControlName="note" [nzAutosize]="{ minRows: 3, maxRows: 6 }" maxlength="255" nzRequired>
+                                </textarea>
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+        <div class="row margnrtp-5">
+            <div class="col-md-8">Budget :
+                <nz-form-item>
+                  <nz-form-control nzErrorTip="Select Budget">
+                    <nz-select
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="Select Budget"
+                      formControlName="budget"
+                    >
+                      <nz-option
+                        *ngFor="let data of budget_documents"
+                        [nzLabel]="data.value"
+                        [nzValue]="data.key"
+                      ></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>   
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end" *ngIf="!sdgRequest || (sdgRequest && sdgRequest?.status === 'SAVED')">
+                <button [disabled]="false" nz-button nzType="default" (click)="cancelCnfrm()" class="margnlt-5">
+                    Cancel
+                </button>
+                <button nz-button nzType="primary" (click)="saveBudgetDocument()" class="margnlt-5">
+                    {{"table.listga.save" |translate}}
+                </button>
+                <button [disabled]="!SDGForm.valid" nz-button nzType="primary"
+                nz-popconfirm nzPopconfirmTitle="Are you sure you want to Submit?" (nzOnConfirm)="submitBudgetDocument()" 
+                (nzOnCancel)="cancelCnfrm()" class="margnlt-5">
+                    {{"table.listga.submit" |translate}}
+                </button>
+            </div>
+        </div>
+    </form>
+</div>

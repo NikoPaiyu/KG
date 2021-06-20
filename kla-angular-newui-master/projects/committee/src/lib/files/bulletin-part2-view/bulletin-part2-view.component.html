@@ -1,0 +1,46 @@
+<div class="row">
+  <div class="col-md-12  maximise" [ngClass]="{
+    enlarge: fullScreenMode == true
+  }">
+<nz-collapse nzAccordion *ngIf="bulletinResponse">
+  <nz-collapse-panel
+    [nzActive]="true"
+    [nzExtra]="extraTpl"
+    nzHeader="{{ bulletinResponse.bulletinNumber }} - {{ bulletinResponse.title }}"
+    [nzDisabled]="bulletinResponse.disabled"
+  >
+    <!-- change description with htmlcontent template from API --> 
+    <div class="col-md-12 text-align-right">
+    <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+      <i *ngIf="!fullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+      <i *ngIf="fullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+    </button>
+  </div>
+    <p [innerHTML]="bulletinResponse.reportData | safeHtml"></p>
+ 
+    <ng-template #extraTpl>
+      <nz-tag *ngIf="bulletinResponse.fileStatus">{{ bulletinResponse.status }}</nz-tag>
+      <button
+        nz-button nzType="primary" 
+        (click)="$event.stopPropagation()"
+        *ngIf="
+          buttonControls.publish &&
+          bulletinResponse.fileStatus === 'APPROVED' &&
+          bulletinResponse.status !== 'PUBLISHED'
+        "
+        nz-popconfirm
+        nzCancelText="No"
+        nzOkText="Yes"
+        nzPopconfirmTitle="Do you want to publish?"
+        (nzOnConfirm)="publishBulletin(bulletinResponse)"
+        nzPopconfirmPlacement="bottomLeft"
+      >
+        Publish
+      </button>
+    </ng-template>
+  </nz-collapse-panel>
+</nz-collapse>
+</div>
+</div>
+
+

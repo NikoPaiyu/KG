@@ -1,0 +1,23 @@
+.table-all tr td {
+    vertical-align: top !important;
+  }
+  .table-all tr td td {
+    background-color: #ccc0 !important;
+    padding-bottom: 0px !important;
+    padding-top: 5px !important;
+  }
+  
+  .viewlink {
+    color: blue;
+  }
+  .justify-content-flex-end {
+    justify-content: flex-end;
+  }
+  .mr-6 {
+    margin-right: 6px;
+  }
+
+  .viewlink {
+    color: blue;
+  }
+  

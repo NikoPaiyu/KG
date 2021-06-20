@@ -1,0 +1,10 @@
+.mr-6{margin-right: 6px;}
+.va td{background-color: #f000 !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;}
+.padding_15 {padding: 25px;}
+.va td a{padding-left: 0px !important;font-weight: 600;}
+.mat-radio-button ~ .mat-radio-button {
+    margin-left: 16px;
+  }

@@ -1,0 +1,166 @@
+<div class="row d-flex jusleify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        Budget Management
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+       Dashboard
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+      
+  <h2 class="admin-page-heading" >
+          SDG & EG 
+          </h2>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button  nz-button nzType="primary" (click)="createSDGRequest(null)">
+          Create
+        </button>
+    </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10" *ngIf="assemblySession['assembly']">
+      {{"table.listga.assembly" |translate}}
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="assemblySession['assembly'].currentassembly" name="selectedAssembly" (ngModelChange)="getrequestList()">
+          <nz-option *ngFor="let assembly of assemblySession['assembly']" [nzLabel]="assembly?.assemblyId" [nzValue]="assembly.id">
+          </nz-option>
+      </nz-select>
+  </div>
+
+  <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10" *ngIf="assemblySession['session']">
+      {{"table.listga.session" |translate}}
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="assemblySession['session'].currentsession" name="selectedSession" (ngModelChange)="getrequestList()">
+          <nz-option *ngFor="let session of assemblySession['session']" [nzLabel]="session.sessionId" [nzValue]="session.id">
+          </nz-option>
+      </nz-select>&nbsp;
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-md-6">
+      <!-- <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+          {{ "noticeprocessing.staff.personalregister.addfilter" | translate }}
+      </button> -->
+  </div>
+  <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+          <div class="col-md-6">
+              <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                  <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder='"{{ "cpl.documents.search" | translate }}"' />
+              </nz-input-group>
+              <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search"></i>
+              </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+              <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+                  <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> {{
+                  "noticeprocessing.staff.personalregister.cols" | translate }}
+              </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                  <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                      <li>
+                          <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i" (ngModelChange)="disableCheckBox()">{{
+                              box.label
+                              }}</label>
+                      </li>
+                  </ul>
+              </div>
+          </nz-dropdown-menu>
+      </div>
+  </div>
+</div>
+
+
+
+
+<nz-divider></nz-divider>
+<nz-table #filterTable [nzShowPagination]="false" nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="currentPageDataChange($event)" class="table-all">
+  <thead *ngIf="isChecked" (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+          <th  nzShowSort nzSortKey="assemlby">
+              Assembly
+             </th>
+             <th nzShowSort nzSortKey="session">
+               Session
+             </th>
+             <th  nzShowSort nzSortKey="note"> 
+               Note
+             </th>
+             <th  nzShowSort nzSortKey="note"> 
+               Type
+             </th>
+             <th >
+              Action
+             </th>
+             <th nzShowSort nzSortKey="createdDate">
+               Created Date
+             </th>
+             <th  nzShowSort nzSortKey="status">
+               Status
+             </th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr *ngFor="let list of filterTable.data">
+      <td >{{ list?.assemblyValue  }}</td>
+      <td >{{ list?.sessionValue }}</td>
+      <td  (mouseover)="showLinks(list.id)">
+        <tr>
+          {{
+            list?.note
+          }}
+        </tr>
+        <tr *ngIf="list.viewLinks">
+          <div>
+            <td><a class="viewlink" *ngIf="list.status== 'SAVED'" (click)="createSDGRequest(list)">Edit</a></td>
+            <td><a class="viewlink" *ngIf="list.status !== 'SAVED'" (click)="createSDGRequest(list)">View</a></td>
+            <td><a class="viewlink" *ngIf="!list?.fileId" (click)="showCreateFileModel(list)">Create File</a></td>
+            <td>
+              <a class="viewlink" *ngIf="list?.fileId" (click)="viewFile(list?.fileId)">{{list?.fileNumber}}</a>
+            </td>
+          </div>
+        </tr>
+      </td>
+      <td >
+       {{list?.nature}}
+      </td>
+      <td >
+        <button type="button" nz-button nzType="primary" 
+        *ngIf="list?.fileNumber && list?.stage == 'LETTER_PENDING'"
+         class="margnlt-5" (click)="draftCorrespondece(list)"> Attach Request Letter</button>
+      </td>
+      <td >{{ list?.createdDate | date: 'dd-MM-yyyy' }}</td>
+      <td >
+        <nz-tag> {{ list?.status }}</nz-tag>
+      </td>
+      </tr>
+  </tbody>
+</nz-table>
+
+<nz-pagination [nzPageIndex]="1" [nzPageSize]="paginationParams.numberOfItem" [nzTotal]="paginationParams.total" (nzPageIndexChange)="pageIndexChange($event - 1)" nzShowSizeChanger (nzPageSizeChange)="pageSizeChange($event)">
+</nz-pagination>
+<nz-modal [(nzVisible)]="createPopup" nzTitle="{{ sdgRequest ? 'Edit SDG request':'Create SDG Request'}}" (nzOnCancel)="createPopup = false" [nzFooter]="null"
+nzWidth="800">
+<budget-create-sdgeg-request *ngIf="createPopup"
+[sdgRequest]="sdgRequest"
+(onCloseEvent)="cancelSDG($event)"
+[assemblySession]="assemblySession">
+
+</budget-create-sdgeg-request>
+</nz-modal>

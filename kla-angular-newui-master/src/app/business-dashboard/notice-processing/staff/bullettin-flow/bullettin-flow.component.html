@@ -1,0 +1,157 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+              Dashboard
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+              <b> Bullettin </b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-4 d-flex justify-content-space-between">
+      <h4>
+        2422/Legi-02/2020/ni-se
+      </h4>
+      <span class="blthd">
+        <nz-tag [nzColor]="'red'"> Urgent </nz-tag></span
+      >
+    </div>
+    <div class="col-md-4 d-flex justify-content-flex-end">
+      <button nz-button nzType="default"  class="mrgL6" >...</button>
+      <button nz-button  nzType="default"  class="mrgL6">Return</button>
+      <button nz-button nzType="default"  class="mrgL6">Submit</button>
+    </div>
+</div>  
+<nz-divider> </nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+    <div class="col-md-6">
+        <nz-tabset>
+            <nz-tab nzTitle="Content">
+                <nz-table #billTable [nzData]="listOfData">
+                    <thead>
+                      <tr>
+                        <th>sl No</th>
+                        <th>Bill Title</th>
+                        <th>Other Important Coloumns</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of billTable.data; let i = index;">
+                        <td>{{i+1}}</td>
+                        <td>{{data.billTitle}}</td>
+                        <td>{{data. otherImportantColoumns}}</td>
+                      </tr>
+                    </tbody>
+                </nz-table>
+            </nz-tab>
+            <nz-tab nzTitle="Details">
+            </nz-tab>
+            <button nz-button nz-type="default" class="m-r5">Versions</button>
+            <button nz-buttton nz-type="default" class="m-r5">Edit</button> 
+        </nz-tabset>
+              
+    </div>
+    <div class="col-md-6">
+        <nz-tabset>
+          <nz-tab 
+              nzTitle="Notes">
+            <div class="chat-main-body" #scrollme [scrollTop]="scrollme.scrollHeight">
+          <nz-card
+            class="margin-10 notesp" 
+          > 
+        <div class="row">
+           <div class="col-md-7" >
+             <p>users name</p>
+             <h6>Kla roles</h6>
+             <button nz-button nzType="default"  class="m-r5">Edit</button>
+             <button nz-button nzType="default"  class="m-r5">Delete</button>
+            </div>
+           <div class="col-md-5 d-flex justify-content-flex-end">
+            <p>time&date</p>
+           </div>
+        </div>
+       </nz-card>
+      </div>
+      <div class="row">
+        <form [formGroup]="" >
+          <div class="type_msg col-md-12 p-R250 ">
+            <div class="col-md-9 bg_txtarea">
+            <textarea
+              rows="2"
+              nz-input
+              placeholder="Type a message"
+              name="note"
+              formControlName="note"
+            ></textarea>
+           </div>
+           <div
+            class="col-md-3 d-flex justify-content-end"
+           >
+           <nz-form-item>
+             <nz-form-control>
+           <nz-radio-group  formControlName="tempFlag"  nzName="radiogroup">
+            <label nz-radio-button nzValue="true" style="background-color: yellow;">yellow</label>
+            <label nz-radio-button nzValue="false">Normal</label>
+          </nz-radio-group>
+          </nz-form-control>
+          </nz-form-item>
+           </div>
+          <button
+          nz-button
+          nzType="primary"
+          class="send-btn-style p-R15"
+        >
+        Save
+        </button>
+        </div>
+       <div class="">
+      </div>
+       </form>
+      </div>
+  </nz-tab> 
+<nz-tab nzTitle="Logs">
+    <ng-container >
+     <div class="row" >
+       <div class="col-md-12">
+         <div class="bg_block">
+           <div class="col-md-7 pdzero">
+             <div class="width-100 d-flex marginbtm-15" >
+               <div class="overflow-blt"></div>
+             </div> 
+          </div>
+        </div>
+       </div>
+     </div>
+     </ng-container>
+     &nbsp;&nbsp;
+</nz-tab>  
+<nz-tab nzTitle="Files">
+    <ng-container>
+     <div class="row">
+      <div class="col-md-3"><span class="workflowhd">Bullettin Workflow</span></div>
+       <div class="col-md-9">
+        <div class="overflownote">
+            <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                <nz-step [nzStatus]="'finish'" [nzTitle]=""></nz-step>
+                <nz-step [nzStatus]="'finish'" [nzTitle]=""></nz-step>
+                <nz-step [nzStatus]="'finish'" [nzTitle]=""></nz-step>
+                <nz-step [nzStatus]="'process'" [nzTitle]="'Active'"></nz-step>
+            </nz-steps>
+          </div>
+       </div>
+       </div>
+ </ng-container>
+</nz-tab>
+</nz-tabset>
+</div>
+</div>
+
+
+      
+
+

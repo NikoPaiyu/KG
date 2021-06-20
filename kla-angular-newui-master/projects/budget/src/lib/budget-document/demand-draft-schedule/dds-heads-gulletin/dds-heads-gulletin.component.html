@@ -1,0 +1,43 @@
+<!-- Demand Heads And Gulletin -->
+<div class="row">
+    <div class="col-md-12 align-right">
+        <button *ngIf="isFileView" nz-button nzType="primary" (click)="gotoVersion()" class="mr-6"> 
+         Version
+        </button>
+    </div>
+</div>
+<div class="row">
+    <nz-tabset>
+        <nz-tab nzTitle='{{"Demand Draft Schedule" |translate}}'>
+            <div class="col-md-12">
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <budget-dds-preview [DDSCreationType]="DDSCreationType" [demandMasterId]="demandDraftMasterId" [isFrmFileView]="true" (renderGulletin)="renderGulletin($event)"></budget-dds-preview>
+                    </div>
+                </div>
+            </div>
+        </nz-tab>
+        <nz-tab nzTitle='{{"Gulletin" |translate}}'>
+            <div class="col-md-12">
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <nz-table #tbl2 nzBordered [nzData]="gulletinList" nzShowPagination nzShowSizeChanger>
+                            <thead>
+                                <tr>
+                                    <th class="bg-head">{{"Sl No." | translate}}</th>
+                                    <th class="bg-head">{{"Demand Head" | translate}}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item2 of tbl2.data; let j = index">
+                                    <td> {{j+1 }}</td>
+                                    <td> {{item2.demandNameEng}}</td>
+                                </tr>
+                            </tbody>
+                        </nz-table>
+                    </div>
+                </div>
+            </div>
+        </nz-tab>
+    </nz-tabset>
+</div>

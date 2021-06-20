@@ -1,0 +1,189 @@
+<div
+    class="chat-main-body"
+            #scrollme
+            [scrollTop]="scrollme.scrollHeight"
+          >
+            <nz-card
+              class="margin-10 notesp"
+              *ngFor="let data of notesList; let index; of: i"
+              [ngClass]="data.temporary == true ? 'temporary' : 'normal'"
+            >
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-7">
+                      <p>{{ data?.user?.details?.fullName }}</p>
+                      <small *ngFor="let role of data?.user?.roles; index as i">
+                        <span *ngIf="i === 0">{{
+                          getRoles(data.user.roles)
+                        }}</span>
+                      </small>
+                    </div>
+                    <div class="col-md-5 d-flex justify-content-flex-end">
+                      <p>{{ data.createdDate | date: "hh:mm a | dd/MM/yyyy" }}</p>
+                      <!-- <br>
+                  <p>{{data.createdDate |  date: "dd/MM/yyyy"}}</p> -->
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h6 class="cont_nt">{{ data.note }}</h6>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-9">
+                      <button
+                        nz-button
+                        nzType="default"
+                        class="m-r5"
+                        *ngIf="
+                          data.userId === currentUserID &&
+                          data.noteId === latest.noteId &&
+                          fileDetails.status === 'SUBMITTED' &&
+                          fileDetails.currentAssignee
+                        "
+                        (click)="editNote(data)"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        nz-button
+                        nzType="default"
+                        class="m-r5"
+                        nzType="info"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to delete?"
+                        (nzOnConfirm)="deleteNote(data.noteId)"
+                        (nzOnCancel)="cancel()"
+                        *ngIf="
+                          data.userId === currentUserID &&
+                          data.noteId === latest.noteId &&
+                          fileDetails.currentAssignee
+                        "
+                      >
+                        Delete
+                      </button>
+                      <button
+                        nz-button
+                        nzType="default"
+                        class="m-r5"
+                        nzType="info"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to convert this note  to normal note?"
+                        (nzOnConfirm)="convertTONormal(data.noteId)"
+                        (nzOnCancel)="cancel()"
+                        *ngIf="data.temporary == true"
+                      >
+                        Convert to Normal
+                      </button>
+                    </div>
+                    <div class="col-md-3">
+                      <span class="note_num">{{ data.noteNumber }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </nz-card>
+          </div>
+          <div class="row">
+            <form [formGroup]="createNoteForm" class="width-100">
+  
+              <div class="col-md-12" *ngIf="true">
+                <div class="row">
+                  <div class="col-md-7 bg_txtarea">
+                    <textarea
+                      rows="2"
+                      nz-input
+                      placeholder="Type a message"
+                      name="note"
+                      formControlName="note"
+                      class="txt_ful"
+                    ></textarea>
+                  </div>
+                  <div class="col-md-5 bg_txtarea">
+                    <div class="width-100 d-flex">
+                      <div class="col-md-12 d-flex justify-content-end mrt-5">
+                        <nz-form-item>
+                          <nz-form-control>
+                            <nz-radio-group
+                              formControlName="tempFlag"
+                              nzName="radiogroup"
+                            >
+                              <label
+                                nz-radio-button
+                                nzValue="true"
+                                style="background-color: yellow;"
+                                >yellow</label
+                              >
+                              <label
+                                nz-radio-button
+                                nzValue="false"
+                                >Normal</label
+                              >
+                            </nz-radio-group>
+                          </nz-form-control>
+                        </nz-form-item>
+                      </div>
+                    </div>
+                    <div class="width-100 d-flex">
+                      <div class="col-md-12 d-flex justify-content-end">
+                        <button
+                          *ngIf="!editMode && fileDetails.currentAssignee"
+                          type="submit"
+                          nz-button
+                          nzType="primary"
+                          class="send-btn-style"
+                          (click)="createNote()"
+                        >
+                          Save
+                        </button>
+                        <button
+                          *ngIf="editMode && fileDetails.currentAssignee"
+                          type="submit"
+                          nz-button
+                          nzType="primary"
+                          class="send-btn-style p-R15"
+                          (click)="updateNote()"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+  
+              <!-- <div class="type_msg col-md-12">
+                  
+               
+                </div> -->
+  
+              <div class="">
+                <nz-modal
+                  [(nzVisible)]="ShowRules"
+                  nzTitle="Rules And Directions"
+                  (nzOnCancel)="cancelRuleSelection()"
+                  (nzOnOk)="applyRule()"
+                >
+                  <div class="width-100 pading-all">
+                    <nz-table #rulesForNotes [nzData]="allRules" [nzPageSize]="5">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Rule No</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let data of rulesForNotes.data">
+                          <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                          <td>{{ data.code }}</td>
+                          <td>{{ data.englishDescription }}</td>
+                        </tr>
+                      </tbody>
+                    </nz-table>
+                  </div>
+                </nz-modal>
+              </div>
+            </form>
+          </div>

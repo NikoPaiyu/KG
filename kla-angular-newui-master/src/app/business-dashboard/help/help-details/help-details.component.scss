@@ -1,0 +1,14 @@
+@import '~src/sass/utilities/variables';
+@import '~src/sass/utilities/mixin';
+.help-view{
+	float: left;width: 100%;
+	margin-top: 20px;
+	padding: 0px 20px;
+	li{
+		float: left;width: 100%;
+		list-style: decimal;
+		margin-bottom: 25px;
+		h2{float: left;width: 100%; color: $dark;font-weight: 700;font-size: 17px;}
+		p{float: left;width: 100%;color: $dark;line-height: 22px;}
+	}
+}

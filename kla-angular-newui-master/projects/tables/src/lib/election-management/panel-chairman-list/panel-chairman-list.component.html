@@ -1,0 +1,124 @@
+<<<<<<< HEAD
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-12">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+             {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"Panel Of Chairman" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"
+>Panel Of Chairman List</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <button class="d-flex align-items-center mr-6" nz-button nzType="default">
+           Print
+          </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-10">
+        <div class="row d-flex justify-content-end">
+        <div class="col-md-3">
+            <nz-select [(ngModel)]="member" (ngModelChange)="getPanelList()" name="member">
+                <nz-option *ngFor="let type of panelList" [nzLabel]="type" [nzValue]="type"></nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-3">
+            <nz-select [(ngModel)]="party" (ngModelChange)="getPanelList()" name="party">
+                <nz-option *ngFor="let type of panelList" [nzLabel]="type" [nzValue]="type"></nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-3">
+            <nz-select [(ngModel)]="kla" (ngModelChange)="getPanelList()" name="kla">
+                <nz-option *ngFor="let type of panelList" [nzLabel]="type" [nzValue]="type"></nz-option>
+            </nz-select>
+        </div>
+        <div class="col-md-3">
+            <nz-select [(ngModel)]="listOfSelectedValue" (ngModelChange)="getPanelList()" name="listOfSelectedValue">
+                <nz-option *ngFor="let type of panelList" [nzLabel]="type" [nzValue]="type"></nz-option>
+            </nz-select>
+        </div>
+    </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10">
+<div class="row marginbtm-15">
+    <nz-table #speakerTable [nzShowPagination]="false" nzShowSizeChanger [nzData]="listOfData" class="table-all">
+        <thead>
+            <tr>
+            <th>
+               Member Name
+            </th>
+            <th>
+               Party
+            </th>
+            <th>
+              KLA
+            </th>
+            <th>
+                Sessions
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let list of speakerTable.data; let i=index">
+              <td>{{list.mN}}</td>
+              <td>{{list.party}}</td>
+              <td>{{list.kla}}</td>
+              <td><nz-tag [nzColor]="'green'"> <a> {{ list.session }}</a>
+                <nz-divider nzType="vertical"></nz-divider>
+                <a>{{list.session1}}</a></nz-tag></td>
+          </tr>
+        </tbody>
+    </nz-table>
+</div>
+</div>
+</div>
+=======
+<nz-collapse>
+    <nz-collapse-panel *ngFor="let panel of panelOfChairmanDtoList" [nzHeader]="title">
+      <div class="row">
+      <div class="col-md-12">
+         <nz-table #panelChairmanTable [nzFrontPagination]="false" nzShowSizeChanger [nzData]="panelOfChairmanDtoList"
+         class="table-all">
+             <thead>
+                 <tr>
+                 <th>
+                   {{"business-dashboard.tables.poc.membername" | translate}}
+                 </th>
+                 <th>
+                   {{"business-dashboard.tables.poc.party" | translate}}
+                 </th>
+             </tr>
+             </thead>
+             <tbody>
+                <ng-container *ngFor="let list of panel.membersList"> 
+                      <tr>
+                        <td>{{list?.user?.details?.fullName}}</td>
+                        <td>{{list?.user?.details?.keralaPolicticalPartyName}}</td>
+                      </tr>
+                </ng-container>
+             </tbody>
+         </nz-table>
+      </div>
+  </div>
+  <ng-template #title>
+    <p> {{"business-dashboard.tables.poc.session" | translate}} {{panel.sessionId}}</p> 
+  </ng-template>
+    </nz-collapse-panel>
+  </nz-collapse>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4

@@ -1,0 +1,508 @@
+
+<!-- start html content for loading admin side-->
+<ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+<form nz-form [formGroup]="validateForm" class="question-create" *ngIf="rbsPermission">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item [routerLink]="
+            isMLA()
+              ? ['/business-dashboard/question/question-dashboard']
+              : ['/business-dashboard/question/question-dept-dashboard']
+          ">
+                    {{ "business-dashboard.question.dashboard" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{ "business-dashboard.question.noticeforquestion" | translate }}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">
+                {{ "business-dashboard.question.noticeforquestion" | translate }}
+            </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div></div>
+            <div class="d-flex justify-content-between">
+                <button nz-button nzType="primary" (click)="submitForm(false, false)" style="margin-left: 6px;">
+          {{ "business-dashboard.question.save" | translate }}
+        </button>
+                <button *ngIf="validCategory" nz-button nzType="primary" type="submit" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle="{{'business-dashboard.questioncreate.submitnoticecnfmsg' | translate}} {{
+            popupmessge
+          }} ?" (nzOnConfirm)="submitForm(true, false)" nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;">
+          {{ "business-dashboard.question.submit" | translate }}
+        </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+
+    <div class="row">
+        <div class="col-md-6" *ngIf="assemblySession">
+            <nz-form-item>
+                <nz-form-control>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{ "business-dashboard.question.assembly" | translate }}
+                            </nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <span class="margnlft-10">{{
+                assemblySession["assembly"]
+                  ? assemblySession["assembly"].currentassemblyLabel
+                  : ""
+              }}</span>
+                        </div>
+                    </div>
+                    <nz-form-item>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-label>{{ "business-dashboard.question.session" | translate }}
+                                </nz-form-label>
+                            </div>
+                            <div class="col-md-8" *ngIf="assemblySession['session']">
+                                <nz-form-control>
+                                    <nz-select nzShowSearch nzAllowClear [(ngModel)]="assemblySession['session'].currentsession" formControlName="session" readonly="true" (ngModelChange)="getQuestionDateList()">
+                                        <nz-option *ngFor="let session of assemblySession['session']" [nzDisabled]="(session.sessionId < assemblySession['session'].currentsessionLabel) ? true : false" [nzLabel]="session.sessionId" [nzValue]="session.id">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </div>
+                        </div>
+                    </nz-form-item>
+                </nz-form-control>
+            </nz-form-item>
+            <div class="row" *ngIf="rbsPermission.addparty && !isPPO()">
+                <div class="col-md-4">
+                    <nz-form-label>{{"business-dashboard.question.membergroup" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12 marginbtm-10">
+                            <nz-select nzShowSearch [(ngModel)]="partyId" nzPlaceHolder="Select Party" formControlName="partyName" (ngModelChange)="getMlaListByParty(partyId)">
+                                <nz-option nzValue="All" nzLabel="All"></nz-option>
+                                <nz-option nzValue="RULING_PARTY" nzLabel="Ruling Party"></nz-option>
+                                <nz-option nzValue="OPOSITION_PARTY" nzLabel="Opposition Party"></nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="rbsPermission.addmla">
+                <div class="col-md-4">
+                    <nz-form-label>{{"business-dashboard.question.nameofmla" | translate }}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12 marginbtm-10">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{
+                  'business-dashboard.question.questioncreate.placehldmla'
+                    | translate
+                }}" (ngModelChange)="getConsentsOfMLA($event)" formControlName="primaryMember">
+                                <nz-option *ngFor="let data of mlalist" [nzValue]="data.details" [nzLabel]="data.details.fullName">
+                                </nz-option>
+                            </nz-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="rbsPermission.clubbmla">
+                <div class="col-md-4">
+                    <nz-form-label>{{ "business-dashboard.question.mlaName" | translate }}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-tag class="first">{{ primaryMember.fullName }}</nz-tag>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 marginbtm-15 mla-tag">
+                            <nz-tag *ngFor="let mla of newMlaList; let i = index" [nzMode]="'closeable'" (nzAfterClose)="removeClubbedMla(mla)">
+                                {{ mla.memberTo.details.fullName }}
+                            </nz-tag>
+                        </div>
+                    </div>
+                    <nz-tag *ngIf="!showAddMla && !noticeType" nzNoAnimation (click)="addMla()">
+                        <i nz-icon nzType="plus"></i> {{ "business-dashboard.question.addmla" | translate }}
+                    </nz-tag>
+                    <nz-form-item>
+                        <nz-form-control>
+                            <nz-select *ngIf="showAddMla && !noticeType" nzShowSearch nzAllowClear nzPlaceHolder="{{
+                  'business-dashboard.question.questioncreate.placehldmla'
+                    | translate
+                }}" (ngModelChange)="addMlAOnChange($event)" formControlName="clubbingDetails">
+                                <nz-option *ngFor="let data of memeberDetails" [nzValue]="data" [nzLabel]="data.memberTo.details.fullName"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-control>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>
+                                {{ "business-dashboard.question.questiondate" | translate }}
+                            </nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip="{{
+                    'business-dashboard.question.questioncreate.placehldqdate'
+                      | translate
+                  }}">
+                                    <nz-select nzRequired nzShowSearch nzAllowClear nzPlaceHolder="{{
+                      'business-dashboard.question.questioncreate.placehldqdate'
+                        | translate
+                    }}" formControlName="questionDate" (ngModelChange)="
+                      getExistingQuestionCount(); getListOfPortfolio()
+                    ">
+                                        <nz-option *ngFor="let item of questionDate" nzLabel="{{ item | date: 'dd-MM-yyyy' }}" nzValue="{{ item }}">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </nz-form-control>
+            </nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{ "business-dashboard.question.portfolio" | translate }}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-item>
+                        <nz-form-control nzErrorTip="{{
+                'business-dashboard.question.questioncreate.placehldportfolio'
+                  | translate
+              }}">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{
+                  'business-dashboard.question.questioncreate.placehldportfolio'
+                    | translate
+                }}" (ngModelChange)="getMinisterSubject($event)" formControlName="portfolio">
+                                <nz-option *ngFor="let data of portfolio" [nzLabel]="data.name" [nzValue]="data"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.question.ministersubject" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="{{
+                'business-dashboard.question.questioncreate.placehldministersubject'
+                  | translate
+              }}">
+                            <nz-select nzRequired nzShowSearch nzAllowClear nzPlaceHolder="{{
+                  'business-dashboard.question.questioncreate.placehldministersubject'
+                    | translate
+                }}" formControlName="ministerSubject">
+                                <nz-option *ngFor="let item of ministerSubject" [nzLabel]="item.title" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+            <div *ngIf="showQDateSection && noticeType !== 'snq'">
+                <nz-form-item>
+                    <nz-form-control nzErrorTip="{{
+              'business-dashboard.question.questioncreate.qcategory' | translate
+            }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-label>{{ "business-dashboard.question.ncategory" | translate }}
+                                </nz-form-label>
+                            </div>
+                            <div class="col-md-8">
+                                <nz-radio-group nzName="radiogroup" formControlName="category" nzRequired [(ngModel)]="noticeCategory">
+                                    <label nz-radio nzValue="STARRED" (click)="getExistingQuestionCount()">{{
+                      "business-dashboard.question.starred" | translate
+                    }}</label>
+                                    <label [nzDisabled]="noticeType === 'snq' ? true : false" nz-radio nzValue="UNSTARRED" (click)="getExistingQuestionCount()">{{
+                      "business-dashboard.question.unstarred" | translate
+                    }}</label>
+                                </nz-radio-group>
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="noticeCategory == 'STARRED' && noticeType !== 'snq'">
+                    <nz-form-control nzErrorTip="{{
+              'business-dashboard.question.questioncreate.placehldnoticepriority'
+                | translate
+            }}">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <nz-form-label>
+                                    {{ "business-dashboard.question.noticepriority" | translate }}
+                                </nz-form-label>
+                            </div>
+                            <div class="col-md-4">
+                                <nz-select *ngIf="noticeType !== 'snq'; else viewPriority" nzRequired nzPlaceHolder="{{
+                    'business-dashboard.question.questioncreate.placehldnoticepriority'
+                      | translate
+                  }}" nzShowSearch nzAllowClear formControlName="priority" (ngModelChange)="getpriority($event)">
+                                    <nz-option *ngFor="let p of priorityList" [nzLabel]="p" [nzValue]="p">{{ p }}</nz-option>
+                                </nz-select>
+                                <ng-template #viewPriority>P1</ng-template>
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-2">
+                        <nz-form-label>{{ "business-dashboard.question.noticeheading" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-10">
+                        <nz-form-control nzErrorTip="{{
+                'business-dashboard.question.questioncreate.placehldnoticeheading'
+                  | translate
+              }}">
+                            <textarea nz-input [nzAutosize]="{ minRows: 1, maxRows: 6 }" formControlName="title" class="ant-select-selection" minlength="{{ configurableParms.minTitleChar }}" maxlength="{{ configurableParms.maxTitleChar }}" nzRequired oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+              </textarea>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <ngx-sortable [items]="questionClausesList" (listSorted)="listSorted($event)" name="Clause List" *ngIf="questionClausesList.length>0">
+                <nz-form-item>
+                    <ng-template let-questionClause>
+                        <nz-form-control nzErrorTip="{{
+            'business-dashboard.question.questioncreate.giveclause' | translate
+          }}">
+                            <nz-card class="margnrtp-15">
+                                <div class="row"></div>
+                                <div class="width-100">
+                                    <div class="row">
+                                        <div class="col-md-2">
+                                            <span>{{ "business-dashboard.question.clause" | translate }} ({{
+                      upper[questionClausesList.indexOf(questionClause)]
+                    }})</span>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <nz-form-item *ngIf="questionClause.isEdit">
+                                                <div class="width-100">
+                                                    <nz-form-control nzErrorTip="{{
+                          'business-dashboard.question.questioncreate.enterclause'
+                            | translate
+                        }}">
+                                                        <textarea #myText (paste)="onPaste($event, questionClausesList.indexOf(questionClause))" (keydown)="disableKey(myText.value, $event)" nz-input [nzAutosize]="{ minRows: 2, maxRows: 6 }" [(ngModel)]="questionClause.clause" [name]="questionClause.clause"
+                                                            [ngModelOptions]="{ standalone: true }" nzRequired oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">{{ questionClause.clause }}
+                       </textarea>
+                                                    </nz-form-control>
+                                                </div>
+                                            </nz-form-item>
+                                            <div class="col-md-12 wordbreak" *ngIf="!questionClause.isEdit">
+                                                {{ questionClause.clause }}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="width-100 d-flex justify-content-end">
+                                                <div class="d-flex justify-content-end space_given">
+                                                    <button nz-button nzType="default" (click)="showClauseAsEditable(questionClausesList.indexOf(questionClause))">
+                            <i nz-icon nzType="edit" nzTheme="outline"></i>
+                          </button>
+                                                    <button nz-button nzType="default" nz-popconfirm nzCancelText="No" nzOkText="Yes" nzPopconfirmTitle="{{
+                          'business-dashboard.question.questioncreate.deletemsgclause'
+                            | translate
+                        }}" (nzOnConfirm)="removeClause(questionClausesList.indexOf(questionClause))" (nzOnCancel)="_cancelDelete()" nzPopconfirmPlacement="rightTop">
+                            <i nz-icon nzType="delete" nzTheme="outline"></i>
+                          </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex width-100 justify-content-end" *ngIf="questionClause.isEdit">
+                                        <button nz-button nzType="dashed" class="add-button" (click)="saveClause(questionClausesList.indexOf(questionClause), questionClause)">
+                      {{
+                    "business-dashboard.question.questioncreate.ok" | translate
+                  }}
+                    </button>
+                                    </div>
+                                </div>
+                            </nz-card>
+
+
+                        </nz-form-control>
+                    </ng-template>
+                </nz-form-item>
+            </ngx-sortable>
+            <nz-form-item>
+                <div class="row margnrtp-15">
+                    <div class="col-md-2">
+                        <nz-form-label *ngIf="clauseNo">
+                            {{ "business-dashboard.question.clause" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-10">
+                        <nz-form-control nzErrorTip="{{
+                'business-dashboard.question.questioncreate.enterclause'
+                  | translate
+              }}">
+                            <textarea #myText id="myText" nz-input placeholder="" [nzAutosize]="{ minRows: 2, maxRows: 6 }" formControlName="clauseVal" (paste)="onPaste($event, null)" (keydown)="disableKey(myText.value, $event)" *ngIf="clauseNo" oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+              </textarea>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+            <nz-form-control [nzXs]="{ span: 12, offset: 0 }" [nzSm]="{ span: 20, offset: 4 }" class="d-flex justify-content-flex-end">
+                <button nz-button nzType="dashed" type="button" class="add-button" (click)="addMoreClause()" *ngIf="clauseNo">
+          <i nz-icon nzType="plus"></i>
+          {{
+            "business-dashboard.question.questioncreate.addclause" | translate
+          }}
+        </button>
+            </nz-form-control>
+        </div>
+    </div>
+</form>
+<nz-modal nzClosable="false" nzMaskClosable="false" [(nzVisible)]="showPreview" nzTitle='{{"business-dashboard.question.verify&confirm" | translate}}' (nzOnCancel)="cancelPreview()" (nzOnOk)="submitForm(true, true)" nzOkText="Confirm" nzWidth="800">
+    <app-notice-preview [questionVersion]="previewData"></app-notice-preview>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="showPreviewModalFlag" nzTitle='{{"cpl.docamendments.preview" | translate}}' [nzFooter]="null" nzWidth="800" (nzOnCancel)="cancelPreviewModal()">
+    <app-notice-preview [questionVersion]="previewData"></app-notice-preview>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="showConsent" [nzTitle]="modalTitle" [nzContent]="modalContent" [nzFooter]="modalFooter" (nzOnCancel)="cancelConsentList()">
+    <ng-template #modalTitle>
+        {{"business-dashboard.question.addmla" | translate }}
+    </ng-template>
+
+    <ng-template #modalContent>
+        <div class="width-100 pading-all">
+            <nz-tabset>
+                <nz-tab nzTitle="My party">
+                    <div class="row">
+                        <div class="col-md-12 block-checked">
+                            <nz-radio-group name="membertype" id="membertype" [(ngModel)]="radioValue1" nzButtonStyle="solid">
+                                <label (click)="getSelectedMember(data,'myparty')" nz-radio-button [nzValue]="data.memberTo.details.fullName" *ngFor="let data of myPartyMembers">{{data.memberTo.details.fullName}}<br></label
+    >
+
+  </nz-radio-group>
+</div>
+      </div>
+      
+    </nz-tab>
+    <nz-tab nzTitle='{{"business-dashboard.question.consentedParty" | translate}}'>
+      <div class="row marginbtm-15">
+        <div class="col-md-6">
+          <nz-select
+          nzShowSearch
+          nzPlaceHolder="{{
+            'business-dashboard.question.questiongrantconsent.selparty'
+              | translate
+          }}"
+          [(ngModel)]="selectedPartyId"
+          (ngModelChange)="searchBasedParty()"
+          name="parties"
+        >
+          <nz-option [nzLabel]="'All'" [nzValue]="0"> </nz-option>
+          <nz-option
+            *ngFor="let data of parties"
+            [nzLabel]="data.kerelaPoliticalPartyName"
+            [nzValue]="data.kerelaPoliticalPartyId"
+          ></nz-option>
+        </nz-select>
+        </div>
+        <div class="col-md-6">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          [(ngModel)]="searchParam"
+          name="search"
+          nz-input
+          placeholder="Search"
+          (ngModelChange)="searchBasedParty()"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+      </div>
+      <div class="row">
+<div  class="col-md-12 block-checked">
+<nz-radio-group
+name="membertype"
+id="membertype"
+[(ngModel)]="radioValue2"
+nzButtonStyle="solid"
+>
+<label (click)="getSelectedMember(data,'consentedParty')"
+nz-radio-button
+  [nzValue]="data.memberTo.details.fullName"
+  *ngFor="let data of consentedPartyMembers"
+  >{{data.memberTo.details.fullName}}<br></label
+>
+
+                            </nz-radio-group>
+                        </div>
+                    </div>
+                </nz-tab>
+                <nz-tab nzTitle='{{"business-dashboard.question.consentedmember" | translate}}'>
+                    <div class="row marginbtm-15">
+                        <div class="col-md-6">
+
+                        </div>
+                        <div class="col-md-6">
+                            <nz-input-group [nzSuffix]="suffixIconSearch">
+                                <input type="text" [(ngModel)]="searchParams" name="search" nz-input placeholder="Search" (ngModelChange)="searchOnConsentList('tab3')" />
+                            </nz-input-group>
+                            <ng-template #suffixIconSearch>
+                                <i nz-icon nzType="search"></i>
+                            </ng-template>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- <div  class="col-md-12 block-checked">
+       <div *ngFor="let data of consentedMembers" class="marginbtm-10 fl">
+        <nz-tag  nzMode="checkable" (click)="getSelectedMember(data,'consentedMember')">{{data.memberTo.details.fullName}}</nz-tag>
+       </div>
+       </div> -->
+                        <div class="col-md-12 block-checked">
+                            <nz-radio-group name="membertype" id="membertype" [(ngModel)]="radioValue3" nzButtonStyle="solid">
+                                <label (click)="getSelectedMember(data,'consentedMember')" nz-radio-button [nzValue]="data.memberTo.details.fullName" *ngFor="let data of consentedMembers">{{data.memberTo.details.fullName}}<br></label
+       >
+       
+       </nz-radio-group>
+</div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</div>
+</ng-template>
+
+<ng-template #modalFooter>
+  <button nz-button nzType="default" (click)="cancelConsentList()">
+    {{"business-dashboard.question.cancel" | translate }}</button>
+  <button nz-button nzType="primary" (click)="onAddMLAOk()">
+    {{"business-dashboard.question.addmla" | translate }}</button>
+</ng-template>
+</nz-modal>

@@ -1,0 +1,170 @@
+<div class="overflow-blt">
+  <nz-tabset [nzTabBarExtraContent]="dropDown">
+    <nz-tab *ngFor="let tab of tabs" [nzTitle]="tab.title">
+      <div class="row marginbtm-25">
+        <div class="col-md-6">
+          <button nz-button nzType="default" (click)="showPdfModal(tab.attachments, 'main')">{{"cpl.fileworkflowdocs.View Doc" | translate}}</button>
+        </div>
+        <div class="col-md-4 d-flex justify-content-end">
+          <nz-select nzShowSearch nzAllowClear [(ngModel)]="attachment"
+            (ngModelChange)="showPdfModal(attachment, false)"
+            [nzPlaceHolder]="'Attachments (' + tab.attachments.length + ')'">
+            <nz-option *ngFor="let att of tab.attachments" [nzValue]="att" [nzLabel]="att.name"></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-2 d-flex justify-content-end">
+          <button nz-button nzType="default" (click)="editDoc(tab.id)" *ngIf="user.authorities.includes('officeAssistant')">{{"cpl.cplview.edit" | translate}}</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.documents.documenttitle" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-9">
+          <nz-form-item>
+            <b>{{ tab.title }}</b>
+          </nz-form-item>
+        </div> 
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.actregistration.doctype" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.type }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.cplview.deptfileNo" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.departmentFileNumber }}</b>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.cplview.ministerfor" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b *ngIf="tab.portfolioName.length > 18"><span nz-tooltip [nzTooltipTitle]="tab.portfolioName">{{ tab.portfolioName.substr(0,18) }}..</span></b>
+            <b *ngIf="tab.portfolioName.length < 18">{{ tab.portfolioName }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.fileworkflowdocs.departMent" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b *ngIf="tab.ministerDepartmentName.length > 18"><span nz-tooltip [nzTooltipTitle]="tab.ministerDepartmentName">{{ tab.ministerDepartmentName.substr(0,18) }}..</span></b>
+            <b *ngIf="tab.ministerDepartmentName.length < 18">{{ tab.ministerDepartmentName }}</b>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label> {{"cpl.fileworkflowdocs.gono" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3 word-brk">
+          <nz-form-item>
+            <b>{{ tab.goNumber }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.fileworkflowdocs.godate" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.goDate | date: 'dd-MM-yyyy' }}</b>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label> {{"cpl.docpreparion.srodate" | translate }}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.sroDate | date: 'dd-MM-yyyy' }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.docamendments.sronumber" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.sroNumber }}</b>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>
+            {{"cpl.fileworkflowdocs.dateofpublishinthegazette" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.gazettePublishDate | date: 'dd-MM-yyyy' }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.fileworkflow.delaystatement" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <button *ngIf="tab.delayStatus !== 'NOT_NEEDED'" nz-button nzType="default" (click)="showPdfModal(tab.attachments, 'delay')">{{"cpl.correspondencelist.view" | translate}}</button>
+            <ng-container *ngIf="tab.delayStatus === 'NOT_NEEDED'">{{ tab.delayStatus.replace('_', ' ') }}</ng-container>
+          </nz-form-item>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.cplview.layingprovisionact" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.layingProvisionInAct }}</b>
+          </nz-form-item>
+        </div>
+        <div class="col-md-3">
+          <nz-form-label>{{"cpl.fileworkflowdocs.noofdaystobelaidinsabha" | translate }}</nz-form-label>
+        </div>
+        <div class="col-md-3">
+          <nz-form-item>
+            <b>{{ tab.numberOfDaysInSabha }}</b>
+          </nz-form-item>
+        </div>
+      </div>
+</nz-tab>
+</nz-tabset>
+<ng-template #dropDown>
+  <!-- <button nz-button>
+      <i nz-icon nzType="caret-down" nzTheme="outline"></i>
+    </button> -->
+  <button nz-button nz-dropdown [nzDropdownMenu]="menu"  *ngIf="extraTabs.length !== 0"><i nz-icon nzType="down"></i></button>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <ul nz-menu>
+      <li nz-menu-item *ngFor="let tab of extraTabs">
+        <a (click)="changeTabContents(tab)">{{ tab.title }}</a>
+      </li>
+    </ul>
+  </nz-dropdown-menu>
+</ng-template>
+<nz-modal [(nzVisible)]="isPdfVisible" [nzFooter]="null" (nzOnCancel)="hideModal()">
+  <div class="width-100 pading-all" *ngIf="this.docUrl !== null">
+    <ngx-doc-viewer [url]="docUrl" viewer="google" style="width:100%; height: 500px;"></ngx-doc-viewer>
+  </div>
+  <div class="width-100 pading-all" *ngIf="this.docUrl === null">
+    <h4>{{"cpl.fileworkflowdocs.nodocumentuploadedtoview" | translate }}</h4>
+  </div>
+</nz-modal>
+</div>

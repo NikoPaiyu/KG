@@ -1,0 +1,28 @@
+<!-- <div class="row">
+  <div class="col-md-12 maximise" [ngClass]="{
+      enlarge: fullScreenMode == true
+    }"> -->
+<div class="padding_25">
+  <div  class="row margnrtp-15">
+    <div class="col-md-12 align-right">
+      <button *ngIf="!isFileView" class="mr-6" nz-button (click)="cancelPreview()">Cancel</button>
+      <button *ngIf="!isFileView && !isViewOnly && reportDto?.reportData == null " class="mr-6" nzType="primary" nz-button (click)="generateReport()">Generate Report</button>
+      <button *ngIf="!isFileView && !isViewOnly && reportDto?.reportData" class="mr-6" nzType="primary" nz-button (click)="downloadReport()">Download Report</button>
+    </div>
+  </div>
+  <div *ngIf="isFileView || !isViewOnly" class="row margnrtp-15">
+ <!-- <div class="col-md-12 align-center">  
+  <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+    <i *ngIf="!fullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+    <i *ngIf="fullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+  </button>
+  </div> -->
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-12">
+ <div [innerHtml]="previewContent"></div>
+</div>
+</div>
+</div>
+<!-- </div>
+</div> -->

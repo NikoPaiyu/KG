@@ -1,0 +1,146 @@
+<div *ngIf="!runningLines || runningLines.length == 0">
+  <nz-empty [nzNotFoundContent]="contentTpl">
+    <ng-template #contentTpl>
+      <span> No Businesses Available </span>
+    </ng-template>
+  </nz-empty>
+</div>
+<div class="row" *ngIf="runningLines && runningLines.length > 0">
+  <div class="col-md-2">
+    <div class="card-height full-heights">
+      <div class="list-group" role="tablist">
+        <ng-container *ngFor="let item of runningLines">
+          <a
+            [ngClass]="{ active: item.businessId == currentBusinessId }"
+            class="list-group-item list-group-item-action list-style-1 mb-2  button-admin-radius lob-list"
+            role="tab"
+            href="javascript:;"
+            (click)="onClickBusiness(item)"
+            >{{ item.businessNameMalayalam || item.businessName }}</a
+          >
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="col-md-6">
+    <div class="card card-height full-heights bc-color">
+      <div class="card-body">
+        <div *ngFor="let runningLine of runningLines" nz-row>
+          <div nz-col nzSpan="24">
+            <nz-collapse
+              *ngFor="
+                let item of runningLine.businessLines
+                  | filterbusiness: currentBusinessId;
+                let i = index
+              "
+              class="mrg-btm bc-green"
+            >
+              <nz-collapse-panel
+                [nzHeader]="header"
+                [nzExtra]="extra"
+                [nzDisabled]="'true'"
+                nzShowArrow="false"
+              >
+                <ng-template #header>
+                  <div class="row">
+                    <div class="col-md-2">#{{ i + 1 }}</div>
+                    <div class="col-md-1">
+                      <i
+                        nz-icon
+                        *ngIf="item.read"
+                        [nzType]="'check-circle'"
+                        [nzTheme]="'fill'"
+                        class="read-check-icon"
+                      ></i>
+                    </div>
+                    <div class="col-md-7">
+                      <p>{{ item.title }}</p>
+                      <p>
+                        <span class="lobview-span mla-name-tab"
+                          >{{ "lobview.view.membername" | translate }} :
+                          {{
+                            item.primaryMemberMalayalamFullName ||
+                              item.primaryMemberName
+                          }}
+                          <span *ngIf="item.primaryMemberDesignation">
+                            {{
+                              "( " +
+                                item.primaryMemberDesignation
+                                  .designationNameMalayalam +
+                                " )"
+                            }}
+                          </span>
+                        </span>
+                      </p>
+                    </div>
+                    <div class="col-md-2">
+                      <button
+                        *ngIf="item.speakerNoteUrl"
+                        nz-button
+                        nzType="default"
+                        (click)="onViewFile(item.speakerNoteUrl)"
+                        class="bc-btn d-flex align-items-center justify-content-center"
+                        title="View Speaker Note"
+                      >
+                        <i nz-icon nzType="file-pdf" [nzTheme]="'twotone'"></i>
+                      </button>
+                    </div>
+                  </div>
+                </ng-template>
+                <ng-template #extra> </ng-template>
+
+                <div nz-row>
+                  <p></p>
+                  <p *ngIf="item.description">
+                    <span class="lobview-span"
+                      >{{ "lobview.view.description" | translate }} :
+                      {{ item.description }}
+                    </span>
+                  </p>
+                </div>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <div
+    class="col-md-10"
+    [ngClass]="{
+      enlarge: fullScreenMode == true
+    }"
+  >
+    <div class="abs-adj bc-btn-holder">
+      <button (click)="addClass()" class="bc-btn-fll margnrtp-15">
+        <div *ngIf="fullScreenMode">
+          <img src="../../assets/img/normalscreen.svg" alt="" width="15" />
+        </div>
+        <div *ngIf="!fullScreenMode">
+          <img src="../../assets/img/fullscreen.svg" alt="" width="15" />
+        </div>
+      </button>
+    </div>
+    <div class="card-height full-heights no-brdr bc-color prv-area">
+      <span *ngIf="!pdfSrc" class="prv-bc">Speaker Note Content Goes Here</span>
+      <pinch-zoom
+        [disableZoomControl]="'disable'"
+        *ngIf="pdfSrc"
+        class="zoom-reader"
+      >
+        <div>
+          <pdf-viewer
+            id="page"
+            *ngIf="pdfSrc"
+            [src]="pdfSrc"
+            [render-text]="false"
+            [show-all]="true"
+            style="display: block;"
+            [original-size]="true"
+            [fit-to-page]="!fullScreenMode"
+          ></pdf-viewer>
+        </div>
+      </pinch-zoom>
+    </div>
+  </div>
+</div>

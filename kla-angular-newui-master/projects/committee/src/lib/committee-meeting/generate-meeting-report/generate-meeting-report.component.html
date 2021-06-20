@@ -1,0 +1,112 @@
+<form nz-form [formGroup]="reportForm" class="form">
+  <div class="padding_25">
+    <div class="row margnrtp-15">
+      <div class="col-md-11 align-right">
+        <!-- <button class="mr-6" nz-button *ngIf="canIedit" (click)="editDescription()">Edit</button> -->
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-11">
+        <nz-form-item>
+          <nz-form-label>{{ "table.createminute.header" | translate}}</nz-form-label>
+          <nz-form-control nzErrorTip='{{ "committee.generatemeetingreport.enterheader" | translate}}'>
+            <textarea *ngIf="editMode"
+              nz-input
+              [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+              formControlName="header"
+              nzRequired
+              class="ant-select-selection"
+              
+              nzRequired
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+            >
+            </textarea>
+            <div *ngIf="!editMode">
+              {{reportForm.value.header}}
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-form-label>{{ "committee.addclause.reportdescription" | translate}}</nz-form-label>
+        <div formArrayName="descriptions">
+          <div *ngFor="let d of clause.controls; let i = index">
+            <div [formGroupName]="i">
+              <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "committee.generatemeetingreport.enterdescription" | translate}}'>
+                  <div class="row margnrtp-15">
+                  <div class="col-md-11">
+                  <textarea *ngIf="editMode"
+                    nz-input
+                    [nzAutosize]="{ minRows: 4, maxRows: 8 }"
+                    formControlName="description"
+                    nzRequired
+                    class="ant-select-selection"
+                   
+                    nzRequired
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                  >
+                  </textarea>
+                  <span *ngIf="!editMode">
+                   {{i+1}}.{{d.value.description}}
+                  </span>
+                  </div>
+                  <div class="col-md-1">
+                    <button *ngIf="editMode"
+                    nz-button
+                    nzType="default"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{ "committee.generatemeetingreport.douwanttodeletedescription" | translate}}'
+                    (nzOnConfirm)="deleteDescription(i)"
+                    (nzOnCancel)="cancelDelete()"
+                    nzPopconfirmPlacement="bottomLeft"
+                  >
+                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                  </button>
+                  </div>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <button *ngIf="editMode"
+        nz-button
+        nzType="primary"
+        class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+        (click)="addnewDescription()"
+      >
+        <i nz-icon nzType="plus"></i>
+        {{ "committee.subjectcommittee.adddescription" | translate}}
+      </button>
+    </div>
+    <!-- <div class="row margnrtp-15">
+    <div class="col-md-12"></div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-12"></div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-12"></div>
+  </div> -->
+    <div class="row margnrtp-25">
+      <div class="col-md-12 align-right">
+        <button class="mr-6" nz-button (click)="cancelReport()">{{ "committee.committe-files.cancel" | translate}}</button>
+        <button *ngIf="editMode"
+          class="mr-6"
+          nzType="primary"
+          nz-button
+          (click)="saveDescription()"
+        >
+        {{ "committee.generatemeetingreport.save" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</form>
+

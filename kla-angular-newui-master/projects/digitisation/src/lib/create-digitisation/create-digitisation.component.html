@@ -1,0 +1,453 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "digitisation.digitisation" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">
+            {{ "digitisation.digitisation" | translate }}
+        </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button nzType="default" class="mr-6">
+            {{ "business-dashboard.agenda.agenda-create.cancel" | translate }}
+        </button>
+        <button (click)='saveDigitisation()' nz-button nzType="default">
+            {{ "cpl.docupload.save" | translate }}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+
+<form [formGroup]='digitisationForm'>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ "digitisation.refId" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='refId' nz-input maxlength="40"
+                                placeholder='{{"digitisation.refId" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ "digitisation.date" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-date-picker formControlName='date'></nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "cpl.docupload.assembly" | translate }}</nz-form-label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select (ngModelChange)='getSessionList()' formControlName='assemblyId' nzAllowClear
+                                nzPlaceHolder='{{"cpl.docupload.selassembly" | translate}}'>
+                                <nz-option *ngFor='let assemblyItems of assemblyList' [nzValue]='assemblyItems.id'
+                                    [nzLabel]='assemblyItems.assemblyId'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "cpl.docupload.session" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select formControlName='sessionId' nzAllowClear
+                                nzPlaceHolder='{{"cpl.docupload.selsession" | translate}}'>
+                                <nz-option *ngFor='let sessionItems of sessionList' [nzValue]='sessionItems.id'
+                                    [nzLabel]='sessionItems.sessionId'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.documentType" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select (ngModelChange)='getDocumentSubType()' formControlName='documentType'
+                                nzAllowClear nzPlaceHolder='{{"digitisation.documentType" | translate}}'>
+                                <nz-option *ngFor='let documentItems of documentType' [nzValue]='documentItems.code'
+                                    [nzLabel]='documentItems.name'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.documentSubType" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select formControlName='subType' nzAllowClear
+                                nzPlaceHolder='{{"digitisation.documentSubType" | translate}}'>
+                                <nz-option *ngFor='let subTypeItems of documentSubType' [nzValue]='subTypeItems.code'
+                                    [nzLabel]='subTypeItems.name'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.documentNo" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='documentNo' nz-input maxlength="40"
+                                placeholder='{{"digitisation.documentNo" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "cpl.correspondencelist.documentname" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='documentName' nz-input maxlength="40"
+                                placeholder='{{"cpl.correspondencelist.documentname" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.docYear" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-date-picker formControlName='documentYear'></nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "business-dashboard.question.questionlist.subject" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='subject' nz-input maxlength="40"
+                                placeholder='{{"business-dashboard.question.questionlist.subject" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.event" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='event' nz-input maxlength="40"
+                                placeholder='{{"digitisation.event" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "business-dashboard.question.questionlist.status" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='status' nz-input maxlength="40"
+                                placeholder='{{"business-dashboard.question.questionlist.status" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "cpl.docupload.klasection" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select formControlName='klaSection' nzAllowClear
+                                nzPlaceHolder='{{"cpl.docupload.klasection" | translate}}'>
+                                <nz-option *ngFor='let sectionItems of klaSectionList' [nzValue]='sectionItems.code'
+                                    [nzLabel]='sectionItems.klaSectionName'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.recievedFrom" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='recievedFrom' nz-input maxlength="40"
+                                placeholder='{{"digitisation.recievedFrom" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "cpl.cplview.dep" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select formControlName='department' nzAllowClear
+                                nzPlaceHolder='{{"cpl.cplview.dep" | translate}}'>
+                                <nz-option *ngFor='let departmentItem of departmentList' [nzValue]='departmentItem.id'
+                                    [nzLabel]='departmentItem.departmentName'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.recievedDate" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='recievedDate' nz-input maxlength="40"
+                                placeholder='{{"digitisation.recievedDate" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.accesLevel" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <input formControlName='accessLevel' nz-input maxlength="40"
+                                placeholder='{{"digitisation.accesLevel" | translate}}' />
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.accesForKlaSection" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select nzAllowClear nzPlaceHolder='{{"digitisation.accesForKlaSection" | translate}}'>
+                                <nz-option *ngFor='let sectionItem of klaSectionList' [nzValue]='sectionItem.code'
+                                    [nzLabel]='sectionItem.klaSectionName'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.accesForDepartment" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-select nzAllowClear nzPlaceHolder='{{"digitisation.accesForDepartment" | translate}}'>
+                                <nz-option *ngFor='let departmentItem of departmentList' [nzValue]='departmentItem.id'
+                                    [nzLabel]='departmentItem.departmentName'>
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <nz-divider></nz-divider>
+        <div class="col-md-6">
+            <nz-form-item>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ "digitisation.docAttachment" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control
+                            nzErrorTip='{{"noticeprocessing.noticetemplate.createtemplate.input" | translate}}'>
+                            <nz-upload (nzChange)="handleChange($event)" [nzMultiple]='true' [nzAction]='fileUploadUrl'
+                                [nzFileList]='fileList'>
+                                <button type='button' nz-button><i nz-icon nzType="upload"></i>Click to Upload</button>
+                            </nz-upload>
+                        </nz-form-control>
+                    </div>
+                </div>
+
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label> {{ "digitisation.tags" | translate }}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-tag *ngFor="let tag of tags; let i = index" nzMode="closeable" (nzOnClose)="handleClose(tag)">
+                        {{ sliceTagName(tag) }}
+                    </nz-tag>
+                    <nz-tag *ngIf="!inputVisible" class="editable-tag" nzNoAnimation (click)="showInput()">
+                        <i nz-icon nzType="plus"></i>
+                        New Tag
+                    </nz-tag>
+                    <input [ngModelOptions]="{standalone: true}" #inputElement nz-input nzSize="small"
+                        *ngIf="inputVisible" type="text" [(ngModel)]="inputValue" style="width: 78px;"
+                        (blur)="handleInputConfirm()" (keydown.enter)="handleInputConfirm()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>

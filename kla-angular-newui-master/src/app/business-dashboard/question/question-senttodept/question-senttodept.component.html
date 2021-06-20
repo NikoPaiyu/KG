@@ -1,0 +1,172 @@
+<form nz-form>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="[
+            '/business-dashboard/question/question-dept-dashboard'
+          ]">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between marginbtm-15">
+        <div class="col-md-12">
+          <h3>{{"business-dashboard.question.sendshortnotice" | translate}}</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-9">
+          <div class="row">
+            <div class="col-md-2 d-flex align-items-center whitespace" *ngIf="assemblySession['assembly']">
+              {{ "business-dashboard.question.assembly" | translate }}
+              <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="assemblyId"
+                [(ngModel)]="assemblySession['assembly'].currentassembly" (ngModelChange)="findSessionListByAssembly(assemblySession['assembly'].currentassembly)">
+                <nz-option *ngFor="let assembly of assemblySession['assembly']" [nzLabel]="assembly.assemblyId"
+                  [nzValue]="assembly.id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="col-md-2 d-flex align-items-center whitespace" *ngIf="assemblySession['session']">
+              {{ "business-dashboard.question.questionlist.session" | translate }}
+              <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="sessionId"
+                [(ngModel)]="assemblySession['session'].currentsession" (ngModelChange)="getApprovedShortNotices()">
+                <nz-option *ngFor="let session of assemblySession['session']" [nzLabel]="session.sessionId"
+                  [nzValue]="session.id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="col-md-4 d-flex align-items-center whitespace">
+              {{ "business-dashboard.question.questiondate" | translate }}
+              <nz-select nzRequired nzShowSearch nzAllowClear name="qDate" nzPlaceHolder="{{
+            'business-dashboard.question.questioncreate.placehldqdate'
+              | translate
+          }}" [(ngModel)]="questionDate" (ngModelChange)="filterByQdate()">
+                <nz-option *ngFor="let item of questionDates" nzLabel="{{ item | date: 'dd/MM/yyyy' }}"
+                  nzValue="{{ item }}">
+                </nz-option>
+              </nz-select>
+            </div>
+            <button nz-button nzType="primary" nz-popconfirm nzCancelText="No" nzOkText="Yes"
+              nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttosend" | translate}}' (nzOnConfirm)="sendToDept()"
+              nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;">
+              {{"business-dashboard.question.sendtodepartment" | translate}}
+            </button>
+          </div>
+        </div>
+        <div class="col-md-3 d-flex align-items-center">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                  'business-dashboard.question.questionlist.inputsearch'
+                    | translate
+                }}" (ngModelChange)="onSearch()" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+  <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="approvedShortNotices" class="table-all">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" (nzCheckedChange)="_checkAllRows($event)"></th>
+        <th nzShowSort nzSortKey="slNo">
+          {{"business-dashboard.question.slno" | translate}}
+        </th>
+        <th nzShowSort nzSortKey="memberName">
+          {{"business-dashboard.question.member" | translate}}
+        </th>
+        <th *ngIf="!shownotice" nzShowSort nzSortKey="questionNumber">
+          {{"business-dashboard.question.questionlist.questionnumber" | translate}}
+        </th>
+        <th nzShowSort nzSortKey="heading">
+          <label *ngIf="shownotice">{{"business-dashboard.question.notice" | translate}}</label>
+          <label *ngIf="!shownotice">{{"business-dashboard.question.questioneditconsent.Question" | translate}}</label>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data; let i = index">
+        <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="selectSNQ()"></td>
+        <td>
+          {{ list.slNo }}
+        </td>
+        <td>
+          <ng-container *ngIf="
+              list.clubbingDetails &&
+                list.clubbingDetails.length > 1;
+              else noClubbing
+            ">
+            <a nz-popover [nzPopoverContent]="contentTemplate" nzPopoverTrigger="click"
+              (click)="_showClubbedMembers(list.clubbingDetails)" href="javascript:void(0);"><img
+                src="../../assets/img/club_q_active.svg" alt="" /></a></ng-container>
+          {{ list.primaryMemberName }}
+        </td>
+        <ng-template #noClubbing>
+          <img src="../../assets/img/club_q.svg" alt="" />
+        </ng-template>
+        <td *ngIf="!shownotice && list.questionNumber">
+          {{ list.questionNumber }}
+        </td>
+        <td *ngIf="list.heading">
+          <a href="javascript:void(0);" (click)="showVersionModal(list)">
+            {{ list.heading }}</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</form>
+<ng-template #contentTemplate>
+  <div *ngIf="ClubbedMembers.data">
+    <nz-table #rowTable [nzData]="ClubbedMembers.data" [nzFrontPagination]="false" [nzShowPagination]="false"
+      [nzBordered]="false">
+      <thead></thead>
+      <tbody>
+        <tr *ngFor="let clubb of rowTable.data; let i = index">
+          <td>{{ clubb.noticeNumber }}:</td>
+          <td>
+            {{ clubb.memberName }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</ng-template>
+
+<nz-modal [nzTitle]="versionModalTitle" [(nzVisible)]="showVersion" (nzOnCancel)="cancelVersion()" [nzFooter]="null"
+  [nzWidth]="'800'">
+  <div *ngIf="questionVersion">
+    <app-short-notice-preview [previewData]="questionVersion" [assembly]="questionVersion.assemblyId"
+      [session]="questionVersion.sessionId" [hidePrint]="true"></app-short-notice-preview>
+  </div>
+   <ng-template #versionModalTitle>
+    <div class="row paddingT15">
+      <div class="col-md-6">
+        <nz-select (ngModelChange)="getVersionDetailsById($event)" [(ngModel)]="selectedVersion">
+          <ng-container *ngFor="let version of versionsCombo">
+            <nz-option nzCustomContent nzLabel="{{ version.ROLE }}" [nzValue]="version.id">
+              <div class="row dropdown-option">
+                <div class="col-md-12">
+                  <div class="row">
+                    <strong>{{ version.ROLE }}</strong>
+                  </div>
+                  <div class="row">
+                    {{ version.cretationDate | date: "dd-MM-yyyy hh:mm a" }}
+                  </div>
+                </div>
+              </div>
+            </nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+    </div>
+  </ng-template> 
+</nz-modal>

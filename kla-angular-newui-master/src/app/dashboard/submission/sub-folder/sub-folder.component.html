@@ -1,0 +1,15 @@
+<button class="mla-button cover" (click)="backToSubTemplate()">
+    <img src="../../assets/img/prev.svg" height="13px" alt="" />
+</button>
+<ul class="folder-list-view d-flex flex-wrap justify-content-between">
+    <li (click)="openSubFileTemplate(item.fileUrl)" *ngFor="let item of FileUploadDetails">
+        <img src="../../assets/img/File_Icon.png" alt="" />
+        <span>{{ item.name }}</span>
+        <div>
+            <span>{{"dashboard.summary.date" | translate}}: </span><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span>
+        </div>
+
+    </li>
+
+</ul>
+<nz-empty *ngIf="FileUploadDetails.length == 0 "></nz-empty>

@@ -1,0 +1,86 @@
+<app-create [createTitle]="createTitle" [createStatus]="statusOfDisposal?.value" [createBreadCums]="disposalBreadCums">
+    <div class="header-action" *ngIf="(UIState$ | async) === 'CREATE'">
+        <button nz-button nzType="primary" (click)="onSave('Draft')" class="mr-2">Save as Draft</button>
+        <button nz-button nzType="primary" (click)="onSubmit('Active')" class="mr-2" [disabled]="disposalFormGroup?.invalid">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" nzDanger>Discard</button>
+    </div>
+    <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">
+        <button nz-button nzType="primary" (click)="onEditState()" class="mr-2" [disabled]="statusOfDisposal?.value === 'AWAITING_APPROVAL'">Edit</button>
+        <button nz-button nzType="primary" (click)="onSubmit('view',null)" class="mr-2" [disabled]="disposalFormGroup?.invalid || statusOfDisposal?.value === 'AWAITING_APPROVAL'">Submit</button>
+        <button nz-button nzType="dashed" (click)="onCreateAuction()" class="mr-2" *ngIf="statusOfDisposal?.value === 'AWAITING_APPROVAL'">Create Auction</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" nzDanger>Discard</button>
+    </div>  
+    <div class="header-action" *ngIf="(UIState$ | async) === 'EDIT'">
+        <button nz-button nzType="primary" (click)="onEdit()" class="mr-2">Save as Draft</button>
+        <button nz-button nzType="primary" (click)="onSubmit('edit')" class="mr-2" [disabled]="disposalFormGroup?.invalid">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" nzDanger>Discard</button>
+    </div>
+
+    <div class="create-form">
+        <form [formGroup]="disposalFormGroup" *ngIf="disposalFormGroup;">
+            <div class="row">
+                <div class="col-6">
+                    <nz-form-item *ngIf="(UIState$ | async) === 'VIEW' || (UIState$ | async) === 'EDIT'">
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Request ID</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="value" formControlName="id" type="text" [disabled]="true"/>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Reason for Disposal</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24" >
+                            <nz-select formControlName="reasonForDisposal" [nzDisabled]="(UIState$ | async) === 'VIEW'">
+                                <nz-option nzValue="Asset no longer used" nzLabel="Asset no longer used"></nz-option>
+                                <nz-option nzValue="Asset in a bad condition" nzLabel="Asset in a bad condition"></nz-option>
+                                <nz-option nzValue="Asset more in quantity" nzLabel="Asset more in quantity"></nz-option>
+                                <nz-option nzValue="Asset is in end of life" nzLabel="Asset is in end of life"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="value" nzRequired>Expected Disposal Value</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <input nz-input  id="value" formControlName="expectedDisposalValue" type="number"  [disabled]="(UIState$ | async) === 'VIEW'" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="method" nzRequired>Disposal Method</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-select formControlName="disposalMethod"  [nzDisabled]="(UIState$ | async) === 'VIEW'">
+                                <nz-option nzValue="Direct" nzLabel="Direct"></nz-option>
+                                <nz-option nzValue="Auction" nzLabel="Auction"></nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Date(Asset Needs to be disposed )</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <nz-date-picker id="disposed" formControlName="dateForDisposal"  [nzDisabled]="(UIState$ | async) === 'VIEW'"></nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="disposed" nzRequired>Attachments</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="24">
+                            <app-file-list (fileListEvent)="fileListEvent($event)" [attachmentDisabled]="(UIState$ | async) === 'VIEW'"  [fileList]="disposalFormGroup?.get('attachments')?.value"></app-file-list>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSm]="10" [nzXs]="10" nzFor="disposed" nzRequired>Remarks</nz-form-label>
+                        <nz-form-control [nzSm]="14" [nzXs]="10">
+                            <textarea  nz-input formControlName="remarks" style="min-height: 250px !important" [disabled]="(UIState$ | async) === 'VIEW'"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</app-create>
+
+

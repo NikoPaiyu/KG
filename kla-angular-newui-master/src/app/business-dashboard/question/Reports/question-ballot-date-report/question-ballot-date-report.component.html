@@ -1,0 +1,128 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.ballotreport.ballotreport" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 col-sm-12">
+    <h3>{{"business-dashboard.question.ballotreport.ballotreport" | translate}}</h3>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div
+    class="col-md-2 d-flex align-items-center whitespace"
+    *ngIf="assemblySession['assembly']"
+  >
+    {{ "business-dashboard.question.assembly" | translate }}
+    <nz-select
+      nzShowSearch
+      nzAllowClear
+      nzPlaceHolder=""
+      name="assemblyId"
+      [(ngModel)]="assemblySession['assembly'].currentassembly"
+      (ngModelChange)="findSessionListByAssembly(assemblySession['assembly'].currentassembly)"
+    >
+      <nz-option
+        *ngFor="let assembly of assemblySession['assembly']"
+        [nzLabel]="assembly.assemblyId"
+        [nzValue]="assembly.id"
+      >
+      </nz-option>
+    </nz-select>
+  </div>
+  <div
+    class="col-md-2 d-flex align-items-center whitespace"
+    *ngIf="assemblySession['session']"
+  >
+    {{ "business-dashboard.question.questionlist.session" | translate }}
+    <nz-select
+      nzShowSearch
+      nzAllowClear
+      nzPlaceHolder=""
+      name="sessionId"
+      [(ngModel)]="assemblySession['session'].currentsession"
+      (ngModelChange)="getQuestionDate()"
+    >
+      <nz-option
+        *ngFor="let session of assemblySession['session']"
+        [nzLabel]="session.sessionId"
+        [nzValue]="session.id"
+      >
+      </nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-5">
+    <div class="row align-items-center">
+      <div class="col-md-4 wordbreak">{{"business-dashboard.question.questiondate" | translate}}:</div>
+      <div class="col-md-8">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="Select Date">
+            <nz-select
+              nzRequired
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="{{
+                'business-dashboard.question.questioncreate.placehldqdate'
+                  | translate
+              }}"
+              [(ngModel)]="questionDate"
+              (ngModelChange)="getBallotResult()"
+            >
+              <nz-option
+                *ngFor="let item of questionDates"
+                nzLabel="{{ item | date: 'dd/MM/yyyy' }}"
+                nzValue="{{ item }}"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+  <div
+    class="col-md-3 d-flex align-items-center whitespace justify-content-end"
+  ></div>
+</div>
+<nz-table
+  #filterTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="ballotList"
+  class="table-all"
+>
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th nzShowSort nzSortKey="slNo">
+        {{"business-dashboard.question.slno" | translate}}
+      </th>
+      <th nzShowSort nzSortKey="memberName">
+        {{"business-dashboard.question.member" | translate}}
+      </th>
+      <!-- <th nzShowSort nzSortKey="ruling">
+        Ruling / Opposition
+      </th> -->
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data">
+      <td>
+        {{ list.slNo }}
+      </td>
+      <td>
+        {{ list.memberName }}
+      </td>
+      <!-- <td>
+        Ruling
+      </td> -->
+    </tr>
+  </tbody>
+</nz-table>

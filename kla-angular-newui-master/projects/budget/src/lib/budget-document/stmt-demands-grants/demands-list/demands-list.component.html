@@ -1,0 +1,57 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"budget.budgetspeech.document" |translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"> {{"Demands List" |translate}} </h2>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row margnrtp-15 justify-content-end">
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-12">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                'business-dashboard.question.questionlist.inputsearch' | translate
+              }}" (ngModelChange)="onSearchUser()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<!-- <ngx-sortable [items]="listOfData" [name]="'List'" (listSorted)="listSorted($event)">
+    <ng-template let-item> -->
+<nz-table class="running-table table-all" [nzData]="listOfData" [nzFrontPagination]="false" [nzShowPagination]="false">
+    <thead>
+        <tr>
+            <th class="bg-head">{{"Sl No" | translate}}</th>
+            <th class="bg-head">{{"Demand Number" | translate}}</th>
+            <th class="bg-head">{{"Demand Name" | translate}}</th>
+        </tr>
+    </thead>
+    <tbody cdkDropList (cdkDropListDropped)="drop($event)">
+        <tr *ngFor="let item of listOfData; index as i" cdkDrag>
+            <td>{{ i + 1}}</td>
+            <td>{{ item.demandNumber }}</td>
+            <td>{{ item.demandNameEng }}</td>
+            <td>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<!-- </ng-template>
+</ngx-sortable> -->

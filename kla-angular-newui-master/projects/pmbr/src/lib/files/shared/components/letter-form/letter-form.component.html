@@ -1,0 +1,15 @@
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "cpl.correspondence.correspondence" | translate }}:
+    </div>
+    <div class="col-md-4">
+        <button class="ml-6" nz-button nzType="primary" (click)="draftCorrespondence()">
+            <!-- *ngIf="priorityListRequest.correspondenceId === null && permissions.correspondence" -->
+            {{ "bill.bill-clause.list.attachcorrespondence" | translate }}
+        </button>
+        <a class="viewlink" (click)="viewCorrespondence(fileDetails.pmbrScheduleLottingResultDTO.correspondenceId)">
+            <!-- *ngIf="priorityListRequest.correspondenceId !== null" -->
+            View
+        </a>
+    </div>
+</div>

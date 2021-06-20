@@ -1,0 +1,288 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b>{{"cpl.correspondence.correspondence" | translate}}</b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">
+            {{"cpl.correspondence.correspondence" | translate}}
+        </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+            <button nz-button nzType="primary" class="secondary-button button-admin-radius button-font dark-border dark-font" (click)="goToTemplateSelect()">
+                {{"cpl.docupload.back" | translate}}
+            </button>
+            <button *ngIf="_canShowSaveBtn()" class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" (click)="sendCorrespondence(0)">
+                {{ saveButtonText }}
+            </button>
+            <button class="secondary-button button-admin-radius button-font dark-border dark-font" nzType="default" nz-popconfirm nzPopconfirmTitle="Are you sure you want to Send?" (nzOnConfirm)="sendCorrespondence(1)" (nzOnCancel)="cancel()" *ngIf="!workFlowMandatory && urlParams?.business !== 'REQUEST_PRIORITY_LIST' && urlParams?.business !== 'COMMITEE_REQUEST_NOMINEES'
+                && urlParams?.business !== 'COMMITTEE_MEETING_LETTER'&& urlParams?.business !== 'COMMITTEE_MEETING_NOTICE' &&
+                urlParams?.business !== 'COMMITTEE_MEETING_SUPPORTING_DOCUMENT_REQUEST' &&
+                urlParams?.business !== 'TABLE_GOVERNORS_ADDRESS_CORRESPONDANCE_COVERING_LETTER'&&
+                urlParams?.business !== 'TABLE_LETTER_WITH_COVERING_LETTER'&&
+                urlParams?.business !== 'TABLE_CORRESPONDANCE_LAW_DEPT'&&
+                urlParams?.business !== 'TABLE_GOVERNORS_SPEECH' &&
+                urlParams?.business !== 'TABLE_OBITURY_FAMILY_LETTER' &&
+                urlParams?.business !== 'ELECTION_PRO_TEM_SPEAKER_GOVERNORS_LETEER' &&
+                urlParams?.business !== 'ELECTION_PRO_TEM_SPEAKER_INFORM_LETEER'&&
+                urlParams?.business !== 'ELECTION_PRO_TEM_LETTER_TO_GAD'&&
+                urlParams?.business !== 'ELECTION_PRO_TEM_LETTER_TO_TOURISM' &&
+                urlParams?.business !== 'ELECTION_NOMINATION_LETTER_TO_MEMBER' &&
+                urlParams?.business !== 'ELECTION_LETTER_TO_HOUSE_KEEPING' &&
+                urlParams?.business !== 'BUDGET_AP_BILL_REQUEST' &&
+                urlParams?.business !== 'VOA_AP_BILL_REQUEST' &&
+                urlParams?.business !== 'SDG_AP_BILL_REQUEST' &&
+                urlParams?.business !== 'BUDGET_SDFG_LETTER' &&
+                urlParams?.business !== 'BUDGET_VOA_LETTER' &&
+                urlParams?.business !== 'BUDGET_SDG_EG_REQUEST_LETTER' &&
+                urlParams?.business !== 'BUDGET_DOCUMENT_LETTER' &&
+                urlParams?.business !== 'PRIVATE_MEMBER_BILL_REJECTION_LETTER' &&
+                urlParams?.business !== 'BUDGET_DOCUMENT_GRL_REQUEST_LETTER' &&
+                urlParams?.business !== 'PRIVATE_MEMBER_BILL_WON_LETTER' &&
+                urlParams?.business !== 'PM_BILL_SEND_TO_DEPARTMENT' &&
+                urlParams?.business !== 'PM_RESOLUTION_LETTER_TO_STAKE_HOLDER'&&
+                urlParams?.business !== 'PM_RESOLUTION_LETTER_TO_DEPARTMENT'&&
+                urlParams?.business !== 'BILL_ERRATA_LETTER'
+                ">
+                {{"cpl.correspondence.send" | translate}}
+            </button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<form [formGroup]="correspondenceForm">
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docupload.subject" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Subject required">
+                            <textarea rows="1" nz-input maxlength="254" formControlName="title" placeholder="Subject"></textarea>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docpreparion.date" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Subject required">
+                            {{ date | date: "dd-MM-yyyy hh:mm a" }}
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.from" | translate}}</nz-form-label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <input nz-input keydown="return false" formControlName="fromDisplayName" placeholder="from" disabled />
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.template" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Type required">
+                            {{ templateName }}
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.correspondence.to" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control *ngIf="!toEditable" nzErrorTip="To required">
+                            <nz-select *ngIf="!urlParams?.toDisplayName" nzMode="multiple" formControlName="toValue" (ngModelChange)="getToListData($event)">
+                                <ng-container *ngFor="let option of typeList">
+                                    <nz-option *ngIf="this.displayName !== option.displayName" [nzLabel]="option.displayName" [nzValue]="option">
+                                    </nz-option>
+                                </ng-container>
+                            </nz-select>
+                            <ng-container *ngIf="urlParams?.toDisplayName">{{ urlParams?.toDisplayName }}
+                            </ng-container>
+                        </nz-form-control>
+                        <nz-form-control *ngIf="toEditable" nzErrorTip="To required">
+                            <nz-select *ngIf="urlParams?.toDisplayName && !toTypable" nzMode="multiple" formControlName="toValue" [compareWith]="compareFn" (ngModelChange)="getToListData($event)">
+                                <ng-container *ngFor="let option of typeList">
+                                    <nz-option *ngIf="this.displayName !== option.displayName" [nzLabel]="option.displayName" [nzValue]="option">
+                                    </nz-option>
+                                </ng-container>
+                            </nz-select>
+                            <input *ngIf="toTypable" nz-input placeholder="Enter Addres here" formControlName="toTypableValue" />
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="urlParams?.masterLetter">
+            <nz-form-item>
+                <nz-tag nzColor="red">{{"cpl.draftcorrespondence.correspeply" | translate}}</nz-tag>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row" *ngIf="
+        urlParams?.businessReferNumber ||
+        urlParams?.fileNumber ||
+        urlParams?.businessReferName
+      ">
+        <div class="col-md-6" *ngIf="urlParams?.businessReferNumber || urlParams?.businessReferName">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label *ngIf="urlParams?.businessReferNumber">
+                            {{"cpl.correspondence.refdocnumber" | translate}}</nz-form-label>
+                        <nz-form-label *ngIf="
+                  urlParams?.businessReferNumber === null &&
+                  urlParams?.businessReferName
+                ">{{"cpl.draftcorrespondence.refdocumentname" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <ng-container *ngIf="urlParams?.businessReferNumber">{{ urlParams?.businessReferNumber }}
+                        </ng-container>
+                        <ng-container *ngIf="
+                  urlParams?.businessReferNumber === null &&
+                  urlParams?.businessReferName
+                ">{{ urlParams.businessReferName }}</ng-container>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="urlParams?.fileNumber">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docamendments.fileno" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        {{ urlParams?.fileNumber }}
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{"cpl.correspondence.attachments" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <span style="cursor: pointer;" nz-span nzType="primary" class="mrgL6" (click)="attachFiles()">
+                        <nz-upload
+                            nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/jpg"
+                            [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 3"
+                            [nzShowUploadList]="showUploadList" [nzRemove]="true" (nzChange)="handleChange($event)">
+                            <button nz-button><i nz-icon
+                                    nzType="upload"></i>{{"cpl.correspondencelist.upload" | translate}}</button>
+                        </nz-upload>
+                    </span>
+                    <span class="text-danger" *ngIf="onSaveSupportAttch && fileList.length < 1">
+                        Attachment is required
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" *ngIf="urlParams?.business == 'BUDGET_SDFG_LETTER_RESPONSE' || urlParams?.business == 'BUDGET_VOA_LETTER_RESPONSE'">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>{{budgetParams.drpdwnTitle | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-select [(ngModel)]="budgetParams.selsdfgId" name="selsdfgId" [ngModelOptions]="{standalone: true}" (ngModelChange)="selectSDFG($event)" nzShowSearch>
+                        <nz-option *ngFor="let option of budgetParams.sdfgList" [nzLabel]="option.title" [nzValue]="option.sdfgId">
+                        </nz-option>
+                    </nz-select>
+                    <button *ngIf="budgetParams.showPreview" nz-button nzType="default" (click)="showSDFGPreview()">
+                        {{"Preview" | translate}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <div class="preview-main">
+        <div class="form mrgT20">
+            <div *ngIf="FinalcomponentArray?.length > 0">
+                <app-dynamic-form [fields]="FinalcomponentArray" (changes)="showForm($event)" *ngIf="FinalcomponentArray?.length > 0">
+                </app-dynamic-form>
+            </div>
+        </div>
+        <div class="mrgT20 preview-main-text">
+            <h3>{{"cpl.docamendments.preview" | translate}}</h3>
+            <div>
+                <quill-view-html [content]="viewContent" *ngIf="viewContent">
+                </quill-view-html>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <Correspondence-add-committee-response *ngIf="urlParams?.business == 'COMMITTEE_NOMINEE_SUBMISSION'" [businessData]="correspondenceForm.controls.businessData" [correspondenceFormGrp]="correspondenceForm" [businessReferId]="urlParams?.businessReferId">
+    </Correspondence-add-committee-response>
+    <add-timeallocation-response *ngIf="_checkIfTimeAllocationBusiness() && correspondenceForm.value" (emitBusinessData)="getBusinessData($event)" [correspondenceFormGrp]="correspondenceForm" [currentBuinessType]="urlParams.businessReferType" [business]="urlParams?.business">
+    </add-timeallocation-response>
+    <Correspondence-table-timeallocation-response *ngIf="urlParams?.business == 'TABLE_BUSINESS_TIME_ALLOCATION_RESPONSE'  && correspondenceForm.value" (emitBusinessData)="getBusinessData($event)" [correspondenceFormGrp]="correspondenceForm">
+    </Correspondence-table-timeallocation-response>
+    <Correspondence-add-budget-doc-response *ngIf="urlParams?.business == 'BUDGET_DOCUMENT_REPLY_LETTER'" [businessData]="correspondenceForm.controls.businessData" [isSubmit]="isSubmit">
+    </Correspondence-add-budget-doc-response>
+    <!-- <nz-modal nzWidth="650" *ngIf="(urlParams?.business == 'BUDGET_SDFG_LETTER_RESPONSE' || urlParams?.business == 'BUDGET_VOA_LETTER_RESPONSE') && budgetParams.selsdfgId" [(nzVisible)]="budgetParams.sdfgPreview" nzTitle="SDFG" (nzOnCancel)="budgetParams.sdfgPreview = false">
+        <div style="width: 650px;overflow:auto;">
+            <budget-sdfg-preview [sdfgId]="budgetParams.selsdfgId"></budget-sdfg-preview>
+        </div>
+    </nz-modal> -->
+
+    <Correspondence-ap-bill-on-budget-response *ngIf="urlParams?.business == 'BUDGET_AP_BILL_RESPONSE' ||
+    urlParams?.business == 'VOA_AP_BILL_RESPONSE' || urlParams?.business == 'SDG_AP_BILL_RESPONSE'" [businessData]="correspondenceForm.controls.businessData" [correspondenceFormGrp]="correspondenceForm" [business]="urlParams?.business">
+    </Correspondence-ap-bill-on-budget-response>
+
+    <Correspondence-add-budget-grl-reply *ngIf="urlParams?.business == 'BUDGET_DOCUMENT_GRL_REPLY_LETTER' 
+    && correspondenceForm.value" [businessData]="correspondenceForm.controls.businessData" [isSubmit]="isSubmit">
+    </Correspondence-add-budget-grl-reply>
+
+    <Correspondence-sdg-eg-reply *ngIf="urlParams?.business == 'BUDGET_SDG_EG_REPLY_LETTER' 
+    && correspondenceForm.value" [businessData]="correspondenceForm.controls.businessData" [isSubmit]="isSubmit" [masterLetter]="urlParams?.masterLetter">
+    </Correspondence-sdg-eg-reply>
+
+</form>

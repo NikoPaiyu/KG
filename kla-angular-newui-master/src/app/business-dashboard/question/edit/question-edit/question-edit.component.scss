@@ -1,0 +1,126 @@
+@import "~src/sass/utilities/variables";
+
+input {
+  width: 100%;
+}
+
+.m-tb-30 {
+  margin: 30px 0px;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.ml-2 {
+  margin-left: 30px;
+}
+.mr-15 {
+  margin-right: 15px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+// .ant-tag {
+//   background: $white;
+//   padding: 3px 7px;
+// }
+.nz-close-style {
+  color: $color-red-close;
+  cursor: pointer;
+}
+
+.editable-tag {
+  background: rgb(255, 255, 255);
+  border-style: dashed;
+}
+
+// .ant-tag {
+//   background: #fff;
+//   padding: 3px 7px;
+//   height: 45px;
+//   width: 100%;
+//   margin-bottom: 15px;
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+// }
+// .ant-tag {
+//   padding: 3px 7px;
+//   background: #eee;
+//   border-radius: 4px;
+//   margin: 3px;
+// }
+.ant-tag {
+  // background: $white;
+  padding: 3px 7px;
+}
+
+.ant-input-group-wrapper {
+  background-color: #eee;
+  padding: 8px;
+  margin: 20px 0;
+}
+.ant-input-group-addon {
+  background-color: #eee !important;
+}
+.ant-input {
+  background: #eee;
+}
+.ant-tag {
+  padding: 3px 7px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 3px;
+}
+.pr0 {
+  padding-right: 0px;
+}
+.pl0 {
+  padding-left: 0px;
+}
+
+.chat-footer {
+  margin-top: auto;
+  position: fixed;
+  bottom: 0px;
+  z-index: 99;
+  padding-top: 20px;
+  background: #fff;
+}
+.chat-main-body {
+  overflow-y: auto;
+height: calc(100vh - 245px);
+overflow-x: hidden;
+}
+.txt-area-main {
+  margin-top: auto;
+}
+.ant-modal {
+  top: 5px !important;
+}
+
+.ant-tag-checkable {
+  color: #1890ff !important;
+}
+.custom_w {
+  max-width: 40%;
+  margin-left: 10px;
+}
+.first {
+  position: relative;
+}
+.first::after {
+  position: absolute;
+  content: "1st";
+  right: -25px;
+  color: #689fcb;
+  font-size: 14px;
+}
+// .tag_mla .ant-tag {
+//   float: left;
+//   clear: both;
+// }
+.mrgn-15{margin:15px;}
+.mb-15{margin:15px;}
+.mr-5{margin-right:5px !important;}
+.font-w{font-weight: 600;}
+.pr-0{padding-right: 0px !important;}

@@ -1,0 +1,148 @@
+<!-- <p>committee-view works!</p> -->
+<div class="row" *ngIf="!isView">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b>
+            {{ "committee.committe-mgmnt" | translate}}
+          </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+      <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading"> {{ "committee.view.commiteconfri" | translate}}</h2>
+            
+          </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button class="ml-6 m-r5" style="margin:5px;"  nz-button [nzType]="'default'">
+            {{ "committee.view.viewchart" | translate}}
+          </button>
+          <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'">
+            {{ "cpl.uploadedlist.return" | translate}}
+          </button>
+          <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'">
+            {{ "bill.prioritylist.create.submit" | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-4">
+        <h6>{{ "committee.view.subjectcommitte1" | translate}}</h6>   
+      </div> 
+  <div class="col-md-4 justify-content-end d-flex">
+    <h6>{{ "committee.view.dateofconstitution" | translate}}-dd/MM/yyyy</h6>   
+  </div>
+  <div class="col-md-4 justify-content-end d-flex" *ngIf="!isView">
+    <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="committeeEdit()">
+      {{ "noticeprocessing.noticeprocess.edit" | translate}}
+      </button>
+      <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'">
+        {{ "noticeprocessing.noticeprocess.delete" | translate}}
+      </button>
+  </div>
+</div>
+  <nz-divider></nz-divider>
+<nz-card nzTitle="Agriculture,Animal Husbandary and Fisheriers" class="text-align-center" style="width:965px;">
+    <div class="row">
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{ "committee.view.chairman" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    Shri.V.S Sunil Kumar, Minister for Agriculture
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    <div class="row">
+        <div class="col-md-6">
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{ "committee.view.ecofficomembers" | translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <p>Hon'able Minister for Forest, Animal Husbandary,Musems and zoos</p>
+                    <p>Minister For Fisherier,Horbour Engineering and Cashew Industry</p>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+            <div class="row">
+                <div class="col-md-6">
+                  <nz-form-item>
+                    <nz-form-control>
+                      <div class="row">
+                        <div class="col-md-4">
+                          <nz-form-label>{{ "committee.view.members" | translate}}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                           <p> Shri Parakkal Abdulla</p>
+                           <p> Shri A.P.Anil Kumar</p>
+                           <p>Shri Chittayam Gopakumar</p>
+                           <p>Shri K Kunhiraman</p>
+                        </div>
+                      </div>
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                          <nz-form-item>
+                            <nz-form-control>
+                              <div class="row">
+                                <div class="col-md-4">
+                                  <nz-form-label> {{ "committee.view.officers" | translate}}</nz-form-label>
+                                </div>
+                                <div class="col-md-8">
+                                    <p>Shri K G Thrideep,Deputy Secretary</p>
+                                    <p>Shri Chittayam Gopakumar,Joint Secretary</p>
+                                    <p>Shri Gopakumar,Under Secretary</p>
+                                </div>
+                              </div>
+                            </nz-form-control>
+                          </nz-form-item>
+                        </div>
+                      </div>
+     
+                            <div class="row">
+                                <div class="col-md-6">
+                                  <nz-form-item>
+                                    <nz-form-control>
+                                      <div class="row">
+                                        <div class="col-md-4">
+                                          <nz-form-label>  {{ "committee.view.contact" | translate}}</nz-form-label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <p> Subject Committee 'C' Section: 0471-251 2441</p>
+                                            <p>subcc@niyamasadha.nic.in</p>
+                                        </div>
+                                      </div>
+                                    </nz-form-control>
+                                  </nz-form-item>
+                                </div>
+                              </div>
+
+   </nz-card>

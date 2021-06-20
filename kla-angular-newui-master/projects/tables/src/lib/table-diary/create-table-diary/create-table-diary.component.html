@@ -1,0 +1,65 @@
+
+    <div class="padding_25">
+        <div class="row margnrtp-15">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ "business-dashboard.question.assembly" | translate }}
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzAllowClear
+                            name="assemblyId"
+                            [(ngModel)]="assemblyId" 
+                            (ngModelChange)="getSessionForAssembly()">
+                    <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                    </nz-option>
+                </nz-select>
+                    </div>
+                </div>
+                
+                                
+                 
+            </div>
+             
+             <div class="col-md-6">
+                 <div class="row">
+                     <div class="col-md-4">
+                        {{ "business-dashboard.question.questionlist.session" | translate }}
+                     </div>
+                     <div class="col-md-8">
+                        <nz-select nzAllowClear name="sessionId"
+                        [(ngModel)]="sessionId"
+                            (ngModelChange)="getDateList()">
+                            <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                            </nz-option>
+                        </nz-select>
+                     </div>
+                 </div>
+                 
+                 
+             </div>
+        </div>
+        
+        <div class="row margnrtp-15">
+            <div class="col-md-2">
+                {{"business-dashboard.question.questioncreate.placehldqdate" | translate}} : 
+            </div>
+            <div class="col-md-5">
+                <nz-date-picker [(ngModel)]="dateSelected" 
+                nzPlaceHolder= '{{ "business-dashboard.question.questioncreate.placehldqdate" | translate }}'
+                [nzDisabledDate]="disabledCosDates" nzFormat="dd/MM/yyyy"></nz-date-picker>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            
+            <div class="col-md-12 align-right">
+                <button class="mr-6" nz-button (click)="cancel()">
+                 {{"business-dashboard.forms.form-list.cancel" | translate}}
+               </button>
+                <button [disabled]="!dateSelected" nz-button (click)="createTableDiary()">
+                   {{"business-dashboard.table.table-diary.create" | translate}}
+               </button>
+            </div>
+        </div>
+     </div>
+      

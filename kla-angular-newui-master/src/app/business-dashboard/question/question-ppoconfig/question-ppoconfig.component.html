@@ -1,0 +1,55 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.question" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6 col-sm-6">
+    <h2 class="admin-page-heading">{{"business-dashboard.question.Configuration" | translate}}</h2>
+  </div>
+  <div class="col-md-6 col-sm-6 justify-content-end d-flex">
+    <button nz-button nzType="primary" nz-popconfirm
+    nzCancelText = "No"
+    nzOkText = "Yes"
+    nzPopconfirmTitle='{{"business-dashboard.question.areusurewanttosave" | translate}}'
+    (nzOnConfirm)="saveConfig()"
+    (nzOnCancel)="cancel()"
+    nzPopconfirmPlacement="bottom">
+      {{"business-dashboard.question.save" | translate}}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25"></div>
+<div class="row marginbtm-25">
+  <div class="col-md-12">
+    <nz-form-item>
+      <div class="row marginbtm-25">
+        <div class="col-md-5">
+          {{"business-dashboard.question.queSubbymemthroughPPO" | translate}}
+        </div>
+        <div class="col-md-5">
+          <nz-form-control>
+            <nz-radio-group
+              nzName="radiogroup"
+              nzRequired
+              [(ngModel)]="QSubmission"
+            >
+              <label nz-radio nzValue="yes">{{"business-dashboard.question.questionrequestconsent.yes" | translate}}</label>
+              <label nz-radio nzValue="no">{{"business-dashboard.question.questionrequestconsent.no" | translate}}</label>
+            </nz-radio-group>
+          </nz-form-control>
+        </div>
+      </div>
+    </nz-form-item>
+  </div>
+</div>

@@ -1,0 +1,123 @@
+<div class="padding_15">
+  <div class="row margnrtp-15">
+    <div class="col-md-10 align-right">
+      <button *ngIf="category =='SUBJECT_COMMITTEE' && memberDetailDto?.memberFileStatus =='APPROVED'"
+        class="ml-6"
+        nz-button
+        nzType="primary"
+        (click)="viewCommitteDetails(memberDetailDto?.id,'view')"
+      >
+        Full View
+      </button>
+      <button *ngIf="category =='SUBJECT_COMMITTEE' && memberDetailDto?.memberFileStatus =='SUBMITTED'"
+        class="ml-6"
+        nz-button
+        nzType="primary"
+        (click)="viewCommitteDetails(memberDetailDto?.id,'edit')"
+      >
+       Edit
+      </button>
+    </div>
+  </div>
+  <div class="container" class="card1">
+    <div class="row">
+      <div class="col-md-12" style="padding-right: 0px;">
+        
+            <div class="overflow-blt row">
+          <div class="col-md-6"
+          style="padding-right: 0px;"
+            *ngFor="
+              let committee of memberDetailDto?.committeeDto;
+              let j = index
+            "
+          >
+              <nz-card
+                nzTitle="{{ committee.subjectName }}"
+                class="marginbtm-15 sortable committee_blk"
+                style="border:#bdbdbd solid 1px;"
+              >
+                <strong>Committe Name:</strong><br>
+                <span>{{ committee?.name }}</span><br>
+                <ng-container >
+                <strong>Chairman:</strong><br>
+                <div
+                  *ngFor="
+                    let chairman of committee.memberDtoResponse.CHAIRMAN;
+                    let chman = index
+                  "
+                >
+                  <nz-card class="committee_blk marginbtm-15">
+                    <span class="m-r5">{{ chairman.memberName }}</span>
+                    <span *ngIf="chairman?.portfolioName">(<i>{{chairman?.portfolioName}}</i>)</span>
+                  </nz-card>
+                </div>
+               </ng-container>
+               <ng-container>
+                <strong>Ex Offico Members:</strong>
+                <!-- <div class="ex-ofico_ht"> -->
+                  <div>
+                <div
+                  *ngFor="
+                    let exoffice of committee.memberDtoResponse.EX_OFFICIO
+                  "
+                >
+                  <nz-card class="committee_blk marginbtm-15">
+                    <span class="m-r5">{{ exoffice.memberName }}</span>
+                    <span *ngIf="exoffice?.portfolioName">(<i>{{exoffice?.portfolioName}}</i>)</span>
+                  </nz-card>
+                </div>
+              </div>
+              </ng-container>
+
+                <div class="row margntp-25">
+                  <div class="col-md-12"><strong>Members:</strong></div>
+                </div>
+                <!-- <div class="mbr_ht"> -->
+                  <div>
+                  <div
+                    *ngFor="let member of committee.memberDtoResponse.MEMBER"
+                  >
+                    <nz-card class="committee_blk">
+                      <div class="row bg_block align-items-center">
+                        <div class="col-md-7">
+                          <span>{{ member.memberName }}</span>
+                        </div>
+
+                        <div class="col-md-3 text-align-right">
+                          <nz-tag class="m-r5"
+                            *ngIf="
+                              member?.member?.details?.memberGroup ==
+                              'OPOSITION_PARTY'
+                            "
+                            [nzColor]="'blue'"
+                            >OPPOSITION</nz-tag
+                          >
+                          <nz-tag class="m-r5"
+                            *ngIf="
+                              member?.member?.details?.memberGroup ==
+                              'RULING_PARTY'
+                            "
+                            [nzColor]="'red'"
+                            >RULING</nz-tag
+                          >
+                          <nz-tag class="m-r5"
+                            *ngIf="
+                              member?.member?.details?.memberGroup ==
+                              'TREASURY_BENCH'
+                            "
+                            [nzColor]="'red'"
+                            >TREASURY BENCH</nz-tag
+                          >
+                        </div>
+                      </div>
+                    </nz-card>
+                  </div>
+                </div>
+              </nz-card>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

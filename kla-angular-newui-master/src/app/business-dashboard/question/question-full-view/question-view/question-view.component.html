@@ -1,0 +1,1310 @@
+
+
+<ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+<div class="row">
+  <div class="col-md-8 col-sm-8 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item [routerLink]="
+          isMLA()
+            ? ['/question/question-dashboard']
+            : ['/question/question-dept-dashboard']
+        ">
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{
+          _IsQuestion()
+            ? ("business-dashboard.question.question" | translate)
+            : ("business-dashboard.question.notice" | translate)
+        }}</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-4">
+    <nz-alert *ngIf="
+        rbsPermission &&
+        rbsPermission.notes &&
+        !claimParams['showClaimBtn'] &&
+        claimMessage
+      " nzType="info" [nzMessage]="claimMessage" nzShowIcon></nz-alert>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 marginbtm-5">
+    <h2 class="admin-page-heading">
+      {{
+        _IsQuestion()
+          ? ("business-dashboard.question.question" | translate)
+          : ("business-dashboard.question.notice" | translate)
+      }}
+    </h2>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-between">
+    <div class="row">
+      <div class="col-md-4 col-sm-12" *ngIf="rbsPermission">
+        <button *ngIf="rbsPermission.notes && !rbsPermission.ChangeReply" nz-button nzType="default" class="mr-6"
+          (click)="handleNotes(true)">
+          {{ "business-dashboard.question.notes" | translate }}({{
+            notesList.length
+          }})
+        </button>
+        <button *ngIf="rbsPermission.version && !rbsPermission.ChangeReply" nz-button (click)="showVersion()"
+          class="mr-6">
+          {{ "business-dashboard.question.versions" | translate }}
+        </button>
+        <button *ngIf="rbsPermission.answerVersion" nz-button (click)="showAnswerVersion()">
+          {{ "business-dashboard.question.answerversions" | translate }}
+        </button>
+      </div>
+      <div *ngIf="rbsPermission" class="col-md-8 col-sm-12 d-flex justify-content-end">
+        <button nz-button nzType="primary" *ngIf="rbsPermission.Back" (click)="onBack(qDetail.status)" class="mr-6">
+          {{ "business-dashboard.question.questionview.back" | translate }}
+        </button>
+        <button nz-button nzType="primary" (click)="createPreviewModal()" class="mr-6">
+          {{ "business-dashboard.question.preview" | translate }}
+        </button>
+        <ng-container *ngIf="rbsPermission && rbsPermission.changeAnsType && showFinalizeBtn()">
+          <button nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttofinans" | translate}}'
+            nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="finaliseQuestionAnswer()" nz-button nzType="primary"
+            class="mr-6">
+            {{"business-dashboard.question.finalizeanswer" | translate}}
+          </button>
+        </ng-container>
+        <ng-container *ngIf="rbsPermission && canShowActionButtons()">
+          <button nz-button nzType="primary" *ngIf="rbsPermission.Revoke" nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.douwantrevokethisnotice" | translate}}' nzCancelText="No" nzOkText="Yes"
+            (nzOnConfirm)="RevokeQuestion(qDetail.id)" nzPopconfirmPlacement="bottomLeft" class="mr-6">
+            {{ "business-dashboard.question.revoke" | translate }}
+          </button>
+          <button nz-button nzType="primary" *ngIf="
+              rbsPermission.notes &&
+              claimParams['showClaimBtn'] &&
+              canShowClaimForWithdraw()
+            " (click)="claimUnclaimQuestion(qDetail.id)" class="mr-6">
+            {{ claimParams["BtnLbl"] }}
+          </button>
+          <button nz-button nzType="primary" *ngIf="
+              rbsPermission.Edit &&
+              qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+            " (click)="onEdit(qDetail.id)" [disabled]="!claimParams['IsClaimed']" class="mr-6">
+            {{ "business-dashboard.question.edit" | translate }}
+          </button>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.clubbRemoveApprove" nz-popconfirm
+            nzPopconfirmTitle="{{'business-dashboard.question.questionview.doyouwanttoadmitthisnotice' | translate}}"
+            nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitClubbRemoveQuestion()"
+            nzPopconfirmPlacement="bottomLeft" class="mr-6" [disabled]="!claimParams['IsClaimed']">
+            {{ "business-dashboard.question.admitclubbingremovl" | translate }}
+          </button>
+          <nz-select *ngIf="
+              rbsPermission.clubbRemoveForward && canWithdrwfrwrdAsNotice()
+            " class="col-md-5" nzPlaceHolder='{{"dashboard.seatlayout.select" |' [(ngModel)]="forwardToQS"
+            (ngModelChange)="forwardNoticeTo($event)">
+            <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+          </nz-select>
+          <button nz-button nzType="primary" *ngIf="
+              rbsPermission.clubbRemoveForward && canWithdrwfrwrdAsNotice()
+            " nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+            (nzOnConfirm)="forwardClubbRemoveQuestion()" nzCancelText="No" nzOkText="Yes"
+            nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+            {{ ForwardButton }}
+          </button>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.Approve" nz-popconfirm
+            nzPopconfirmTitle="{{'business-dashboard.question.questionview.doyouwanttoadmitthisnotice' | translate}}"
+            nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitQuestion()" nzPopconfirmPlacement="bottomLeft"
+            class="mr-6" [disabled]="!claimParams['IsClaimed']">
+            {{"business-dashboard.question.admit" | translate}}
+          </button>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.Disallow" nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.douwantdisallowthisnotice" | translate}}' nzCancelText="No" nzOkText="Yes"
+            (nzOnConfirm)="DisallowQuestion()" nzPopconfirmPlacement="bottomLeft" class="mr-6"
+            [disabled]="!claimParams['IsClaimed']">
+            {{"business-dashboard.question.questionlist.disallow" | translate}}
+          </button>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.ChangeReply && isChange" nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.douwantapprovechangereply" | translate}}' nzCancelText="No" nzOkText="Yes"
+            (nzOnConfirm)="ApproveChangeReply(qDetail.id)" nzPopconfirmPlacement="bottomLeft">
+            {{"business-dashboard.question.questionview.approvechangereply" | translate}}
+          </button>
+          <nz-select *ngIf="
+              rbsPermission.ForwardTo &&
+              qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+            " class="col-md-5" nzPlaceHolder="--Select--" [(ngModel)]="forwardToQS"
+            (ngModelChange)="forwardNoticeTo($event)">
+            <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+          </nz-select>
+          <button nz-button nzType="primary" *ngIf="
+              rbsPermission.ForwardTo &&
+              qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+            " nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+            (nzOnConfirm)="forwardToQuestion()" nzCancelText="No" nzOkText="Yes" nzPopconfirmPlacement="bottomLeft"
+            style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+            {{ ForwardButton }}
+          </button>
+          <button *ngIf="rbsPermission.WithdrawApprove && canApproveWithdrwAsQues()" nz-button nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle="{{'business-dashboard.question.questionview.Doyouwanttoapprovewithdrawrequest' | translate}}"
+            nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitQuestionWithdrawal()"
+            nzPopconfirmPlacement="bottomLeft" [disabled]="!claimParams['IsClaimed']">
+            {{"business-dashboard.question.approve" | translate}}
+          </button>
+          <nz-select *ngIf="rbsPermission.WithdrawForward && canWithdrwfrwrdAsNotice()" class="col-md-5"
+            nzPlaceHolder="--Select--" [(ngModel)]="forwardToQS" (ngModelChange)="forwardNoticeTo($event)">
+            <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+          </nz-select>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.WithdrawForward && canWithdrwfrwrdAsNotice()"
+            nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}}  {{ ForwardButton }}? '
+            (nzOnConfirm)="forwardQuestionWithdrawal()" nzCancelText="No" nzOkText="Yes"
+            nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+            {{ ForwardButton }}
+          </button>
+          <button *ngIf="rbsPermission.CorrectionApprove" nz-button nzType="primary" nz-popconfirm
+            nzPopconfirmTitle="{{'business-dashboard.question.questionview.Doyouwanttoapprovecorrectionrequest' | translate}}"
+            nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitCorrectionRequest()" nzPopconfirmPlacement="bottomLeft"
+            [disabled]="!claimParams['IsClaimed']">
+            {{"business-dashboard.question.approve" | translate}}
+          </button>
+          <nz-select *ngIf="rbsPermission.CorrectionForward" class="col-md-5" nzPlaceHolder="--Select--"
+            [(ngModel)]="forwardToQS" (ngModelChange)="forwardNoticeTo($event)">
+            <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+          </nz-select>
+          <button nz-button nzType="primary" *ngIf="rbsPermission.CorrectionForward" nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+            (nzOnConfirm)="forwardCorrectionRequest()" nzCancelText="No" nzOkText="Yes"
+            nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+            {{ ForwardButton }}
+          </button>
+          <button *ngIf="rbsPermission.CorrectionApproveAfterSabha" nz-button nzType="primary"
+            [disabled]="!claimParams['IsClaimed']" (click)="correctionApproveAfterSabha()">
+            {{ "business-dashboard.question.questionview.assign" | translate }}
+          </button>
+          <ng-container *ngIf="canMLAPerformActions()" id="mla-btns">
+            <button nz-button nzType="primary" *ngIf="rbsPermission.Delete" (click)="deleteQuestion(qDetail.id)"
+            style="margin-left: 6px;">
+            {{ "business-dashboard.question.delete" | translate }}
+          </button>
+          <button nz-button *ngIf="rbsPermission.Withdraw" nzType="primary" nz-popconfirm nzPopconfirmTitle="{{
+            qDetail.questionNumber !== null
+            ? ('business-dashboard.question.questionview.withdrawquestionmsg'
+              | translate)
+            : ('business-dashboard.question.questionview.withdrawnoticemsg'
+              | translate)
+            }}" (nzOnConfirm)="WithdrawQuestion(qDetail.id)" (nzOnCancel)="cancel()" nzPopconfirmPlacement="rightTop"
+            class="mr-6">
+            {{
+              qDetail.questionNumber !== null
+                ? ("business-dashboard.question.questionview.withdrawques"
+                  | translate)
+                : ("business-dashboard.question.questionview.withdrawnotice"
+                  | translate)
+            }}
+          </button>
+          <button nz-button *ngIf="rbsPermission.removeClubbing" nzType="primary" nz-popconfirm
+            nzPopconfirmTitle="{{'business-dashboard.question.questionview.areyousurewanttoremove' | translate}}"
+            (nzOnConfirm)="removeMeFromClubbing(qDetail.id)" nzCancelText="No" nzOkText="Yes" (nzOnCancel)="cancel()"
+            nzPopconfirmPlacement="rightTop" class="mr-6">
+            {{
+              qDetail.questionNumber !== null
+                ? "Remove me from this Question"
+                : "Remove me from this Notice"
+            }}
+          </button>
+          <ng-container *ngIf="canshowAuthAndClubbQuestion()">
+            <button nz-button nzType="primary" class="mr-6" (click)="getMemberList()">
+              {{
+                "business-dashboard.question.questionview.authorizeqstn"
+                  | translate
+              }}
+            </button>
+            <button nz-button nzType="primary" class="mr-6" (click)="getClubbingQuestions()">
+              {{
+                "business-dashboard.question.questionview.reqqclubbing"
+                  | translate
+              }}
+            </button>
+          </ng-container>
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+</ng-container>
+
+<ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+  <div class="row inhouse margntp-25">
+    <div class="col-md-8 col-sm-8 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="
+            isMLA()
+              ? ['/question/question-dashboard']
+              : ['/question/question-dept-dashboard']
+          ">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <a>{{
+            _IsQuestion()
+              ? ("business-dashboard.question.question" | translate)
+              : ("business-dashboard.question.notice" | translate)
+          }}</a>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+    <div class="col-md-4 inhouse">
+      <nz-alert *ngIf="
+          rbsPermission &&
+          rbsPermission.notes &&
+          !claimParams['showClaimBtn'] &&
+          claimMessage
+        " nzType="info" [nzMessage]="claimMessage" nzShowIcon></nz-alert>
+    </div>
+  </div>
+  <div class="row inhouse">
+    <div class="col-md-4 marginbtm-5">
+      <h2 class="admin-page-heading">
+        {{
+          _IsQuestion()
+            ? ("business-dashboard.question.question" | translate)
+            : ("business-dashboard.question.notice" | translate)
+        }}
+      </h2>
+    </div>
+  </div>
+  <div class="row inhouse">
+    <div class="col-md-12 d-flex justify-content-between">
+      <div class="row">
+        <div class="col-md-4 col-sm-12" *ngIf="rbsPermission">
+          <button *ngIf="rbsPermission.notes && !rbsPermission.ChangeReply" nz-button nzType="default" class="mr-6"
+            (click)="handleNotes(true)">
+            {{ "business-dashboard.question.notes" | translate }}({{
+              notesList.length
+            }})
+          </button>
+          <button *ngIf="rbsPermission.version && !rbsPermission.ChangeReply" nz-button (click)="showVersion()"
+            class="mr-6">
+            {{ "business-dashboard.question.versions" | translate }}
+          </button>
+          <button *ngIf="rbsPermission.answerVersion" nz-button (click)="showAnswerVersion()">
+            {{ "business-dashboard.question.answerversions" | translate }}
+          </button>
+        </div>
+        <div *ngIf="rbsPermission" class="col-md-8 col-sm-12 d-flex justify-content-end">
+          <button nz-button nzType="primary" *ngIf="rbsPermission.Back" (click)="onBack(qDetail.status)" class="mr-6">
+            {{ "business-dashboard.question.questionview.back" | translate }}
+          </button>
+          <button nz-button nzType="primary" (click)="createPreviewModal()" class="mr-6">
+            {{ "business-dashboard.question.preview" | translate }}
+          </button>
+          <ng-container *ngIf="rbsPermission && rbsPermission.changeAnsType && showFinalizeBtn()">
+            <button nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttofinans" | translate}}'
+              nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="finaliseQuestionAnswer()" nz-button nzType="primary"
+              class="mr-6">
+              {{"business-dashboard.question.finalizeanswer" | translate}}
+            </button>
+          </ng-container>
+          <ng-container *ngIf="rbsPermission && canShowActionButtons()">
+            <button nz-button nzType="primary" *ngIf="rbsPermission.Revoke" nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.question.douwantrevokethisnotice" | translate}}' nzCancelText="No" nzOkText="Yes"
+              (nzOnConfirm)="RevokeQuestion(qDetail.id)" nzPopconfirmPlacement="bottomLeft" class="mr-6">
+              {{ "business-dashboard.question.revoke" | translate }}
+            </button>
+            <button nz-button nzType="primary" *ngIf="
+                rbsPermission.notes &&
+                claimParams['showClaimBtn'] &&
+                canShowClaimForWithdraw()
+              " (click)="claimUnclaimQuestion(qDetail.id)" class="mr-6">
+              {{ claimParams["BtnLbl"] }}
+            </button>
+            <button nz-button nzType="primary" *ngIf="
+                rbsPermission.Edit &&
+                qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+              " (click)="onEdit(qDetail.id)" [disabled]="!claimParams['IsClaimed']" class="mr-6">
+              {{ "business-dashboard.question.edit" | translate }}
+            </button>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.clubbRemoveApprove" nz-popconfirm
+              nzPopconfirmTitle="{{'business-dashboard.question.questionview.doyouwanttoadmitthisnotice' | translate}}"
+              nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitClubbRemoveQuestion()"
+              nzPopconfirmPlacement="bottomLeft" class="mr-6" [disabled]="!claimParams['IsClaimed']">
+              {{ "business-dashboard.question.admitclubbingremovl" | translate }}
+            </button>
+            <nz-select *ngIf="
+                rbsPermission.clubbRemoveForward && canWithdrwfrwrdAsNotice()
+              " class="col-md-5" nzPlaceHolder='{{"dashboard.seatlayout.select" |' [(ngModel)]="forwardToQS"
+              (ngModelChange)="forwardNoticeTo($event)">
+              <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" *ngIf="
+                rbsPermission.clubbRemoveForward && canWithdrwfrwrdAsNotice()
+              " nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+              (nzOnConfirm)="forwardClubbRemoveQuestion()" nzCancelText="No" nzOkText="Yes"
+              nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+              {{ ForwardButton }}
+            </button>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.Approve" nz-popconfirm
+              nzPopconfirmTitle="{{'business-dashboard.question.questionview.doyouwanttoadmitthisnotice' | translate}}"
+              nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitQuestion()" nzPopconfirmPlacement="bottomLeft"
+              class="mr-6" [disabled]="!claimParams['IsClaimed']">
+              {{"business-dashboard.question.admit" | translate}}
+            </button>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.Disallow" nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.question.douwantdisallowthisnotice" | translate}}' nzCancelText="No" nzOkText="Yes"
+              (nzOnConfirm)="DisallowQuestion()" nzPopconfirmPlacement="bottomLeft" class="mr-6"
+              [disabled]="!claimParams['IsClaimed']">
+              {{"business-dashboard.question.questionlist.disallow" | translate}}
+            </button>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.ChangeReply && isChange" nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.question.douwantapprovechangereply" | translate}}' nzCancelText="No" nzOkText="Yes"
+              (nzOnConfirm)="ApproveChangeReply(qDetail.id)" nzPopconfirmPlacement="bottomLeft">
+              {{"business-dashboard.question.questionview.approvechangereply" | translate}}
+            </button>
+            <nz-select *ngIf="
+                rbsPermission.ForwardTo &&
+                qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+              " class="col-md-5" nzPlaceHolder="--Select--" [(ngModel)]="forwardToQS"
+              (ngModelChange)="forwardNoticeTo($event)">
+              <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" *ngIf="
+                rbsPermission.ForwardTo &&
+                qDetail.withdrawelStatus != 'WITHDRAWEL_REQUESTED'
+              " nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+              (nzOnConfirm)="forwardToQuestion()" nzCancelText="No" nzOkText="Yes" nzPopconfirmPlacement="bottomLeft"
+              style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+              {{ ForwardButton }}
+            </button>
+            <button *ngIf="rbsPermission.WithdrawApprove && canApproveWithdrwAsQues()" nz-button nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="{{'business-dashboard.question.questionview.Doyouwanttoapprovewithdrawrequest' | translate}}"
+              nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitQuestionWithdrawal()"
+              nzPopconfirmPlacement="bottomLeft" [disabled]="!claimParams['IsClaimed']">
+              {{"business-dashboard.question.approve" | translate}}
+            </button>
+            <nz-select *ngIf="rbsPermission.WithdrawForward && canWithdrwfrwrdAsNotice()" class="col-md-5"
+              nzPlaceHolder="--Select--" [(ngModel)]="forwardToQS" (ngModelChange)="forwardNoticeTo($event)">
+              <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.WithdrawForward && canWithdrwfrwrdAsNotice()"
+              nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}}  {{ ForwardButton }}? '
+              (nzOnConfirm)="forwardQuestionWithdrawal()" nzCancelText="No" nzOkText="Yes"
+              nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+              {{ ForwardButton }}
+            </button>
+            <button *ngIf="rbsPermission.CorrectionApprove" nz-button nzType="primary" nz-popconfirm
+              nzPopconfirmTitle="{{'business-dashboard.question.questionview.Doyouwanttoapprovecorrectionrequest' | translate}}"
+              nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="admitCorrectionRequest()" nzPopconfirmPlacement="bottomLeft"
+              [disabled]="!claimParams['IsClaimed']">
+              {{"business-dashboard.question.approve" | translate}}
+            </button>
+            <nz-select *ngIf="rbsPermission.CorrectionForward" class="col-md-5" nzPlaceHolder="--Select--"
+              [(ngModel)]="forwardToQS" (ngModelChange)="forwardNoticeTo($event)">
+              <nz-option *ngFor="let data of forwardTo" [nzLabel]="data.displayName" [nzValue]="data"></nz-option>
+            </nz-select>
+            <button nz-button nzType="primary" *ngIf="rbsPermission.CorrectionForward" nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}} {{ ForwardButton }}? '
+              (nzOnConfirm)="forwardCorrectionRequest()" nzCancelText="No" nzOkText="Yes"
+              nzPopconfirmPlacement="bottomLeft" style="margin-left: 6px;" [disabled]="!claimParams['IsClaimed']">
+              {{ ForwardButton }}
+            </button>
+            <button *ngIf="rbsPermission.CorrectionApproveAfterSabha" nz-button nzType="primary"
+              [disabled]="!claimParams['IsClaimed']" (click)="correctionApproveAfterSabha()">
+              {{ "business-dashboard.question.questionview.assign" | translate }}
+            </button>
+            <ng-container *ngIf="canMLAPerformActions()" id="mla-btns">
+              <button nz-button nzType="primary" *ngIf="rbsPermission.Delete" (click)="deleteQuestion(qDetail.id)"
+              style="margin-left: 6px;">
+              {{ "business-dashboard.question.delete" | translate }}
+            </button>
+            <button nz-button *ngIf="rbsPermission.Withdraw" nzType="primary" nz-popconfirm nzPopconfirmTitle="{{
+              qDetail.questionNumber !== null
+              ? ('business-dashboard.question.questionview.withdrawquestionmsg'
+                | translate)
+              : ('business-dashboard.question.questionview.withdrawnoticemsg'
+                | translate)
+              }}" (nzOnConfirm)="WithdrawQuestion(qDetail.id)" (nzOnCancel)="cancel()" nzPopconfirmPlacement="rightTop"
+              class="mr-6">
+              {{
+                qDetail.questionNumber !== null
+                  ? ("business-dashboard.question.questionview.withdrawques"
+                    | translate)
+                  : ("business-dashboard.question.questionview.withdrawnotice"
+                    | translate)
+              }}
+            </button>
+            <button nz-button *ngIf="rbsPermission.removeClubbing" nzType="primary" nz-popconfirm
+              nzPopconfirmTitle="{{'business-dashboard.question.questionview.areyousurewanttoremove' | translate}}"
+              (nzOnConfirm)="removeMeFromClubbing(qDetail.id)" nzCancelText="No" nzOkText="Yes" (nzOnCancel)="cancel()"
+              nzPopconfirmPlacement="rightTop" class="mr-6">
+              {{
+                qDetail.questionNumber !== null
+                  ? "Remove me from this Question"
+                  : "Remove me from this Notice"
+              }}
+            </button>
+            <ng-container *ngIf="canshowAuthAndClubbQuestion()">
+              <button nz-button nzType="primary" class="mr-6" (click)="getMemberList()">
+                {{
+                  "business-dashboard.question.questionview.authorizeqstn"
+                    | translate
+                }}
+              </button>
+              <button nz-button nzType="primary" class="mr-6" (click)="getClubbingQuestions()">
+                {{
+                  "business-dashboard.question.questionview.reqqclubbing"
+                    | translate
+                }}
+              </button>
+            </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </ng-container>
+
+
+
+<nz-alert *ngIf="disallowedReason" nzType="warning" nzMessage='{{"business-dashboard.question.Ruledisallowingotice" | translate}}' nzDescription="{{ qDetail.directions[0].reason }}" nzShowIcon>
+</nz-alert>
+
+<nz-alert *ngIf="disallowedShortNoticeReason" nzType="warning" nzMessage='{{"business-dashboard.question.Rule&Reasondisallowingotice" | translate}}'
+  nzDescription="Rule: {{ shortNoticeRule }}
+  Reason: {{ shortNoticeReason }}" nzShowIcon>
+</nz-alert>
+
+<div class="input-group">
+  <div class="row align-items-center">
+    <div class="col-md-2 align-items-center" *ngIf="activityFlowList && activityFlowList.length > 0">
+      <span class="workflowhd">{{"business-dashboard.question.mainworkflow" | translate}}</span>
+    </div>
+    <div class="col-md-10 marginbtm-10 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step *ngFor="let data of activityFlowList" [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [ngClass]="{ dropFlow: data.endWrkflow }" [nzTitle]="
+              data.owner
+                ? capitalize(data.owner)
+                : capitalize(data.taskDefinitionKey)
+            ">
+          </nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="revokeFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2"><span class="workflowhd">{{"business-dashboard.question.revokeworkflow" | translate}}</span>
+    </div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step *ngFor="let data of revokeFlowList" [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [ngClass]="{ dropFlow: data.endWrkflow }" [nzTitle]="capitalize(data.owner)"></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="withdrawFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd">{{"business-dashboard.question.withdrawalworkflow" | translate}}</span>
+    </div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step *ngFor="let data of withdrawFlowList" [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [nzTitle]="capitalize(data.owner)"></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-group" *ngIf="correctionReqFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd" *ngIf="qDetail.correctionRequestAfterSabhaWorkFlowId else correctionWrkflw">
+        {{"business-dashboard.question.correctionrequestworkflow" | translate}}</span>
+      <ng-template #correctionWrkflw>
+        <span class="workflowhd">{{"business-dashboard.question.changenreplyworkflow" | translate}}</span>
+      </ng-template>
+    </div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step *ngFor="let data of correctionReqFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'" [nzTitle]="capitalize(data.owner)"></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="clubbRemovalWorkflow.length != 0">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd">{{"business-dashboard.question.clubbingremovalworkflow" | translate}}</span>
+    </div>
+    <!-- <div class="row" *ngFor="let flow of clubbRemovalWorkflow"> -->
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow" *ngFor="let flow of clubbRemovalWorkflow">
+        <div>{{"business-dashboard.question.clubbingremovalof" | translate}} {{ flow.memberDetails.memberName }}</div>
+        <nz-steps nzSize="small">
+          <nz-step *ngFor="let data of flow" [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [nzTitle]="capitalize(data.owner)"></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+    <!-- </div> -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="row marginbtm-15" *ngIf="assemblySession['assemblyId']">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.assembly" | translate }}:
+      </div>
+      <div class="col-md-8">
+        {{ assemblySession["assemblyId"] }}
+      </div>
+    </div>
+    <div class="row marginbtm-15" *ngIf="assemblySession['sessionId']">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.session" | translate }}:
+      </div>
+      <div class="col-md-8">{{ assemblySession["sessionId"] }}</div>
+    </div>
+
+    <div class="input-group">
+      <div class="row marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.mlaName" | translate }}:
+        </div>
+        <div class="pLR15">
+          <div *ngFor="let data of qDetail.clubbingDetails" class="col border-style">
+            {{ data.memberName }}
+            <div *ngIf="data.withdrawalWorkflowId">
+              <nz-tag nzColor="default">{{"business-dashboard.question.clubbingremovalrequested" | translate}}</nz-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticeno" | translate }}:
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-12" *ngFor="let noticeNo of noticeNoArray">
+              <span *ngIf="
+                  noticeNo && noticeNo.charAt(0) === 'T';
+                  else showNoticeNo
+                ">
+                <strong style="color: red;">T</strong>{{ noticeNo.substring(1) }}
+              </span>
+              <ng-template #showNoticeNo>
+                <span #showNoticeNo>
+                  {{ noticeNo }}
+                </span>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="input-group" *ngIf="qDetail.questionNumber">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionlist.questionnumber"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.questionNumber }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.dateofreg" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.registrationDate | date: "dd-MM-yyyy" }}
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="row marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.portfolio" | translate }}:
+        </div>
+        <div class="col-md-8" *ngIf="portfolio">
+          {{ portfolio.name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubject" | translate }}:
+        </div>
+        <div class="col-md-8" *ngIf="ministerSubjects">
+          {{ ministerSubjects.title }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE' && qDetail.ministerSubSubjectName">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubsubject" | translate }}
+          :
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.ministerSubSubjectName }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.questiondate" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.questionDate | date: "dd-MM-yyyy" }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group" *ngIf="showDate">
+      <div class="row">
+        <div class="col-md-4">
+          Correction Date :
+        </div>
+        <div class="col-md-8">
+          <nz-select nzRequired nzShowSearch nzPlaceHolder='{{"business-dashboard.question.SelectCorrectionDate" | translate}}' [(ngModel)]="qdateForCorrection">
+            <nz-option *ngFor="let item of questionDate" nzLabel="{{ item | date: 'dd-MM-yyyy' }}" nzValue="{{ item }}">
+            </nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE'">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            _IsQuestion()
+              ? ("business-dashboard.question.qcategory" | translate)
+              : ("business-dashboard.question.ncategory" | translate)
+          }}
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.category }}
+        </div>
+      </div>
+      <div class="row" *ngIf="changeCategoryRule !== ''">
+        <div class="col-md-12">
+          <nz-alert *ngIf="changeCategoryReason" nzType="warning"
+            nzMessage='{{"business-dashboard.question.quecatchangasperfolldirection" | translate}}'
+            nzDescription="Direction: {{ changeCategoryRule }}" nzShowIcon>
+          </nz-alert>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="
+        qDetail.type !== 'SHORT_NOTICE' &&
+        qDetail.category == 'STARRED' &&
+        qDetail.priority
+      ">
+      <div class="input-group">
+        <div class="row">
+          <div class="col-md-4">
+            {{
+              _IsQuestion()
+                ? ("business-dashboard.question.questionpriority" | translate)
+                : ("business-dashboard.question.noticepriority" | translate)
+            }}
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.priority }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-group">
+  <div class="row">
+    <div class="col-md-2">
+      {{
+        _IsQuestion()
+          ? ("business-dashboard.question.questionlist.questionheading"
+            | translate)
+          : ("business-dashboard.question.noticeheading" | translate)
+      }}
+    </div>
+    <div class="col-md-10">{{ qDetail.heading }}</div>
+  </div>
+</div>
+<div class="input-group" *ngIf="_IsQuestion() && qDetail.dealayStatementUrl">
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.questionans.delaystmt" | translate }}:
+    </div>
+    <div class="col-md-10">
+      <a [href]="qDetail.dealayStatementUrl" target="_blank">
+        Delay Statement
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="input-group" *ngIf="_IsQuestion() && qDetail.answerAttachmentUrl">
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.questionview.ansattachment" | translate }}
+    </div>
+    <div class="col-md-10">
+      <a [href]="qDetail.answerAttachmentUrl" target="_blank">
+        Attachment
+      </a>
+      <button nz-button (click)="DownloadFile(qDetail.answerAttachmentUrl)" [nzType]="'default'">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="
+    rbsPermission &&
+    _IsQuestion() &&
+    qDetail.correctionAttachmentUrl &&
+    IsQsOfficials()
+  ">
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.questionans.coverletter" | translate }}:
+    </div>
+    <div class="col-md-10">
+      <a (click)="basicPopup()" style="color: #4597d8;">
+        {{
+          "business-dashboard.question.questionans.coverletter" | translate
+        }}</a>
+      <button nz-button (click)="DownloadFile(qDetail.correctionAttachmentUrl)" [nzType]="'default'">
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="
+    rbsPermission &&
+    rbsPermission.edit &&
+    rbsPermission.edit.tagEdit &&
+    qDetail.tags &&
+    qDetail.tags.length > 0
+  ">
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.versioning.tags" | translate }} :
+    </div>
+    <div class="col-md-10">
+      <nz-tag *ngFor="let tags of qDetail.tags; let i = index">
+        {{ tags.tag }}
+      </nz-tag>
+    </div>
+  </div>
+</div>
+<div *ngFor="let i = index; let clause; of: qDetail.clauses">
+  <div class="input-group">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-card>
+          <div class="row">
+            <div class="input-group">
+              <div class="row" *ngIf="clause.subSubjectId">
+                <div class="col-md-2">
+                  {{
+                    "business-dashboard.question.ministersubsubject" | translate
+                  }}
+                </div>
+                <div class="col-md-10">
+                  {{ _getMinisterSubSubjectData(clause.subSubjectId).title }}
+                </div>
+              </div>
+            </div>
+            <div class="width-100">
+              <div class="row">
+                <div class="col-md-2">
+                  <span>{{ "business-dashboard.question.clause" | translate }}({{
+                      upper[i]
+                    }})</span>
+                </div>
+                <div class="col md 10 wordbreak">
+                  {{ clause.clause }}
+                </div>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="showAnswer() && clause.answer">
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.versioning.answer" | translate
+                }}
+              </div>
+              <div class="col-md-8">
+                {{ clause.answer.answer }}
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="
+                showAnswer() && clause.answer && clause.answer.clauseAnswerUrl
+              ">
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.questionview.attachment"
+                    | translate
+                }}
+              </div>
+              <div class="col-md-8">
+                <a [href]="clause.answer.clauseAnswerUrl" target="_blank">
+                  {{
+                    "business-dashboard.question.questionview.attachment"
+                      | translate
+                  }}
+                  ({{ upper[i] }})
+                </a>
+                <button nz-button (click)="DownloadFile(clause.answer.clauseAnswerUrl)" [nzType]="'default'">
+                  <i nz-icon nzType="download" nzTheme="outline"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="showAnswer() && clause.answer && this.IsQsOfficials()">
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.versioning.finalorInterim"
+                    | translate
+                }}
+              </div>
+              <div class="col-md-8" *ngIf="rbsPermission && canChangeAnsType(clause.answer) && rbsPermission.changeAnsType else viewAnswerType">
+                {{ clause.answer.type }}
+                <button
+                  nzType="primary" nz-popconfirm nzPopconfirmTitle='{{clause.answer.type === "FINAL" ? ("business-dashboard.question.DouwantchanasINTERIM" | translate) : ("Do you want to return?" | translate )}}'
+                  nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="updateClauseType(clause)"
+                  nzPopconfirmPlacement="bottomLeft" nz-button>
+                  {{
+                    clause.answer.type === 'FINAL'
+                      ? ("business-dashboard.question.questionview.markasinterim" | translate)
+                      : ("business-dashboard.question.questionview.return" | translate)
+                  }}
+                </button>
+              </div>
+              <ng-template #viewAnswerType>
+                <div class="col-md-8">
+                  {{ clause.answer.type }}
+                </div>
+              </ng-template>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+</div>
+<form nz-form class="question-create">
+  <nz-drawer [nzMaskClosable]="false" [nzWidth]="550" [nzVisible]="shownotes" nzTitle='{{"business-dashboard.question.notes&comments" | translate}}'
+    (nzOnClose)="handleNotes(false)">
+    <div #scrollMe class="chat-main-body" [ngClass]="{ fullScroll: rbsPermission && !rbsPermission.addnote }"
+      [scrollTop]="scrollMe.scrollHeight">
+      <nz-card *ngFor="let data of notesList; let i = index" class="mb-15">
+        <div>
+          <div class="input-group">
+            <div class="row d-flex justify-content-between">
+              <div class="col-md-5 padding0">
+                {{ data?.owner?.details?.fullName }}
+              </div>
+              <div class="col-md-7 txt-alignR padding0">
+                <div nz-row hover>
+                  <button *ngIf="data.editNote && !this._isWithdrawn()" nz-button nzType="default"
+                    (click)="editNotes(i, data)" [disabled]="!claimParams['IsClaimed']">
+                    Edit</button>&nbsp;&nbsp;
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 padding0">
+                <div class="input-group">
+                  <span class="font-w">
+                    {{ displayNoteOwnr(data) }}</span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <div>
+                    <!-- <span *ngIf="data.noteditable">
+                      <div *ngIf="showQuickOption && !shortNoticeQuickOptions">
+                        <strong>Quick options: </strong>
+                        <nz-tag *ngFor="let tag of quickOptions" nzMode="checkable"
+                          [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+                          (nzCheckedChange)="CheckforRules($event, tag, i)">
+                          {{ tag.label }}
+                        </nz-tag>
+                      </div>
+                      <div *ngIf="shortNoticeQuickOptions">
+                        <strong>Quick options: </strong>
+                        <nz-tag *ngFor="let tag of quickOption" nzMode="checkable"
+                          [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+                          (nzCheckedChange)="CheckforRules($event, tag, i)">
+                          {{ tag.label }}
+                        </nz-tag>
+                      </div>
+                      <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+                        <input type="text" nzSize="large" nz-input [(ngModel)]="editedNote" name="editedNote" nz-input
+                          placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}' />
+                      </nz-input-group>
+                      <ng-template #suffixButton>
+                        <button nzType="default" (click)="updateNotes(i, qDetail.id, data)" nz-button>
+                          Save
+                        </button>
+                      </ng-template>
+                    </span> -->
+                    <span *ngIf="!data.noteditable"><b class="text-left">{{ data.note }}</b></span>
+                    <div>
+                      <div class="d-flex justify-content-between mt-20 w-100">
+                        <div class="col-md-5 pl0">
+                          Version:{{ data.questionVersion }}
+                        </div>
+                        <div class="col-md-7 d-flex justify-content-end pr0">
+                          <div>
+                            {{ data.createDate | date: "dd MMMM yyyy" }}
+                          </div>
+                          <div class="margnlft-15">
+                            {{ data.createDate | date: "hh:mm a" }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div class="chat-footer width550" *ngIf="rbsPermission && rbsPermission.addnote">
+      <div class="txt-area-main">
+        <div class="col" *ngIf="showQuickOption && !shortNoticeQuickOptions">
+          <strong>Quick options: </strong>
+          <nz-tag *ngFor="let tag of quickOptions; let i = index" nzMode="checkable"
+            [nzChecked]="selectedTags.indexOf(tag.label) > -1" (nzCheckedChange)="CheckforRules($event, tag, i)">
+            {{ tag.label }}
+          </nz-tag>
+        </div>
+        <div class="col" *ngIf="shortNoticeQuickOptions">
+          <strong>Quick options: </strong>
+          <nz-tag *ngFor="let tag of quickOption; let i = index" nzMode="checkable"
+            [nzChecked]="selectedTags.indexOf(tag.label) > -1" (nzCheckedChange)="CheckforRules($event, tag, i)">
+            {{ tag.label }}
+          </nz-tag>
+        </div>
+      </div>
+      <div>
+        <div class="col">
+          <div>
+            <span>
+              <nz-input-group nzSearch nzSize="large" [nzAddOnAfter]="suffixButton">
+                <textarea nz-input placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}' nz-input [(ngModel)]="noteGiven"
+                  name="noteGiven" [nzAutosize]="{ minRows: 1, maxRows: 6 }"></textarea>
+                <!-- <input
+                  type="text"
+                  nzSize="large"
+                  nz-input
+                  [(ngModel)]="noteGiven"
+                  name="noteGiven"
+                  nz-input
+                  placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}'
+                /> -->
+              </nz-input-group>
+
+              <ng-template #suffixButton>
+                <button nzType="default" (click)="saveNotes(qDetail.id)" nz-button
+                  [disabled]="!claimParams['IsClaimed']">
+                  Save
+                </button>
+              </ng-template>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="">
+      <nz-modal [(nzVisible)]="ShowRules" nzTitle="Rules" (nzOnCancel)="cancelRuleSelection()" (nzOnOk)="applyRule()">
+        <div class="padding-15">
+          <nz-table #rulesForNotes [nzData]="ruleList" [nzPageSize]="5">
+            <thead>
+              <tr>
+                <th></th>
+                <th>{{"business-dashboard.question.ruleno" | translate}}</th>
+                <th>{{"business-dashboard.question.description" | translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of rulesForNotes.data">
+                <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="checkedRule($event)"></td>
+                <td>{{ data.code }}</td>
+                <td>{{ data.englishDescription }}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <div class="row">
+            <div class="col-md-2">
+              <nz-form-label>{{"business-dashboard.question.reason" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-10">
+              <input type="text" nzSize="large" nz-input [(ngModel)]="reason" name="reason" nz-input
+                placeholder='{{"business-dashboard.question.typeyourreasonhere" | translate}}' class="bg_inp" />
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+    </div>
+    <div class="">
+      <nz-modal nzClosable="false" nzMaskClosable="false" [(nzVisible)]="showDirection" nzTitle='{{"business-dashboard.question.directions" | translate}}'
+        (nzOnCancel)="cancelRuleSelection()" (nzOnOk)="applyDirection()" nzClassName="pdngs">
+        <div class="pading-all width-100">
+          <div class="padding-15">
+            <nz-table #rowDirectionTable [nzData]="directionList" [nzPageSize]="5">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>{{"business-dashboard.question.directionno" | translate}}</th>
+                  <th>{{"cpl.docamendments.description" | translate}}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let data of rowDirectionTable.data">
+                  <td *ngIf="data.heading; else elseBlock" colspan="3">
+                <tr>
+                  <td colspan="2">
+                    <b class="marginbtm-10 fl width-100">{{
+                          data.heading
+                        }}</b>
+                  </td>
+                </tr>
+                <tr>
+                  <td nzShowCheckbox [(nzChecked)]="data.checked" width="50"></td>
+                  <td>{{ data.englishDescription }}</td>
+                </tr>
+                </td>
+                <ng-template #elseBlock>
+                  <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                  <td>{{ data.code }}</td>
+                  <td>{{ data.englishDescription }}</td>
+                </ng-template>
+                </tr>
+              </tbody>
+            </nz-table>
+          </div>
+        </div>
+      </nz-modal>
+    </div>
+  </nz-drawer>
+</form>
+<div>
+  <nz-modal [(nzVisible)]="TDTMParams.showTM" (nzOnCancel)="cancelTDTM()" (nzOnOk)="selectTDTM()">
+    <div class="width-100 pading-all">
+      <nz-form-item>
+        <div class="row margntp-25">
+          <div class="col-md-4">
+            <nz-form-label>{{ TDTMParams.TDTMLabel }}</nz-form-label>
+          </div>
+
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="TDTMParams.TMSelData">
+                <nz-option *ngFor="let data of TDTMParams.TMData" [nzLabel]="data" [nzValue]="data">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </nz-modal>
+</div>
+<div>
+  <nz-modal [(nzVisible)]="TDTMParams.showTD" (nzOnCancel)="cancelTDTM()" (nzOnOk)="selectTDTM()">
+    <div class="width-100 pading-all">
+      <nz-form-item>
+        <div class="row margntp-25">
+          <div class="col-md-4">
+            <nz-form-label>{{ TDTMParams.TDTMLabel }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="TDTMParams.TDSelData">
+                <nz-option *ngFor="let data of TDTMParams.TDData" [nzLabel]="data | date: 'dd-MM-yyyy'"
+                  [nzValue]="data | date: 'dd-MM-yyyy'">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </nz-modal>
+</div>
+<div>
+  <nz-modal [(nzVisible)]="TDTMParams.showMinisterandDate" (nzOnCancel)="cancelTDTM()" (nzOnOk)="selectTDTM()">
+    <div class="width-100 pading-all">
+      <nz-form-item>
+        <div class="row margntp-25">
+          <div class="col-md-4">
+            <nz-form-label>{{"business-dashboard.question.selectquestiondate" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="TDTMParams.selDateData"
+                (ngModelChange)="_applytransferMinisterOption($event, 'TD/TM')">
+                <nz-option *ngFor="let data of TDTMParams.TDData" [nzLabel]="data | date: 'dd-MM-yyyy'"
+                  [nzValue]="data">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+        <div class="row margntp-25">
+          <div class="col-md-4">
+            <nz-form-label>{{"business-dashboard.question.selectminister" | translate}}</nz-form-label>
+          </div>
+
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="TDTMParams.selMinisterData">
+                <nz-option *ngFor="let data of TDTMParams.TMData" [nzLabel]="data" [nzValue]="data">
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </nz-modal>
+</div>
+<nz-modal [(nzVisible)]="viewQuestionClubbing" nzTitle='{{"business-dashboard.question.questionview.reqqclubbing" | translate}}' (nzOnCancel)="onCancelClubbing()"
+  (nzOnOk)="onSubmitClubbing()" [nzWidth]="800">
+  <div class="padding-15">
+    <div class="row">
+      <div class="col-md-12">
+        {{
+          "business-dashboard.question.questionview.selectqclubbing"
+            | translate
+        }}:
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-table #questions nzShowPagination nzShowSizeChanger [nzData]="questionForClubbing" class="table-all">
+          <thead>
+            <tr>
+              <th></th>
+              <th>
+                {{
+                  "business-dashboard.question.questionlist.questionnumber"
+                    | translate
+                }}
+              </th>
+              <th>
+                {{
+                  "business-dashboard.question.heading" | translate
+                }}
+              </th>
+              <th>
+                {{
+                  "business-dashboard.question.questionlist.subject" | translate
+                }}
+              </th>
+              <th>
+                {{ "business-dashboard.question.primarymember" | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let q of questions.data">
+              <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[q.id]" (nzCheckedChange)="selQuestion(q.id)"></td>
+              <td>{{ q.questionNumber }}</td>
+              <td>
+                {{ q.heading }}
+              </td>
+              <td>
+                {{ q.subjectName }}
+              </td>
+              <td>
+                {{ q.primaryMemberName }}
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="viewAuthorize" nzTitle='{{"business-dashboard.question.QuestionAuthorization" | translate}}' (nzOnCancel)="onCancelAuthorization()"
+  (nzOnOk)="onSubmitAuthorization()">
+  <div class="padding-15">
+    <div class="row">
+      <div class="col-md-8">
+        {{
+          "business-dashboard.question.questionview.selauthorizeQstn"
+            | translate
+        }}:
+      </div>
+      <div class="col-md-4">
+        <nz-input-group nzSearch>
+          <input nz-input [(ngModel)]="searchParam" placeholder="{{
+              'business-dashboard.question.questionlist.inputsearch' | translate
+            }}" (ngModelChange)="onSearchMember()" />
+        </nz-input-group>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="mlaDetails" class="table-all">
+          <thead>
+            <tr>
+              <th></th>
+              <th>
+                {{ "business-dashboard.question.membername" | translate }}
+              </th>
+              <th>
+                {{ "business-dashboard.question.constituency" | translate }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mem of filterTable.data">
+              <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[mem.id]" (nzCheckedChange)="checkMember(mem.id)"></td>
+              <td>{{ mem.fullName }}</td>
+              <td>
+                {{ mem.keralaConstituencyName }}({{ mem.keralaConstituencyId }})
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </div>
+    </div>
+  </div>
+</nz-modal>

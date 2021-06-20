@@ -1,0 +1,31 @@
+.chat-main-body {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 250px);
+  }
+  .cont_nt {
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  .m-r5 {
+    margin-right: 5px;
+  }
+  .note_num {
+    float: right;
+    font-weight: bold;
+    color: #1890ff;
+    margin-top: 10px;
+  }
+  .bg_txtarea {
+    background-color: #f2f2f2;
+  }
+  .p-R15 {
+    padding-right: 15px;
+  }
+  .bg_txtarea {
+    background-color: #f2f2f2;
+  }
+  .txt_ful {
+    margin-left: 5px;
+    margin-top: 5px;
+  }

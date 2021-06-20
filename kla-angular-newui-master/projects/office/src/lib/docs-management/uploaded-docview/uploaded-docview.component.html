@@ -1,0 +1,417 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+         {{"business-dashboard.office.uploaded-docsview.office" | translate}}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{"business-dashboard.office.uploaded-docsview.doc-view" | translate}}
+      </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+      <div class="d-flex justify-content-between">
+        <button
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+          nzType="default"
+          (click)="onBackClick()"
+        >
+          {{ "cpl.docupload.back" | translate }}
+        </button>
+        <button *ngIf="(docDetails?.status == 'SAVED' || 
+         docDetails?.status == 'RETURN'||
+         docDetails?.status == 'RETURNED') && rbsPermissions.editDoc"
+        class="secondary-button button-admin-radius button-font dark-border dark-font"
+        nzType="default"
+        (click)="showEditModal()"
+      >
+      {{"business-dashboard.office.uploaded-docsview.edit" | translate}}
+      </button>
+      <!-- <button
+      *ngIf="sectionName === 'Table Section' && rbsPermissions.regTableDocs"
+      class="primary-button button-admin-radius button-font"
+      nzType="primary"
+      nz-popconfirm
+      nzPopconfirmTitle="Do you want to register the document?"
+      (nzOnConfirm)="registerElectionDoc()"
+    >
+      {{ "Register Document" | translate }}
+    </button> -->
+      </div>
+    </div>
+  </div>  
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{
+              "business-dashboard.office.uploaded-docsview.current-number" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+             {{docDetails?.currentNumber}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{ 
+              "cpl.docupload.assembly" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+             {{assemblyId?.assemblyId}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{
+              "cpl.docupload.session" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+             {{sessionId?.sessionId}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <!-- <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label> -->
+            <nz-form-label>
+              {{"business-dashboard.office.uploaded-docsview.to-kla-section" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+              nzErrorTip="{{ 'cpl.docupload.selectklasection' | translate }}"
+            >
+            {{sectionName}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+   
+    <div class="col-md-6" *ngIf="isCplSection" >
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>
+              {{"business-dashboard.office.uploaded-docsview.document-type" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+            >
+            {{docDetails?.type}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngIf="isCplSection">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <!-- <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label> -->
+            <nz-form-label>{{
+              "cpl.docupload.receivedfrom" | translate
+            }}</nz-form-label>          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.fromWhom}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngIf="isCplSection">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <!-- <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label> -->
+            <nz-form-label>{{
+              "cpl.fileworkflowdocs.departMent" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+              
+            >
+            {{docDetails?.department}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="isCplSection" >
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>
+              {{"business-dashboard.office.uploaded-docsview.minister" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.subjectName}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngIf="isCplSection">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>
+              {{"business-dashboard.swearing-in.subject" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+            >
+            {{docDetails?.title}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6"*ngIf="isCplSection" >
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>
+              {{"business-dashboard.election-management.pending -document.list.received-date" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.receivedDate}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row"  *ngIf="!isCplSection">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <!-- <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label> -->
+            <nz-form-label>{{
+              "cpl.docupload.receivedfrom" | translate
+            }}</nz-form-label>          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.receivedFrom}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" >
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>
+              {{"business-dashboard.election-management.pending -document.list.received-date" | translate}}
+            </nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.receivedDate}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row"  *ngIf="!isCplSection">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <!-- <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label> -->
+            <nz-form-label>
+              {{"business-dashboard.swearing-in.subject" | translate}}
+            </nz-form-label>          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            {{docDetails?.title}}
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>  
+  <nz-divider></nz-divider>
+  <div class="row" *ngIf="!isCplSection">
+    <div class="col-md-12">
+      <div class="col-md-4">
+        <nz-form-label>
+          {{"cpl.correspondence.attachments" | translate}}
+        </nz-form-label>
+      </div>
+      <nz-form-item>
+        <div class="row">
+        
+          <div class="col-md-8">
+            <nz-form-control
+            >
+            <ng-container *ngFor="let docs of docDetails?.attachments">
+              <div class="row margnrtp-15">
+                <div class="col-md-3">
+                 {{"business-dashboard.swearing-in.type" | translate}}: {{docs?.type}}
+                </div>
+                <div class="col-md-3">
+                  {{"business-dashboard.election-management.view-registered-document.title" | translate}}: {{docs?.title}}
+                 </div>
+                 <div class="col-md-3">
+                  {{"business-dashboard.election-management.view-registered-document.preview" | translate}}:  
+                  <i
+                    (click)="showPdfModal(docs.documentUrl)"
+                    class="preview-icon pointer"
+                    nz-icon
+                    nzType="file"
+                    nzTheme="outline"
+                  ></i>
+                 </div>
+              </div>
+             
+            </ng-container>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    </div>
+  <ng-container *ngIf="isCplSection">
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{
+              "cpl.docupload.coveringletter" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+            >
+            <ng-container *ngFor="let cover of docDetails?.attachments">
+              <i
+                *ngIf="cover.type == 'COVERING_LETTER'"
+                (click)="showPdfModal(cover.documentUrl)"
+                class="preview-icon pointer"
+                nz-icon
+                nzType="file"
+                nzTheme="outline"
+              ></i>
+            </ng-container>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6" >
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{
+              "cpl.docupload.otherdocuments" | translate
+            }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control
+             
+            >
+            <ng-container *ngFor="let cover of docDetails?.attachments">
+              <i
+                *ngIf="cover.type == 'OTHERS'"
+                (click)="showPdfModal(cover.documentUrl)"
+                class="preview-icon pointer"
+                nz-icon
+                nzType="file"
+                nzTheme="outline"
+              ></i>
+            </ng-container>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+</ng-container>  
+
+   <!-- document viewer modal -->
+   <nz-modal
+   [(nzVisible)]="isPdfVisible"
+   [nzFooter]="null"
+   (nzOnCancel)="hideModal()"
+   nzWidth="800"
+ >
+   <div class="width-100 pading-all">
+     <div class="row margnrtp-15 margnrgt-15">
+       <div class="col-md-12 align-items-center">
+         <ngx-doc-viewer
+           [url]="docUrl"
+           viewer="url"
+           style="width: 100%; height: 500px;"
+         ></ngx-doc-viewer>
+       </div>
+     </div>
+   </div>
+ </nz-modal>
+ <!-- end of document viewer modal -->

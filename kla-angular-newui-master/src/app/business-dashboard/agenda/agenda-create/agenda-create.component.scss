@@ -1,0 +1,144 @@
+@import "~src/sass/utilities/variables";
+
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+.list-style-1 {
+  border-radius: 10px;
+}
+.bg-color-1 {
+  background: $color-gray-light;
+}
+.bg-color-2 {
+  background: $light-gray;
+}
+.ant-breadcrumb {
+}
+
+.fa .fa-plus .ng-star-inserted {
+  position: absolute !important;
+  right: 15px !important;
+}
+
+[nz-collapse-panel] {
+  background: $white !important;
+  border: transparent !important;
+}
+.ant-btn {
+  &:not(:last-child) {
+    margin-right: 5px;
+  }
+}
+
+.m-r-10 {
+  margin-right: 10px !important;
+}
+.m-t-15 {
+  margin-top: 15px;
+}
+.m-b-15 {
+  margin-bottom: 15px;
+}
+.padding20 {
+  padding: 20px;
+}
+.paddingL20 {
+  padding-left: 20px;
+}
+[nz-icon] {
+  color: $color-gray !important;
+  text-align: right !important;
+}
+.nz-icon-align {
+  position: absolute;
+  right: 15px;
+  left: auto;
+}
+.ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  left: auto;
+  right: 10px;
+}
+
+.ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-extra {
+  float: right;
+}
+
+:host ::ng-deep .long-div {
+  height: 700px;
+  overflow-y: scroll;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+:host ::ng-deep .long-div-inner {
+  height: 1400px;
+}
+
+:host ::ng-deep .long-div .ant-back-top {
+  right: 150px;
+}
+
+:host ::ng-deep strong {
+  color: rgba(64, 64, 64, 0.8);
+}
+.p-l-5 {
+  padding-left: 5px !important;
+}
+
+.d-inline-block {
+  display: inline-block !important;
+}
+
+.dynamic-delete-button {
+  cursor: pointer;
+  position: relative;
+  top: 4px;
+  font-size: 24px;
+  color: #999;
+  transition: all 0.3s;
+}
+
+.dynamic-delete-button:hover {
+  color: #777;
+}
+
+.passenger-input {
+  width: 100%;
+  margin-right: 8px;
+}
+
+[nz-form] {
+  max-width: 600px;
+}
+
+.collapse-width {
+  width: -webkit-fill-available;
+}
+.add-button {
+  width: 100%;
+}
+.time-input {
+  width: fit-content;
+}
+.select {
+  min-width: 100px;
+}
+.card-height {
+  min-height: 50vh;
+}
+.paddingT10 {
+  padding-top: 10px;
+}
+
+.card.full-heights.no-brdr {
+  border: none !important;
+}
+.card.full-heights.no-brdr .card-body.lob-business {
+  padding: 0px;
+}
+.mrg-btm {
+  margin-bottom: 15px !important;
+}

@@ -1,0 +1,65 @@
+@import "~src/sass/utilities/mixin";
+
+.card1 {
+  padding: 15px 0px;
+}
+.card2 {
+  padding: 15px 0px;
+}
+.mrgb-6 {
+  margin-bottom: 6px;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.justify-content-end {
+  display: flex;
+  justify-content: flex-end;
+}
+.card-main {
+  &-box {
+    margin-bottom: 30px;
+    border: 1px solid rgb(219, 215, 215);
+    background: #ffffff;
+    padding: 15px;
+    line-height: 18px;
+    border-radius: 5px;
+
+    h4 {
+      font-size: 19px;
+      margin-top: 10px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 23px;
+      color: #717171;
+    }
+    
+  }
+  &-card {
+    margin-bottom: 30px;
+    border: 1px solid rgb(219, 215, 215);
+    background: #f1efef;
+    padding: 15px;
+    line-height: 18px;
+    border-radius: 5px;
+
+    h4 {
+      font-size: 19px;
+      margin-top: 10px;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 23px;
+      color: #717171;
+    }
+    
+  }
+}

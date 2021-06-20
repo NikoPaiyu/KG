@@ -1,0 +1,131 @@
+<div class="row">
+  <div class="col-md-10">
+    <strong></strong>
+    <div>
+      <div *ngFor="let gist of getGistDetails(); index as i">
+        <div>
+          <nz-form-item>
+            <nz-form-control>
+              <div class="row">
+                <div class="col-md-6">
+                  <nz-card class="committee_blk marginbtm-15">
+                    <span class="mr-6">{{ gist.name }}</span>
+                    <span class="mr-6"
+                      >({{ gist.birthDate | date: "yyyy" }} -
+                      {{ gist.deathDate | date: "yyyy" }})</span
+                    >
+                    <span class="flr">
+                      <i class="mr-6" nz-icon nzType="eye" nzTheme="outline" (click)="viewGist(gist)"></i>
+                      <i *ngIf="!isFileView" class="mr-6" nz-icon nzType="form" nzTheme="outline" [class.disabled]="fileStatus === 'SUBMITTED'"  (click)="editGist(gist,i)"></i>
+                      <i *ngIf="!isFileView"
+                        [class.disabled]="fileStatus === 'SUBMITTED'"
+                        nz-icon
+                        nzType="delete"
+                        nzTheme="outline"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to delete ?"
+                        (nzOnConfirm)="deleteGist(i)"
+                      ></i>
+                    </span>
+                    <!-- <div *ngIf="gist.updatedDate">
+                      <br/>
+                      <small class="mr-6 ft-15">{{ gist.updatedDate | date: 'dd/MM/yyyy hh:mm:ss a' }}</small>
+                      <br/>
+                      <small class="mr-6 ft-15">{{ gist?.user?.details?.fullName }}</small>
+                    </div> -->
+                  </nz-card>
+                </div>
+                <div class="col-md-2">
+                  <button
+                    class="mr-6"
+                    *ngIf="
+                      obituaryDetails?.status == 'APPROVED' &&
+                      gist.letterStatus == 'PENDING'
+                    "
+                    nz-button
+                    nzType="primary"
+                    (click)="attachCorrespondence(gist)"
+                  >
+                    {{"bill.bill-clause.list.attachcorrespondence" | translate}}
+                  </button>
+                </div>
+              </div>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <button
+      nz-button
+      nzType="dashed"
+      class="add-button margnrtp-15"
+      (click)="shownewGistPopup()"
+      [disabled]="fileStatus === 'SUBMITTED'"
+      *ngIf="!isFileView"
+    >
+      <i nz-icon nzType="plus"></i>
+      {{"tables.obituary-management.add-new" | translate}}
+    </button>
+  </div>
+</div>
+<nz-modal
+  [(nzVisible)]="showGistModal"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  nzTitle=""
+  nzWidth="850"
+>
+  <tables-add-gist
+    [hidden]="!showGistModal"
+    (gistCancel)="cancelGist($event)"
+    (selectedData)="getAddedData($event)"
+  >
+  </tables-add-gist>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="viewGistModel"
+  [nzFooter]="null"
+  [nzClosable]="true"
+  nzTitle=""
+  nzWidth="800"
+  (nzOnCancel)="cancelGistView()"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <b>{{"tables.obituary-management.view-gist-details" | translate}}</b>
+        <div class="row margnrtp-25">
+          <div class="col-md-4">{{"business-dashboard.bill-amendments.obj-introduction-list.nameofmember" | translate}}:</div>
+          <div class="col-md-8">
+            {{ gistViewData?.name }}
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"tables.obituary-management.life" | translate}}:</div>
+          <div class="col-md-8">({{ gistViewData?.birthDate | date: 'dd/MM/yyyy'  }} - {{ gistViewData?.deathDate | date: 'dd/MM/yyyy'  }})</div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"tables.obituary-management.photo" | translate}}:</div>
+          <div class="col-md-8">
+            <nz-avatar
+              [nzShape]="'square'"
+              [nzSize]="128"
+              [nzIcon]="'user'"
+              [nzSrc]="gistViewData?.image"
+            ></nz-avatar>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-4">{{"tables.obituary-management.bio" | translate}}:</div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-10">
+            <nz-card>
+              <quill-view-html [content]="gistViewData?.bio"> </quill-view-html>
+            </nz-card>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

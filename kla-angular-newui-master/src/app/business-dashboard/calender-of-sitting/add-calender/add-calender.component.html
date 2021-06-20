@@ -1,0 +1,425 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between align-items-center">
+    <div class="col-auto">
+      <h2 class="admin-page-heading">{{"business-dashboard.live-business.DraftCalendarOfSittings" | translate}}</h2>
+    </div>
+    <div class="col-auto">
+      <button nz-button class="" nzType="primary" *ngIf="false" [routerLink]="['/business-dashboard/sitting/add']">
+        {{"noticeprocessing.notice.createnotice.print" | translate}}
+      </button>
+      <button type="button" nzType="default" nz-button *ngIf="showDeleteBtn" class="ml-6" mwlConfirmationPopover
+        [popoverTitle]="popoverTitle" [popoverMessage]="popoverMessage" placement="left"
+        (confirm)="deleteParticularCosGroup()">
+        {{"business-dashboard.question.delete" | translate}}
+      </button>
+      <button
+      nz-button
+      [nzType]="'default'"
+      style="margin:7px;"
+      (click)="showModel()"
+      type="button"
+      [disabled]="!(validateForm?.get('assembly').value && validateForm?.get('sessionId').value && calendarEvents.length > 0)"
+    >
+      {{"business-dashboard.live-business.previewCOS" | translate}}
+    </button> 
+      <button nzType="primary" nz-button
+      *ngIf="!returnUrl && cobservice.doIHaveAnAccess('FILE', 'CREATE')"
+      [disabled]="!(validateForm?.get('assembly').value && validateForm?.get('sessionId').value && calendarEvents.length > 0)"
+      nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.doyouwanttosubmit" |translate}}'
+      (nzOnConfirm)="submitfile()">
+        {{"business-dashboard.calendarofsittings.submitcalendarofsittings" | translate}}
+      </button>
+      <button nzType="primary" nz-button *ngIf="returnUrl" (click)="backtoFile()">
+        {{"business-dashboard.question.save" | translate}}
+      </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+
+
+  <div class="calendar-of-sittings">
+    <div class="row  d-flex align-items-center marginbtm-15" *ngIf="!returnUrl">
+      <div class="col-md-1">
+        {{"cpl.documents.Filter" | translate}}
+      </div>
+      <div class="col-md-2">
+        <div>
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+              <nz-select nzPlaceHolder='{{"cpl.docupload.assembly" | translate}}' formControlName="assembly">
+                <nz-option *ngFor="let assemblyItems of assemblyList" [nzLabel]="assemblyItems.assemblyId"
+                  [nzValue]="assemblyItems.id"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div>
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"business-dashboard.question.selectassemblysession" | translate}}'>
+              <nz-select nzPlaceHolder='{{"business-dashboard.question.assemblysession" | translate}}' (ngModelChange)="getCODDataList()"
+                formControlName="sessionId">
+                <nz-option *ngFor="let sessionItems of sessionList" [nzLabel]="sessionItems.sessionId"
+                  [nzValue]="sessionItems.id"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- <nz-alert nzMessage="Your selected date: {{ selectedValue | date: 'yyyy-MM-dd' }}"></nz-alert> -->
+<div class="width-100 cal_date">
+    <full-calendar 
+    #fullcalendar
+    defaultView="dayGridMonth" 
+    [plugins]="calendarPlugins"
+    [events]="calendarEvents"
+    (eventClick)="changeEvent($event)"
+    (dateClick)="selectDate($event)"
+    >
+    </full-calendar>
+  </div>
+    <nz-modal [(nzVisible)]="isVisible" nzTitle='{{"business-dashboard.calendarofsittings.addtocalendar" | translate}}' (nzOnCancel)="handleCancel()"
+      [nzOkLoading]="isOkLoading" [nzFooter]="null">
+      <ng-template #errorTpl let-control>
+        <ng-container *ngIf="control.hasError('required')">
+          {{"business-dashboard.calendarofsittings.inputRequired" | translate }}
+        </ng-container>
+      </ng-template>
+      <div class="row">
+        <!-- <div class="col-md-3 cosgrouping">
+          <ul
+            [ngClass]="{
+              ungroup: item.calendarOfDay.length == '1'
+            }"
+            *ngFor="let item of cosDetailsList"
+            class="list-group dateofsitting "
+          >
+            <li
+              *ngFor="let child of item.calendarOfDay"
+              (click)="getSessionByDate(item)"
+              class="list-group-item"
+            >
+              {{ child.date | date: "dd/MM/yyyy" }}
+            
+            </li>
+          </ul>
+        </div> -->
+        <div class="col-md-12">
+          <nz-card class="nbcard-cos">
+            <nz-form-item>
+              <div class="row">
+                <nz-form-label [nzSm]="7" [nzXs]="24" nzRequired nzFor="date">{{"business-dashboard.calendarofsittings.AllottedDate" | translate}}</nz-form-label>
+                <nz-form-control [nzSm]="17" [nzXs]="24">
+                  <nz-date-picker [nzAllowClear]="false" [nzDisabledDate]="disabledDate" [nzFormat]="dateFormat"
+                    formControlName="dates" (ngModelChange)="calenderOnChange($event)"></nz-date-picker>
+                </nz-form-control>
+              </div>
+              <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-9 d-flex flex-wrap">
+                  <ng-container *ngFor="let data of dateRange; let i = index">
+                    <div class="label-cos">
+                      <label>
+                        {{ data | date: "dd/MM/yyyy" }}
+                      </label>
+                      <i (click)="onSplice(i)" nz-icon nzType="close" nzTheme="outline"></i>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </nz-form-item>
+            <div formArrayName="agenda" *ngFor="let agenda of getControls(); index as i; first as f;">
+              <div [formGroupName]="i">
+                <nz-form-item class="marginbtm-15">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <nz-form-label nzFor="pretitle">
+                        {{"business-dashboard.calendarofsittings.Agenda" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-9">
+                      <nz-form-control>
+                        <textarea autofocus nz-input formControlName="preTitleEng" placeholder='{{"business-dashboard.calendarofsittings.pretitle(English)" | translate}}'
+                          id="preTitleEng"></textarea>
+                      </nz-form-control>
+                    </div>
+                    <div class="col-md-1">
+                      <nz-form-control>
+                        <i nz-icon nzType="minus-circle-o" class="dynamic-delete-button"
+                          (click)="removeAgendaButtonClick(i)"></i>
+                      </nz-form-control>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-10">
+                      <nz-form-control>
+                        <textarea nz-input formControlName="preTitleMal" placeholder='{{"business-dashboard.calendarofsittings.pretitle(Malayalam)" | translate}}'
+                          id="preTitleMal"></textarea>
+                      </nz-form-control>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2">
+                    </div>
+                    <div class="col-md-10">
+                      <nz-form-control>
+                        <nz-select nzPlaceHolder="Select Business" (ngModelChange)="selectgovtBuisness()"
+                          formControlName="lobBusinessGroupId">
+                          <nz-option *ngFor="let businessItems of businessgroupList" [nzLabel]="businessItems.name"
+                            [nzValue]="businessItems.id"></nz-option>
+                        </nz-select>
+                      </nz-form-control>
+                    </div>
+                  </div>
+                  <nz-form-control>
+                    <div *ngIf="getControls()[i].get('lobBusinessGroupId').value == 3">
+                      <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-10">
+                          <nz-form-control>
+                            <textarea nz-input formControlName="descriptionEng" placeholder='{{"business-dashboard.calendarofsittings.Description(English)" | translate}}'
+                              id="preTitleMal"></textarea>
+                          </nz-form-control>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-2">
+                        </div>
+                        <div class="col-md-10">
+                          <nz-form-control>
+                            <textarea nz-input formControlName="descriptionMal" placeholder='{{"business-dashboard.calendarofsittings.Description(Malayalam)" | translate}}'
+                              id="preTitleMal"></textarea>
+                          </nz-form-control>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="d-flex justify-content-center align-items-center" [disabled]="getControls()[i].invalid" nz-button nzType="primary"
+                    (click)="addAgendaClick()" nzShape="circle">
+                      <i nz-icon nzType="plus-circle"></i>
+                    </button>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <nz-form-item *ngIf="flag" class="marginbtm-15">
+              <nz-form-label [nzSm]="7" [nzXs]="24" nzRequired nzFor="description">
+                {{"business-dashboard.calendarofsittings.Agendatext(Eng)pretiltle" | translate}}</nz-form-label>
+              <nz-form-control [nzSm]="17" [nzXs]="24" [nzErrorTip]="errorTpl">
+                <textarea autofocus nz-input formControlName="agdEng" id="agdEng"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+            <nz-form-item *ngIf="flag" class="marginbtm-15">
+              <nz-form-label [nzSm]="7" [nzXs]="24" nzRequired nzFor="agdMal">
+                {{"business-dashboard.calendarofsittings.Agendatext(Mal)pretiltle" | translate}}</nz-form-label>
+              <nz-form-control [nzSm]="17" [nzXs]="24" [nzErrorTip]="errorTpl">
+                <textarea nz-input formControlName="agdMal" id="agdMal"></textarea>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item class="marginbtm-15">
+              <nz-form-label [nzSm]="12" [nzXs]="24" nzRequired nzFor="radioValue">
+                {{"business-dashboard.calendarofsittings.whetherquedayornot" | translate}}:
+              </nz-form-label>
+              <nz-form-control [nzSm]="12" [nzXs]="24">
+                <nz-radio-group formControlName="radioValue">
+                  <label nz-radio [nzValue]="true">{{"business-dashboard.question.questionrequestconsent.yes" | translate}} </label>
+                  <label nz-radio [nzValue]="false">{{"business-dashboard.question.questionrequestconsent.no" | translate}} </label>
+                </nz-radio-group>
+              </nz-form-control>
+            </nz-form-item>
+            <button nz-button nzType="primary" (click)="Add_to_Calender()" 
+                  [disabled]="validateForm.invalid|| dateRange.length < 1"
+                  *ngIf="cobservice.doIHaveAnAccess('FILE', 'READ')">
+              <span>{{"business-dashboard.question.save" | translate}}</span>
+            </button>&nbsp;
+            <button nz-button nzType="primary" nzDanger type="button"
+            nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.calendarofsittings.douwantdeletethebusiness" | translate}}'
+            [disabled]="!calendarDaysId"
+            *ngIf="cobservice.doIHaveAnAccess('FILE', 'READ')"
+            (nzOnConfirm)="deleteBusiness()">{{"business-dashboard.calendarofsittings.Deletebusiness" | translate}}</button>
+          </nz-card>
+        </div>
+      </div>
+
+    </nz-modal>
+    <!-- <div class="row">
+      <div class="col-md-3 cosgrouping">
+        <ul
+          [ngClass]="{
+            ungroup: item.calendarOfDay.length == '1'
+          }"
+          *ngFor="let item of cosDetailsList"
+          class="list-group dateofsitting "
+        >
+          <li
+            *ngFor="let child of item.calendarOfDay"
+            (click)="getSessionByDate(item)"
+            class="list-group-item"
+          >
+            {{ child.date | date: "dd/MM/yyyy" }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-8">
+        <nz-card class="nbcard-cos">
+          <nz-form-item>
+            <div class="row">
+              <nz-form-label [nzSm]="7" [nzXs]="24" nzRequired nzFor="date"
+                >Allotted Date</nz-form-label
+              >
+              <nz-form-control
+                [nzSm]="17"
+                [nzXs]="24"
+                nzErrorTip="Select Alloted Date"
+              >
+                <nz-date-picker
+                  [nzAllowClear]="false"
+                  [nzDisabledDate]="disabledDate"
+                  [nzFormat]="dateFormat"
+                  formControlName="dates"
+                  (ngModelChange)="calenderOnChange($event)"
+                ></nz-date-picker>
+              </nz-form-control>
+            </div>
+            <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-9 d-flex flex-wrap">
+                <ng-container *ngFor="let data of dateRange; let i = index">
+                  <div class="label-cos">
+                    <label>
+                      {{ data | date: "dd/MM/yyyy" }}
+                    </label>
+                    <i
+                      (click)="onSplice(i)"
+                      nz-icon
+                      nzType="close"
+                      nzTheme="outline"
+                    ></i>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label
+              [nzSm]="7"
+              [nzXs]="24"
+              nzRequired
+              nzFor="description"
+            >
+              Agenda text(Eng)</nz-form-label
+            >
+            <nz-form-control
+              [nzSm]="17"
+              [nzXs]="24"
+              nzErrorTip="Fill  Agenda text(Eng)"
+            >
+              <textarea
+                autofocus
+                nz-input
+                formControlName="agdEng"
+                id="agdEng"
+              ></textarea>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="7" [nzXs]="24" nzRequired nzFor="agdMal">
+              Agenda text(Mal)</nz-form-label
+            >
+            <nz-form-control
+              [nzSm]="17"
+              [nzXs]="24"
+              nzErrorTip="Fill  Agenda text(Mal)"
+            >
+              <textarea
+                nz-input
+                formControlName="agdMal"
+                id="agdMal"
+              ></textarea>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-label [nzSm]="8" [nzXs]="24" nzRequired nzFor="radioValue">
+              Whether question day or not:
+            </nz-form-label>
+            <nz-form-control [nzSm]="16" [nzXs]="24">
+              <nz-radio-group
+                formControlName="radioValue"
+                [(ngModel)]="radioValue"
+              >
+                <label nz-radio nzValue="true">yes </label>
+                <label nz-radio nzValue="false">no </label>
+              </nz-radio-group>
+            </nz-form-control>
+          </nz-form-item>
+        </nz-card>
+      </div>
+    </div> -->
+  </div>
+</form>
+<nz-modal
+[(nzVisible)]="isVisibleData"
+nzTitle="Preview"
+(nzOnCancel)="handleCancelData()"
+[nzFooter]= "null"
+[nzWidth]="650"
+>
+<div class="width-100 white_pd"> 
+<div class="row align-items-center" *ngFor="let item of tempCos.calendarOfDaysList">
+  <div *ngIf="item.month" class="col-md-12" style="text-align: center;">
+    <h5>{{item.month | date: 'MMMM yyyy'}}</h5>
+  </div>
+  <div class="col-md-4">
+    <ul class="data_lis">
+      <li class="label-cos" *ngFor="let obj of item.dateList">
+        {{ obj | date: "EEEE, MMMM dd"}}
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-8">
+    <ul class="data_lis">
+      <ng-container *ngFor="let obj of item.businessDetails">
+        <p style="font-weight: 800;text-decoration: underline;margin-top:1rem;"><strong>{{obj.preTitleEng}}</strong></p>
+        <li>{{ ShowBusiness(obj)}}</li>
+      </ng-container>
+    </ul>
+  </div>
+  <div class="col-md-12">
+      <nz-divider> </nz-divider>
+    </div>
+  </div>
+<div class="row align-items-center" *ngFor="let item of tempCos.calendarOfDaysList">
+  <div *ngIf="item.month" class="col-md-12" style="text-align: center;">
+    <h5>{{cobservice.getMalayalamMonth(item.month)}}</h5>
+  </div>
+  <div class="col-md-4">
+    <ul class="data_lis">
+      <li class="label-cos" *ngFor="let obj of item.dateList">
+        {{ cobservice.getMalayalamDate(obj)}}
+      </li>
+    </ul>
+  </div>
+  <div class="col-md-8">
+    <ul class="data_lis">
+      <ng-container *ngFor="let obj of item.businessDetails">
+        <p style="font-weight: 800;text-decoration: underline;">
+          <strong>{{obj.preTitleMal}}</strong></p>
+        <li>{{ ShowMalyalamBusiness(obj)}}</li>
+      </ng-container>
+    </ul>
+  </div>
+  <div class="col-md-12">
+      <nz-divider> </nz-divider>
+    </div>
+  </div>
+</div>
+</nz-modal>

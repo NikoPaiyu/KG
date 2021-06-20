@@ -1,0 +1,115 @@
+<div class="pading-all">
+      <!-- <div class="row marginbtm-15">
+        <div class="col-md-12 text-align-right">
+          <span *ngIf="noOfChecked"> {{ noOfChecked }} Selected </span>
+        </div>
+      </div> -->
+  
+    <div class="row" >
+      <div class="col-md-9">
+        <nz-card
+          [nzTitle]="null"
+          style="width: 100%; height: 300px; overflow-y: scroll"
+          class="committee_blk"
+        >
+          <!-- <ul nz-menu filterTable class="checkbox-style"> -->
+          <ul class="checklis" *ngIf="assistantTab">
+            <p *ngFor="let box of allAssistant; let i = index">
+              <label nz-checkbox [(ngModel)]="box.checked" 
+              name="checkbox{{ i }}"  [nzDisabled]="box.disable"
+              (ngModelChange)="getCheckedCount(allAssistant)"
+              >{{ box.details.fullName }}</label>
+            </p>
+          </ul>
+          <ul class="checklis" *ngIf="officerTab">
+            <p *ngFor="let box of allOfficer; let i = index">
+              <label nz-checkbox [(ngModel)]="box.checked" [nzDisabled]="box.disable"
+              name="checkbox{{ i }}" (ngModelChange)="getCheckedCount(allOfficer)"
+              >{{ box.details.fullName  }}</label>
+            </p>
+          </ul>
+          <ul class="checklis" *ngIf="officeAttendentTab">
+            <p *ngFor="let box of allOfficeAttendent; let i = index">
+             <label nz-checkbox [(ngModel)]="box.checked"
+             (ngModelChange)="getCheckedCount(allOfficeAttendent)"
+              name="checkbox{{ i }}"
+              >{{ box.details.fullName  }}</label>
+            </p>
+          </ul>
+          <ul class="checklis" *ngIf="reporterTab">
+            <p *ngFor="let box of allReporter; let i = index">
+              <label nz-checkbox [(ngModel)]="box.checked"
+              (ngModelChange)="getCheckedCount(allReporter)"
+              name="checkbox{{ i }}"
+              >{{ box.details.fullName  }}</label>
+            </p>
+          </ul>
+          <ul class="checklis" *ngIf="inviteeTab">
+            <p *ngFor="let box of allInvitee; let i = index">
+              <label nz-checkbox [(ngModel)]="box.checked"
+              (ngModelChange)="getCheckedCount(allInvitee)"
+              name="checkbox{{ i }}"
+              >{{ box.details.fullName  }}</label>
+            </p>
+          </ul>
+          <!-- </ul> -->
+        </nz-card>
+      </div>
+      <div class="col-md-3 text-align-left" style="padding-left: 0px">
+        <!-- <div *ngIf="!inviteeTab">
+        <button [disabled]="!assistantTab"
+          nzType="'default'"
+          class="ant-btn ant-btn-default mrb-5 width-100"
+        >
+          Assistant
+        </button>
+        <button [disabled]="!officerTab"
+          nzType="'default'"
+          class="ant-btn ant-btn-default mrb-5 width-100"
+        >
+          Officer
+        </button>
+        <button [disabled]="!officeAttendentTab"
+          nzType="'default'"
+          class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+        >
+          Office Attendant
+        </button>
+        <button [disabled]="!reporterTab"
+        nzType="'default'"
+        class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+      >
+       Reporter
+        </button>
+      </div>
+      <div *ngIf="inviteeTab">
+        <button
+        nzType="'default'"
+        class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+      >
+      Invitee
+        </button>
+      </div> -->
+        <div class="width-100" style="margin-top: 115px">
+          <div class="row margnrtp-15">
+          <button (click)="addMember()" [disabled]="disableAddButton"
+            nzType="'default'"
+            class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+          >
+           {{ButtonTitle}}
+          </button>
+        </div>
+        <div class="row margnrtp-15">
+          <button 
+            nzType="'default'"
+            class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+            (click)="handleCancel()"
+          >
+            Cancel
+          </button>
+        </div>  
+        </div>
+      </div>
+    </div>
+  </div>
+  

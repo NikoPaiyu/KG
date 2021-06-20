@@ -1,0 +1,88 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a
+          >{{ "noticeprocessing.notice.createnotice.create" | translate }}
+        </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{ "noticeprocessing.notice.createnotice.create" | translate }}</h2>
+  </div>
+  <div class="col-md-6 text-align-right">
+    <button
+      nz-button
+      nzType="primary"
+      class="mrgL6"
+      (click)="goTo(noticeTemplate)"
+      *ngIf="notice.doIHaveAnAccess('NOTICE', 'CREATE')"
+    >
+      {{ "noticeprocessing.notice.selectnoticetype.continue" | translate }}
+    </button>
+
+    <button nz-button nzType="default" class="mrgL6" (click)="backToList()">
+      {{ "noticeprocessing.notice.versions.back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <!-- <p>
+      {{ "noticeprocessing.notice.selectnoticetype.selectype" | translate }}
+    </p> -->
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input
+        [(ngModel)]="searchParam"
+        type="text"
+        nz-input
+        placeholder='{{"dashboard.chat.search" | translate}}...'
+      />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+  <div class="col-md-6"></div>
+</div>
+<br/>
+<div class="row">
+  <div class="col-md-6">
+    <!-- <span *ngFor="let item of templateList; let i = index">
+      <h6 *ngIf="(item.categoryTemplate | seacrchTemplate: searchParam).length > 0">
+        {{ item.categoryName }}
+      </h6> -->
+      <div class="row">
+        <span
+          *ngFor="
+            let temp of templateList | seacrchTemplate: searchParam
+          "
+          class="col-md-4"
+        >
+          <button
+            nz-button
+            nzType="default"
+            class="btn-style btn-active-bg width-100 marginbtm-10"
+            (click)="getTemplate(temp.id)"
+          >
+            {{ temp.name }}
+          </button>
+        </span>
+      </div>
+    <!-- </span> -->
+  </div>
+  <div class="col-md-6 mrgT50">
+    <nz-card class="bg-box-notice">
+      <quill-view [content]="data"></quill-view>
+    </nz-card>
+  </div>
+</div>

@@ -1,0 +1,212 @@
+<form nz-form>
+  <div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-4 d-flex align-items-center">
+          {{ "noticeprocessing.notice.listnotice.assembly" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            name="selectedValue"
+            [(ngModel)]="filter.assemblyId"
+            (ngModelChange)="filterAssembly()"
+          >
+            <nz-option
+              *ngFor="let item of assemblyList"
+              [nzLabel]="item.assemblyId"
+              [nzValue]="item.id"
+            ></nz-option>
+          </nz-select>
+          <!-- <i
+              nz-icon
+              nzType="close-circle"
+              class="nz-close-style"
+              nzTheme="outline" (click) ="removeAssemblyId()"
+            ></i> -->
+        </div>
+
+        <div class="col-md-4 d-flex align-items-center">
+          {{ "noticeprocessing.notice.listnotice.session" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            name="select"
+            [(ngModel)]="filter.sessionId"
+            (ngModelChange)="getAllNotice(0)"
+          >
+            <nz-option
+              *ngFor="let item of sessionList"
+              [nzLabel]="item.sessionId"
+              [nzValue]="item.id"
+            ></nz-option>
+          </nz-select>
+          <!-- <i
+              nz-icon
+              nzType="close-circle"
+              class="nz-close-style"
+              nzTheme="outline" (click) ="removeSessionId()"
+            ></i> -->
+        </div>
+        <div class="col-md-4 d-flex align-items-center">
+          {{ "noticeprocessing.notice.listnotice.status" | translate }}
+          <nz-select
+            nzPlaceHolder="Select status"
+            nzShowSearch
+            nzAllowClear
+            name="status"
+            [(ngModel)]="filter.status"
+            (ngModelChange)="getAllNotice(0)"
+          >
+            <nz-option
+              *ngFor="let item of noticeStatusList"
+              [nzLabel]="item"
+              [nzValue]="item"
+            ></nz-option>
+          </nz-select>
+          <!-- <button nz-button [nzType]="'primary'" class="btn-style-flex">
+              <i nz-icon nzType="plus"></i>
+            </button> -->
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="d-flex justify-content-end" style="width: 98%;">
+        <!-- <button
+          class="margnrt-5"
+          nz-button
+          nzType="default"
+          (click)="resetFilter()"
+        >
+          {{
+            "noticeprocessing.noticetemplate.listtemplate.clearfilter"
+              | translate
+          }}
+        </button> -->
+
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            name="search"
+            nz-input
+            [(ngModel)]="filter.searchText"
+            (ngModelChange)="searchForNotices()"
+            placeholder="{{ 'usermanagement.listrole.searchhere' | translate }}"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-12 mrgt10">
+      <nz-table
+        #filterTable
+        [nzData]="noticeList"
+        nzShowPagination
+        nzShowSizeChanger
+      >
+        <thead>
+          <tr>
+            <!-- <th
+              *ngIf="filterCheckboxes[0].checked"
+              nzShowSort
+              nzSortKey="serialNo"
+            >
+              {{ "noticeprocessing.notice.listnotice.serialNo" | translate }}
+            </th> -->
+
+            <th
+              *ngIf="filterCheckboxes[1].checked"
+              nzShowSort
+              nzSortKey="noticeNo"
+            >
+              {{ "noticeprocessing.notice.listnotice.noticeno" | translate }}
+            </th>
+
+            <th
+              *ngIf="filterCheckboxes[2].checked"
+              nzShowSort
+              nzSortKey="NoticeHeading"
+            >
+              {{
+                "noticeprocessing.notice.listnotice.noticeheading" | translate
+              }}
+            </th>
+            <th
+              *ngIf="filterCheckboxes[3].checked"
+              nzShowSort
+              nzSortKey="NoticeType"
+            >
+              {{ "noticeprocessing.notice.listnotice.noticetype" | translate }}
+            </th>
+            <th
+              *ngIf="filterCheckboxes[4].checked"
+              nzShowSort
+              nzSortKey="FileNo"
+              class="rd"
+            >
+              {{"cpl.documents.fileno" | translate }}
+            </th>
+            <th
+              *ngIf="filterCheckboxes[5].checked"
+              nzShowSort
+              nzSortKey="regDate"
+            >
+              {{ "noticeprocessing.notice.listnotice.regdate" | translate }}
+            </th>
+            <th
+              *ngIf="filterCheckboxes[6].checked"
+              nzShowSort
+              nzSortKey="Status"
+            >
+              {{ "noticeprocessing.notice.listnotice.status" | translate }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style="cursor: pointer;"
+            *ngFor="let data of filterTable.data; let i = index"
+          >
+            <!-- <td *ngIf="filterCheckboxes[0].checked">
+              {{ pageIndex * numberOfItem + (i + 1) }}
+            </td> -->
+            <td *ngIf="filterCheckboxes[1].checked">
+              <a
+                style="text-decoration: underline; color: blue;"
+                (click)="processNotice(data)"
+                >{{ data.noticeNumber }}
+              </a>
+            </td>
+            <td *ngIf="filterCheckboxes[2].checked">
+              <a (click)="processNotice(data)">{{ data.title }}</a>
+            </td>
+            <td *ngIf="filterCheckboxes[3].checked">
+              {{ data.templateName }}
+            </td>
+            <td *ngIf="filterCheckboxes[4].checked" class="whitespace">
+              {{ data.fileNumber }}
+            </td>
+            <td *ngIf="filterCheckboxes[5].checked">
+              {{ data.createdDate | date: "dd/MM/yyyy" }}
+            </td>
+            <td *ngIf="filterCheckboxes[6].checked">
+              {{ data.statusText }}
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <!-- <nz-pagination
+    [nzPageIndex]="1"
+    [nzPageSize]="numberOfItem"
+    [nzTotal]="total"
+    (nzPageIndexChange)="pageIndexChange($event - 1)"
+    nzShowSizeChanger
+    (nzPageSizeChange)="pageSizeChange($event)"
+  ></nz-pagination> -->
+</form>

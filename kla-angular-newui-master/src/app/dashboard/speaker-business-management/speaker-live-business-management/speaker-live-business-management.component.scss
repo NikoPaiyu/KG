@@ -1,0 +1,79 @@
+.text-align-right {
+  text-align: right;
+}
+
+.mrg-btm {
+  margin-bottom: 15px;
+}
+
+.abs-adj {
+  position: absolute;
+  z-index: 99;
+  right: 60px;
+  bottom: 40px;
+}
+
+.start-button {
+  background-color: rgb(29, 180, 29);
+  color: white;
+}
+
+.pause-button {
+  background-color: rgb(248, 248, 29);
+  color: white;
+}
+
+.stop-button {
+  background-color: rgb(248, 31, 31);
+  color: white;
+}
+
+.read-check-icon {
+  color: rgb(29, 180, 29);
+}
+
+.bc-color {
+  background: #ebf6ff !important;
+  border: #cfe3f4 solid 1px !important;
+  border-radius: 5px;
+  position: relative;
+}
+
+.bc-btn-fll {
+  background: #fff;
+  border: #cfe3f4 solid 1px !important;
+  padding: 10px;
+}
+
+.bc-btn-holder {
+  right: 35px !important;
+  bottom: 30px !important;
+}
+
+.prv-bc {
+  color: #afc1d0;
+  font-size: 18px;
+  font-weight: 700;
+  position: absolute;
+  top: 50%;
+  right: 35%;
+}
+
+.prv-area #page1 {
+  width: 100% !important;
+  height: auto !important;
+}
+
+.enlarge {
+  max-width: 100%;
+  z-index: 9;
+  padding: 0px;
+}
+
+.enlarge .full-heights {
+  height: 101vh !important;
+}
+
+.lob_form {
+  padding: 20px;
+}

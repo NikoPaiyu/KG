@@ -1,0 +1,164 @@
+<!-- <p>create-questionnaire works!</p> -->
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "committee.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b>
+          {{ "committee.committe-mgmnt" | translate}}
+        </b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <h2 class="admin-page-heading">2224/Table02/ni.e</h2>
+                <nz-tag nzColor="red">{{ "committee.committe-files.priority.urgent" | translate}}</nz-tag>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <!-- <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="createQuestionnaire(false)">
+          {{ " Save " | translate}}
+        </button> -->
+                <button class="ml-6 m-r5 " style="margin:5px; " nz-button [nzType]=" 'default' " (click)="createQuestionnaire()">
+          {{ "Save and Attach " | translate}}
+        </button>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="col-md-6 ">
+    <h6> {{ "committee.list.createquestionnaire " | translate}}</h6>
+</div>
+<nz-divider></nz-divider>
+<form nz-form [formGroup]="questionnaireForm">
+    <div class="row mrgTp-30 ">
+        <div class="col-md-8 ">
+            <strong>{{ "committee.createquestionnaire.headercontent" | translate}}:</strong>
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "committee.createquestionnaire.pleaseenterheadercontent" | translate}}'>
+                    <quill-editor class="quillstyle" formControlName="header" [modules]="modules"></quill-editor>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-form-label [nzSm]="24 " [nzXs]="24 ">{{ "Meeting Subject " | translate}}</nz-form-label>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-md-12 ">
+                            <nz-form-item>
+                                <nz-form-control [nzSm]="24 " [nzXs]="24 " nzErrorTip='{{ "committee.createquestionnaire.selectmeetingsubject" | translate}}'>
+                                    <input nz-input placeholder="Meeting Subject " formControlName="subject" disabled />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 ">
+                    <div class="row ">
+                        <div class="col-md-12 ">
+                            <nz-form-label [nzSm]="24 " [nzXs]="24 ">{{ "Meeting Date " | translate}}</nz-form-label>
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-md-12 ">
+                            <nz-form-item>
+                                <nz-form-control [nzSm]="24 " [nzXs]="24 ">
+                                    <input nz-input placeholder="Meeting Date" formControlName="meetingDate" disabled />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4" [formGroup]="questionnaireForm">
+            <nz-form-item>
+                <nz-form-label> {{ "cpl.correspondence.attachments" | translate}}</nz-form-label>
+                <nz-form-control>
+                    <nz-upload nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png " [nzAction]="uploadURL " [(nzFileList)]="FileList " [nzShowButton]="FileList.length < 3" [nzShowUploadList]="showUploadList "
+                        (nzChange)="handleChange($event) ">
+                        <button nz-button>
+        <i nz-icon nzType="upload "></i>{{ "cpl.correspondence.attachfiles" | translate}}
+                        </button>
+                    </nz-upload>
+                    <div *ngIf="!(FileList.length > 0) && isSubmit">
+                        <p>{{ "committee.createquestionnaire.attachmentsrequired" | translate}}</p>
+                    </div>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row mrgTp-30 ">
+        <div class="col-md-8 ">
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "committee.createquestionnaire.pleaseentercontent" | translate}}'>
+                    <nz-card class="cardHeight ">
+                        <quill-editor formControlName="questions" [modules]="modules" [styles]="{ height: '300px' }">
+                        </quill-editor>
+                    </nz-card>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- </div>
+    </div> -->
+    <div class="row mrgTp-30 ">
+        <div class="col-md-8 ">
+            <strong>{{ "committee.createquestionnaire.footercontent" | translate}}:</strong>
+            <nz-form-item>
+                <nz-form-control nzErrorTip='{{ "committee.createquestionnaire.pleaseenterfootercontent" | translate}}'>
+                    <quill-editor class="quillstyle " formControlName="footer" [modules]="modules "></quill-editor>
+                </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+</form>
+<!-- <div class="row ">
+    <div class="col-md-4 ">
+      <strong>{{ "committee.list.meetingsubject " | translate}}:</strong>
+      <input style="margin:5px; " type="text " id="name " name="name " required minlength="4 " maxlength="8 " size="50 ">
+    </div>
+    <div class="col-md-4 ">
+      <strong>{{ "committee.list.dateofmeeting " | translate}}:</strong>
+      <input style="margin:5px; " type="text " id="name " name="name " required minlength="4 " maxlength="8 " size="50 ">
+    </div> -->
+<!-- <div class="col-md-2 ">
+        <nz-upload
+              nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png "
+              nzType="drag "
+              [nzMultiple]="true "
+              nzAction="https://www.mocky.io/v2/5cc8019d300000980a055e76 "
+              (nzChange)="handleChange($event) "
+              [(nzFileList)]="fileList1 "
+            >
+              <p class="ant-upload-drag-icon ">
+                <i nz-icon nzType="inbox "></i>
+              </p>
+              <p class="ant-upload-text "> {{ "cpl.correspondencelist.upload " | translate}}</p>
+            </nz-upload>
+      </div> -->
+<!-- </div> -->
+<!-- <nz-card style="width:600px; "> -->
+<!-- <p (click)="questionAdd() ">Question Description  </p> -->
+<!-- <button class="ml-6 m-r5 " style="margin:5px; " nz-button (click)="questionAdd() " [nzType]=" 'default' ">
+      {{ "business-dashboard.question.submit " | translate}}
+    </button>
+    <quill-editor *ngIf="edit " class="quillstyle " [(ngModel)]="content "></quill-editor>
+    <p>Card content</p>
+    <p>Card content</p>
+  </nz-card> -->

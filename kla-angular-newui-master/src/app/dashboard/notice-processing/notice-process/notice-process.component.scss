@@ -1,0 +1,41 @@
+.footer-chat {
+  background: #fff;
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+  padding: 20px 15px 15px;
+  max-width: 510px;
+}
+
+.type_msg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eee;
+  border-radius: 4px;
+}
+textarea.ant-input {
+  margin: 15px;
+}
+.p-R15 {
+  padding-right: 15px;
+}
+
+.ant-drawer-wrapper-body {
+  background: #fff;
+}
+.p-L0 {
+  padding-left: 0px !important;
+}
+.p-0 {
+  padding: 0px !important;
+}
+.ant-input {
+  background: #eee !important;
+}
+.m-r5 {
+  margin-right: 5px;
+}
+.ant-input {
+  border-bottom: #eee !important;
+}

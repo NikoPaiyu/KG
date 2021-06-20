@@ -1,0 +1,32 @@
+<!-- <p>speaker-note-view works!</p> -->
+<form [formGroup]='createNoticeForm'>
+    <div class="row padding-10">
+        <div class="col-md-12 mrg-top-10 d-flex justify-content-end">
+            <button (click)='saveOrCancel(false)' nz-button nzType="default" class='mrgR6'>
+                Cancel
+            </button>
+            <button (click)='saveOrCancel(true)' nz-button nzType="primary">
+               Save
+            </button>
+        </div>
+        <!-- <div class="col-md-6">
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Input cannot empty">
+                    <input placeholder="Subject line goes here" nz-input maxlength="254" formControlName='subject' />
+                </nz-form-control>
+            </nz-form-item>
+
+        </div> -->
+        <div class="col-md-12 mrg-top-10">
+            <nz-form-item>
+                <nz-form-control nzErrorTip="Input cannot empty">
+                    <quill-editor formControlName='description' #editor style="float: left;" html="html"
+                        [sanitize]="false">
+                    </quill-editor>
+                </nz-form-control>
+            </nz-form-item>
+
+        </div>
+        
+    </div>
+</form>

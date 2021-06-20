@@ -1,0 +1,187 @@
+<div class="pading-all">
+  <div class="row">
+    <div
+      class="col-md-12"
+      [ngClass]="{
+        enlarge: fullScreenMode == true,
+        maximise: showHeader
+      }"
+    >
+      <div class="row" *ngIf="showHeader">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button
+            (click)="addClass()"
+            nz-button
+            title="fullscreen"
+            nzType="default"
+            class="mrgL6"
+          >
+            <i
+              *ngIf="!fullScreenMode"
+              nz-icon
+              nzType="fullscreen"
+              nzTheme="outline"
+              class="baseline"
+            ></i>
+            <i
+              *ngIf="fullScreenMode"
+              nz-icon
+              nzType="fullscreen-exit"
+              nzTheme="outline"
+              class="baseline"
+            ></i>
+          </button>
+        </div>
+      </div>
+      <div class="report-holder">
+        <ng-container *ngIf="showHeader">
+          <table cellpadding="0" cellspacing="0" class="table">
+            <tr>
+              <td>
+                <span class="listname"
+                  >List <span *ngIf="listNumber">{{ listNumber }}</span></span
+                >
+              </td>
+            </tr>
+            <tr>
+              <td class="tc pt">
+                <strong> {{ assembly }}-ാം കേരള നിയമസഭ </strong>
+              </td>
+            </tr>
+            <tr>
+              <td class="tc pt">
+                <strong> {{ session }}-ാം സമ്മേളനം</strong>
+              </td>
+            </tr>
+            <tr></tr>
+            <tr>
+              <td class="tc pt" style="padding: 25px 5px !important">
+                <strong
+                  ><span *ngIf="details?.committeeTypeMl && listNumber == 1"
+                    >{{ details?.committeeTypeMl }} റിപ്പോർട്ട് ചെയ്ത
+                    പ്രകാരമുള്ള</span
+                  >
+                  {{ billTitle }} ബില്ലിനുള്ള ഭേദഗതി നോട്ടീസ്
+                </strong>
+              </td>
+            </tr>
+            <tr>
+              <td class="tc">
+                <strong
+                  ><u>
+                    സർക്കുലേറ്റ് ചെയ്യണമെന്നോ ബന്ധപ്പെട്ട
+                    {{ ballotList[0]?.committeeTypeMl }}-ക്ക് അയക്കണമെന്നോ
+                    ആവിശ്യപ്പെടുന്ന ഭേദഗതികൾ
+                  </u></strong
+                >
+              </td>
+            </tr>
+          </table>
+          <table cellpadding="0" cellspacing="0" class="table">
+            <tr>
+              <td style="width: 120px; vertical-align: top">
+                <u> ഭേദഗതി എ :-</u>
+              </td>
+              <td>
+                <p>
+                  {{ billTitle }} ബിൽ പൊതുജനാഭിപ്രായം ആരായുന്നതിനായി
+                  സർക്കുലേറ്റ് ചെയ്യണമെന്ന ഭേദഗതി ഞാൻ അവതരിപ്പിക്കുന്നു
+                </p>
+                <p>
+                  [I move that The {{ billTitle }} Bill, be circulated for
+                  eliciting public opinion]
+                </p>
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 120px; vertical-align: top">
+                <u>ഭേദഗതി ബി :-</u>
+              </td>
+              <td>
+                <p>
+                  {{ billTitle }} ബിൽ ബന്ധപ്പെട്ട
+                  {{ ballotList[0]?.committeeTypeMl }}-യുടെ പരിഗണനയ്ക്ക്
+                  അയക്കണമെന്ന ഭേദഗതി ഞാൻ അവതരിപ്പിക്കുന്നു
+                </p>
+                <p>
+                  [I move that The {{ billTitle }} Bill, be referred to
+                  appropriate {{ ballotList[0]?.committeeType }}]
+                </p>
+              </td>
+            </tr>
+
+            <tr>
+              <td style="width: 120px; vertical-align: top">[കുറിപ്പ് :-</td>
+              <td>
+                <p>
+                  മേൽപറഞ്ഞ ഭേദഗതികൾക്ക് നോട്ടീസ് നൽകിയിട്ടുള്ള അംഗങ്ങളുടെ പേരും
+                  ഭേദഗതി നമ്പറും ഭേദഗതി 'എ' യുടെ കാര്യത്തിൽ ഏത് തിയതി വരെ
+                  സർക്കുലേറ്റ് ചെയ്യണമെന്നുള്ളതും താഴെ കൊടുത്തിരിക്കുന്നു.]
+                </p>
+              </td>
+            </tr>
+          </table>
+        </ng-container>
+      </div>
+      <nz-table
+        #basicTable
+        [nzData]="ballotList"
+        nzShowPagination
+        nzShowSizeChanger
+        [nzPageIndex]="1"
+        (nzPageIndexChange)="pageSizeChanged($event)"
+      >
+        <tbody>
+          <tr *ngFor="let data of basicTable.data; let i = index">
+            <td>
+              <div class="row">
+                <div class="col-md-1">
+                  <b>{{ (basicTable.nzPageIndex - 1) * 10 + i + 1 + ". " }}</b>
+                </div>
+                <div class="col-md-9">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <b>{{ data.memberMal }}</b>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                        ഭേദഗതി എ:
+                    </div>
+                    <div class="col-md-8">
+                      {{ data.opinionUpto | date: "dd/MM/yyyy" }}
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                        ഭേദഗതി ബി:
+                    </div>
+                    <div class="col-md-8">
+                      {{ data.committeeTypeMl }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="isLastPage(basicTable.nzPageIndex)">
+            <td style="line-height: 0.3">
+              <p>കേരള നിയമസഭാ സെക്രട്ടേറിയറ്റ്</p>
+              <p>തിരുവനന്തപുരം</p>
+              <p>{{ formatDate(details?.approvedDate) }}</p>
+            </td>
+            <td>
+              <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-8">
+                  <p>{{ details?.approvedByMal }}</p>
+                  <p>{{details?.approverRoleMl}}</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,159 @@
+@import "~src/sass/utilities/variables";
+
+::ng-deep .vertical-center-modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.model-content {
+  .modal-header {
+    padding: 11px 15px;
+    background-color: $mla-font-color;
+    border-bottom: 1px solid #e5e5e5;
+    min-height: 16.428571429px;
+    border-radius: 14px 14px 0px 0px;
+    h4 {
+      font-size: 14px;
+      color: #fff;
+    }
+    span {
+      font-size: 14px;
+      color: #fff;
+    }
+  }
+}
+.padding0 {
+  padding: 0px !important;
+}
+
+.shadow-true {
+  background: #a9ffbd;
+  color: #006217;
+  outline: none;
+  border: none;
+  box-shadow: inset 4px 3px 5px #74b784;
+  -webkit-box-shadow: inset 4px 3px 5px #74b784;
+  -moz-box-shadow: inset 4px 3px 5px #74b784;
+}
+.shadow-true:hover {
+  background: #a9ffbd !important;
+  color: #006217 !important;
+  box-shadow: inset 4px 3px 5px #74b784;
+  -webkit-box-shadow: inset 4px 3px 5px #74b784;
+  -moz-box-shadow: inset 4px 3px 5px #74b784;
+}
+
+.shadow-true:focus {
+  background: #a9ffbd !important;
+  color: #006217 !important;
+  box-shadow: inset 4px 3px 5px #74b784 !important;
+  -webkit-box-shadow: inset 4px 3px 5px #74b784;
+  -moz-box-shadow: inset 4px 3px 5px #74b784;
+}
+.shadow-true:active {
+  background: #a9ffbd !important;
+  color: #006217 !important;
+  box-shadow: inset 4px 3px 5px #74b784 !important;
+  -webkit-box-shadow: inset 4px 3px 5px #74b784;
+  -moz-box-shadow: inset 4px 3px 5px #74b784;
+}
+.ant-btn-lg {
+  padding: 0px 35px !important;
+  line-height: 45px !important;
+}
+
+.shadow-false {
+  background: #ffa7a7;
+  color: #950000;
+  outline: none;
+  border: none;
+  box-shadow: inset 4px 3px 5px #af6f6f;
+  -webkit-box-shadow: inset 4px 3px 5px #af6f6f;
+  -moz-box-shadow: inset 4px 3px 5px #af6f6f;
+}
+.shadow-false:hover {
+  background: #ffa7a7 !important;
+  color: #950000 !important;
+  box-shadow: inset 4px 3px 5px #af6f6f !important;
+  -webkit-box-shadow: inset 4px 3px 5px #af6f6f;
+  -moz-box-shadow: inset 4px 3px 5px #af6f6f;
+}
+.shadow-false:focus {
+  background: #ffa7a7 !important;
+  color: #950000 !important;
+  box-shadow: inset 4px 3px 5px #af6f6f !important;
+  -webkit-box-shadow: inset 4px 3px 5px #af6f6f;
+  -moz-box-shadow: inset 4px 3px 5px #af6f6f;
+}
+.shadow-false:active {
+  background: #ffa7a7 !important;
+  color: #950000 !important;
+  box-shadow: inset 4px 3px 5px #af6f6f !important;
+  -webkit-box-shadow: inset 4px 3px 5px #af6f6f;
+  -moz-box-shadow: inset 4px 3px 5px #af6f6f;
+}
+.shadow-none {
+  background: #716df5 !important;
+  color: #06036b;
+  outline: none;
+  border: none;
+  box-shadow: inset 4px 3px 5px #06036b !important;
+  -webkit-box-shadow: inset 4px 3px 5px #06036b !important;
+  -moz-box-shadow: inset 4px 3px 5px #06036b !important;
+}
+
+.shadow-none:hover {
+  color: #06036b !important;
+  background: #716df5 !important;
+  box-shadow: inset 4px 3px 5px #06036b !important;
+  -webkit-box-shadow: inset 4px 3px 5px #06036b !important;
+  -moz-box-shadow: inset 4px 3px 5px #06036b !important;
+}
+.shadow-none:focus {
+  color: #06036b !important;
+  background: #716df5 !important;
+  box-shadow: inset 4px 3px 5px #06036b !important;
+  -webkit-box-shadow: inset 4px 3px 5px #06036b !important;
+  -moz-box-shadow: inset 4px 3px 5px #06036b !important;
+}
+
+.shadow-none:active {
+  color: #06036b !important;
+  background: #716df5 !important;
+  box-shadow: inset 4px 3px 5px #06036b !important;
+  -webkit-box-shadow: inset 4px 3px 5px #06036b !important;
+  -moz-box-shadow: inset 4px 3px 5px #06036b !important;
+}
+.auth-section {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.auth-section .mla-button {
+  display: flex;
+  align-items: center;
+  padding: 20px 30px;
+  margin-bottom: 20px;
+  line-height: 18px;
+}
+.auth-section .mla-button:hover {
+  background: none !important;
+}
+
+.vote-q {
+  width: 100%;
+  padding: 10px;
+  float: left;
+  font-weight: 600;
+  font-size: 16px;
+  padding-top: 0px;
+  border-bottom: #c0d9ec solid 1px;
+  margin-bottom: 10px;
+}
+.auth-text {
+  width: 100%;
+  text-align: center;
+  font-size: 16px;
+}

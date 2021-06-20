@@ -1,0 +1,70 @@
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "business-dashboard.question.assembly" | translate }}:
+    </div>
+    <div class="col-md-4">
+        <b>{{ priorityListRequest.assemblyValue }}</b>
+    </div>
+</div>
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "business-dashboard.question.questionlist.session" | translate }}:
+    </div>
+    <div class="col-md-4">
+        <b>{{ priorityListRequest.sessionValue }}</b>
+    </div>
+</div>
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "cpl.correspondence.correspondence" | translate }}:
+    </div>
+    <div class="col-md-4">
+        <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    *ngIf="priorityListRequest.correspondenceId === null && permissions.correspondence"
+    (click)="draftCorrespondence()"
+  >
+  {{ "bill.bill-clause.list.attachcorrespondence" | translate }}
+  </button>
+  <a class="viewlink" *ngIf="priorityListRequest.correspondenceId !== null"
+   (click)="viewCorrespondence(priorityListRequest.correspondenceId)">View</a>
+    </div>
+</div>
+
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "bill.prioritylist.listing.cos" | translate }}:
+    </div>
+    <div class="col-md-4">
+        <a class="viewlink" (click)="viewCOS(priorityListRequest)">View</a>
+    </div>
+</div>
+<nz-modal
+  [nzFooter]="null"
+  [(nzVisible)]="reportParams.showPdf"
+  nzTitle="COS Preview"
+  (nzOnCancel)="cancelCos()"
+  nzWidth="1000"
+>
+<div class="width-100">
+  <div class="col-md-12 d-flex justify-content-center">
+    <div class="frame-pdf" *ngIf="reportParams.finalUrl">
+      <ng2-pdfjs-viewer
+        *ngIf="reportParams.finalUrl"
+        [pdfSrc]="reportParams.finalUrl"
+        scroll="V"
+        [downloadFileName]="'COSReport.pdf'"
+        [openFile]="false"
+        [viewBookmark]="false"
+        [download]="true"
+        [print]="true"
+        spread="N"
+        [fullScreen]="false"
+        [showSpinner]="true"
+      ></ng2-pdfjs-viewer>
+    </div>
+    </div>
+    </div>
+</nz-modal>

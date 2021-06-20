@@ -1,0 +1,16 @@
+.padding_25 {
+  padding: 25px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.mrt-5 {
+  margin-top: 5px;
+}
+.disabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+.ft-15 {
+  font-size: 15px;
+}

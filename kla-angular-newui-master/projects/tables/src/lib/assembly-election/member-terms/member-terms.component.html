@@ -1,0 +1,99 @@
+<nz-table
+  #filterTable
+  nzShowPagination
+  nzShowSizeChanger
+  class="table-all"
+  [nzData]="electedMember?.terms"
+>
+  <thead nzSingleSort>
+    <tr>
+      <th>
+        {{"business-dashboard.question.assembly"|translate}}
+      </th>
+     <th>
+      {{"bussiness-dashboard.user-managemnet.biometric-enrollment.membername"|translate}}
+      </th>
+      <th>
+      {{"tables.assembly-election.member-position-details.start-date"|translate}}
+      </th>
+      <th >
+      {{"tables.assembly-election.member-position-details.end-date"|translate}}
+      </th>
+      <th>
+      {{"tables.assembly-election.member-terms.end-type"|translate}}
+      </th>
+      <th>
+        {{"business-dashboard.question.questionlist.status"|translate}}
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data">
+      <td>
+        {{ list?.assemblyValue}}
+      </td>
+      <td >{{ list?.memberName }}</td>
+      <td >{{ list?.startDate | date : 'dd-MM-yyy' }}</td>
+      <td >{{ list?.endDate | date : 'dd-MM-yyy'}}</td>
+      <td >{{ list?.endType?.split('_').join(' ') }}</td>
+      <td>
+        <nz-tag> {{ list?.status?.split('_').join(' ') }}</nz-tag>
+      </td>
+      <td>
+        <button
+        *ngIf="list?.endType == null && rbsPermission?.updateTerm"
+        nz-button
+        nzType="primary"
+       
+        (click)="showEndtype(list)"
+      >
+       {{"tables.assembly-election.member-terms.update-end-type"|translate}}
+      </button>
+      </td>
+    </tr>
+
+  </tbody>
+</nz-table>
+
+<nz-modal
+  [(nzVisible)]="termPopup"
+  nzTitle="{{'tables.assembly-election.member-terms.update-end-type'|translate}}"
+  nzClosable="false"
+  [nzFooter]="null"
+  nzWidth="600"
+>
+  <div class="padding_25">
+    <div class="row  margnrtp-15">
+      <div Class="col-md-4">{{"tables.assembly-election.member-terms.reason-to-end"|translate}}</div>
+      <div Class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="selectedTerm">
+          <nz-option
+            *ngFor="let oath of endTermList"
+            [nzValue]="oath.code"
+            [nzLabel]="oath.name"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="row  margnrtp-15">
+      <div Class="col-md-4">{{"tables.assembly-election.member-position-details.end-date"|translate}}</div>
+      <div Class="col-md-8">
+        <nz-date-picker [(ngModel)]="selectedDate"
+        nzFormat='dd/MM/yyyy'>
+
+        </nz-date-picker>
+      </div>
+    </div>
+    <div class="row  margnrtp-15">
+      <div Class="col-md-12 align-right">
+        <button class="mr-6" nz-button nzType="default" (click)="cancel()">{{"cpl.correspondencelist.cancel"|translate}}</button>
+        <button [disabled]="selectedDate == null || selectedTerm == null"
+        nz-button nzType="primary" (click)="submitEndtype()">
+        {{"business-dashboard.question.submit"|translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

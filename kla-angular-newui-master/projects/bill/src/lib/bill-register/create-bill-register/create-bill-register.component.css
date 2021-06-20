@@ -1,0 +1,12 @@
+.mr-6 {
+  margin-right: 6px;
+}
+.row {
+  align-items: flex-end;
+}
+.align-right {
+  text-align: end;
+}
+.baseline {
+  vertical-align: baseline;
+}

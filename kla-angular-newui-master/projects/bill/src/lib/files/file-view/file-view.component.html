@@ -1,0 +1,596 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item> {{ "noticeprocessing.notice.createnotice.dashboard" | translate }} </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b> {{ "noticeprocessing.noticedashboard.files" | translate }} </b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+        <div class="row ">
+            <!-- <div class="col-md-6 d-flex align-items-center m-b8"> -->
+            <div class="col-md-3 d-flex align-items-center m-b8">
+                <h3 style="word-break:break-all;font-size:20px;">{{ notesInfo?.fileNumber }}</h3>
+            </div>
+            <div class="col-md-3">
+                <nz-tag [nzColor]="'red'">
+                    {{ fileDetails?.fileResponse?.priority.split('_').join(' ') }}
+                </nz-tag>
+            </div>
+            <!-- </div> -->
+            <div class="col-md-6 d-flex justify-content-end">
+                <lib-buttons *ngIf="responseAvailable" [allWorkflowUsers]="allWorkflowUsers" [notesInfo]="notesInfo" [currentPoolUser]="currentPoolUser" [assignee]="assignee" [fileResponse]="fileDetails" [stepStatusDetail]="stepStatusDetail" [fileId]="fileId" (fileForwarded)="getFile($event)"
+                    (fileClosureInitiated)="getFile($event)">
+                </lib-buttons>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-25 margntp-25">
+    <div class="col-md-7">
+        <nz-tabset [nzTabBarExtraContent]="extraTemplate" [nzSelectedIndex]="tabParams['showIndex']">
+            <!-- *ngIf="!showBillContent" -->
+            <nz-tab [nzTitle]="tabIcon" (nzClick)="setTabfilters()">
+                <div *ngIf="fileDetails?.bill" class="row bg_block" (click)="showContent('bill')">
+                    <div class="col-md-6">
+                        <h6>{{ "bill.bill-clause.list.bill" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bill']?.status === 'SUBMITTED' }">{{ fileDetails['bill']?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.bill?.isStatementLateSubmission" class="row bg_block" (click)="showContent('statementOnRule')">
+                  <div class="col-md-6">
+                      <h6>Statement as per rule 75(1)</h6>
+                  </div>
+              </div>
+              <!-- <div *ngIf="fileDetails?.bill?.isStatementLateSubmission" class="row bg_block" (click)="showContent('govnerRecommendation')">
+                <div class="col-md-6">
+                    <h6>Goverenr's Recommendation</h6>
+                </div>
+            </div> -->
+                <div *ngIf="fileDetails?.motion" class="row bg_block" (click)="showContent('motion')">
+                    <div class="col-md-6">
+                        <h6>{{ "bill.bill-clause.list.ministermotion" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['motion']?.status === 'SUBMITTED' }">{{ fileDetails['motion']?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.errata" class="row bg_block" (click)="showContent('errata')">
+                    <div class="col-md-6">
+                        <h6>{{ "bill.bill-clause.list.errata" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: errataStatus === 'SUBMITTED' }">{{ errataStatus.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.translations" class="row bg_block" (click)="showContent('translations')">
+                  <div class="col-md-6">
+                      <h6>Bill Translations </h6>
+                  </div>
+                  <div class="col-md-6 text-align-right">
+                      <nz-tag [ngClass]="{ bold: translationStatus === 'SUBMITTED' }">{{ translationStatus.split('_').join(' ') }}</nz-tag>
+                  </div>
+              </div>
+                <div *ngIf="fileDetails?.priorityRequest && fileDetails?.priorityRequest?.initialApprovalStatus === 'APPROVED' 
+        && fileDetails?.priorityRequest?.cosId" class="row bg_block" (click)="showContent('priorityRequest')">
+                    <div class="col-md-6">
+                        <h6>{{ "bill.bill-clause.list.prioritylist" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['priorityRequest']?.status === 'SUBMITTED' }">{{ fileDetails['priorityRequest']?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                
+                <div *ngIf="fileDetails?.priorityRequest 
+        && !fileDetails?.priorityRequest?.cosId" class="row bg_block">
+                    <div class="col-md-12">
+                        <nz-empty></nz-empty>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.priorityList" class="row bg_block" (click)="showContent('priorityList')">
+                    <div class="col-md-6">
+                        <h6>{{ "business-dashboard.listprioritylist.prioritylist.priority" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['priorityList']?.status === 'SUBMITTED' }">{{ fileDetails['priorityList']?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.priorityList && 
+        (fileDetails['priorityList']?.initaialDateStatus === 'SAVED' || 
+        fileDetails['priorityList']?.initaialDateStatus === 'SUBMITTED' || 
+        fileDetails['priorityList']?.initaialDateStatus === 'APPROVED')"
+        class="row bg_block"
+        (click)="showContent('initialDateList')"
+        >
+          <div class="col-md-6">
+            <h6>{{ "bill.bill-clause.list.initiallastdate" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: fileDetails['initalDates']?.initaialDateStatus === 'SUBMITTED' }"
+              >{{ fileDetails['initalDates']?.initaialDateStatus.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div *ngIf="fileDetails?.scheduleDto"
+        class="row bg_block"
+        (click)="showContent('scheduleDto')"
+        >
+          <div class="col-md-6">
+            <h6>{{ "Schedule for Bills" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: fileDetails['scheduleDto']?.scheduleStatus === 'SUBMITTED' }"
+              >{{ fileDetails['scheduleDto']?.scheduleStatus.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div
+        *ngIf="fileDetails?.ballot"
+        class="row bg_block"
+        (click)="showContent('ballot')"
+        >
+          <div class="col-md-6">
+            <h6>{{ "bill.bill-clause.list.ballot" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: ballotStatus === 'SUBMITTED' }"
+              >{{  ballotStatus.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div
+        *ngIf="fileDetails?.bulletins"
+        class="row bg_block"
+        (click)="showContent('bulletins')"
+        >
+          <div class="col-md-6">
+            <h6>{{ "bill.bill-clause.list.bulletins" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: bulletinStatus === 'SUBMITTED' }"
+              >{{ bulletinStatus.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div
+        *ngIf="fileDetails?.objections"
+        class="row bg_block"
+        (click)="showContent('objections')"
+        >
+          <div class="col-md-6">
+            <h6>{{ "bill.bill-clause.list.objectiontobill" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: objStatus === 'LOB PENDING' }"
+              >{{ objStatus.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div
+          *ngIf="fileDetails?.clauseByClauseList"
+          class="row bg_block"
+          (click)="showContent('clauseByClauseList')"
+        >
+        <div class="col-md-6">
+          <h6>{{ "bill.bill-clause.list.clausebyclauselist" | translate }}</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: clauseStatus === 'SUBMITTED' }"
+              >{{ clauseStatus.split('_').join(' ') }}</nz-tag>
+          </div>
+        </div>
+        <div
+        *ngIf="fileDetails?.committeReport"
+        class="row bg_block"
+        (click)="showContent('committeReport')"
+        >
+          <div class="col-md-6">
+            <h6>Committee Report</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: fileDetails['bill']?.committeReportStatus === 'SUBMITTED' }"
+              >{{ fileDetails['bill']?.committeReportStatus?.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <div
+        *ngIf="fileDetails?.billOralAmendment"
+        class="row bg_block"
+        (click)="showContent('billOralAmendment')"
+        >
+          <div class="col-md-6">
+            <h6>Amendment Report</h6>
+          </div>
+          <div class="col-md-6 text-align-right">
+            <nz-tag [ngClass]="{ bold: fileDetails['billOralAmendment']?.status === 'SAVED' }"
+              >{{ fileDetails['billOralAmendment']?.status?.split('_').join(' ') }}</nz-tag
+            >
+          </div>
+        </div>
+        <ng-template #tabIcon>
+          <i nz-icon nzType="appstore" nzTheme="outline"></i> {{"Index" |translate }}
+        </ng-template>
+      </nz-tab>
+      <nz-tab nzTitle="Bill" *ngIf="tabParams['CurrentTab'] == 'bill'">
+        <ng-container>
+          <app-bill-content
+            [blocks]="fileDetails?.bill?.blocks"
+            [versionDetails]="fileDetails?.bill?.versionMap"
+            [billId]="fileDetails?.bill?.id"
+            [billDetails]="fileDetails?.bill"
+          ></app-bill-content>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Bill Info" *ngIf="tabParams['CurrentTab'] == 'bill'">
+        <ng-container>
+          <lib-bill-info
+          *ngIf="fileDetails?.bill"
+          [billDetails]="fileDetails?.bill"
+        ></lib-bill-info>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Bill" *ngIf="tabParams['CurrentTab'] == 'motion'">
+        <ng-container>
+          <lib-minister-motion-view
+          [user]="currentUser"
+          [billDetails]="fileDetails?.bill"
+          [isFileView]="true"></lib-minister-motion-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Statement" *ngIf="tabParams['CurrentTab'] == 'statementOnRule'">
+        <div class="blthd col-md-6"> 
+            <ngx-doc-viewer [url]="fileDetails?.bill?.statementOnRule" viewer="url" style="width: 500%; height: 500px;"></ngx-doc-viewer>
+        </div>
+      </nz-tab>
+      <!-- <nz-tab nzTitle="Governer Recommendation" *ngIf="tabParams['CurrentTab'] == 'govnerRecommendation'">
+        <div class="blthd col-md-6"> 
+            <ngx-doc-viewer [url]="fileDetails?.bill?.statementOnRule" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+        </div>
+      </nz-tab> -->
+      <nz-tab nzTitle="Priority List" *ngIf="tabParams['CurrentTab'] == 'priorityList'">
+        <ng-container>
+          <lib-priority-list-view
+            [priorityListResponse]="fileDetails.priorityList"
+            [currentAssignee]="assignee == userId"
+          ></lib-priority-list-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Initial Date List" *ngIf="tabParams['CurrentTab'] == 'initialDateList'">
+        <ng-container>
+          <lib-initial-days 
+             [priorityListResponse]="fileDetails['initalDates']"
+             [disableDates]="true"
+             (dateSuccess)="getFileByFileId(this.fileId)"
+             [withCurrentUser]="assignee==userId">
+          </lib-initial-days>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Schedule for Bills" *ngIf="tabParams['CurrentTab'] == 'scheduleDto'">
+        <ng-container>
+          <lib-schedule-for-bill
+             [priorityListResponse]="fileDetails['scheduleDto']"
+             (updateSuccess)="getFileByFileId(this.fileId)"
+             [isFileView]="true"
+             [withCurrentUser]="assignee==userId"
+             [priorityMaster]="fileDetails['priorityList'].id">
+          </lib-schedule-for-bill>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Priority List Request" *ngIf="tabParams['CurrentTab'] == 'priorityRequest'">
+        <ng-container>
+          <lib-priority-list-request-view
+            [priorityListRequest]="fileDetails.priorityRequest"
+          ></lib-priority-list-request-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Errata" *ngIf="tabParams['CurrentTab'] == 'errata'">
+        <ng-container>
+          <lib-erratum-file-view
+            (bulletinCreated)="getFileByFileId(this.fileId)"
+            [erratumData]="fileDetails?.errata"
+          ></lib-erratum-file-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Bill Translations" *ngIf="tabParams['CurrentTab'] == 'translations'">
+        <ng-container>
+          <nz-collapse class="erratum-collapse">
+            <nz-collapse-panel *ngFor="let panel of fileDetails?.translations" [nzActive]="panel.status == 'SUBMITTED'"
+              [nzExtra]="extraTpl" [nzHeader]="panel.title" [nzDisabled]="panel.disabled">
+              <div class="row margnrtp-15">
+                <div class="col-md-4">
+                  Original Language:
+      
+                  <b><span>{{panel?.billOriginalLanguage == 'MAL' ? 'MALAYALAM':'ENGLISH'}}
+                    </span></b>
+                </div>
+                <div class="col-md-4">
+                  Translated Language:
+      
+                  <span *ngIf="panel.language">
+                    <b>{{panel?.language}}</b>
+                  </span>
+      
+                </div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-12">
+                Bill in {{panel?.language}} : 
+                <button class="mr-6" nz-button (click)="previewTranslation(panel)">
+                  <i nz-icon nzType="eye" nzTheme="outline"></i>
+                  Preview
+                </button>
+                <button class="mr-6" nz-button (click)="downloadTranlatedBill(panel?.documentUrl)">
+                  <i nz-icon nzType="download" nzTheme="outline"></i>
+                  Download
+                </button>
+                <button class="mr-6" nz-button *ngIf="panel.status === 'SUBMITTED' && fileDetails?.fileResponse?.currentAssignee" (click)="editTranslation(panel)">
+                  <i nz-icon nzType="edit" nzTheme="outline"></i>
+                  Edit
+                </button>
+
+              </div>
+              </div>
+              <ng-template #extraTpl>
+                <span class="mr-6">
+      
+                </span>
+                <nz-tag [ngClass]="{'bold' : panel.status === 'SUBMITTED'}">{{panel.status.split('_').join(' ')}}</nz-tag>
+              </ng-template>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Bulletins" *ngIf="tabParams['CurrentTab'] == 'bulletins'">
+        <ng-container>
+          <lib-bulletin-part2-view
+            [bulletinResponse]="fileDetails?.bulletins"
+          ></lib-bulletin-part2-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Ballot Result" *ngIf="tabParams['CurrentTab'] == 'ballot'">
+        <ng-container>
+            <lib-ballot-file-view [ballotList]="fileDetails?.ballot" [status]="ballotStatus"
+            [assembly]="fileDetails.bill.assemblyValue"
+            [session]="fileDetails.bill.sessionValue"
+            [billTitle]="fileDetails.bill.blocks[0].content">
+            </lib-ballot-file-view>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Objection to Bill" *ngIf="tabParams['CurrentTab'] == 'objections'">
+        <ng-container>
+          <lib-erratum-file-view
+            (bulletinCreated)="getFileByFileId(this.fileId)"
+            [erratumData]="fileDetails?.errata"
+          ></lib-erratum-file-view>
+          <nz-collapse >
+            <nz-collapse-panel
+              *ngFor="let panel of fileDetails?.objections"
+              [nzActive]="panel.status == 'LOB_PENDING'"
+              [nzExtra]="extraTpl"
+              [nzHeader]="panel.createdDate | date: 'dd/MM/yyyy'"
+              [nzDisabled]="panel.disabled"
+            >
+            <div class="col-md-12 border">
+              <quill-view-html [content]="panel.content"></quill-view-html>
+          </div>
+              <ng-template #extraTpl>
+                <nz-tag [ngClass]="{'bold' : panel.status === 'LOB_PENDING'}">{{panel.status.split('_').join(' ')}}</nz-tag>
+              </ng-template>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Bill Clause List 2" *ngIf="tabParams['CurrentTab'] == 'clauseByClauseList'">
+        <lib-bill-clause-list-view
+        [billTitle]="fileDetails?.clauseByClauseList[0]?.billTitle"
+        [bilClauseAmendmentResponse]="fileDetails?.clauseByClauseList[0]?.bilClauseAmendmentResponse"
+        [isList2]="true"
+        [isFileView]="true"
+        [assemblyValue]="fileDetails?.clauseByClauseList[0]?.assemblyValue"
+        [sessionValue]="fileDetails?.clauseByClauseList[0]?.sessionValue">
+        </lib-bill-clause-list-view>
+      </nz-tab>
+      <nz-tab nzTitle="Bill Clause List 3" *ngIf="tabParams['CurrentTab'] == 'clauseByClauseList'&& fileDetails?.clauseByClauseList[1]">
+        <lib-bill-clause-list-view
+        [billTitle]="fileDetails?.clauseByClauseList[1]?.billTitle"
+        [bilClauseAmendmentResponse]="fileDetails?.clauseByClauseList[1]?.bilClauseAmendmentResponse"
+        [isList3]="true"
+        [isFileView]="true"
+        [assemblyValue]="fileDetails?.clauseByClauseList[1]?.assemblyValue"
+        [sessionValue]="fileDetails?.clauseByClauseList[1]?.sessionValue">
+        </lib-bill-clause-list-view>
+      </nz-tab>
+      <nz-tab nzTitle="Committee Report" *ngIf="tabParams['CurrentTab'] == 'committeReport'&& fileDetails?.committeReport">
+        <!-- <div [innerHTML]="fileDetails?.committeReport.reportData">
+        </div> -->
+        <div class="row">
+        <div class="col-md-12 maximise" [ngClass]="{
+            enlarge: reportfullScreenMode == true
+          }">
+                        <div class="col-md-12 align-center">
+                            <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+              <i *ngIf="!reportfullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+              <i *ngIf="reportfullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+            </button>
+          </div>  
+          <div class="overflow-blt row">
+        <lib-committee-report-preview *ngIf="fileDetails?.committeReport"
+          [isFileView]="true" [reportContent]="fileDetails?.committeReport?.reportData" >
+        </lib-committee-report-preview>
+        </div> 
+        </div>
+        </div>
+        </nz-tab>
+        <nz-tab nzTitle="Oral Amendment Report"
+          *ngIf="tabParams['CurrentTab'] == 'billOralAmendment'&& fileDetails?.billOralAmendment">
+          <!-- <div [innerHTML]="fileDetails?.committeReport.reportData">
+                  </div> -->
+          <div class="row">
+            <div class="col-md-12 maximise" [ngClass]="{enlarge: reportfullScreenMode == true}">
+              <div class="col-md-12 align-center">
+                <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+                  <i *ngIf="!reportfullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+                  <i *ngIf="reportfullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+                </button>
+              </div>
+              <div class="overflow-blt row">
+                <lib-committee-report-preview *ngIf="fileDetails?.billOralAmendment" [isFileView]="true"
+                  [reportContent]="fileDetails?.billOralAmendment?.billReport">
+                </lib-committee-report-preview>
+              </div>
+            </div>
+          </div>
+        </nz-tab>
+      <ng-template #extraTemplate>
+        <!-- <button
+          *ngIf="showBillContent"
+          nz-button
+          nzSize="small"
+          nzType="default"
+          title="View Tiles"
+          (click)="showContent('')"
+        >
+          <i nz-icon nzType="appstore" nzTheme="outline"></i>
+        </button> -->
+            </ng-template>
+        </nz-tabset>
+    </div>
+    <div class="col-md-5">
+        <nz-tabset>
+            <nz-tab nzTitle='{{ "business-dashboard.question.notes" | translate }}'>
+                <lib-notes *ngIf="responseAvailable" [notesInfo]="notesInfo" [assignee]="assignee" [latestNote]="latestNote" [fileResponse]="fileDetails.fileResponse" [ratificationStatus]="ratificationStatus" (fileApproved)="getFileByFileId(this.fileId)">
+                </lib-notes>
+            </nz-tab>
+            <nz-tab nzTitle='{{ "business-dashboard.aod.file-tracking.logs" | translate }}' (nzClick)="getFileByFileId(this.fileId)">
+                <ng-container *ngFor="let log of logDetails.slice(); index as i">
+                    <div class="bg_block">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-7 pdzero">
+                                    <div class="width-100 d-flex marginbtm-15">
+                                        <div class="overflow-blt">
+                                            {{ 1 + i + "." + log.action | titlecase }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                &nbsp;&nbsp;
+            </nz-tab>
+
+            <nz-tab nzTitle='{{ "business-dashboard.aod.file-tracking.fileinfo" | translate }}'>
+                <div class="row">
+                    <div class="col-md-3">
+                        <span class="workflowhd">{{ "cpl.filelistflow.fileworkflow" | translate }}</span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="overflownote">
+                            <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                                <nz-step *ngFor="let status of stepStatusDetail" [nzStatus]="getStatusByReason(status.reason)" [nzTitle]="returnOwner(status)" [nzDescription]="status.reason"></nz-step>
+                            </nz-steps>
+                        </div>
+                    </div>
+                </div>
+                <div class="row bg_block">
+                    <div class="col-md-12">
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "business-dashboard.cpl.view.filesubject" | translate }}:</div>
+                            <div class="blthd col-md-6" style="word-wrap: break-word;">
+                                {{ fileDetails?.fileResponse?.subject }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "business-dashboard.cpl.view.filesdescription" | translate }}:</div>
+                            <div class="blthd col-md-6" style="word-wrap: break-word;">
+                                {{ fileDetails?.fileResponse?.description }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "business-dashboard.question.questionlist.createdat" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                {{ fileDetails?.fileResponse?.createdDate | date: "dd/MM/yyyy" }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "cpl.docamendments.filepriority" | translate }}:</div>
+                            <div class="blthd col-md-6" *ngIf='!isEditPrio'>
+                                <nz-tag [nzColor]="'red'">
+                                    {{ fileDetails?.fileResponse?.priority.split('_').join(' ') }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10" *ngIf='isEditPrio'>
+                            <div class="col-md-6"></div>
+                            <div class="blthd col-md-6">
+                                <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+                                    <label nz-radio nzValue="URGENT">{{ "cpl.docamendments.urgent" | translate }}</label>
+                                    <label nz-radio nzValue="NORMAL">{{ "cpl.docamendments.normal" | translate }}</label>
+                                    <label nz-radio nzValue="ACTION_TODAY">{{ "cpl.docamendments.actiontoday" | translate }}</label>
+                                    <label nz-radio nzValue="ASSEMBLY_URGENT">{{ "cpl.docamendments.assemblyurgent" | translate }}</label>
+                                </nz-radio-group>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "noticeprocessing.staff.personalregister.section" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                {{ fileDetails?.fileResponse?.type }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "cpl.fileworkflow.filetype" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                <nz-tag>
+                                    {{ fileDetails?.fileResponse?.type }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "cpl.fileworkflow.filestatus" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                <nz-tag [nzColor]="'red'">
+                                    {{ fileDetails?.fileResponse?.status.split('_').join(' ') }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-align-right ">
+                    <div class="col-md-12">
+                        <button nz-button class="abs_btn" (click)="editFile()" *ngIf="!isEditPrio">
+            {{ "noticeprocessing.noticeprocess.edit" | translate }}
+            </button>
+                        <button nz-button class="abs_btn" (click)="updateFile()" *ngIf="isEditPrio">
+            {{ "cpl.docupload.update" | translate }}
+            </button>
+                        <button nz-button class="abs_btn" (click)="onCancel()" *ngIf="isEditPrio">
+            Cancel
+            </button>
+                    </div>
+                </div>
+                &nbsp;&nbsp;
+                <ng-container *ngIf="fileDetails?.fileResponse?.subFile && fileDetails?.fileResponse?.subFile.length > 0">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <strong>Sub-Files</strong>
+                    </div>
+                  </div>
+                  <div class="row flex-end mrB10" *ngFor="let file of fileDetails?.fileResponse?.subFile; let i=index">
+                    <div class="blthd col-md-6">
+                      {{i+1}}.{{file?.subject}}
+                    </div>
+                    <div class="blthd col-md-6">
+                      <a href="javascript:;" (click)="viewFile(file?.fileId, file?.filType)">
+                        {{file?.fileNumber}}</a>
+                    </div>
+                  </div>
+              </ng-container>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+</div>

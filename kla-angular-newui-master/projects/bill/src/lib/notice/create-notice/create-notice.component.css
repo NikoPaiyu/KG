@@ -1,0 +1,21 @@
+.p-L0 {
+    padding-left: 0px !important;
+}
+.preview-main {
+    background-color: #eee;
+    padding: 20px 15px;
+    margin-top: 10px;
+}
+.preview-main-text {
+    width: 100%;
+    text-align: center;
+}
+.preview-main  h3 {
+    text-transform: uppercase;
+    font-size: 17px;
+    font-weight: 600;
+    color: #464545;
+}
+.mr6{margin-right: 6px;}
+.pdng20{padding: 20px;}
+

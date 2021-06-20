@@ -1,0 +1,300 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"cpl.correspondence.correspondence" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">{{"cpl.correspondence.correspondence" | translate}}</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+        <button class="mr-6" nz-button nzType="default" (click)="goBack()">
+            {{"cpl.docupload.back" | translate}}
+        </button>
+        <button
+        class="mr-6" nz-button nzType="default"
+        (click)="download()"
+      >
+        {{"cpl.fileworkflow.print" | translate}}
+      </button>
+        <nz-select style="width: 280px;" name="selectedRole" [(ngModel)]="selectedRole" nzPlaceHolder='{{"business-dashboard.bullettin-details.selecttoforward" | translate}}'
+            nzAllowClear *ngIf="currentPool === currentPoolUser && correspondenceData?.status == 'APPROVAL_PENDING'" (ngModelChange)="ForwardOrReturn()">
+            <ng-container *ngFor="let role of workflowUsers">
+                <nz-option   *ngIf="
+                role.code !== currentPoolUser &&
+                correspondenceData?.status == 'APPROVAL_PENDING' && 
+                role.actionName !== currentActionName
+              "
+                nzValue="{{
+                role.userId + '-' + role.actionRow + '-' + role.actionGroup
+                }}" nzLabel="{{ role.fullName + ' - ' + role.actionName }}">
+                </nz-option>
+            </ng-container>
+        </nz-select> &nbsp;
+        <button class="mr-6" nz-button nzType="primary" nz-popconfirm *ngIf="correspondenceData?.status == 'APPROVAL_PENDING' && currentPool === currentPoolUser"
+            nzPopconfirmTitle='{{"business-dashboard.cpl.documents.areusureuwant" | translate}}"{{ forwardReturnBtn }}?"' [disabled]="selectedRole === null"
+            (nzOnConfirm)="forward()" (nzOnCancel)="cancel()">
+            {{ forwardReturnBtn }}
+        </button>
+        <button class="mr-6" nz-button nzType="primary" nz-popconfirm *ngIf="correspondenceData?.status == 'APPROVAL_PENDING' && approveBtn && currentPool === currentPoolUser"
+            nzPopconfirmTitle='{{"business-dashboard.correspondence.approve" | translate}}' (nzOnConfirm)="approveNoteCheck()" (nzOnCancel)="cancel()">
+            {{"cpl.fileworkflow.approveandsend" | translate}}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+    <div class="col-md-2">
+        <span class="workflowhd">{{"cpl.correspondenceworkflow.correspondenceworkflow" | translate}}</span>
+    </div>
+    <div class="col-md-10">
+        <div class="overflow">
+            <nz-steps nzSize="small">
+                <nz-step *ngFor="let status of stepStatus" [nzStatus]="getStatusByReason(status.reason)"
+                    [nzTitle]="status.taskDefinitionKeyName" [nzDescription]="status.reason"></nz-step>
+            </nz-steps>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row marginbtm-25">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button class="mr-6" nz-button nzType="default" (click)="editCorrespondence(correspondenceData?.id)"
+                *ngIf="correspondenceData?.status == 'APPROVAL_PENDING' && currentPool === currentPoolUser">
+                    {{"cpl.cplview.edit" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <div class="row mrgT10 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"cpl.docupload.subject" | translate}}
+                    </div>
+                    <div class="col-md-8">
+                        <b>{{ correspondenceData?.title }}</b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-align-right">
+                <div class="row mrgT10 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"cpl.correspondencelist.dateTime" | translate}}:
+                    </div>
+                    <div class="col-md-8">
+                    <span><b>{{ correspondenceData?.versionOption[0].createdDate | date:'dd-MM-yyyy hh:mm a'}}</b></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <div class="row mrgT10 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"cpl.correspondence.from" | translate}}
+                    </div>
+                    <div class="col-md-8">
+                        <b>{{ correspondenceData?.fromDisplayName }}</b>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row mrgT10">
+                    <div class="col-md-4">
+                        {{"cpl.correspondence.template" | translate}}
+                    </div>
+                    <div class="col-md-8">
+                        <b>{{ correspondenceData?.template }}</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <div class="row mrgT10 marginbtm-15">
+                    <div class="col-md-4">
+                        {{"cpl.correspondence.to" | translate}}
+                    </div>
+                    <div class="col-md-8">
+                        <ng-container *ngFor="let code of toValue; let i = index">
+                            <span *ngIf="i==0">{{ code }}</span>
+                            <span *ngIf="i>0">{{', ' + code}}</span>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="row mrgT10">
+                    <div class="col-md-4">
+                        <b>{{"cpl.correspondence.attachments" | translate}}</b>
+                    </div>
+                    <div class="col-md-8" *ngIf="attachments">
+                      <a *ngFor="let item of attachments"
+                            href="javascript:;"
+                            (click)="showAttachment(item.attachmentUrl)"
+                        >{{ item.name }} </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div
+        class="row top-mrg"
+        *ngIf="
+          correspondenceData?.businessReferId ||
+          correspondenceData?.fileNumber
+        "
+      >
+        <div class="col-md-6" *ngIf="correspondenceData?.businessReferId">
+          <nz-form-item>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.cplview.refdocument" | translate}}</nz-form-label
+                >
+              </div>
+              <div class="col-md-8">
+                <a
+                  href="javascript:;"
+                  (click)="showReference(correspondenceData.businessReferId)"
+                  >{{ correspondenceData?.businessReferType }}</a
+                >
+              </div>
+            </div>
+          </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="correspondenceData?.fileNumber && user?.correspondenceCode?.type !== 'DEPARTMENT'">
+          <nz-form-item>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docamendments.fileno" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <a
+                  href="javascript:;"
+                  [routerLink]="['/business-dashboard/cpl/file-workflow', correspondenceData.fileId]"
+                  >{{ correspondenceData?.fileNumber }}</a
+                >
+              </div>
+            </div>
+          </nz-form-item>
+        </div>
+      </div>
+    <nz-divider></nz-divider>
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-12">
+                <div class="preview-main">
+                    <div class="mrgT20 preview-main-text">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4>{{"cpl.amendmentview.content" | translate}}</h4>
+                            </div>
+                            <div class="col-md-2" *ngIf="versionFlag">
+                              <span>{{"cpl.filelistflow.version" | translate}}</span>
+                            </div>
+                            <div class="col-md-4" *ngIf="versionFlag">
+                              <nz-select
+                              [(ngModel)]="currentVersion"
+                                (ngModelChange)="getVersion($event)"
+                              >
+                                <nz-option
+                                  *ngFor="let versions of correspondenceData?.versionOption;let i = index"
+                                  [nzValue]="i + 1"
+                                  [nzLabel]="'Version ' + (i + 1) + ''"
+                                >
+                                </nz-option>
+                              </nz-select>
+                            </div>
+                          </div>
+                        <div>
+                            <quill-view-html [content]="listOfData" *ngIf="listOfData">
+                            </quill-view-html>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 note_log">
+        <nz-tabset>
+            <nz-tab [nzTitle]="'Notes'">
+                <nz-card class="mb-15">
+                    <div class="overflow-blt">
+                        <div *ngFor="let note of notes" class="input-group brdr_nt"
+                            [ngClass]="{ yellowColor: note.temporary == true }">
+                            <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+                                <div class="col-md-7 pl0">
+                                    <b class="width-100 fl marginbtm-5">{{
+                                note.owner.details.fullName
+                              }}</b>
+                                    <span class="width-100 fl">{{
+                                note.owner.roles[0].roleName
+                              }}</span>
+                                </div>
+                                <div class="col-md-5 d-flex justify-content-between pr0">
+                                    <span>{{ note.createdDate | date: "hh:mm a" }} </span>
+                                    <span>|</span>
+                                    <span>{{ note.createdDate | date: "dd-MM-yyyy" }}</span>
+                                </div>
+                            </div>
+                            <div class="width-100 marginbtm-15 word-brk">
+                                {{ note.note }}
+                            </div>
+                            <div class="fl width-100" *ngIf="note.temporary !== true && user.userId === latestNote.owner.userId && note.id === latestNote.id &&  correspondenceData?.status == 'APPROVAL_PENDING'">
+                                <ng-container>
+                                    <button nz-button nzType="default" (click)="editNote(note.id, note.note)"
+                                        class="mr-6">
+                                        {{"cpl.cplview.edit" | translate}}
+                                    </button>
+                                    <button nz-button nzType="default" nz-popconfirm
+                                        nzPopconfirmTitle='{{"business-dashboard.cpl.documents.areusureuwantthisnote" | translate}}'
+                                        (nzOnConfirm)="deleteNote(note.id)" (nzOnCancel)="cancel()">
+                                        {{"cpl.docpreparion.delete" | translate}}
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <!-- <div class="row">
+                            <div class="width-100 d-flex">
+                                <div class="col-md-12">
+                                    <strong>Quick options: </strong>
+                                    <nz-tag *ngFor="let tag of quickOptions; let i = index" nzMode="checkable"
+                                        [nzChecked]="currentRuleStatement === tag.label">
+                                        {{ tag.label }}
+                                    </nz-tag>
+                                </div>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="row" *ngIf="currentPool === currentPoolUser &&  correspondenceData?.status == 'APPROVAL_PENDING'">
+                        <div class="width-100 d-flex bg_txtarea">
+                            <div class="col-md-12">
+                                <nz-mention [nzPrefix]="['#', '@']">
+                                    <textarea class="textarea_nt" placeholder='{{"business-dashboard.notice-proc.enternotehere" | translate}}' nzMentionTrigger
+                                        nz-input maxlength="254" [(ngModel)]="inputValue"></textarea>
+
+                                </nz-mention>
+                                <button nz-button [nzType]="'default'" class="save_btn" (click)="cancelEdit()"
+                                    *ngIf="update">
+                                    {{"cpl.correspondencelist.cancel" | translate}}
+                                </button>
+                                <button style nz-button [nzType]="'default'" class="save_btn" (click)="addNote()"
+                                    [disabled]="inputValue === ''">
+                                    {{ update ? "Update" : "Save" }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nz-card>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+</div>

@@ -1,0 +1,205 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item> {{"business-dashboard.viewbullettin.dashboard"|translate}} </nz-breadcrumb-item>
+            <nz-breadcrumb-item> {{"business-dashboard.table.repoeterdiary"|translate}}</nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-3">
+                <h3>{{"business-dashboard.table.repoeterdiary"|translate}}</h3>
+            </div>
+            <div class="col-md-5" *ngIf='diaryDetails&&diaryDetails?.lobLines.length>0'>
+                <h5>{{diaryDetails.assemblyValue}} th Assembly ,{{diaryDetails.sessionValue}} th
+                    Session,{{diaryDetails.date | date: 'dd/MM/yyyy' }}</h5>
+            </div>
+            <div class="col-md-4 d-flex justify-content-end">
+                <button nz-button nzType="default" class="mr-6"
+                    (click)='goBack()'>{{"business-dashboard.question.questionview.back"|translate}}</button>
+                <button
+                    *ngIf='diaryDetails&&diaryDetails?.lobLines.length>0&&diaryDetails.status!="SUBMITTED"&&diaryDetails.userId==currentUser?.userId'
+                    nz-button nzType="primary" class="mrgL6" nz-popconfirm nzPopconfirmTitle="Do you want to submit?"
+                    (nzOnConfirm)="submitRporterDiary()" nzPopconfirmPlacement="bottomRight">
+                    {{ "auth.submit"|translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+
+<div class="row" *ngIf="diaryDetails&&diaryDetails.lobLines.length>0">
+    <div class="col-md-3">
+        <nz-collapse class="nominee-collapses" nzAccordion [nzBordered]="false">
+            <ng-container class="mrgT20" *ngFor="let parentPanel of diaryDetails?.lobLines; let parentIndex = index">
+                <nz-collapse-panel [nzDisabled]="parentPanel?.disable" [nzActive]="parentPanel?.active"
+                    [nzHeader]="parentExtra">
+                    <ng-template #parentExtra>
+                        <span class="pos">
+                            {{parentPanel?.businessName}}
+                        </span>
+                        <div [ngClass]="{activeBusiess: parentPanel?.active}" style="position: absolute;"></div>
+                    </ng-template>
+                    <nz-collapse nzAccordion nzExpandIconPosition="right">
+                        <nz-collapse-panel *ngFor="let childPanel of parentPanel.businessLines;" [nzHeader]="childExtra"
+                            (click)='setSelectedBuisnessDetails(childPanel)'>
+                            <ng-template #childExtra>
+                                <span class="pos">
+                                    {{ childPanel?.title}}
+                                </span>
+                                <div style="position: absolute;">&nbsp;</div>
+                            </ng-template>
+                        </nz-collapse-panel>
+                    </nz-collapse>
+                </nz-collapse-panel>
+            </ng-container>
+        </nz-collapse>
+    </div>
+    <div class="col-md-5" *ngIf="selectedBusinessDetails">
+        <nz-card>
+            <div class="row">
+                <span><b> {{ selectedBusinessDetails?.title }}</b></span>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <nz-card class="margnrtp-15"
+                            *ngFor="let dairy of selectedBusinessDetails?.proceedingReporterLines;let diaryIndex = index">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <nz-tag nzColor="magenta">
+                                        {{dairy.type}}
+                                    </nz-tag>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end"
+                                    *ngIf='diaryDetails.status!="SUBMITTED"&&diaryDetails.userId==currentUser?.userId'>
+                                    <button *ngIf='dairy.isEdit' nz-button nzType="default"
+                                        (click)='dairy.isEdit=false'><i nz-icon nzType="edit"
+                                            nzTheme="outline"></i></button>
+                                    <button *ngIf='!dairy.isEdit' nz-button nzType="primary"
+                                        (click)='saveReporterDiary(dairy)'>{{
+                                        "table.createminute.save"|translate}}</button>
+                                </div>
+                            </div>
+                            <div class='row margnrtp-5'>
+                                <div class="col-md-6">
+                                    <nz-time-picker [nzAllowEmpty]='false' [nzDisabled]='dairy.isEdit'
+                                        [(ngModel)]="dairy.startTime" [nzUse12Hours]="true" nzFormat="h:mm a"
+                                        nzPlaceHolder='Start Time'>
+                                    </nz-time-picker>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-end">
+                                    <nz-time-picker [nzAllowEmpty]='false' [nzDisabled]='dairy.isEdit'
+                                        [(ngModel)]="dairy.endTime" [nzUse12Hours]="true" nzFormat="h:mm a"
+                                        nzPlaceHolder='End Time'>
+                                    </nz-time-picker>
+                                </div>
+                            </div>
+                            <div class="row margnrtp-5">
+                                <div class="col-md-12">
+                                    <quill-editor *ngIf="!dairy.isEdit" [styles]="{ height: '500px' }"
+                                        [(ngModel)]="dairy.description" [modules]="modules"></quill-editor>
+                                    <quill-view-html *ngIf="dairy.isEdit" [content]="dairy?.description">
+                                    </quill-view-html>
+                                </div>
+                            </div>
+                        </nz-card>
+                    </div>
+                    <div class="row margnrtp-15"
+                        *ngIf='diaryDetails.status!="SUBMITTED"&&diaryDetails.userId==currentUser?.userId'>
+                        <div class="col-myDiv only-show-on-hover align-right">
+                            <nz-tag *ngFor="let tags of buttonList" [nzColor]="tags.color" (click)="addNewBlock(tags)">
+                                {{
+                                tags.title }}
+                            </nz-tag>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nz-card>
+    </div>
+    <div class="col-md-4" *ngIf="selectedBusinessDetails">
+        <div class="row">
+            <div class="col-md-12">
+                <nz-card class="width-100">
+                    <div class="row  margnrtp-5" *ngIf="selectedBusinessDetails?.allotedTime">
+                        <div class="col-md-6">
+                            {{ "table.listga.timeallocated"|translate}}:
+                        </div>
+                        <div class="col-md-6">
+                            {{selectedBusinessDetails?.allotedTime}} {{"table.createminute.minute"|translate}}
+                        </div>
+                    </div>
+                    <div class="row margnrtp-5" *ngIf="selectedBusinessDetails?.primaryMemberName">
+                        <div class="col-md-6">
+                            {{"bussiness-dashboard.user-managemnet.biometric-enrollment.membername"|translate}}:
+                        </div>
+                        <div class="col-md-6">
+                            {{selectedBusinessDetails?.primaryMemberName}}
+                        </div>
+                    </div>
+                    <div class="row  margnrtp-5" *ngIf="selectedBusinessDetails?.secondaryMemberName">
+                        <div class="col-md-6">
+                            {{ "business-dashboard.question.portfolio.ministername"|translate}}:
+                        </div>
+                        <div class="col-md-6">
+                            {{selectedBusinessDetails?.secondaryMemberName}}
+                        </div>
+                    </div>
+                    <div class="row  margnrtp-5" *ngIf="selectedBusinessDetails?.description">
+                        <div class="col-md-6">
+                            {{ "noticeprocessing.noticeprocess.description"|translate}}:
+                        </div>
+                        <div class="col-md-6">
+                            {{selectedBusinessDetails?.description}}
+                        </div>
+                    </div>
+                </nz-card>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-card class="width-100">
+                    <div class="row  margnrtp-5" *ngIf="selectedBusinessDetails?.speakerNoteUrl">
+                        <div class="col-md-6">
+                            {{ "cpl.fileworkflow.speakernote"|translate}} :
+                        </div>
+                        <div class="col-md-6">
+                            <button *ngIf="selectedBusinessDetails?.speakerNoteUrl" (click)="isPdfVisible = true"
+                                nz-button nzType="default"
+                                class="mr-6">{{"business-dashboard.question.preview"|translate}}</button>
+                        </div>
+                    </div>
+                    <div class="row margnrtp-15" *ngIf="selectedBusinessDetails?.speakerNoteUrl">
+                        <ngx-doc-viewer [url]="selectedBusinessDetails?.speakerNoteUrl" viewer="url"
+                            style="width: 100%;"></ngx-doc-viewer>
+                    </div>
+                    <div class="row margnrtp-15" *ngIf="!selectedBusinessDetails?.speakerNoteUrl">
+                        <h6>{{"cpl.fileworkflowdocs.nodocumentuploadedtoview" | translate }}</h6>
+                    </div>
+                </nz-card>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-modal [nzVisible]="isPdfVisible" nzWidth="800" [nzContent]="modalContent" [nzFooter]="null"
+    (nzOnCancel)="isPdfVisible = false">
+    <ng-template #modalContent>
+        <div class="width-100 pading-all">
+            <div class="row margnrtp-15 margnrgt-15">
+                <div class="col-md-12 align-items-center">
+                    <ngx-doc-viewer [url]="selectedBusinessDetails?.speakerNoteUrl" viewer="url"
+                        style="width: 100%; height: 800px;"></ngx-doc-viewer>
+                </div>
+            </div>
+        </div>
+
+    </ng-template>
+</nz-modal>
+
+<nz-empty *ngIf='diaryDetails?.lobLines.length==0' [nzNotFoundContent]="contentTpl">
+    <ng-template #contentTpl>
+        <span>No data found for this date, please add list of business..</span>
+    </ng-template>
+</nz-empty>

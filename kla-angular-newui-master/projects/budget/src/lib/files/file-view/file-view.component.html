@@ -1,0 +1,813 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item> {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b> {{ "noticeprocessing.noticedashboard.files" | translate }} </b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+        <div class="row ">
+            <div class="col-md-3 d-flex align-items-center m-b8">
+                <h3 style="word-break:break-all;font-size:20px;">{{ notesInfo?.fileNumber }}</h3>
+            </div>
+            <div class="col-md-3">
+                <nz-tag [nzColor]="'red'">
+                    {{ fileDetails?.fileResponse?.priority.split('_').join(' ') }}
+                </nz-tag>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <lib-buttons *ngIf="fileDetails" [allWorkflowUsers]="allWorkflowUsers" [notesInfo]="notesInfo" [currentPoolUser]="currentPoolUser" [assignee]="assignee" [fileResponse]="fileDetails" [stepStatusDetail]="stepStatusDetail" [fileId]="fileId" (fileForwarded)="getFile($event)"
+                    (fileClosureInitiated)="getFile($event)">
+                </lib-buttons>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+    <div class="col-md-7">
+        <nz-tabset [nzSelectedIndex]="tabParams['showIndex']" [nzTabBarExtraContent]="extraTemplate">
+            <nz-tab [nzTitle]="tabIcon" (nzClick)="setTabfilters()">
+                <!-- Table section file Starts-->
+                <!-- budget master -->
+                <div *ngIf="fileDetails?.budgetMaster" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetMaster', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "budget.budgetspeech.budgetdoc.budget" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetMaster']?.status === 'SUBMITTED' }">{{ fileDetails['budgetMaster']?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget document request letter -->
+                <div *ngIf="fileDetails?.budgetDocumentLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocumentLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "budget.budgetspeech.budgetdoc.budgetdocletter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocumentLetter'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocumentLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget document reply letter -->
+                <div *ngIf="fileDetails?.budgetDocumentReplyLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocumentReplyLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "budget.budgetspeech.budgetdoc.budgetdocReplyletter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocumentReplyLetter'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocumentReplyLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget documents-->
+                <div *ngIf="fileDetails?.budgetDocument" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocument', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Budget Document" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocument'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocument'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget Speech-->
+                <div *ngIf="fileDetails?.budgetSpeech" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSpeech', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Budget Speech" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSpeech'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetSpeech'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- sdg-->
+                <div *ngIf="fileDetails?.budgetSdgAndEg" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSdgAndEg', true);">
+                    <div class="col-md-6">
+                        <h6>{{ fileDetails['budgetSdgAndEg'][0]?.type == 'SDG' ? 'SDG': 'EG' }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSdgAndEg'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSdgAndEg'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- Table section file Ends-->
+                <!-- Legislation file Starts-->
+                <div *ngIf="fileDetails?.budgetDocumentGRL" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocumentGRL', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "budget.budgetspeech.budgetdoc.budgetdocGRL" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocumentGRL'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocumentGRL'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget document GRL request letter -->
+                <div *ngIf="fileDetails?.budgetDocumentGRLRequestLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocumentGRLRequestLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "budget.budgetspeech.budgetdoc.budgetdocGRLrequestletter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocumentGRLRequestLetter'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocumentGRLRequestLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget document GRL reply letter -->
+                <div *ngIf="fileDetails?.budgetDocumentGRLReplyLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDocumentGRLReplyLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Budget GRL Reply Letter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDocumentGRLReplyLetter'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetDocumentGRLReplyLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget sdfg request letter -->
+                <div *ngIf="fileDetails?.budgetSDFGLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSDFGLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "SDFG Letter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSDFGLetter'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSDFGLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget sdfg reply letter -->
+                <div *ngIf="fileDetails?.sdfgLetterResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('sdfgLetterResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "SDFG & Letter From Finance Dept." | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['sdfgLetterResponse'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['sdfgLetterResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget voa request letter -->
+                <div *ngIf="fileDetails?.budgetVOALetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetVOALetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "VOA Letter" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetVOALetter'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetVOALetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget voa reply letter -->
+                <div *ngIf="fileDetails?.voaLetterResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('voaLetterResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "VOA & Letter From Finance Dept."| translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['voaLetterResponse'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['voaLetterResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+
+                <!-- budget green book -->
+                <div *ngIf="fileDetails?.greenBookMasterDto" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('greenBookMasterDto', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Green Book" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['greenBookMasterDto'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['greenBookMasterDto'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget demand draft schedule -->
+                <div *ngIf="fileDetails?.bgtDemandDraftMasterDTO" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('bgtDemandDraftMasterDTO', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Demand Draft Schedule" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bgtDemandDraftMasterDTO'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bgtDemandDraftMasterDTO'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget demand draft schedule version -->
+                <div *ngIf="fileDetails?.demandVersionDTO" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('demandVersionDTO', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Demand Heads & Gulletin" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['demandVersionDTO'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['demandVersionDTO'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget demand draft schedule bulletin-->
+                <div *ngIf="fileDetails?.bgtDemandDraftScheduleBulletinDTO" class="row bg_block"
+                    (click)="$event.stopPropagation();showCurrentTab('bgtDemandDraftScheduleBulletinDTO', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Demand Draft Schedule Bulletin" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bgtDemandDraftScheduleBulletinDTO'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bgtDemandDraftScheduleBulletinDTO'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget cutmotion -->
+                <div *ngIf="fileDetails?.bgtCutMotionMasterDTO" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('bgtCutMotionMasterDTO', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "List For Cut Motions" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bgtCutMotionMasterDTO'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bgtCutMotionMasterDTO'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget time allocation starts-->
+                <div *ngIf="fileDetails?.budgetTimeAllocationBudgetSpeech" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationBudgetSpeech', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Budget Speech - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationBudgetSpeech'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationBudgetSpeech'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationBudgetSpeechResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationBudgetSpeechResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Budget Speech - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationBudgetSpeechResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationBudgetSpeechResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationCutMotion" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationCutMotion', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Cutmotion - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationCutMotion'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationCutMotion'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationCutMotionResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationCutMotionResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Cutmotion - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationCutMotionResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationCutMotionResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationForSdgEg" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationForSdgEg', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "SDG/EG - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationForSdgEg'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationForSdgEg'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationForSdgEgResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationForSdgEgResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "SDG/EG - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationForSdgEgResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationForSdgEgResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnBudget" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnBudget', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On Budget - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnBudget'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnBudget'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnBudgetResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnBudgetResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On Budget - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnBudgetResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnBudgetResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnSdg" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnSdg', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On SDG - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnSdg'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnSdg'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnSdgResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnSdgResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On SDG - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnSdgResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnSdgResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnVoa" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnVoa', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On VOA - Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnVoa'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnVoa'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="fileDetails?.budgetTimeAllocationApBillOnVoaResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetTimeAllocationApBillOnVoaResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "AP Bill On VOA - Member Time Allocation" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetTimeAllocationApBillOnVoaResponse'][0]?.status === 'SUBMITTED' }">{{ fileDetails['budgetTimeAllocationApBillOnVoaResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget time allocation ends-->
+
+                <!-- AP Bill request letter and response letter-->
+                <div *ngIf="checkAppropriationRequest()" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab(tabParams['apReqTab'], true);">
+                    <div class="col-md-6">
+                        <h6>{{ tabParams['apTabTitle'] }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails[tabParams['apReqTab']][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails[tabParams['apReqTab']][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <div *ngIf="checkAppropriationResponse()" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab(tabParams['apResponseTab'], true);">
+                    <div class="col-md-6">
+                        <h6>{{ tabParams['apTabTitle'] }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails[tabParams['apResponseTab']][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails[tabParams['apResponseTab']][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- AP Bill  reply letter  and response letter-->
+                <!-- budget SDG & Eg Master-->
+                <div *ngIf="fileDetails?.budgetSdgEgMaster" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSdgEgMaster', true);">
+                    <div class="col-md-6">
+                        <h6>{{ fileDetails['budgetSdgEgMaster'][0]?.nature == 'SDG' ? 'SDG Note' : 'EG Note'}}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSdgEgMaster'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSdgEgMaster'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget SDG & Eg Request Letter-->
+                <div *ngIf="fileDetails?.budgetSdgEgRequestLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSdgEgRequestLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ fileDetails['budgetSdgEgRequestLetter'][0]?.nature == 'SDG' ? 'SDG Request Letter': 'EG Request Letter' }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSdgEgRequestLetter'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSdgEgRequestLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget SDG & Eg Reply Letter-->
+                <div *ngIf="fileDetails?.budgetSdgEgReplyLetter" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSdgEgReplyLetter', true);">
+                    <div class="col-md-6">
+                        <h6>{{ fileDetails['budgetSdgEgReplyLetter'][0]?.nature == 'SDG' ? 'SDG Reply Letter': 'EG Reply Letter' }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSdgEgReplyLetter'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSdgEgReplyLetter'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget SDG -->
+                <div *ngIf="fileDetails?.budgetSdgEgGrlForBulletin" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetSdgEgGrlForBulletin', true);">
+                    <div class="col-md-6">
+                        <h6>{{ fileDetails['budgetSdgEgGrlForBulletin'][0]?.bgtSdgAndEg?.type == 'SDG' ? 'SDG': 'EG' }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetSdgEgGrlForBulletin'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetSdgEgGrlForBulletin'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget SDG - demand draft schedule -->
+                <div *ngIf="fileDetails?.budgetDemandDraftMasterForSdgEg" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('budgetDemandDraftMasterForSdgEg', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Demand Draft Schedule" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['budgetDemandDraftMasterForSdgEg'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['budgetDemandDraftMasterForSdgEg'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget SDG - demand draft schedule version-->
+                <div *ngIf="fileDetails?.demandVersionForSdgEgDTO" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('demandVersionForSdgEgDTO', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Demand Heads & Gulletin" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['demandVersionForSdgEgDTO'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['demandVersionForSdgEgDTO'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget bitlist -->
+                <div *ngIf="fileDetails?.bitListFileResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('bitListFileResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Bit List" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bitListFileResponse'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bitListFileResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget bitlist minister reading-->
+                <div *ngIf="fileDetails?.bitListMinisterReadingResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('bitListMinisterReadingResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Minister Reading" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bitListMinisterReadingResponse'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bitListMinisterReadingResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- budget bitlist speaker note-->
+                <div *ngIf="fileDetails?.bitListSpeakerReadingResponse" class="row bg_block" (click)="$event.stopPropagation();showCurrentTab('bitListSpeakerReadingResponse', true);">
+                    <div class="col-md-6">
+                        <h6>{{ "Speaker Note" | translate }}</h6>
+                    </div>
+                    <div class="col-md-6 text-align-right">
+                        <nz-tag [ngClass]="{ bold: fileDetails['bitListSpeakerReadingResponse'][0]?.status === 'SUBMITTED' }">
+                            {{ fileDetails['bitListSpeakerReadingResponse'][0]?.status.split('_').join(' ') }}</nz-tag>
+                    </div>
+                </div>
+                <!-- Legislation file Ends-->
+                <ng-template #tabIcon>
+                    <i nz-icon nzType="appstore" nzTheme="outline"></i> {{"Index" |translate }}
+                </ng-template>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSpeech'" nzTitle="{{ 'Budget Speech' | translate }}">
+                <ng-container>
+                    <iframe [src]="fileDetails['budgetSpeech'][0]?.budgetUrl" style="width: 100%;height: 600px;overflow: auto;"></iframe>
+                </ng-container>
+            </nz-tab>
+            <!-- <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetAppropriationRequests'" nzTitle="{{ 'Request Letter for Appropriation Bill on Budget' | translate }}">
+                <budget-letter-view *ngIf="tabParams['CurrentTab'] === 'budgetAppropriationRequests' 
+                && fileDetails['budgetAppropriationRequests'][0].currespondanceId" [correspondenceId]="fileDetails['budgetAppropriationRequests'][0].currespondanceId"></budget-letter-view>
+            </nz-tab> -->
+            <nz-tab *ngIf="tabParams['CurrentTab'] === tabParams['apReqTab']" nzTitle="{{tabParams['apTabTitle']}}">
+                <budget-letter-view *ngIf="tabParams['CurrentTab'] === tabParams['apReqTab']
+                && fileDetails[tabParams['apReqTab']][0].currespondanceId" [correspondenceId]="fileDetails[tabParams['apReqTab']][0].currespondanceId"></budget-letter-view>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === tabParams['apResponseTab']" nzTitle="{{ 'The Bill ' | translate }}">
+                <ng-container>
+                    <budget-bill-content [isFileView]="true" [billId]="fileDetails[tabParams['apResponseTab']][0]?.billId" *ngIf="tabParams['CurrentTab'] === tabParams['apResponseTab'] && fileDetails[tabParams['apResponseTab']][0]?.billId">
+                    </budget-bill-content>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] ===tabParams['apResponseTab']" nzTitle="{{ 'Covering Letter' | translate }}">
+                <budget-letter-view *ngIf="tabParams['CurrentTab'] === tabParams['apResponseTab'] 
+                && fileDetails[tabParams['apResponseTab']][0].currespondanceId" [correspondenceId]="fileDetails[tabParams['apResponseTab']][0].currespondanceId"></budget-letter-view>
+            </nz-tab>
+
+            <!-- <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetAppropriationResponses'" nzTitle="{{ 'Bill Info' | translate }}">
+                
+            </nz-tab> -->
+            <nz-tab *ngIf="tabParams['CurrentTab'] === tabParams['apResponseTab']" nzTitle="{{ 'Governor\'s Recommendation Letter' | translate }}">
+                <ng-container>
+                    <div class="preview-main">
+                        <div class="mrgT20 preview-main-text">
+                            <div>
+                                <quill-view-html [content]="fileDetails[tabParams['apResponseTab']][0]?.grlContent"></quill-view-html>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocument'" nzTitle="{{ 'Budget Document' | translate }}">
+                <ng-container>
+                    <budget-budget-doc-reply-letter [budgetMain]="budgetdocuments"></budget-budget-doc-reply-letter>
+                </ng-container>
+
+            </nz-tab>
+            <!-- budget document GRL -->
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentGRL'" nzTitle="{{ 'Budget Document GRL' | translate }}">
+                <ng-container>
+                    Note:{{fileDetails['budgetDocumentGRL'][0]?.note}}
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentLetter'" nzTitle="{{ 'Budget Document Letter' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+
+            <nz-tab *ngIf="isTimeAllocationReq()" nzTitle="{{ 'Time Allocation' | translate }}">
+                <ng-container>
+                    <budget-configuration [type]="tabParams['timeAllocation']?.type" [masterId]="tabParams['timeAllocation']?.masterId" [isFileView]="true"></budget-configuration>
+                </ng-container>
+            </nz-tab>
+
+            <nz-tab *ngIf="isTimeAllocationRes()" nzTitle="{{ 'Member Time Allocation' | translate }}">
+                <ng-container>
+                    <budget-timeallocation-ts [type]="tabParams['timeAllocation']?.type" [masterId]="tabParams['timeAllocation']?.masterId" [isFileView]="true"></budget-timeallocation-ts>
+                </ng-container>
+            </nz-tab>
+            <!-- budget document reply letter -->
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentReplyLetter'" nzTitle="{{ 'Budget Document Reply Letter' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+
+            </nz-tab>
+
+
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'sdfgLetterResponse'" nzTitle="{{'SDFG'}}">
+                <ng-container>
+                    <budget-sdfg-preview [sdfgId]="fileDetails?.sdfgLetterResponse[0]?.sdfgId" [from]="'SDFG_LETTER'"></budget-sdfg-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'sdfgLetterResponse'" nzTitle="{{ 'SDFG Letter From Finance Dept.' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSDFGLetter'" nzTitle="{{ ' SDFG Letter '| translate}}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'voaLetterResponse'" nzTitle="{{ 'VOA' }}">
+                <ng-container>
+                    <budget-sdfg-preview [sdfgId]="fileDetails?.voaLetterResponse[0]?.sdfgId" [from]="'SDFG_LETTER'"></budget-sdfg-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'voaLetterResponse'" nzTitle="{{ 'VOA Letter From Finance Dept.' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetVOALetter'" nzTitle="{{ ' VOA Letter ' | translate}}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bgtDemandDraftMasterDTO'" nzTitle="{{ 'Demand Draft Schedule ' | translate }}">
+                <ng-container>
+                    <budget-dds-preview [DDSCreationType]="'SDFG/VOA'" [demandMasterId]="fileDetails?.bgtDemandDraftMasterDTO[0]?.id" [isFrmFileView]="true"></budget-dds-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bgtDemandDraftScheduleBulletinDTO'" nzTitle="{{ 'Demand Draft Schedule Bulletin' | translate }}">
+                <ng-container>
+                    <budget-schedule-report [demandMasterId]="fileDetails?.bgtDemandDraftScheduleBulletinDTO[0]?.id" [isFrmFileView]="true"></budget-schedule-report>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'greenBookMasterDto'" nzTitle="{{ 'Green Book' | translate }}">
+                <ng-container>
+                    <budget-create-greenBook [id]="fileDetails?.greenBookMasterDto[0]?.id" [isFrmFileView]="true"></budget-create-greenBook>
+                </ng-container>
+            </nz-tab>
+
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'demandVersionDTO'" nzTitle="{{ 'Demand Heads & Gulletin' | translate }}">
+                <ng-container>
+                    <budget-dds-heads-gulletin [DDSCreationType]="'SDFG/VOA'" [demandDraftMasterId]="fileDetails?.demandVersionDTO[0]?.masterId" [fileId]="fileId" [demandVersionStatus]="fileDetails?.demandVersionDTO[0]?.status" [sdfgMasterId]="fileDetails?.demandVersionDTO[0]?.sdfgMasterId"
+                        [isFileView]="true"></budget-dds-heads-gulletin>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentGRLRequestLetter'" nzTitle="{{ 'Budget Document GRL request Letter' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bgtCutMotionMasterDTO'" nzTitle="{{ 'List For Cut Motions' | translate }}">
+                <ng-container>
+                    <budget-list-cut-motion [SdfgMasterId]="fileDetails?.bgtCutMotionMasterDTO[0]?.sdfgMasterId" [isFileView]="true"></budget-list-cut-motion>
+                </ng-container>
+            </nz-tab>
+
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetMaster'" nzTitle="{{ 'Budget Master' | translate }}">
+                <ng-container>
+                    <strong>Budget For Financial Year: </strong>{{fileDetails['budgetMaster'].note}}
+                </ng-container>
+            </nz-tab>
+
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentGRLReplyLetter'" nzTitle="{{ 'Budget GRL Reply Letter' | translate }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentGRLReplyLetter'" nzTitle="{{ 'GRL Department Copy' | translate }}">
+                <ng-container>
+                    <budget-budget-grl-reply-content [grlReply]="fileDetails['budgetDocumentGRLReplyLetter'][0]" [sectionMode]="false"></budget-budget-grl-reply-content>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDocumentGRLReplyLetter'" nzTitle="{{ 'GRL Bulletin' | translate }}">
+                <ng-container>
+                    <budget-budget-grl-reply-content [grlReply]="fileDetails['budgetDocumentGRLReplyLetter'][0]" [sectionMode]="true"></budget-budget-grl-reply-content>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgMaster'" nzTitle="{{ fileDetails['budgetSdgEgMaster'][0]?.nature == 'SDG' ? 'SDG Note' : 'EG Note'}}">
+                <ng-container>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- Budget : {{fileDetails['budgetSdgEgMaster'][0]?.budget?.}} -->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            Note: {{fileDetails['budgetSdgEgMaster'][0]?.note}}
+                        </div>
+                    </div>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgRequestLetter'" nzTitle="{{  fileDetails['budgetSdgEgRequestLetter'][0]?.nature == 'SDG' ? 'SDG Request Letter': 'EG Request Letter'  }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="fileDetails['budgetSdgEgRequestLetter'][0]?.correspondenceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgReplyLetter'" nzTitle="{{  fileDetails['budgetSdgEgReplyLetter'][0]?.nature == 'SDG' ? 'SDG Reply Letter': 'EG Reply Letter'  }}">
+                <ng-container>
+                    <budget-letter-view [correspondenceId]="fileDetails['budgetSdgEgReplyLetter'][0]?.correspondanceId"></budget-letter-view>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgReplyLetter'" nzTitle="Department Copy">
+                <ng-container>
+                    <budget-sdgeg-grl-reply [sectionMode]="false" [grlReply]="fileDetails['budgetSdgEgReplyLetter'][0]"></budget-sdgeg-grl-reply>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgReplyLetter'" nzTitle="GRL Bulletin">
+                <ng-container>
+                    <budget-sdgeg-grl-reply [sectionMode]="true" [grlReply]="fileDetails['budgetSdgEgReplyLetter'][0]"></budget-sdgeg-grl-reply>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgAndEg'" nzTitle="{{fileDetails['budgetSdgAndEg'][0]?.type == 'SDG' ? 'SDG' : 'EG'}}">
+                <ng-container>
+                    <budget-sdfg-preview [sdgEgId]="fileDetails?.budgetSdgAndEg[0]?.id"></budget-sdfg-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetSdgEgGrlForBulletin'" nzTitle="{{fileDetails['budgetSdgEgGrlForBulletin'][0]?.bgtSdgAndEg?.type == 'SDG' ? 'SDG' : 'EG'}}">
+                <ng-container>
+                    <budget-sdfg-preview [sdgEgId]="fileDetails?.budgetSdgEgGrlForBulletin[0]?.bgtSdgAndEg?.id"></budget-sdfg-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'budgetDemandDraftMasterForSdgEg'" nzTitle="{{ 'Demand Draft Schedule ' | translate }}">
+                <ng-container>
+                    <budget-dds-preview [DDSCreationType]="'SDGEG'" [demandMasterId]="fileDetails?.budgetDemandDraftMasterForSdgEg[0]?.id" [isFrmFileView]="true"></budget-dds-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'demandVersionForSdgEgDTO'" nzTitle="{{ 'Demand Heads & Gulletin' | translate }}">
+                <ng-container>
+                    <budget-dds-heads-gulletin [DDSCreationType]="'SDGEG'" [demandDraftMasterId]="fileDetails?.demandVersionForSdgEgDTO[0]?.masterId" [fileId]="fileId" [demandVersionStatus]="fileDetails?.demandVersionForSdgEgDTO[0]?.status" [sdfgMasterId]="fileDetails?.demandVersionForSdgEgDTO[0]?.sdfgMasterId"
+                        [isFileView]="true"></budget-dds-heads-gulletin>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bitListFileResponse'" nzTitle="{{ 'Bit List' | translate }}">
+                <ng-container>
+                    <budget-prepare-bit-list [bitListMasterId]="fileDetails?.bitListFileResponse[0]?.bitListMasterId" [sdfgId]="fileDetails?.bitListFileResponse[0]?.sdfgId" [isFileView]="true"></budget-prepare-bit-list>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bitListMinisterReadingResponse'" nzTitle="{{ 'Minister Reading' | translate }}">
+                <ng-container>
+                    <budget-lob-files-preview [bitListMasterId]="fileDetails?.bitListMinisterReadingResponse[0]?.bitListMasterId" [sdfgId]="fileDetails?.bitListMinisterReadingResponse[0]?.sdfgId" [type]="'MINISTER'" [isFileView]="true"></budget-lob-files-preview>
+                </ng-container>
+            </nz-tab>
+            <nz-tab *ngIf="tabParams['CurrentTab'] === 'bitListSpeakerReadingResponse'" nzTitle="{{ 'Speaker Note' | translate }}">
+                <ng-container>
+                    <budget-lob-files-preview [bitListMasterId]="fileDetails?.bitListSpeakerReadingResponse[0]?.bitListMasterId" [sdfgId]="fileDetails?.bitListSpeakerReadingResponse[0]?.sdfgId" [type]="'SPEAKER'" [isFileView]="true"></budget-lob-files-preview>
+                </ng-container>
+            </nz-tab>
+        </nz-tabset>
+        <ng-template #extraTemplate>
+            <!-- <button *ngIf="tabParams['CurrentTab'] === 'budgetSpeech' && 
+                fileDetails['budgetSpeech'][0]?.status == 'PUBLISHED' &&
+                fileDetails?.budgetAppropriationRequests == null" class="ml-6" nz-button [nzType]="'primary'" (click)="draftAPbillCorrespondence()">
+                   Request AP Bill on Budget
+                </button> -->
+        </ng-template>
+    </div>
+    <div class="col-md-5">
+        <nz-tabset>
+            <nz-tab nzTitle='{{ "business-dashboard.question.notes" | translate }}'>
+                <lib-notes *ngIf="fileDetails" [notesInfo]="notesInfo" [assignee]="assignee" [latestNote]="latestNote" [fileResponse]="fileDetails.fileResponse" [ratificationStatus]="ratificationStatus" (fileApproved)="getFileByFileId(this.fileId)">
+                </lib-notes>
+            </nz-tab>
+            <nz-tab nzTitle='{{ "Logs" | translate }}' (nzClick)="getFileByFileId(this.fileId)">
+                <ng-container *ngFor="let log of logDetails.slice(); index as i">
+                    <div class="bg_block">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="col-md-7 pdzero">
+                                    <div class="width-100 d-flex marginbtm-15">
+                                        <div class="overflow-blt">
+                                            {{ 1 + i + "." + log.action | titlecase }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                &nbsp;&nbsp;
+            </nz-tab>
+
+            <nz-tab nzTitle='{{ "File Info" | translate }}'>
+                <div class="row">
+                    <div class="col-md-3">
+                        <span class="workflowhd">{{ "File Flow" | translate }}</span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="overflownote">
+                            <nz-steps nzSize="small" [nzDirection]="'vertical'">
+                                <nz-step *ngFor="let status of stepStatusDetail" [nzStatus]="getStatusByReason(status.reason)" [nzTitle]="returnOwner(status)" [nzDescription]="status.reason"></nz-step>
+                            </nz-steps>
+                        </div>
+                    </div>
+                </div>
+                <div class="row bg_block">
+                    <div class="col-md-12">
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "File Subject" | translate }}:</div>
+                            <div class="blthd col-md-6" style="word-wrap: break-word;">
+                                {{ fileDetails?.fileResponse?.subject }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "File Description" | translate }}:</div>
+                            <div class="blthd col-md-6" style="word-wrap: break-word;">
+                                {{ fileDetails?.fileResponse?.description }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "business-dashboard.question.questionlist.createdat" | translate }}:
+                            </div>
+                            <div class="blthd col-md-6">
+                                {{ fileDetails?.fileResponse?.createdDate | date: "dd/MM/yyyy" }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "File Priority" | translate }}:</div>
+                            <div class="blthd col-md-6" *ngIf='!isEditPrio'>
+                                <nz-tag [nzColor]="'red'">
+                                    {{ fileDetails?.fileResponse?.priority.split('_').join(' ') }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10" *ngIf='isEditPrio'>
+                            <div class="col-md-6"></div>
+                            <div class="blthd col-md-6">
+                                <nz-radio-group [(ngModel)]="priority" nzName="radiogroup">
+                                    <label nz-radio nzValue="URGENT">{{ "cpl.docamendments.urgent" | translate
+                                        }}</label>
+                                    <label nz-radio nzValue="NORMAL">{{ "cpl.docamendments.normal" | translate
+                                        }}</label>
+                                    <label nz-radio nzValue="ACTION_TODAY">{{ "cpl.docamendments.actiontoday" |
+                                        translate }}</label>
+                                    <label nz-radio nzValue="ASSEMBLY_URGENT">{{ "cpl.docamendments.assemblyurgent" |
+                                        translate }}</label>
+                                </nz-radio-group>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "noticeprocessing.staff.personalregister.section" | translate }}:
+                            </div>
+                            <div class="blthd col-md-6">
+                                {{ fileDetails?.fileResponse?.type }}
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "File Type" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                <nz-tag>
+                                    {{ fileDetails?.fileResponse?.type }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                        <div class="row flex-end mrB10">
+                            <div class="col-md-6">{{ "File Status" | translate }}:</div>
+                            <div class="blthd col-md-6">
+                                <nz-tag [nzColor]="'red'">
+                                    {{ fileDetails?.fileResponse?.status.split('_').join(' ') }}
+                                </nz-tag>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-align-right ">
+                    <div class="col-md-12">
+                        <button nz-button class="abs_btn" (click)="editFile()" *ngIf="!isEditPrio">
+                            {{ "noticeprocessing.noticeprocess.edit" | translate }}
+                        </button>
+                        <button nz-button class="abs_btn" (click)="updateFile()" *ngIf="isEditPrio">
+                            {{ "cpl.docupload.update" | translate }}
+                        </button>
+                        <button nz-button class="abs_btn" (click)="onCancel()" *ngIf="isEditPrio">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                &nbsp;&nbsp;
+                <ng-container *ngIf="fileDetails?.fileResponse?.subFile && fileDetails?.fileResponse?.subFile.length > 0">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <strong>Sub-Files</strong>
+                      </div>
+                    </div>
+                    <div class="row flex-end mrB10" *ngFor="let file of fileDetails?.fileResponse?.subFile; let i=index">
+                      <div class="blthd col-md-6">
+                        {{i+1}}.{{file?.subject}}
+                      </div>
+                      <div class="blthd col-md-6">
+                        <a href="javascript:;" (click)="viewSubFile(file?.fileId, file?.filType)">
+                          {{file?.fileNumber}}</a>
+                      </div>
+                    </div>
+                </ng-container>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+</div>
+<nz-modal [(nzVisible)]="validatePasswd.showModal" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <budget-validate-password *ngIf="validatePasswd?.showModal" [budgetDto]="fileDetails[validatePasswd?.key][0]" [type]="validatePasswd?.key" (onCancel)="getUrls($event)">
+        </budget-validate-password>
+    </div>
+</nz-modal>

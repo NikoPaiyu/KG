@@ -1,0 +1,747 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+       {{"cpl.actregistration.dash" |translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+       {{"cpl.actregistration.cpl" |translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{"cpl.uploadedlist.officesectiondocuments"|translate}}</h2>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-15">
+  <!-- <div class="col-md-3 d-flex align-items-center whitespace">
+    Assembly:
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder=""
+      name="assemblyId"
+      [(ngModel)]="assemblyId"
+      (ngModelChange)="getDocList()"
+    >
+      <nz-option
+        *ngFor="let item of assemblyList"
+        [nzLabel]="item.assemblyId"
+        [nzValue]="item.id"
+      ></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-3 d-flex align-items-center whitespace">
+    Session:
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder=""
+      name="sessionId"
+      [(ngModel)]="sessionId"
+      (ngModelChange)="getDocList()"
+    >
+      <nz-option
+        *ngFor="let item of sessionList"
+        [nzLabel]="item.sessionId"
+        [nzValue]="item.id"
+      ></nz-option>
+    </nz-select>
+  </div> -->
+  <div class="col-md-2 d-flex align-items-center whitespace">
+   {{"cpl.docupload.assembly" |translate}}
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder=""
+      name="assemblyId"
+      [(ngModel)]="assemblyId"
+      (ngModelChange)="getSessionForAssembly()"
+    >
+      <nz-option
+        *ngFor="let item of assemblyList"
+        [nzLabel]="item.assemblyId"
+        [nzValue]="item.id"
+      ></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-2 d-flex align-items-center whitespace">
+    {{"cpl.docupload.session"| translate}}
+    <nz-select
+      nzAllowClear
+      nzPlaceHolder=""
+      name="sessionId"
+      [(ngModel)]="sessionId"
+      (ngModelChange)="check||officeRegister?getPendingDocList():getDocList()"
+    >
+      <nz-option
+        *ngFor="let item of sessionList"
+        [nzLabel]="item.sessionId"
+        [nzValue]="item.id"
+      ></nz-option>
+    </nz-select>
+  </div>
+  <div class="col-md-3 d-flex align-items-center whitespace">
+    <ng-container *ngIf="!officeRegister && !check">
+     {{"cpl.docamendments.status"|translate}}:
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="status"
+        [(ngModel)]="status"
+        (ngModelChange)="filterList()"
+      >
+        <nz-option
+          *ngFor="let status of statusArray"
+          [nzLabel]="status"
+          [nzValue]="status"
+        ></nz-option>
+      </nz-select>
+    </ng-container>
+    <ng-container *ngIf="check">
+      {{"cpl.docamendments.status"|translate}}:
+       <nz-select
+         nzAllowClear
+         nzPlaceHolder=""
+         name="status"
+         [(ngModel)]="status"
+         (ngModelChange)="status==='ASSIGNED'?getDocList():getPendingDocList()"
+       >
+         <nz-option
+           *ngFor="let status of statusArray"
+           [nzLabel]="status"
+           [nzValue]="status"
+         ></nz-option>
+       </nz-select>
+     </ng-container>
+  </div>
+  <div class="col-md-3 d-flex align-items-center whitespace">
+    {{"cpl.documents.search" |translate}}:
+    <nz-input-group [nzSuffix]="suffixIconSearch">
+      <input
+        type="text"
+        name="search"
+        [(ngModel)]="docTitle"
+        (ngModelChange)="searchDoc()"
+        nz-input
+        placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}'
+      />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+  <div class="col-md-2 d-flex align-items-center justify-content-end">
+    <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+      <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+    </button>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <div>
+        <ul
+          nz-menu
+          fileTable
+          *ngFor="let box of colCheckboxes; let i = index"
+          class="checkbox-style"
+        >
+          <li>
+            <label nz-checkbox 
+            [nzDisabled]="box.disable" 
+            [(ngModel)]="box.check" name="i" 
+            (ngModelChange)="disableCheckBoxes()">{{
+              box.label
+            }}</label>
+          </li>
+        </ul>
+      </div>
+    </nz-dropdown-menu>
+  </div>
+</div>
+<nz-table #docTable nzShowPagination nzShowSizeChanger [nzData]="listOfDoc" 
+(nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+class="table-all">
+  <thead>
+    <tr>
+      <th nzShowCheckbox *ngIf="check && status==='SUBMITTED'"
+      [(nzChecked)]="checked"
+      [nzIndeterminate]="indeterminate"
+      (nzCheckedChange)="_checkAllRows($event)"></th>
+      <th *ngIf="colCheckboxes[0].check">
+        {{"cpl.documents.currno" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[1].check">
+        {{"cpl.actregistration.doctype" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[2].check">
+        {{"cpl.uploadedlist.docsub" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[3].check">
+        {{"cpl.documents.submissiondate" |translate}}
+      </th>
+      <th *ngIf="!check && !officeRegister && colCheckboxes[11]?.check">
+        {{"cpl.docupload.klasection"|translate}}
+      </th>
+      <th *ngIf="colCheckboxes[4].check">
+        {{"cpl.docupload.fromwhom" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[5].check">
+        {{"cpl.cplview.subject" |translate}}
+      </th>
+      <th *ngIf="!check && !officeRegister  && colCheckboxes[12]?.check">
+        {{"cpl.docupload.receivedfrom" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[6].check">
+      {{"cpl.docupload.receiveddate" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[7].check">
+       {{"cpl.docamendments.status" |translate}}
+      </th>
+      <th *ngIf="!officeRegister && colCheckboxes[10]?.check">
+        {{"cpl.uploadedlist.remark" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[8].check">
+        {{"cpl.cplview.coverletter" |translate}}
+      </th>
+      <th *ngIf="colCheckboxes[9].check">
+        {{"cpl.docupload.otherdocuments" |translate}}
+      </th>
+      <th  *ngIf="officeRegister">
+      </th>
+    </tr>
+  </thead>
+  <tr *ngIf="setOfCheckedId.size !== 0">
+    <th colspan="2">
+      <span>{{ setOfCheckedId.size }} selected</span>
+    </th>
+    <th colspan="3">
+      <!-- <button
+            (click)="assignTOAssistant()"
+            nz-button
+            [nzType]="'default'"
+            class="mr-6 secondary-button button-admin-radius button-font dark-border dark-font"
+          >
+            Assign Task
+          </button> -->
+      <button
+        (click)="assignModal()"
+        nz-button
+        [nzType]="'default'"
+        class="secondary-button button-admin-radius button-font dark-border dark-font"
+      >
+      {{"cpl.uploadedlist.assigntask" |translate}}
+      </button>
+    </th>
+  </tr>
+  <tbody>
+    <tr
+      *ngFor="let list of docTable.data"
+      nz-popover
+      nzType="primary"
+      nzPopoverPlacement="left"
+      [nzPopoverContent]=" ((!check && !officeRegister) && this.list.status === 'SAVED' || this.list.status === 'RETURN') ? contentTemplateDoc : null"
+      
+    >
+      <ng-template #contentTemplateDoc>
+        <a class="sortable" *ngIf="this.list.status === 'SAVED' || this.list.status === 'RETURN'" (click)="showEditModal(list)">{{"cpl.cplview.edit" |translate}} |</a>
+        <!-- <a class="sortable" *ngIf="check" (click)="showViewModel(list)"> View</a> --> 
+       <a class="sortable"  *ngIf=" this.list.status === 'SAVED' || this.list.status === 'RETURN'" (click)="showDeleteConfirm(list.title, list.id)"
+          > {{"cpl.docpreparion.delete" |translate}}</a
+        >
+      </ng-template>
+      <!-- <tr
+      *ngFor="let list of docTable.data"
+      nz-popover
+      nzType="primary"
+      nzPopoverPlacement="left"
+      [nzPopoverContent]=" !check ? contentTemplateDoc : null"
+    >
+      <ng-template #contentTemplateDoc>
+        <div>
+          <span class="sortable"  *ngIf="
+          this.list.status === 'SAVED' ||
+            this.list.status === 'RETURN'
+        " (click)="showEditModal(list)">Edit |</span>
+         
+          <span
+            class="sortable"
+            *ngIf="
+              this.list.status === 'SAVED' ||
+                this.list.status === 'RETURN'
+            "
+            (click)="showDeleteConfirm(list.title, list.id)"
+          >
+            Delete</span
+          >
+        </div>
+      </ng-template> -->
+      <td
+        nzShowCheckbox
+        [nzChecked]="setOfCheckedId.has(list.id)"
+        (nzCheckedChange)="onItemChecked(list.id, $event)"
+        *ngIf="check && status==='SUBMITTED'"
+      ></td>
+      <td *ngIf="colCheckboxes[0].check">
+        {{ list.currentNumber }}
+      </td>
+      <td *ngIf="colCheckboxes[1].check">{{ list.type }}</td>
+      <td class="break-word" *ngIf="colCheckboxes[2].check">
+        <!-- <span
+          *ngIf="list.title.length > 20; else docTitle"
+          nz-tooltip
+          [nzTooltipTitle]="list.title"
+        >
+          {{ list.title.substr(0, 20) }}..
+        </span> -->
+        <!-- <ng-template #docTitle> -->
+          {{ list.title }}
+        <!-- </ng-template> -->
+      </td>
+      <td class="break-word" *ngIf="colCheckboxes[3].check">
+        {{ list.createdDate | date: "dd-MM-yyyy" }}
+      </td>
+      <td class="break-word" *ngIf="!check && !officeRegister  && colCheckboxes[11]?.check">
+        {{"cpl.actregistration" |translate}}
+      </td>
+      <td *ngIf="colCheckboxes[4].check">
+        {{ list.department }}
+      </td>
+      <td *ngIf="colCheckboxes[5].check">
+        {{ list.subjectName }}
+      </td>
+      <td *ngIf="!check && !officeRegister && colCheckboxes[12]?.check">
+        {{ list.fromWhom }}
+      </td>
+      <td *ngIf="colCheckboxes[6].check">
+        {{ list.receivedDate | date: "dd-MM-yyyy" }}
+      </td>
+      <td class="break-word" *ngIf="colCheckboxes[7].check">
+        <nz-tag [nzColor]="'green'">{{ getStatus(list.status) }}</nz-tag>
+        <ng-container *ngIf="list.status === 'SAVED'">
+          <button
+            class="mrgtp-btn"
+            nz-button
+            [nzType]="'primary'"
+            type="submit"
+            nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.cpl.registrationconform.wanttosend" | translate }}'
+            (nzOnConfirm)="submitDoc(list.id)"
+            (nzOnCancel)="cancel()"
+          >
+          {{"cpl.docupload.submit" |translate}}
+          </button>
+        </ng-container>
+        <ng-container  *ngIf="check && list.status === 'SUBMITTED'">
+          <button
+            class="mrgtp-btn"
+            nz-button
+            [nzType]="'primary'"
+            type="submit"
+            (click)="showReturnModal(list.id)"
+          >
+          {{"cpl.uploadedlist.return" |translate}}
+          </button>
+        </ng-container>
+      </td>
+      <td  class="break-word" *ngIf="!officeRegister && colCheckboxes[10]?.check">
+          <span *ngIf="list?.remark?.length > 18" nz-tooltip [nzTooltipTitle]="list.remark"
+            >{{ list.remark.substr(0, 18) }}..</span
+          >
+        <ng-container *ngIf="list?.remark?.length < 18">{{
+          list.remark
+        }}</ng-container>
+        <!-- {{ list.remark }} -->
+      </td>
+      <td class="break-word" *ngIf="colCheckboxes[8].check">
+        <ng-container *ngFor="let cover of list.attachments">
+          <i
+            *ngIf="cover.type == 'COVERING_LETTER'"
+            (click)="showPdfModal(cover.documentUrl)"
+            class="preview-icon pointer"
+            nz-icon
+            nzType="file"
+            nzTheme="outline"
+          ></i>
+        </ng-container>
+      </td>
+      <td class="break-word" *ngIf="colCheckboxes[9].check">
+        <ng-container *ngFor="let otherDocuments of list.attachments">
+          <i
+            *ngIf="otherDocuments.type !== 'COVERING_LETTER'"
+            (click)="showPdfModal(otherDocuments.documentUrl)"
+            class="preview-icon pointer"
+            nz-icon
+            nzType="file"
+            nzTheme="outline"
+          ></i>
+        </ng-container>
+      </td>
+      <td *ngIf="officeRegister">
+        <button
+            (click)="registerDocument(list.id)"
+            nz-button
+            nzType="primary">
+            {{"cpl.uploadedlist.register"  | translate}}
+          </button>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<!-- assign to assistant modal -->
+<nz-modal
+  [(nzVisible)]="isAssignVisible"
+  [nzFooter]="null"
+  [nzClosable]="false"
+>
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4"> {{"cpl.uploadedlist.assigntask" |translate}}</div>
+        </div>
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4">{{"cpl.documents.Filter" |translate}}</div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <input
+              nz-input
+              placeholder="{{'cpl.uploadedlist.searchname'|translate}}"
+              [(ngModel)]="searchPerson"
+              (ngModelChange)="personSearch()"
+            />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-card [nzTitle]="null" class="checklist-all">
+              <nz-table #assistantListTable [nzData]="assistantList">
+                <tbody>
+                  <tr *ngFor="let person of assistantListTable.data">
+                    <td>
+                      <nz-radio-group [(ngModel)]="radioValue">
+                        <label nz-radio [nzValue]="person.userId"></label>
+                      </nz-radio-group>
+                    </td>
+                    <td>{{ person.fullName }}</td>
+                    <td>{{ person.name }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-card>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="default"
+              class="secondary-button button-admin-radius button-font dark-border dark-font"
+              (click)="handleCancel()"
+            >
+            {{"cpl.correspondencelist.cancel" |translate}}
+            </button>
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              (click)="assignTOAssistant()"
+              class="primary-button button-admin-radius button-font"
+              [disabled]="radioValue === null"
+            >
+            {{"cpl.documents.assign" |translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end of assign to assistant modal -->
+<!-- document viewer modal -->
+<nz-modal
+  [(nzVisible)]="isPdfVisible"
+  [nzFooter]="null"
+  (nzOnCancel)="hideModal()"
+  nzWidth="800"
+>
+  <div class="width-100 pading-all">
+    <div class="row margnrtp-15 margnrgt-15">
+      <div class="col-md-12 align-items-center">
+        <ngx-doc-viewer
+          [url]="docUrl"
+          viewer="url"
+          style="width: 100%; height: 500px;"
+        ></ngx-doc-viewer>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end of document viewer modal -->
+<!-- edit document modal -->
+<nz-modal [(nzVisible)]="isEditVisible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selassembly' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"cpl.docupload.assembly" |translate}}</nz-form-label>
+        </div>
+              <div class="col-md-8">
+                {{document.assemblyId}}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selsession' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docupload.session" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8"> 
+                {{ document.sessionId }}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selassembly' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"cpl.actregistration.doctype" |translate}}</nz-form-label>
+        </div>
+              <div class="col-md-8">
+                {{document.type}}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selsession' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docupload.klasection" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8"> 
+              <!-- ? {{ document.klaSectionName }} -->
+              {{"cpl.actregistration.cpl" |translate}}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"cpl.docupload.fromwhom"|translate}}</nz-form-label>
+        </div>
+              <div class="col-md-8">
+                {{document.portfolio}}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selsession' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{ "cpl.docupload.receivedfrom" | translate }}</nz-form-label>
+              </div>
+              <div class="col-md-8"> 
+                {{ document.fromWhom }}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.uploadedlist.entertitle' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label> {{"cpl.docupload.subject" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                {{ document.title }}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{'cpl.docupload.selsession' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docupload.receiveddate" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+              
+                {{document.receivedDate | date: "dd-MM-yyyy"}}
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.uploadedlist.entertitle'|translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docupload.coveringletter" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <a
+                [href]="document.coveringletterURL"
+                target="_blank"
+               
+                >
+            {{ document.coveringletter }} </a>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-control nzErrorTip="{{'cpl.docupload.selsession' |translate}}">
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{"cpl.docupload.otherdocuments" |translate}}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+              
+                <a
+                [href]="document.otherDocumetsURL"
+                target="_blank"
+               
+                >
+            {{ document.otherDocumets }} </a>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+          (click)="hideModal()"
+        >
+        {{"cpl.correspondencelist.cancel" |translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+<!-- end of edit document modal -->
+<!-- return modal -->
+<nz-modal [(nzVisible)]="returnModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+       {{"cpl.uploadedlist.reasontoreturn" |translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <!-- <input type="text" [(ngModel)]="reason" nz-input placeholder="reason" />  -->
+        <textarea
+          nz-input
+          placeholder="{{'cpl.uploadedlist.reasontoreturn' |translate}}"
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="254"
+          [(ngModel)]="reason"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="handleCancel()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+        {{"cpl.correspondencelist.cancel" |translate}}
+        </button>
+        <button
+          type="button"
+          [disabled]="reason === ''"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle='{{"business-dashboard.draftcorr.return" | translate }}'
+          (nzOnConfirm)="returnDoc()"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+        {{"cpl.uploadedlist.return" |translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="deleteModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <nz-alert nzType="warning" 
+        nzMessage="Warning" 
+        nzDescription='{{"business-dashboard.lob.lob-create.areusureuwantdelete" | translate}}{{deleteTitle}}?' nzShowIcon>
+        </nz-alert>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          nz-button
+          nzType="default"
+          (click)="cancel()"
+        >
+         No
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          class="margnlft-15"
+          (click)="deleteDocument()"
+          nzDanger
+        >
+        {{"business-dashboard.question.questionrequestconsent.yes" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end of return modal -->

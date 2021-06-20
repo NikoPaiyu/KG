@@ -1,0 +1,74 @@
+nz-page-header {
+  background: #fff;
+  color: #212121;
+  padding: 20px;
+  font-size: 15px;
+}
+.content {
+  display: flex;
+}
+
+@media (max-width: 576px) {
+  .content {
+    display: block;
+  }
+
+  .main {
+    width: 100%;
+    margin-bottom: 12px;
+  }
+
+  .extra {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+}
+
+.active {
+  background-color: #f5fbff !important;
+  border: #cee7fd solid 1px !important;
+}
+
+.border_cqs {
+  width: 100%;
+  border: #dfe8ef solid 1px;
+  border-radius: 5px;
+  font-family: rachana;
+  padding: 10px;
+  font-size: 18px;
+}
+.qblk {
+  width: 100%;
+  border: #cee7fd solid 1px;
+  border-radius: 5px;
+  font-family: rachana;
+  background-color: #e9f5ff;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  float: left;
+}
+.sblk {
+  width: 100%;
+  border: #cee7fd solid 1px;
+  border-radius: 5px;
+  font-family: rachana;
+  background-color: #fcfeff;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  float: left;
+  color: #495057;
+}
+.air {
+  text-align: right;
+  margin-bottom: 5px;
+}
+.sblk.active {
+  border-right: none !important;
+  width: calc(100% + 32px);
+  border-radius: 5px 0px 0px 5px !important;
+  position: relative;
+  z-index: 9;
+}

@@ -1,0 +1,82 @@
+<nz-modal
+    [(nzVisible)]="isVisible"
+    nzTitle=""
+    (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleOk()"
+    [nzOkLoading]="isOkLoading"
+    [nzFooter]= "null"
+  >
+  <br/>
+  <br/>
+  <div class="row">
+      <div class="col-md-6">
+        <h5>Mark Attendance</h5>
+    </div>
+    </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">Choose Meeting</nz-form-label>
+                <nz-form-control [nzSpan]="20">
+                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="selectedValue">
+                        <nz-option nzLabel="Meeting Title-12/10/2020" nzValue="Meeting Title-12/10/2020"></nz-option>
+                        <nz-option nzLabel="Meeting Title-12/10/2020" nzValue="Meeting Title-12/10/2020"></nz-option>
+                        <nz-option nzLabel="Meeting Title-12/10/2020" nzValue="Meeting Title-12/10/2020"></nz-option>
+                      </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            </div>
+            <br/>
+  <div class="row">
+    <div class="col-md-3"
+    >
+    <p>Meeting Venue,</p>
+    </div>
+    <div class="col-md-3"
+    >
+    <p> Date & Time</p>
+    </div>
+  </div>
+<br/>
+<div class="row">
+    <div class="col-md-10">
+      <nz-table #attendanceTable [nzData]="listOfData" [nzShowPagination]="false" nzShowSizeChanger>
+        <thead>
+          <tr> 
+            <th></th>
+            <th nzShowCheckbox class="tablechk"></th>
+            <th>Name Of Members</th>
+            <th>Distance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style="cursor: pointer;"
+            *ngFor="let data of attendanceTable.data; let i = index"
+          >
+          <td>{{i+1}}</td>
+          <td nzShowCheckbox class="tablechk"></td>
+          <td >{{data.nom}}</td>
+          <td> <nz-tag [nzColor]="'green'">
+            {{ data.distance }}
+          </nz-tag>Km</td>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <br/>
+  <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6"></div>
+  <div class="col-md-6 text-align-right">
+    <button nz-button nzType="primary" class="mrgL6">
+     Cancel
+    </button>
+    <button nz-button nzType="primary" class="mrgL6">
+        Mark Attendance
+       </button>
+  </div>
+</div>
+
+  </nz-modal>

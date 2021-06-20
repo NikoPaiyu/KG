@@ -1,0 +1,65 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>PDF Result Template</title>
+</head>
+<body>
+  <div class="report-holder">
+    <table cellpadding="0" cellspacing="0" class="table">
+      <tr>
+        <td class="tc pt">
+          <strong>14 th KERALA LEGISLATIVE ASSEMBLY</strong>
+        </td>
+      </tr>
+      <tr>
+        <td class="tc pt">
+          <strong>First Session</strong>
+        </td>
+      </tr>
+      <tr>
+      <tr>
+        <td class="tc pt">
+          <i>{{setDateFormat()}}</i>
+          <!-- <i>Wednesday, December 30, 2020</i> -->
+        </td>
+      </tr>
+      <tr>
+      <tr>
+        <td class="tc pt">
+          <strong> {{minutesData['header']}}</strong>
+        </td>
+      </tr>
+      <tr>
+        <td class="tc">
+          AT {{minutesData['governorsAddressDTO']?.governorsAddressDate | date: "hh:mm a"}}
+        </td>
+      </tr>
+      <tr>
+        <td class="tc">
+          <strong>PROGRAMME</strong>
+        </td>
+      </tr>
+    </table>
+    <table *ngIf="minutesData['minuteToMinuteProgramDTO'] && minutesData['minuteToMinuteProgramDTO'].length > 0" cellpadding="0" cellspacing="0" class="table">
+      <tr *ngFor="let programs of minutesData['minuteToMinuteProgramDTO']; let i = index">
+        <td class="vt">{{i + 1}}</td>
+        <td>{{programs.programName}}</td>
+      </tr>
+    </table>
+    <table cellpadding="0" cellspacing="0" class="table">
+      <tr>
+        <td class="tr">
+          {{minutesData['footer']}}
+        </td>
+      </tr>
+      <!-- <tr>
+        <td class="tr">
+          {{minutesData['footer']}} </td>
+      </tr> -->
+    </table>
+    <br />
+  </div>
+</body>
+
+</html>

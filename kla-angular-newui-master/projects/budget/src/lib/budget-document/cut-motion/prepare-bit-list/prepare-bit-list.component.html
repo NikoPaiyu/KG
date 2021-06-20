@@ -1,0 +1,226 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "budget.budgetspeech.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item> Prepare Bit List </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">Prepare Bit List</h2>
+  </div>
+  <div class="col-md-6 justify-content-end d-flex"></div>
+</div>
+<nz-divider></nz-divider>
+<div class="row mrgT20 d-flex justify-content-center">
+  <div class="col-md-12">
+    <nz-card style="width: 800px">
+      <div class="row mrgT20">
+        <div class="col-md-12">
+          <b
+            >List of Demands for Grants to be Submitted to the Vote of the
+            House</b
+          >
+        </div>
+      </div>
+
+      <div class="row mrgT20">
+        <div class="col-md-12">
+          <div class="row">Choose Date</div>
+          <div class="row">
+            <div class="col-md-10">
+              <nz-date-picker [(ngModel)]="date"></nz-date-picker>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mrgT20">
+        <div class="col-md-12">
+          <div class="row">Demand Number and Name</div>
+          <div class="row">
+            <div class="col-md-9">
+              <nz-card
+                [nzTitle]="null"
+                style="width: 100%; height: 300px; overflow-y: scroll"
+                class="committee_blk"
+              >
+                <!-- <ul nz-menu filterTable class="checkbox-style"> -->
+                <ul class="checklis">
+                  <li *ngFor="let box of demandsList; let i = index">
+                    <label
+                      nz-checkbox
+                      [(ngModel)]="box.checked"
+                      name="checkbox{{ i }}"
+                      >{{ box.name }}</label
+                    >
+                  </li>
+                </ul>
+              </nz-card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mrgT20">
+        <div class="col-md-12">
+          <button nzType="dashed" nz-button (click)="showHead()">
+            <i nz-icon nzType="plus-circle" nzTheme="outline"></i>
+            Add Head
+          </button>
+        </div>
+      </div>
+      <div class="row mrgT20">
+        <div class="col-md-12 align-right">
+          <button class="mr-6" nz-button (click)="cancelDemand()">
+            Cancel
+          </button>
+          <button nz-button (click)="createDemand()">OK</button>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+</div>
+<div class="row mrgT20">
+  <div class="col-md-12">
+    <div class="row row d-flex justify-content-center">
+      <h4><b> FOURTEENTH KERALA LEGISLATIVE ASSEMBLY </b></h4>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <b>Fifteenth Session</b>
+    </div>
+    <div class="row d-flex justify-content-center">
+      LIST OF DEMANDS FOR GRANTS TO BE SUBMITTED TO THE VOTE VOTE OF THE HOUSE
+    </div>
+    <div class="row d-flex justify-content-center">
+      <u>(Vide List of Business for June 12,2019)</u>
+    </div>
+    <div class="row mrgT20 d-flex justify-content-center">
+      <nz-table #borderedTable nzBordered [nzData]="dataSet">
+        <thead>
+          <tr>
+            <th rowspan="3">Demand Number</th>
+            <th rowspan="3">Name of Demand</th>
+            <th colspan="5">Budget Estimates for 2020-2021</th>
+          </tr>
+          <tr>
+            <th colspan="2">
+              Amount of Demands for Grants on Account Voted by the house on
+              07.09.2019
+            </th>
+            <th colspan="2">
+              Amount of Demands for Grants to be Submitted to the vote of the
+              House
+            </th>
+            <th></th>
+          </tr>
+          <tr>
+            <th>Revenue</th>
+            <th>Capital</th>
+            <th>Revenue</th>
+            <th>Capital</th>
+            <th>Total</th>
+          </tr>
+          <tr>
+            <th>(1)</th>
+            <th>(2)</th>
+            <th>(3)</th>
+            <th>(4)</th>
+            <th>(5)</th>
+            <th>(6)</th>
+            <th>(7)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>V</td>
+            <td>
+              Goods and Services Tax, Agrilcutural Income tax and Sales Tax
+            </td>
+            <td>1139003300</td>
+            <td>--</td>
+            <td>22,33332100</td>
+            <td>--</td>
+            <td>44,89632637</td>
+          </tr>
+          <!-- <tr *ngFor="let data of borderedTable.data">
+       
+      </tr> -->
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [(nzVisible)]="showHeadPopUp"
+  nzTitle="Add Demand Heads"
+  (nzOnCancel)="showHeadPopUp = false"
+  [nzFooter]="null"
+  nzWidth="800"
+>
+  <div class="padding_25">
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">
+            <b>Previosly Unselected Demand Heads</b>
+          </div>
+          <div class="col-md-4">
+            <nz-select nzShowSearch nzAllowClear>
+              <nz-option nzLabel="DD/MM/YYYY" nzValue="1"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <ul class="checklis">
+            <li *ngFor="let box of demandsList; let i = index">
+              <label
+                class="mr-6"
+                nz-checkbox
+                [(ngModel)]="box.checked"
+                name="checkbox{{ i }}"
+                >{{ box.name }}</label
+              >
+              <span>dd/MM/yyyy</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4">
+            <b>UpComing Demand Heads</b>
+          </div>
+          <div class="col-md-4">
+            <nz-select nzShowSearch nzAllowClear>
+              <nz-option nzLabel="DD/MM/YYYY" nzValue="1"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <ul class="checklis">
+            <li *ngFor="let box of demandsList; let i = index">
+              <label
+                class="mr-6"
+                nz-checkbox
+                [(ngModel)]="box.checked"
+                name="checkbox{{ i }}"
+                >{{ box.name }}</label
+              >
+              <span>dd/MM/yyyy</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-right">
+        <button class="mr-6" nz-button nzType="primary">Add Head</button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

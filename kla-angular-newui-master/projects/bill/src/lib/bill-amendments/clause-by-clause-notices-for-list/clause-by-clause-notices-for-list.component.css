@@ -1,0 +1,9 @@
+.viewlink {
+    color: blue;
+  }
+  .mr-top {
+    margin-top: 20px;
+}
+.word-break {
+  word-break: break-all;
+}

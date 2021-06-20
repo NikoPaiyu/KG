@@ -1,0 +1,121 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    <a>{{ "noticeprocessing.notice.createnotice.dashboard" | translate }}</a>
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    <a>{{ "bussiness-dashboard.current-number.currentNumberGeneration" | translate }}</a>
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class ="col-md-12">
+          <h2 class="admin-page-heading">
+                {{ "bussiness-dashboard.current-number.currentNumberGeneration" | translate }}
+            </h2>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <button 
+                nz-button nzType="'primary'" nz-button 
+                class="btn-align ant-btn ant-btn-primary marginbtm-15"
+                (click)="generateModal()">
+                {{ "bussiness-dashboard.current-number.genearteCurrentNumber" | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <nz-card style="width:400px;">
+                <div class="row">
+                    <div class = "col-md-6">
+                        {{ "bussiness-dashboard.current-number.newCurrentNumber" | translate }}
+                    </div>
+                    <div class= "col-md-6">
+                        <h4>{{currentNumber}}</h4>
+                    </div>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+</div>
+<nz-modal
+  [(nzVisible)]="isGenerateVisibleModal"
+  nzTitle=" Generate Current Number"
+  [nzFooter]= "null"
+  (nzOnCancel)="handleCancel()"
+>
+  <div class="padding_25">
+    <form nz-form [formGroup]="currentForm" class="form">
+      <div class="row">
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{ "bill.prioritylist.create.errortpl" | translate }}
+          </ng-container>
+        </ng-template>
+        <div class="col-md-12">
+          <nz-form-item>
+            <nz-form-label>{{
+              "Section" | translate
+            }}</nz-form-label>
+            <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+              <nz-select nzShowSearch nzPlaceHolder="Select Section" nzAllowClear formControlName="sectionId">
+                <nz-option
+                  *ngFor="let section of klaSections"
+                  [nzLabel]="section.klaSectionName"
+                  [nzValue]="section.klaSectionId"
+                ></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+    </div>
+    </form>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15">
+          <div class="col-md-4">Subject</div>
+          <div class="col-md-8">
+            <input
+              nz-input
+              placeholder="subject"
+              [(ngModel)]="current.subject"
+            />
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              class="secondary-button button-font dark-border dark-font"
+              (click)="handleCancel()"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to Generate Current Number?"
+              (nzOnConfirm)="genearateCurrentNumber()"
+              class="btn btn-primary primary-button"
+              [disabled]="current.subject === '' || !this.currentForm.valid"
+            >
+              Generate Current Number
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

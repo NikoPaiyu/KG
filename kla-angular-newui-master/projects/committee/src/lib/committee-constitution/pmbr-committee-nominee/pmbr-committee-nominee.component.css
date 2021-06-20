@@ -1,0 +1,42 @@
+
+.card1 {
+    padding: 15px 0px;
+  }
+  .card2 {
+    padding: 15px 0px;
+  }
+  .mrgb-6 {
+    margin-bottom: 15px;
+  }
+  .sortable  {
+    cursor: pointer;
+  }
+  .fix-btn {
+    position: fixed;
+    right: -20px;
+    top: 60vh;
+    transform: rotate(270deg);
+    -webkit-transform: rotate(270deg);
+    -moz-transform: rotate(270deg);
+    -o-transform: rotate(270deg);
+    -ms-transform: rotate(270deg);
+    z-index: 99;
+  }
+  .mrt-5{margin-top: 5px;}
+  .committee_blk{margin-top: 10px;}
+  .m-r5 {
+    margin-right: 5px;
+  }
+  .m-r2 {
+    margin-right: 2px;
+  }
+  .overflow-blt {
+    max-height: 90vh;
+    overflow: auto;
+    width: 100%;
+  }
+  .ex-ofico_ht{height: 120px;overflow: auto;}
+.mbr_ht{height: 290px;overflow: auto;overflow-x: hidden;}
+.ml-6 {
+  margin-left: 6px;
+}

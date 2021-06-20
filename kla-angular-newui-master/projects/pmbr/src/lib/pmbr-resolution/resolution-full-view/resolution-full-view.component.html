@@ -1,0 +1,123 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item> {{ "business-dashboard.bill-management.dashboard" | translate }} </nz-breadcrumb-item>
+            <nz-breadcrumb-item> {{ "business-dashboard.pmbr.resolution-list.pmbrmanagement" | translate }} </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12 d-flex justify-content-end">
+        <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="back()">
+            {{"business-dashboard.question.questionview.back" | translate}}
+        </button>
+        <button *ngIf="resolutionDetails?.status == 'SAVED'" class="ml-6 m-r5" nz-button [nzType]="'default'"
+            (click)="editResolution(resolutionId)">
+            {{"noticeprocessing.noticeprocess.edit" | translate}}
+        </button>
+        <button *ngIf="resolutionDetails?.status == 'SAVED'" nz-popconfirm
+            nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwantsubmit" | translate }}'
+            (nzOnConfirm)="submitResolution()" nz-button nzType="default" class="mrgL6">
+            <span>{{"business-dashboard.bill-management.billCreate.submit" | translate}}</span>
+        </button>
+    </div>
+</div>
+</div>
+
+<div class="row">
+    <div class="col-md-9">
+        <nz-tabset>
+            <nz-tab nzTitle='{{"business-dashboard.pmbr.resolution-list.resolution" |translate}}'>
+                <!-- <a nz-tab-link [routerLink]="['./bill-content']" [queryParams]="{ tab: 'content' }"queryParamsHandling="merge">Bill</a> -->
+                <pmbr-resolution-content-view *ngIf="resolutionDetails" [blocks]="resolutionDetails.blocks"
+                    [versionDetails]="resolutionDetails.versionMap" [billId]="resolutionDetails.id">
+                </pmbr-resolution-content-view>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+    <div class="col-md-3 left-border bill-details">
+        <div class="row mrgB20">
+            <div class="col-md-12">
+                <strong style="font-size: 17px">{{ "pmbr.resolutions.resolutiondetails" | translate }}</strong>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <nz-form-label>
+                        {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+                    </nz-form-label>
+                </strong>
+            </div>
+        </div>
+        <div class="row marginbtm-25" *ngIf="resolutionDetails?.type">
+            <div class="col-md-12">
+                <span class="br-word">
+                    {{ resolutionDetails?.type?.split("_").join(" ") }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <nz-form-label>
+                        {{ "pmbr.resolutions.natureResolution" | translate }}
+                    </nz-form-label>
+                </strong>
+            </div>
+        </div>
+        <div class="row marginbtm-25" *ngIf="resolutionDetails?.natureOfBill">
+            <div class="col-md-12">
+                <span class="br-word"> {{ resolutionDetails?.natureOfBill }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <nz-form-label>
+                        {{ "pmbr.lists.resolutionNumber" | translate }}
+                    </nz-form-label>
+                </strong>
+            </div>
+        </div>
+        <div class="row marginbtm-25">
+            <div class="col-md-12">
+                <span class="br-word"> {{ resolutionDetails?.billNumber }}</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <nz-form-label>
+                        {{ "pmbr.resolutions.resolutionStatus" | translate }}
+                    </nz-form-label>
+                </strong>
+            </div>
+        </div>
+        <div class="row marginbtm-25" *ngIf="resolutionDetails?.status">
+            <div class="col-md-12">
+                <span class="br-word">
+                    {{ resolutionDetails?.status.split("_").join(" ") }}</span>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <strong>
+                    <nz-form-label>{{
+                        "business-dashboard.bill-management.billlist.lang" | translate
+                        }}</nz-form-label>
+                </strong>
+            </div>
+        </div>
+        <div class="row marginbtm-25">
+            <div class="col-md-12">
+                <span class="br-word" *ngIf="resolutionDetails?.language == 'MAL'">
+                    {{ "bill.bill-clause.list.malayalm" | translate }}</span>
+                <span class="br-word" *ngIf="resolutionDetails?.language == 'ENG'"> {{ "bill.bill-clause.list.english" |
+                    translate }}</span>
+            </div>
+        </div>
+    </div>
+</div>

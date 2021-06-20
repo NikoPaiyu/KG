@@ -1,0 +1,40 @@
+.report-holder {
+  width: 800px;
+  padding: 15px;
+}
+.table {
+  width: 100%;
+  font-size: 14px;
+  margin-top: 15px;
+}
+.table td {
+  width: auto;
+  padding: 5px;
+  line-height: 22px;
+}
+.tl {
+  text-align: left;
+}
+.tc {
+  text-align: center;
+}
+.tr {
+  text-align: right;
+}
+.pt {
+  padding-top: 10px !important;
+}
+.width100 {
+  width: 100%;
+  float: left;
+  margin-bottom: 5px;
+}
+.border td {
+  border: none !important;
+}
+.border th {
+  border: none !important;
+  padding: 5px;
+}
+.no-brder-head th{border: none !important;padding-bottom: 10px;text-align: left;}
+.vt{vertical-align: top;}

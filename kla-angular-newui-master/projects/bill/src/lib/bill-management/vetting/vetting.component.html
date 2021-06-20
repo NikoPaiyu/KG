@@ -1,0 +1,178 @@
+
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "bill.bill-clause.list.bill" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">Vetting</h2>
+    </div>
+</div>
+<nz-divider></nz-divider>
+
+<nz-tabset>
+    <nz-tab *ngIf="permissions.pending_vetting" nzTitle="Vetting Pending" (nzClick)="getSignManualList()">
+        <ng-template [ngTemplateOutlet]="pendingVettingTable"></ng-template>
+    </nz-tab>
+    <nz-tab *ngIf="permissions.completed_vetting" nzTitle="Vetting Completed" (nzClick)="getBillsCompletedVetting()">
+        <ng-template [ngTemplateOutlet]="completedVettingTable"></ng-template>
+    </nz-tab>
+    <nz-tab *ngIf="permissions.vetting" nzTitle="Vetting Pending" (nzClick)="getBillsForVetting()">
+        <ng-template [ngTemplateOutlet]="vettingTable"></ng-template>
+    </nz-tab>
+</nz-tabset>
+<ng-template #pendingVettingTable>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="ant-btn" (click)="clearFilter();clearSearch()">
+                        Clear Filter
+                    </button>
+                </div>
+                <div class="col-md-6">
+                        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="pendingSearch" (ngModelChange)="searchPending()" nz-input placeholder="input title here" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-table #filterTable nzShowPagination [nzData]="pendingList |  search:'title':pendingSearch" class="table-all">
+        <thead>
+            <tr>
+                <th>Serial No</th>
+                <th>Bill Number</th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">Bill Title</th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="date">Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of filterTable.data; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{item.bill?.billNumber}}</td>
+                <td *ngIf="colCheckboxes[0].check"  (mouseover)="showLinks(item.bill.id, 'pending')">
+                    <tr>{{item.title}}</tr> 
+                    <tr *ngIf="item.viewLinks">
+                        <a [routerLink]="['/business-dashboard/bill/bill-view/',item.bill.id]">View Bill</a>
+                    </tr>
+                </td>
+                <td>
+                    <nz-tag [nzColor]="'green'">{{ item.bill?.status?.split("_").join(" ") }}</nz-tag>
+                </td>
+                <td>
+                    <button nz-popconfirm nzPopconfirmTitle='Do you want to send the bill for Vetting ?' 
+                    (nzOnConfirm)="sendBillforVetting(item.bill.id)" type="button" class="ant-btn">Send for Vetting</button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<ng-template #completedVettingTable>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="ant-btn" (click)="clearFilter();clearSearch()">
+                        Clear Filter
+                    </button>
+                </div>
+                <div class="col-md-6">
+                        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="completedSearch" (ngModelChange)="searchCompleted()" nz-input placeholder="input title here" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-table #filterTable nzShowPagination [nzData]="completedList |  search:'title':completedSearch" class="table-all">
+        <thead>
+            <tr>
+                <th>Serial No</th>
+                <th>Bill Number</th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">Bill Title</th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="venue">Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of filterTable.data; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{item.bill?.billNumber}}</td>
+                <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(item.bill.id, 'complete')">
+                    <tr>{{item.title}}</tr>
+                    <tr *ngIf="item.viewLinks">
+                        <a [routerLink]="['/business-dashboard/bill/bill-view/',item.bill.id]">View Bill</a>
+                    </tr>
+                </td>
+                <td>
+                    <nz-tag [nzColor]="'green'">{{ item.bill?.status?.split("_").join(" ") }}</nz-tag>
+                </td>
+                <td>
+                    <a [routerLink]="['/business-dashboard/bill/registered-bill-view/' + item.bill.id + '/view/']">View Bill Register</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<ng-template #vettingTable>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="ant-btn" (click)="clearFilter();clearSearch()">
+                        Clear Filter
+                    </button>
+                </div>
+                <div class="col-md-6">
+                        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+                            <input type="text" [(ngModel)]="searchKey" name='searchKey' 
+                            (ngModelChange)="searchVetting()" nz-input placeholder="input title here" />
+                        </nz-input-group>
+                        <ng-template #suffixIconSearch>
+                            <i nz-icon nzType="search"></i>
+                        </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nz-table #filterTable nzShowPagination [nzData]="vettingList |  search:'title':searchKey" class="table-all">
+        <thead>
+            <tr>
+                <th>Serial No</th>
+                <th>Bill Number</th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">Bill Title</th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="date">Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of filterTable.data; let i = index">
+                <td>{{i+1}}</td>
+                <td>{{item.bill?.billNumber}}</td>
+                <td *ngIf="colCheckboxes[0].check">{{item.title}}</td>
+                <td>
+                    <nz-tag [nzColor]="'green'">{{ item.bill?.status?.split("_").join(" ") }}</nz-tag>
+                </td>
+                <td> 
+                    <a [routerLink]="['/business-dashboard/bill/bill-view/',item.bill.id]">View Bill</a>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>

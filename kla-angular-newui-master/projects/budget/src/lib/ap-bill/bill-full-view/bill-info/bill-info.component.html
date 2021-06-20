@@ -1,0 +1,227 @@
+<div class="row mrgB20">
+    <!-- <div class="col-md-12 d-flex justify-content-end">
+      <button nz-button nzSize="small" (click)="editBillDetails()">
+        <i nz-icon nzType="edit" class="baseline" nzTheme="outline"></i>
+      </button>
+    </div> -->
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{
+          "business-dashboard.bill-management.billCreate.billtitle"
+            | translate
+        }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.blocks[0].content }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{ "business-dashboard.bill-management.billlist.type" | translate }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails?.type?.split("_").join(" ") }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{
+          "business-dashboard.bill-management.billCreate.billNature"
+            | translate
+        }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.natureOfBill }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.billNumber }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>
+        {{
+          "business-dashboard.bill-management.billlist.billstatus" | translate
+        }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails?.status?.split("_").join(" ") }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>{{
+        "business-dashboard.bill-management.billlist.lang" | translate
+      }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong *ngIf="billDetails.language == 'MAL'"> {{ "bill.bill-clause.list.malayalm" | translate }} </strong>
+      <strong *ngIf="billDetails.language == 'ENG'"> {{ "bill.bill-clause.list.english" | translate }} </strong>
+    </div>
+  </div>
+  <div
+    class="row mrgB20"
+    *ngIf="billDetails.referenceAct && billDetails?.referenceAct.length > 0"
+  >
+    <div class="col-md-3">
+      <nz-form-label>
+        {{
+          "business-dashboard.bill-management.billCreate.actreference"
+            | translate
+        }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong *ngFor="let actReference of billDetails.referenceAct">
+        {{ actReference }} &nbsp; &nbsp;
+      </strong>
+    </div>
+  </div>
+  <div
+    class="row mrgB20"
+    *ngIf="
+      billDetails.oldReferenceAct && billDetails?.oldReferenceAct.length > 0
+    "
+  >
+    <div class="col-md-3">
+      <nz-form-label>
+        {{
+          "business-dashboard.bill-management.billCreate.oldacteference"
+            | translate
+        }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong *ngFor="let oldActReference of billDetails.oldReferenceAct">
+        {{ oldActReference }}&nbsp; &nbsp;
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>{{
+        "business-dashboard.bill-management.billlist.minister" | translate
+      }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.minister }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>{{
+        "business-dashboard.bill-management.billlist.dept" | translate
+      }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.department }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label> {{ "bill.bill-clause.list.ordinancereplacmentbill" | translate }} </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        <i
+          *ngIf="!billDetails.ordinance"
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+        ></i>
+        <i
+          *ngIf="billDetails.ordinance && billDetails?.statementOnRule"
+          nz-icon
+          nzType="check-circle"
+          nzTheme="outline"
+        ></i>
+        <a
+          *ngIf="billDetails.ordinance && billDetails.statementOnRule"
+          [href]="billDetails.statementOnRule"
+          target="_blank"
+        >
+        {{ "bill.bill-clause.list.viewstatementrule(1)" | translate }}
+        </a>
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20" *ngIf="billDetails.ordinance">
+    <div class="col-md-3">
+      <nz-form-label> {{ "cpl.docpreparion.ordinanceno" | translate }} </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.ordinanceNumber }}
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label> {{ "business-dashboard.bill-management.billlist.govrec" | translate }} </nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        <i
+          *ngIf="billDetails.governerRecommendation"
+          nz-icon
+          nzType="check-circle"
+          nzTheme="outline"
+        ></i>
+        <a
+          *ngIf="billDetails.governerRecommendation"
+          [href]="billDetails.governerRecommendationUrl"
+          target="_blank"
+        >
+        {{ "bill.performballo.viewfile" | translate }}
+        </a>
+        <i
+          *ngIf="!billDetails.governerRecommendation"
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+        ></i>
+      </strong>
+    </div>
+  </div>
+  <div class="row mrgB20">
+    <div class="col-md-3">
+      <nz-form-label>{{
+        "business-dashboard.bill-management.billCreate.article" | translate
+      }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <strong>
+        {{ billDetails.articalNo }}
+      </strong>
+    </div>
+  </div>
+

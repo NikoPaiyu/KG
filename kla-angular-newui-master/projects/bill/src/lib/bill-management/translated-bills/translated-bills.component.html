@@ -1,0 +1,225 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.bill-management" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.bill-management.dashboard" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">
+            Translated Bills
+            </h2>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-6">
+      <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+        {{ "business-dashboard.bill-management.billlist.addFilter" | translate }}
+      </button>
+      <button type="button" class="ant-btn" (click)="clearFilter()">
+        {{
+          "business-dashboard.bill-management.billlist.clearFilter" | translate
+        }}
+      </button>
+    </div>
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              [(ngModel)]="searchParam"
+              name="search"
+              nz-input
+              placeholder="Search"
+              (ngModelChange)="searchonErrata()"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button
+            type="button"
+            class="ant-btn"
+            nz-dropdown
+            nzTrigger="click"
+            [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+          </button>
+        </div>
+  
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul nz-menu fileTable class="checkbox-style">
+              <li class="pdm" *ngFor="let box of colCheckboxes; let i = index">
+                <label
+                  nz-checkbox
+                  [nzDisabled]="box.disable"
+                  [(ngModel)]="box.check"
+                  name="i"
+                  (ngModelChange)="disableCheckBox()"
+                  >{{ box.label }}</label
+                >
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of checkedFilters">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">
+          {{ filter.label }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filter.selValue"
+            name="{{ filter.label }}"
+            (ngModelChange)="searchCol()"
+          >
+            <nz-option
+              *ngFor="let data of filter.data"
+              [nzLabel]="data"
+              [nzValue]="data"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(filter)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="translatedList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <th
+          nzShowCheckbox
+          [(nzChecked)]="checkbxParams.allDtCheckd"
+          (nzCheckedChange)="_checkAllRows($event)"
+        ></th>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billTitle">
+          Bill Title
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="billOriginalLanguage">
+         Original Language
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+          Bill Title in Translated Language
+          </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="language"> 
+         Translated Language 
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort>
+          Document
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="status">
+          Translated Bill Status
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data">
+        <td
+          nzShowCheckbox
+          [(nzChecked)]="mapOfCheckedId[list.id]"
+          (nzCheckedChange)="refreshStatus(list)"
+        ></td>
+        <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)">
+          <tr>
+            {{
+              list.billTitle
+            }}
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td *ngIf="list.status == 'WAITING_FOR_SUBMISSION'">
+                <a class="viewlink"(click)="resubmittoFile(list)">Resubmit to file </a>
+              </td>
+              
+            </div>
+          </tr>
+        </td>
+
+        <td *ngIf="colCheckboxes[1].check">{{ (list.billOriginalLanguage == 'ENG') ? "ENGLISH" : "MALAYALM" }}</td>
+        <td *ngIf="colCheckboxes[2].check">{{ list.title }}</td>
+        <td *ngIf="colCheckboxes[2].check">{{ list.language }}</td>
+        <td *ngIf="colCheckboxes[3].check">
+          <button class="mr-6" nz-button (click)="downloadTranlatedBill(list?.documentUrl)">
+            <i nz-icon nzType="download" nzTheme="outline"></i>
+            Download
+          </button>
+          <button  [disabled]="list.status != 'WAITING_FOR_SUBMISSION'" class="mr-6 mt-2" nz-button (click)="editTranslatedBillDetails(list)">
+            <i nz-icon nzType="edit" nzTheme="outline"></i>
+            Edit
+          </button>
+        </td>
+        <td *ngIf="colCheckboxes[4].check">
+          <nz-tag> {{ list?.status.split('_').join(' ') }}</nz-tag>
+          <button nz-button nzType="primary" class="ant-btn mr-6" (click)="publishTranslatedBill(list.id)"
+          *ngIf="list?.status === 'APPROVED'">
+            {{ "Publish" | translate }}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <!-- Starting Filter popup -->
+  <nz-modal
+    [(nzVisible)]="filtrParams.rowFilter || filtrParams.colFilter"
+    nzTitle=""
+    (nzOnCancel)="showFilter(null)"
+    (nzOnOk)="_confrmFilter()"
+  >
+    <div class="padding_15">
+      <p *ngFor="let box of filtrParams.tableDto; let i = index">
+        <label
+          nz-checkbox
+          name="checkbox{{ i }}"
+          (ngModelChange)="_chooseFilter(box)"
+          [(ngModel)]="box.checked"
+          >{{ box.label }}</label
+        >
+      </p>
+    </div>
+  </nz-modal>
+  <!-- Ending filter popup -->
+
+  <nz-modal [(nzVisible)]="translation.showpopUp" [nzClosable]="true"(nzOnCancel)="cancelTranslation($event)" [nzFooter]="null" nzWidth="1000" >
+    <lib-translation-view *ngIf="translation.showpopUp" [transData]="translation.transData"
+    [billDetails]="billDetails" (cancelTranslation)="cancelTranslation($event)" [editDetails]="true"
+    ></lib-translation-view>
+  </nz-modal>
+
+  

@@ -1,0 +1,254 @@
+<form [formGroup]="scheduleForm">
+    <div class="row">
+        <div class="col-md-12">
+            <nz-tabset>
+                <nz-tab nzTitle="{{'scheduling'|translate}}">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <nz-form-label>
+                                                {{ "business-dashboard.question.assembly" | translate }}
+                                            </nz-form-label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nz-select nzDisabled='true' nzPlaceHolder="Choose assembly"
+                                                formControlName="assemblyId" (ngModelChange)="privateBillDates()">
+                                                <nz-option *ngFor="let data of assemblyList" [nzValue]="data.id"
+                                                    [nzLabel]="data.assemblyId">
+                                                </nz-option>
+                                            </nz-select>
+                                        </div>
+                                    </div>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                <nz-form-control nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <nz-form-label>
+                                                {{ "business-dashboard.question.questionlist.session" | translate }}
+                                            </nz-form-label>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <nz-select nzDisabled='true' nzPlaceHolder="Session choose"
+                                                formControlName="sessionId" (ngModelChange)="privateBillDates()">
+                                                <nz-option *ngFor="let data of sessionList" [nzValue]="data.id"
+                                                    [nzLabel]="data.sessionId">
+                                                </nz-option>
+                                            </nz-select>
+                                        </div>
+                                    </div>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div *ngIf='!inputData.isView' class="col-md-4 d-flex justify-content-end">
+                            <button [disabled]="saveButtonValidation()" nz-button nzType="default" nz-popconfirm
+                                nzPopconfirmTitle="Are you sure you want to save this schedule?" (nzOnConfirm)="saveButtonClick()"
+                                nzPopconfirmPlacement="topLeft">
+                                <i nz-icon nzType="file" nzTheme="outline"></i>
+                                {{'business-dashboard.question.save'|translate}}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row mrg-top-20">
+                        <div class="col-md-8">
+                            <b>{{'forbills'|translate}}</b>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-table [nzShowPagination]="false"
+                                [nzData]="this.scheduleForm.controls.pmbrScheduleBill.value">
+                                <thead>
+                                    <tr>
+                                        <th>{{'business-dashboard.question.report.slno'|translate}}</th>
+                                        <th>{{'dateforpvtmemberbill'|translate}}</th>
+                                        <th>{{'lastdateforaddingbillforlotting'|translate}}</th>
+                                        <th>{{'dateoflotting'|translate}}</th>
+                                        <th *ngIf='!inputData.isView'>
+                                            {{'bussiness-dashboard.user-managemnet.biometric-enrollment.action'|translate}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="pmbrScheduleBill">
+                                    <ng-container
+                                        *ngFor="let itemrow of scheduleForm.get('pmbrScheduleBill')['controls'] ;let i=index;"
+                                        [formGroupName]="i">
+                                        <tr *ngIf="itemrow.value.operationType!=='DELETE'">
+                                            <td>{{i+1}}</td>
+                                            <td>
+                                                <nz-date-picker *ngIf="!inputData.isView;else labelPresentationDate"
+                                                    #datepicker [nzDisabledDate]="presentationAllowedDates"
+                                                    [nzAllowClear]="false" nzFormat="dd-MM-yyyy"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="presentationDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)">
+                                                </nz-date-picker>
+                                                <ng-template #labelPresentationDate>{{ itemrow.value.presentationDate|
+                                                    date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <nz-date-picker [nzFormat]="dateFormate"
+                                                    *ngIf="!inputData.isView;else labelSubmissionDate"
+                                                    [nzAllowClear]="false" [nzDisabledDate]="presentationAllowedDates"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="submissionDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)">
+                                                </nz-date-picker>
+                                                <ng-template #labelSubmissionDate>
+                                                    {{ itemrow.value.submissionDate|date:'dd-MM-yyyy'}}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <nz-date-picker [nzFormat]="dateFormate"
+                                                    *ngIf="!inputData.isView;else labelLottingDate"
+                                                    [nzAllowClear]="false"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    [nzDisabledDate]="presentationAllowedDates"
+                                                    formControlName="lottingDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)">
+                                                </nz-date-picker>
+                                                <ng-template #labelLottingDate>{{
+                                                    itemrow.value.lottingDate|date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td *ngIf='!inputData.isView'>
+                                                <button *ngIf='itemrow.value.id>0' nz-button nzType="default"
+                                                    class="mr-6" nzTooltipTitle="Edit"
+                                                    (click)="datePickerChange(itemrow)">
+                                                    <i nz-icon nzType="edit" nzTheme="outline"></i>
+                                                </button>
+                                                <button nz-button nzType="default" class="mr-6" nzTooltipTitle="Delete"
+                                                    nz-popconfirm
+                                                    nzPopconfirmTitle="Are you sure you want to delete this schedule?"
+                                                    (nzOnConfirm)="deleteRow(i,'Bill',itemrow)">
+                                                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr *ngIf='!inputData.isView'>
+                                        <td colSpan="5">
+                                            <button [disabled]="createNewValidation('pmbrScheduleBill')" nz-button
+                                                nzType="primary"
+                                                (click)="addRowForBill()">{{"createnew"|translate}}</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
+                    <div class="row mrg-top-20">
+                        <div class="col-md-8">
+                            <b>{{'forresolution'|translate}}</b>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nz-table [nzShowPagination]="false"
+                                [nzData]="this.scheduleForm.controls.pmbrScheduleResolution.value">
+                                <thead>
+                                    <tr>
+                                        <th>{{'noticeprocessing.staff.personalregister.slno'|translate}}</th>
+                                        <th>{{'datefornonofficialresolution'|translate}}</th>
+                                        <th>{{'lastdatefoaddingnameforlotting'|translate}}</th>
+                                        <th>{{'dateoflotting'|translate}}</th>
+                                        <th>{{'lastdateforsubmissionofnoticebylotwinner'|translate}}</th>
+                                        <th *ngIf='!inputData.isView' style="width: 150px;">
+                                            {{"bussiness-dashboard.user-managemnet.biometric-enrollment.action"|translate}}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody formArrayName="pmbrScheduleResolution">
+                                    <ng-container
+                                        *ngFor="let itemrow of scheduleForm.get('pmbrScheduleResolution')['controls'];let j=index;"
+                                        [formGroupName]="j">
+                                        <tr *ngIf="itemrow.value.operationType!=='DELETE'">
+                                            <td>{{j+1}}</td>
+                                            <td>
+                                                <nz-date-picker *ngIf="!inputData.isView;else labelPresentationDate"
+                                                    [nzFormat]="dateFormate" (ngModelChange)="datePickerChange(itemrow)"
+                                                    [nzAllowClear]="false"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="presentationDate"
+                                                    [nzDisabledDate]="presentationAllowedDates">
+                                                </nz-date-picker>
+                                                <ng-template #labelPresentationDate>{{ itemrow.value.presentationDate
+                                                    |date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <nz-date-picker [nzFormat]="dateFormate"
+                                                    *ngIf="!inputData.isView;else labelSubmissionDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)" [nzAllowClear]="false"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="submissionDate"
+                                                    [nzDisabledDate]="presentationAllowedDates">
+                                                </nz-date-picker>
+                                                <ng-template #labelSubmissionDate>{{ itemrow.value.submissionDate
+                                                    |date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <nz-date-picker [nzFormat]="dateFormate"
+                                                    *ngIf="!inputData.isView;else labelLottingDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)" [nzAllowClear]="false"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="lottingDate"
+                                                    [nzDisabledDate]="presentationAllowedDates">
+                                                </nz-date-picker>
+                                                <ng-template #labelLottingDate>{{
+                                                    itemrow.value.lottingDate|date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td>
+                                                <nz-date-picker [nzFormat]="dateFormate"
+                                                    *ngIf="!inputData.isView;else labelNoticeSubmissionDate"
+                                                    (ngModelChange)="datePickerChange(itemrow)" [nzAllowClear]="false"
+                                                    [nzDisabled]="itemrow.value.controlDisable&&itemrow.value.id>0"
+                                                    formControlName="noticeSubmissionDate"
+                                                    [nzDisabledDate]="presentationAllowedDates">
+                                                </nz-date-picker>
+                                                <ng-template #labelNoticeSubmissionDate>{{
+                                                    itemrow.value.noticeSubmissionDate|date:'dd-MM-yyyy' }}
+                                                </ng-template>
+                                            </td>
+                                            <td *ngIf='!inputData.isView'>
+                                                <button *ngIf='itemrow.value.id>0' nz-button nzType="default"
+                                                    class="mr-6" nzTooltipTitle="Edit"
+                                                    (click)="datePickerChange(itemrow)"><i nz-icon nzType="edit"
+                                                        nzTheme="outline"></i></button>
+                                                <button nz-button nzType="default" class="mr-6" nzTooltipTitle="Delete"
+                                                    nz-popconfirm
+                                                    nzPopconfirmTitle="Are you sure you want to  delete this schedule?"
+                                                    (nzOnConfirm)="deleteRow(j,'Resolution',itemrow)">
+                                                    <i nz-icon nzType="delete" nzTheme="outline"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                    <tr *ngIf='!inputData.isView'>
+                                        <td colspan="6">
+                                            <button [disabled]="createNewValidation('pmbrScheduleResolution')" nz-button
+                                                nzType="primary"
+                                                (click)="addRowForResolution()">{{"createnew"|translate}}</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </div>
+                    </div>
+                </nz-tab>
+            </nz-tabset>
+        </div>
+
+    </div>
+</form>

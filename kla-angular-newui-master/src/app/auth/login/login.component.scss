@@ -1,0 +1,70 @@
+@import "~src/sass/utilities/variables";
+.login {
+	.login-user {
+		h2 {
+			color: $dark;
+		}
+		input {
+			font-size: font-form;
+			background: $white;
+			height: 45px;
+		}
+		label {
+			color: $login-items;
+			font-size: 16px;
+		}
+	}
+	.primary-button {
+		border-radius: 5px;
+	}
+	.justifyend {
+		justify-content: flex-end;
+	}
+	.aligncenter {
+		align-items: center;
+	}
+	.secondary-button {
+		border-radius: 5px;
+	}
+	.forgot-pwd {
+		color: #3D8DDB;
+		background-color: none !important;
+		width: 100%;
+margin-top: 10px;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+.padding0 {
+	padding: 0px !important;
+}
+.content-bg {
+	
+}
+.align-items-center {
+	align-items: center;
+}
+
+.justifystart {
+	justify-content: flex-start;
+}
+.justifybetween {
+	justify-content: space-between;
+}
+.mrgT40 {
+	margin-top: 40px;
+}
+.mrgB40 {
+	margin-bottom: 40px;
+}
+.login_button{
+	background: #3D8DDB;
+color: #fff;
+width: 100%;
+text-align: center;
+border: none;
+border-radius: 9px;
+height: 45px;
+font-size: 16px;
+}

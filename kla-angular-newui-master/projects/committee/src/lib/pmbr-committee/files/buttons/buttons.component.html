@@ -1,0 +1,120 @@
+<div class="d-flex justify-content-between marginbtm-15">
+  <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="goBack()">
+    {{ "business-dashboard.question.questionview.back" | translate }}
+  </button>
+  <button
+    class="m-r5"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to Approve?"
+    (nzOnConfirm)="approveFile()"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      fileResponse.status == 'SUBMITTED' &&
+      _canApprove() &&
+      assignee == user.userId &&
+      showForward &&
+      fileResponse
+    "
+  >
+    {{ "noticeprocessing.noticeprocess.approve" | translate }}
+  </button>
+  <nz-select
+    style="width: 280px"
+    name="selectedRole"
+    [(ngModel)]="selectedRole"
+    nzAllowClear
+    (ngModelChange)="forwardOrReturn()"
+    *ngIf="
+      workflowUsers.length > 0 &&
+      fileResponse.status === 'SUBMITTED' &&
+      assignee === user.userId &&
+      showForward
+    "
+  >
+    <ng-container *ngFor="let role of workflowUsers">
+      <nz-option
+        *ngIf="role.actionId !== currentPoolUser"
+        nzValue="{{
+          role.userId + '-' + role.actionRow + '-' + role.actionGroup
+        }}"
+        nzLabel="{{ role.fullName + ' - ' + role.actionName }}"
+      ></nz-option>
+    </ng-container>
+  </nz-select>
+  <button
+    class="ml-6"
+    nz-button
+    nzType="primary"
+    nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to  {{ forwardReturnButton }} ?"
+    [disabled]="!selectedRole"
+    (nzOnCancel)="cancel()"
+    *ngIf="
+      workflowUsers.length > 0 &&
+      fileResponse.status === 'SUBMITTED' &&
+      assignee == user.userId &&
+      showForward
+    "
+    (nzOnConfirm)="forwardFile(fileResponse.fileId)"
+  >
+    {{ forwardReturnButton }}
+  </button>
+  <nz-modal
+    [(nzVisible)]="showSkipModal"
+    [nzFooter]="null"
+    [nzClosable]="false"
+  >
+    <div class="pading-all">
+      <div class="row">
+        <div class="col-md-12 marginbtm-15">
+          {{ "business-dashboard.notice-proc.reasontoskip" | translate }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 marginbtm-15">
+          <textarea
+            nz-input
+            placeholder="{{
+              'business-dashboard.notice-proc.reasontoskip' | translate
+            }}"
+            [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+            maxlength="256"
+            [(ngModel)]="reason"
+            oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+          >
+          </textarea>
+        </div>
+      </div>
+      <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button
+            type="button"
+            nz-button
+            nzType="default"
+            (click)="handleCancel()"
+            class="secondary-button button-admin-radius button-font dark-border dark-font"
+          >
+            {{ "cpl.correspondencelist.cancel" | translate }}
+          </button>
+          <button
+            type="button"
+            [disabled]="reason === ''"
+            nz-button
+            nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle="{{
+              'business-dashboard.correspondence.skiporforward' | translate
+            }}"
+            (nzOnConfirm)="skip = false; forwardFile(fileResponse.fileId)"
+            (nzOnCancel)="cancel()"
+            class="primary-button button-admin-radius button-font"
+          >
+            {{ "noticeprocessing.noticeprocess.forward" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </nz-modal>
+</div>

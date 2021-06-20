@@ -1,0 +1,298 @@
+<div class="row d-flex jusleify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>{{ "business-dashboard.bill-management.dashboard" | translate }}</nz-breadcrumb-item>
+      <nz-breadcrumb-item>{{ "business-dashboard.table.table-diary" | translate }}</nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-3">
+        <h3>{{ "business-dashboard.table.table-diary" | translate }}</h3>
+      </div>
+      <div class="col-md-5">
+        <h5>
+          {{ diaryData?.assemblyValue }}{{"tables.assembly-election.member-position-details.assembly" | translate}} ,
+          {{ diaryData?.sessionValue }} {{"dashboard.session" | translate}},
+          {{ diaryData?.date | date: "dd/MM/yyyy" }}
+        </h5>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <button
+          nz-button
+          nzType="default"
+          class="mr-6"
+          (click)="bulletinPart1()"
+          *ngIf="rbsPermission.bulletinPart1Create"
+        >
+          {{"business-dashboard.table-diary-prepare.generate-bulletin" | translate}}
+        </button>
+        <button nz-button nzType="default" class="mr-6" (click)="back()">
+          {{"business-dashboard.question.questionview.back" | translate}}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          class="mr-6"
+          (click)="isPreviewVisible = true"
+        >
+          {{"business-dashboard.election-management.view-registered-document.preview" | translate}}
+        </button>
+        <!-- <button nz-button nzType="primary">Save</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row" *ngIf="diaryData?.lobLines.length != 0">
+  <div class="col-md-3">
+    <nz-collapse class="nominee-collapses" nzAccordion [nzBordered]="false">
+      <ng-container
+        class="mrgT20"
+        *ngFor="let parentPanel of diaryData?.lobLines; let parentIndex = index"
+      >
+        <nz-collapse-panel
+          [nzDisabled]="parentPanel?.disable"
+          [nzActive]="parentPanel?.active"
+          [nzHeader]="parentExtra"
+        >
+          <ng-template #parentExtra>
+            <span class="pos">
+              {{ parentPanel?.businessName }}
+            </span>
+            <div
+              [ngClass]="{ activeBusiess: parentPanel?.active }"
+              style="position: absolute"
+            ></div>
+          </ng-template>
+          <nz-collapse nzAccordion nzExpandIconPosition="right">
+            <nz-collapse-panel
+              *ngFor="
+                let childPanel of parentPanel.businessLines;
+                let childIndex = index
+              "
+              [nzHeader]="childExtra"
+              [nzActive]="activeBusiness?.lobId === childPanel?.id"
+              (click)="setDatas(childPanel, childIndex, parentPanel)"
+            >
+              <ng-template #childExtra>
+                <span class="pos">
+                  {{ childPanel?.title }}
+                </span>
+                <div
+                  style="position: absolute"
+                  [ngClass]="{
+                    activeChildBusiess: activeBusiness?.lobId === childPanel?.id
+                  }"
+                >
+                  &nbsp;
+                </div>
+              </ng-template>
+            </nz-collapse-panel>
+          </nz-collapse>
+        </nz-collapse-panel>
+      </ng-container>
+    </nz-collapse>
+  </div>
+  <div class="col-md-5" *ngIf="selectedBusiness">
+    <nz-card>
+      <div class="row">
+        {{ selectedBusiness?.title }}
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="row">
+            <div class="col-md-12">
+              <nz-card
+                class="margnrtp-15"
+                *ngFor="
+                  let dairy of selectedBusiness?.tableDiaryLines;
+                  let diaryIndex = index
+                "
+              >
+                <div class="row">
+                  <div class="col-md-10">
+                    <span class="mr-6" *ngIf="!dairy?.isEdit"
+                      ><b>{{ getTime(dairy?.time) }}</b></span
+                    >
+                    <span class="mr-6" *ngIf="dairy?.isEdit">
+                      <nz-time-picker
+                        [(ngModel)]="dairy.time"
+                        style="width: 100px"
+                        [nzUse12Hours]="true"
+                        nzFormat="h:mm a"
+                      ></nz-time-picker>
+                    </span>
+                    <nz-tag
+                      
+                      [nzColor]="getTagColor(dairy?.type)"
+                    >
+                      {{ getTagName(dairy?.type) }}
+                    </nz-tag>
+                  </div>
+                  <div class="col-md-2 align-right">
+                    <button
+                      *ngIf="!dairy?.isEdit"
+                      (click)="editDiaryLines(diaryIndex)"
+                      nzSize="small"
+                      class="mr-6"
+                      nz-button
+                      nzType="default"
+                    >
+                      {{"business-dashboard.office.uploaded-docsview.edit" | translate}}
+                    </button>
+                    <button
+                      *ngIf="dairy?.isEdit"
+                      (click)="saveDiaryLines(dairy, diaryIndex)"
+                      nzSize="small"
+                      nz-button
+                      nzType="primary"
+                      class="mr-6"
+                    >
+                      {{"business-dashboard.forms.form-list.save" | translate}}
+                    </button>
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <quill-editor
+                      *ngIf="dairy.isEdit"
+                      [styles]="{ height: '100px' }"
+                      [(ngModel)]="dairy.description"
+                      [modules]="modules"
+                    ></quill-editor>
+                    <quill-view-html
+                      *ngIf="!dairy.isEdit"
+                      [content]="dairy?.description"
+                    >
+                    </quill-view-html>
+                  </div>
+                </div>
+              </nz-card>
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-myDiv col-md-12 only-show-on-hover">
+              <nz-tag
+                class="mrbm-6"
+                *ngFor="let tags of getTagList()"
+                [nzColor]="tags.color"
+                (click)="addNew(tags)"
+                >{{ tags.title }}
+              </nz-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+  <div class="col-md-4" *ngIf="selectedBusiness">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-card class="width-100">
+          <div class="row margnrtp-5" *ngIf="selectedBusiness?.allotedTime">
+            <div class="col-md-6">{{"business-dashboard.table-diary-prepare.allocated-time" | translate}}:</div>
+            <div class="col-md-6">
+              {{ selectedBusiness?.allotedTime }} {{"business-dashboard.table-diary-prepare.minutes" | translate}}
+            </div>
+          </div>
+          <div
+            class="row margnrtp-5"
+            *ngIf="selectedBusiness?.primaryMemberName"
+          >
+            <div class="col-md-6">{{"business-dashboard.forms.form-list.member-name" | translate}}:</div>
+            <div class="col-md-6">
+              {{ selectedBusiness?.primaryMemberName }}
+            </div>
+          </div>
+          <div
+            class="row margnrtp-5"
+            *ngIf="selectedBusiness?.secondaryMemberName"
+          >
+            <div class="col-md-6">{{"business-dashboard.question.portfolio.ministername" | translate}}:</div>
+            <div class="col-md-6">
+              {{ selectedBusiness?.secondaryMemberName }}
+            </div>
+          </div>
+          <div class="row margnrtp-5" *ngIf="selectedBusiness?.description">
+            <div class="col-md-6">{{"business-dashboard.swearing-in.description" | translate}}:</div>
+            <div class="col-md-6">
+              {{ selectedBusiness?.description }}
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <nz-card class="width-100">
+          <div class="row margnrtp-15">
+           <div class="col-md-12 d-flex justify-content-between align-items-center"> 
+             {{"lobview.view.speakernote" | translate}}
+            <button
+              *ngIf="selectedBusiness?.speakerNoteUrl"
+              (click)="isPdfVisible = true"
+              nz-button
+              nzType="default"
+              class="mr-6"
+            >
+            {{"business-dashboard.election-management.view-registered-document.preview" | translate}}
+            </button>
+          </div>
+          </div>
+          <div class="row margnrtp-15" *ngIf="selectedBusiness?.speakerNoteUrl">
+            <div class="col-md-12">
+            <ngx-doc-viewer
+              [url]="selectedBusiness?.speakerNoteUrl"
+              viewer="url"
+              style="width: 100%"
+            ></ngx-doc-viewer>
+            </div>
+          </div>
+          <div
+            class="row margnrtp-15"
+            *ngIf="!selectedBusiness?.speakerNoteUrl"
+          >
+          <div class="col-md-12">
+            <h6>
+              {{ "cpl.fileworkflowdocs.nodocumentuploadedtoview" | translate }}
+            </h6>
+          </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-modal
+  [nzVisible]="isPdfVisible"
+  nzWidth="800"
+  [nzContent]="modalContent"
+  [nzFooter]="null"
+  (nzOnCancel)="isPdfVisible = false"
+>
+  <ng-template #modalContent>
+    <div class="width-100 pading-all">
+      <div class="row margnrtp-15 margnrgt-15">
+        <div class="col-md-12 align-items-center">
+          <ngx-doc-viewer
+            [url]="selectedBusiness?.speakerNoteUrl"
+            viewer="url"
+            style="width: 100%; height: 800px"
+          ></ngx-doc-viewer>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>
+
+<nz-modal
+  [nzVisible]="isPreviewVisible"
+  nzWidth="800"
+  [nzFooter]="null"
+  (nzOnCancel)="isPreviewVisible = false"
+>
+  <tables-table-diary-preview *ngIf="isPreviewVisible" [diaryData]="diaryData">
+  </tables-table-diary-preview>
+</nz-modal>

@@ -1,0 +1,24 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="submitForm()">
+  <nz-form-item>
+    <textarea rows="4" nz-input [(ngModel)]="inputValue"></textarea>
+    <br>
+    <h3>October 2019</h3>
+    <button nz-button nzType="default" nzBlock>Monday, October 28</button>
+  </nz-form-item>
+  <nz-form-item>
+    <button nz-button nzType="default">Tuesday, October 29</button>
+    <nz-form-control [nzSpan]="8" [nzOffset]="4">
+      <button>
+      <i nz-icon nzType="delete" nzTheme="fill">{{ "bill.bills.nobusiness" | translate }}</i>
+      </button>
+      <nz-form-control [nzSpan]="8" [nzOffset]="4">
+        <button>
+        <i nz-icon nzType="edit" nzTheme="fill">{{ "bill.bills.extend" | translate }}</i>
+        </button>
+    </nz-form-control>
+  </nz-form-item>
+  <h3>November 2019</h3>
+  <nz-form-item>
+    <button nz-button nzType="default">Wednesday, November 6</button>
+  </nz-form-item>
+</form>

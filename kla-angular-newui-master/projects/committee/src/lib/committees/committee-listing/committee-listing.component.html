@@ -1,0 +1,193 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{"committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{"committee.list.committeemanagement" | translate}}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+      
+      <h2 class="admin-page-heading"> {{"committee.list.committeelisting" | translate}}</h2>
+    </div>
+    
+    <div class="col-md-6 text-align-right">
+      <!-- <button nz-button nzType="primary" class="mrgL6">
+        {{"committee.list.createcommittee" | translate}}
+      </button> -->
+    </div>
+  </div>
+
+  
+  <nz-divider></nz-divider>
+  
+  <div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-6">
+      <!-- <a nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+        {{"committee.edit.committeeType"|translate}}
+        <i nz-icon nzType="down"></i>
+      </a>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu *ngFor="let committeeType of committeeList; let i = index" class="checkbox-style">
+          <li  nz-checkbox nz-menu-item [(ngModel)]="committeeType.id" (click)="subject_committee(committeeType.id)">{{committeeType.name}}</li>
+           <li nz-menu-item>Select Committee</li> 
+          </ul>
+      </nz-dropdown-menu> -->
+
+      <div class="main-container">
+
+        <div class="content-container">
+          <!-- <div class="content-area">
+          <select id="dropdown" (change)="subject_committee($event.target.value)">
+            <option *ngFor="let committeeType of committeeList; let i = index" value="{{committeeType.id}}">
+              {{committeeType.name}}
+            </option>
+          </select>
+
+          </div> -->
+          <div class="content-area">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a Committee to Dissolve"
+          [(ngModel)]="committeeDto"
+          (ngModelChange)="changeCommittee($event)"
+          >
+          <ng-container *ngFor="let committeeType of committeeList; let i = index" >
+            <nz-option
+              [nzValue]="committeeType" [nzLabel]="committeeType.name"></nz-option>
+          </ng-container>
+          </nz-select>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="dissolve" *ngIf="showdissolvebutton">
+        <button nz-popconfirm nzPopconfirmTitle="Are you sure you want to Dissolve Committee?"
+          (nzOnConfirm)="dissolve_committee()" (nzOnCancel)="cancel()" nz-button nzType="primary" class="mrgL6">
+          {{"committee.edit.dissolvecommittee"|translate}} </button>
+      </div>
+      
+    </div>
+      <!-- <div class="col-md-6"> -->
+        <div class="col-md-1">
+          
+         <!-- <p> {{"noticeprocessing.staff.personalregister.addfilter" | translate}}</p> -->
+        </div>
+         <div class="col-md-3"> 
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input type="text" name="search" nz-input  [(ngModel)]="searchFilter"
+          (ngModelChange)="filterList()"
+            placeholder="Input Search text" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    <!-- </div> -->
+         <div class="col-md-2" *ngIf="true"> 
+         <a class="abs_btn" nzType="default" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+           <i nz-icon nzType="layout" nzTheme="outline"></i>
+             <span> Cols </span>
+         </a>
+         <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul
+              nz-menu
+              fileTable
+              *ngFor="let box of checkboxes; let i = index"
+              class="checkbox-style"
+            >
+              <li>
+                <label nz-checkbox [(ngModel)]="box.check" name="i">{{
+                  box.label
+                }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+         </div>
+      </div>
+  <!-- </div> -->
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-table #committeeTable [nzData]="committeeList" nzShowPagination nzShowSizeChanger>
+        <thead>
+          <tr> 
+            <th nzShowCheckbox class="tablechk"></th>
+            <th *ngIf="checkboxes[0].check">{{"committee.edit.committeename" | translate}}</th>
+            <th *ngIf="checkboxes[1].check">{{"committee.edit.committeetype" | translate}}</th>
+            <th *ngIf="checkboxes[2].check">{{"committee.edit.constituteddata" | translate}}</th>
+            <th *ngIf="checkboxes[3].check">{{"business-dashboard.question.questionlist.status" | translate}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            style="cursor: pointer;"
+            *ngFor="let data of committeeTable.data; let i = index" nz-popover nzType="primary"
+            nzPopoverPlacement="left"
+          >
+          <!-- [nzPopoverContent]="contentTemplate" -->
+          <!-- <ng-template #contentTemplate>
+            <div>
+                <span (click)="committeeview()">View</span>
+            </div>
+        </ng-template> -->
+          <td nzShowCheckbox class="tablechk"></td>
+          <td  *ngIf="checkboxes[0].check"
+          (mouseover)="showLinks(data.id)" (mouseleave)="hideLinks(data.id)">
+            <tr>
+              {{data.name}}
+            </tr>
+            <tr *ngIf="data.viewLinks">
+              <a nz-button nzType="link" class="viewlink" (click)="committeeview(data)">
+                View
+              </a>
+              <a nz-button nzType="link" class="viewlink" (click)="createBulletinPart2(data)"
+              *ngIf="!data.bulletinId && data.status === 'APPROVED'
+              && permissions.createBulletin">
+                Create Bulletin
+              </a>
+              <a nz-button nzType="link" class="viewlink" (click)="viewFile(data?.fileId)"
+              *ngIf="data?.fileId">
+                {{data?.fileNumber}}
+              </a>
+          </tr>
+          </td>
+          <td *ngIf="checkboxes[1].check">{{data?.category?.name}}</td>
+          <td *ngIf="checkboxes[2].check">{{data.createdDate | date: "dd-MM-yyyy"}}</td>
+          <td *ngIf="checkboxes[3].check"> <nz-tag [nzColor]="'green'">
+            {{ data.status }}
+          </nz-tag></td>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <nz-modal
+[(nzVisible)]="commiteeView.showpop"
+nzWidth="1000"
+nzTitle="Committee Configuration"
+(nzOnCancel)="closePop()"
+[nzFooter]="null">
+<div class="col-md-12">
+ <!-- <committee-committee-view [isView]="true"></committee-committee-view> as of now subjcet committe is only there --> 
+ <committee-subject-committee-fileview *ngIf="commiteeView?.memberDetailDto && commiteeView.category== 'SUBJECT_COMMITTEE'"
+  [memberDetailDto]="commiteeView?.memberDetailDto" 
+  [userDetails]="user"></committee-subject-committee-fileview>
+  <committee-select-committee-fileview *ngIf="commiteeView?.memberDetailDto
+   && commiteeView.category== 'SELECT_COMMITTEE'"
+  [memberDetailDto]="commiteeView?.memberDetailDto" 
+  [userDetails]="user"></committee-select-committee-fileview>
+
+</div>
+</nz-modal>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle=' {{ "Create Bulletin Part 2" | translate }}' (nzOnCancel)="cancelBulletin()">
+  <committee-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)">
+  </committee-create-bulletin-form>
+</nz-modal>
+

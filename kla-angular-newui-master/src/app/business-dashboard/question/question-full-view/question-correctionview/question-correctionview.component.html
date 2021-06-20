@@ -1,0 +1,500 @@
+<div class="row">
+  <div class="col-md-8 col-sm-8 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        "
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{
+          _IsQuestion(qDetail.status)
+            ? ("business-dashboard.question.question" | translate)
+            : ("business-dashboard.question.notice" | translate)
+        }}</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12 marginbtm-10">
+    <h2 class="admin-page-heading">
+      {{
+        _IsQuestion(qDetail.status)
+          ? ("business-dashboard.question.question" | translate)
+          : ("business-dashboard.question.notice" | translate)
+      }}
+    </h2>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-between">
+    <div class="row">
+      <div class="col-md-4 col-sm-12">
+        <button nz-button (click)="showAnswerVersion()">
+          {{ "business-dashboard.question.answerversions" | translate }}
+        </button>
+      </div>
+      <div class="col-md-8 col-sm-12 d-flex justify-content-end">
+        <button
+          nz-button
+          nzType="primary"
+          (click)="onBack(qDetail.status)"
+          class="mr-6"
+        >
+        {{ "business-dashboard.question.questionview.back" | translate }}
+        </button>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="createPreviewModal()"
+          class="mr-6"
+        >
+        {{ "business-dashboard.question.preview" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="input-group">
+  <div class="row align-items-center">
+    <div
+      class="col-md-2 align-items-center"
+      *ngIf="activityFlowList && activityFlowList.length > 0"
+    >
+      <span class="workflowhd">Main Workflow</span>
+    </div>
+    <div class="col-md-10 marginbtm-10 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of activityFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [ngClass]="{ dropFlow: data.endWrkflow }"
+            [nzTitle]="
+              data.owner
+                ? capitalize(data.owner)
+                : capitalize(data.taskDefinitionKey)
+            "
+          >
+          </nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="revokeFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2"><span class="workflowhd">
+      {{"business-dashboard.question.revokeworkflow" | translate}}
+    </span></div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of revokeFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [ngClass]="{ dropFlow: data.endWrkflow }"
+            [nzTitle]="capitalize(data.owner)"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="withdrawFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd">
+        {{"business-dashboard.question.withdrawalworkflow" | translate}}
+      </span>
+    </div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of withdrawFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [nzTitle]="capitalize(data.owner)"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-group" *ngIf="correctionReqFlowList">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd">
+        {{"business-dashboard.question.correctionrequestworkflow" | translate}}</span>
+    </div>
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow">
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of correctionReqFlowList"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [nzTitle]="capitalize(data.owner)"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="input-group" *ngIf="clubbRemovalWorkflow.length != 0">
+  <div class="row align-items-center">
+    <div class="col-md-2">
+      <span class="workflowhd">
+        {{"business-dashboard.question.clubbingremovalworkflow" | translate}}
+      </span>
+    </div>
+    <!-- <div class="row" *ngFor="let flow of clubbRemovalWorkflow"> -->
+    <div class="col-md-10 marginbtm-25 margnrtp-15">
+      <div class="overflow" *ngFor="let flow of clubbRemovalWorkflow">
+        <div>{{"business-dashboard.question.clubbingremovalworkflow" | translate}}
+          {{ flow.memberDetails.memberName }}</div>
+        <nz-steps nzSize="small">
+          <nz-step
+            *ngFor="let data of flow"
+            [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+            [nzTitle]="capitalize(data.owner)"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+    <!-- </div> -->
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <div class="row marginbtm-15" *ngIf="assemblySession['assemblyId']">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.assembly" | translate }}:
+      </div>
+      <div class="col-md-8">
+        {{ assemblySession["assemblyId"] }}
+      </div>
+    </div>
+    <div class="row marginbtm-15" *ngIf="assemblySession['sessionId']">
+      <div class="col-md-4">
+        {{ "business-dashboard.question.session" | translate }}:
+      </div>
+      <div class="col-md-8">{{ assemblySession["sessionId"] }}</div>
+    </div>
+
+    <div class="input-group">
+      <div class="row marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.mlaName" | translate }}:
+        </div>
+        <div class="pLR15">
+          <div
+            *ngFor="let data of qDetail.clubbingDetails"
+            class="col border-style"
+          >
+            {{ data.memberName }}
+            <div *ngIf="data.withdrawalWorkflowId">
+              <nz-tag nzColor="default">
+                {{"business-dashboard.question.clubbingremovalrequested" | translate}}
+              </nz-tag>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticeno" | translate }}:
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-12" *ngFor="let noticeNo of noticeNoArray">
+              {{ noticeNo }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="input-group" *ngIf="qDetail.questionNumber">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionlist.questionnumber"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.questionNumber }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.dateofreg" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.registrationDate | date: "dd-MM-yyyy" }}
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="row marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.portfolio" | translate }}:
+        </div>
+        <div class="col-md-8" *ngIf="portfolio">
+          {{ portfolio.name }}
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubject" | translate }}:
+        </div>
+        <div class="col-md-8" *ngIf="ministerSubjects">
+          {{ ministerSubjects.title }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group">
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.questiondate" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.questionDate | date: "dd-MM-yyyy" }}
+        </div>
+      </div>
+    </div>
+    <div class="input-group" *ngIf="showDate">
+      <div class="row">
+        <div class="col-md-4">
+          {{"business-dashboard.question.questionans.correctiondate" | translate}} :
+        </div>
+        <div class="col-md-8">
+          <nz-select
+            nzRequired
+            nzShowSearch
+            nzPlaceHolder="Select Correction Date"
+            [(ngModel)]="qdateForCorrection"
+          >
+            <nz-option
+              *ngFor="let item of questionDate"
+              nzLabel="{{ item | date: 'dd-MM-yyyy' }}"
+              nzValue="{{ item }}"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-group" *ngIf="qDetail.type !== 'SHORT_NOTICE'">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            _IsQuestion(qDetail.status)
+              ? ("business-dashboard.question.qcategory" | translate)
+              : ("business-dashboard.question.ncategory" | translate)
+          }}
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.category }}
+        </div>
+      </div>
+      <div class="row" *ngIf="changeCategoryRule !== ''">
+        <div class="col-md-12">
+          <nz-alert
+            *ngIf="changeCategoryReason"
+            nzType="warning"
+            nzMessage="Question category changed as per the following direction  "
+            nzDescription="Direction: {{ changeCategoryRule }}"
+            nzShowIcon
+          >
+          </nz-alert>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="qDetail.category == 'STARRED' && qDetail.priority">
+      <div class="input-group">
+        <div class="row">
+          <div class="col-md-4">
+            {{
+              _IsQuestion(qDetail.status)
+                ? ("business-dashboard.question.questionpriority" | translate)
+                : ("business-dashboard.question.noticepriority" | translate)
+            }}
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.priority }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-group">
+  <div class="row">
+    <div class="col-md-2">
+      {{
+        _IsQuestion(qDetail.status)
+          ? ("business-dashboard.question.questionlist.questionheading"
+            | translate)
+          : ("business-dashboard.question.noticeheading" | translate)
+      }}
+    </div>
+    <div class="col-md-10">{{ qDetail.heading }}</div>
+  </div>
+</div>
+<div
+  class="input-group"
+  *ngIf="_IsQuestion(qDetail.status) && qDetail.answerAttachmentUrl"
+>
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.questionview.ansattachment" | translate }}
+    </div>
+    <div class="col-md-10">
+      <a [href]="qDetail.answerAttachmentUrl" target="_blank">
+        {{"business-dashboard.question.questionview.attachment" | translate}}
+      </a>
+      <button
+        nz-button
+        (click)="DownloadFile(qDetail.answerAttachmentUrl)"
+        [nzType]="'default'"
+      >
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div
+  class="input-group"
+  *ngIf="
+    qDetail && _IsQuestion(qDetail.status) && qDetail.correctionAttachmentUrl
+  "
+>
+  <div class="row">
+    <div class="col-md-2">
+      {{ "business-dashboard.question.questionans.coverletter" | translate }}:
+    </div>
+    <div class="col-md-10">
+      <a (click)="basicPopup()" style="color: #4597d8;">
+        {{
+          "business-dashboard.question.questionans.coverletter" | translate
+        }}</a
+      >
+      <button
+        nz-button
+        (click)="DownloadFile(qDetail.correctionAttachmentUrl)"
+        [nzType]="'default'"
+      >
+        <i nz-icon nzType="download" nzTheme="outline"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div *ngFor="let i = index; let clause; of: qDetail.clauses">
+  <div class="input-group">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-card>
+          <div class="row">
+            <div class="input-group">
+              <div class="row" *ngIf="clause.subSubjectId">
+                <div class="col-md-2">
+                  {{
+                    "business-dashboard.question.ministersubsubject" | translate
+                  }}
+                </div>
+                <div class="col-md-10">
+                  {{ _getMinisterSubSubjectData(clause.subSubjectId).title }}
+                </div>
+              </div>
+            </div>
+            <div class="width-100">
+              <div class="row">
+                <div class="col-md-2">
+                  <span
+                    >{{ "business-dashboard.question.clause" | translate }}({{
+                      upper[i]
+                    }})</span
+                  >
+                </div>
+                <div class="col md 10 wordbreak">
+                  {{ clause.clause }}
+                </div>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="showClauseAns && clause.answer">
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.versioning.answer" | translate
+                }}
+              </div>
+              <div class="col-md-8">
+                {{ clause.answer.answer }}
+              </div>
+            </div>
+            <div
+              class="row margnrtp-15"
+              *ngIf="
+                showClauseAns && clause.answer && clause.answer.clauseAnswerUrl
+              "
+            >
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.questionview.attachment"
+                    | translate
+                }}
+              </div>
+              <div class="col-md-8">
+                <a [href]="clause.answer.clauseAnswerUrl" target="_blank">
+                  {{
+                    "business-dashboard.question.questionview.attachment"
+                      | translate
+                  }}
+                  ({{ upper[i] }})
+                </a>
+                <button
+                  nz-button
+                  (click)="DownloadFile(clause.answer.clauseAnswerUrl)"
+                  [nzType]="'default'"
+                >
+                  <i nz-icon nzType="download" nzTheme="outline"></i>
+                </button>
+              </div>
+            </div>
+            <div class="row margnrtp-15" *ngIf="showClauseAns && clause.answer">
+              <div class="col-md-2">
+                {{
+                  "business-dashboard.question.versioning.finalorInterim"
+                    | translate
+                }}
+              </div>
+              <div class="col-md-8">
+                {{ clause.answer.type }}
+              </div>
+            </div>
+          </div>
+        </nz-card>
+      </div>
+    </div>
+  </div>
+</div>

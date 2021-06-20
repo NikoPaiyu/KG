@@ -1,0 +1,59 @@
+@import "~src/sass/utilities/variables";
+
+.row {
+  width: 100%;
+}
+input {
+  width: 100%;
+}
+.input-group {
+  margin-bottom: 20px;
+}
+.ant-tag {
+  background: $white;
+  padding: 3px 7px;
+}
+.nz-close-style {
+  color: $color-red-close;
+  cursor: pointer;
+}
+.a-answer {
+  background: $color-blue-light-1;
+
+  textarea {
+    width: 100%;
+  }
+}
+.paddingL0 {
+  padding-left: 0px;
+}
+.mr-15 {
+  margin-right: 15px;
+}
+.justify-content-between {
+  justify-content: space-between;
+}
+.border-style {
+  padding: 10px 15px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.pLR15 {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.first {
+  position: relative;
+}
+.first::after {
+  position: absolute;
+  content: "1st";
+  right: -25px;
+  color: #689fcb;
+  font-size: 14px;
+}
+
+.mr-6 {
+  margin-right: 6px;
+}

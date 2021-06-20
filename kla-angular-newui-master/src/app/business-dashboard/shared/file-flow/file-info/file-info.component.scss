@@ -1,0 +1,28 @@
+.blthd {
+    font-weight: 600;
+    width: 100%;
+    float: left;
+}
+.overflow-blt {
+    max-height: 90vh;
+    overflow: auto;
+    width: 100%;
+}
+.bg_block {
+    background: #f1f7fb;
+    border: #e6eff4 solid 1px;
+    border-radius: 5px;
+    width: 100%;
+    padding: 15px;
+    margin: 15px;
+  }
+  .abs_btn {
+    background-color: #e6eff4;
+  
+    padding: 10px 10px;
+    position: absolute;
+    bottom: 0px;
+    right: 20px;
+    border: none;
+    border-radius: 5px;
+  }

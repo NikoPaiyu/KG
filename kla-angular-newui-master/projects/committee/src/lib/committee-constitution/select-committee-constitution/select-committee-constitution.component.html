@@ -1,0 +1,276 @@
+<div class="row" *ngIf="!isFileView">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "committee.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b>
+          {{ "committee.committe-mgmnt" | translate }}
+        </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h3></h3>
+        <!-- <nz-tag nzColor="red">Urgent</nz-tag> -->
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button
+          class="ml-6 m-r5"
+          nz-button
+          [nzType]="'default'"
+          (click)="back()"
+        >
+          Back
+        </button>
+        <!-- <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="back()">
+            View Chart
+          </button> -->
+        <!-- <button *ngIf="purpose == 'view' && editMode"  class="ml-6 m-r5"  nz-button [nzType]="'default'" (click)="cancelCommitte()">
+            Cancel
+           </button>
+          <button *ngIf="purpose == 'view' && editMode"  class="ml-6 m-r5" nz-button nzType="primary" (click)="saveCommitte()">
+           Update
+          </button>
+         
+          <button *ngIf="purpose == 'view' && !editMode && committeeDetailsForm.value.memberFileStatus =='SUBMITTED'"  class="ml-6 m-r5" nz-button nzType="primary" (click)="EditCommitte()">
+           Edit
+           </button>
+          <button *ngIf="purpose == 'create'" class="ml-6 m-r5" nz-button nzType="primary" (click)="reSubmitCommitte()">
+            Save & Attach to File
+          </button> -->
+          <button class="ml-6 m-r5" nz-button nzType="primary" 
+          nz-popconfirm
+          nzPopconfirmTitle="Do you want to save?"
+          (nzOnConfirm)="saveCommitee(false)"
+          >
+            Save 
+          </button> 
+          <button *ngIf="purpose == 'addnew'"  class="ml-6 m-r5" nz-button nzType="primary" 
+          nz-popconfirm
+          nzPopconfirmTitle="Do you want to  Save & Attach to File?"
+          (nzOnConfirm)="saveCommitee(true)"
+          >
+            Save & Attach to File
+          </button> 
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider *ngIf="!isFileView"></nz-divider>
+</div>
+<div class="padding_15">
+  <div class="row margnrtp-15">
+    <div class="col-md-12 align-right">
+       <!-- <button *ngIf="isFileView"
+          class="ml-6"
+          nz-button
+          nzType="primary"
+        >
+          Full View
+        </button> -->
+        <button *ngIf="isFileView &&  rbsPermission.addChairman"
+         class="ml-6 m-r5" nz-button nzType="primary" 
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to save?"
+        (nzOnConfirm)="saveCommitee(false)"
+         >
+          Save 
+        </button>
+    </div>
+  </div>
+  <div class="container" class="card1">
+    <div class="row">
+      <div class="col-md-12" style="padding-right: 0px">
+          <div
+            class="col-md-6"
+            style="padding-right: 0px"
+            *ngFor="
+              let committee of commiteeDetails?.committeeDto;
+              let commIndex = index
+            "
+          >
+            <nz-card
+              nzTitle="{{ committee.categoryName }}"
+              class="marginbtm-15 sortable committee_blk"
+              style="border: #bdbdbd solid 1px"
+            >
+              <strong>Committe Name:</strong><br />
+              <input *ngIf="editable.name" nz-input
+              nzSize="small" class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+              [(ngModel)]="committee.name"
+              nzRequired 
+              placeholder="Name/Title of Committe"
+              >
+              <span *ngIf="!editable.name">{{ committee.name }}</span
+              ><br />
+              <ng-container *ngIf="committee?.memberDtoResponse?.CHAIRMAN.length > 0 || rbsPermission.addChairman">
+
+              <!-- <ng-container> -->
+              <strong>Chairman:</strong>
+              <div
+                *ngFor="
+                  let chairman of committee?.memberDtoResponse?.CHAIRMAN;
+                  let chmanIndex = index
+                "
+              >
+                <nz-card class="committee_blk marginbtm-15">
+                  <span>{{ chairman.memberName }}</span>
+                  <i *ngIf="editable.chairman" nz-icon nzType="delete" class="flr mrt-5" nzTheme="outline"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Do you want to delete this Chairman?"
+                  (nzOnConfirm)="deleteChairman(chairman,chmanIndex)"
+                ></i>
+                </nz-card>
+              </div>
+              </ng-container>
+              <button *ngIf="editable.chairman && commiteeDetails?.memberFileStatus =='SUBMITTED' &&
+               committee?.memberDtoResponse?.CHAIRMAN.length == 0"
+               nz-button
+               nzType="primary"
+               class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+               (click)="showAddmemberPopup('chairman', committee)"
+             >
+               <i nz-icon nzType="plus"></i>
+               Add Chairman
+             </button>
+              <!-- <button *ngIf="rbsPermission.addChairman && commiteeDetails?.memberFileStatus =='SUBMITTED' 
+               && committee?.memberDtoResponse?.CHAIRMAN.length == 0"
+                nz-button
+                nzType="primary"
+                class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+                (click)="showAddmemberPopup('chairman', committee)"
+              >
+                <i nz-icon nzType="plus"></i>
+                Add Chairman
+              </button> -->
+              <div class="row margntp-25">
+                <div class="col-md-12"><strong>Members:</strong></div>
+              </div>
+              <!-- <div class="mbr_ht"> -->
+              <div>
+                <div
+                  *ngFor="let member of committee?.memberDtoResponse?.MEMBER;
+                  let memIndex = index"
+                >
+                  <nz-card class="committee_blk">
+                    <div class="row bg_block align-items-center">
+                      <div class="col-md-7">
+                        <span>{{ member.memberName }}</span>
+                        
+                      </div>
+
+                      <div class="col-md-3 text-align-right ">
+                        <nz-tag class="m-r5"
+                              *ngIf="
+                                member?.partySide ==
+                                'OPOSITION_PARTY'
+                              "
+                              [nzColor]="'blue'"
+                              >OPPOSITION</nz-tag
+                            >
+                        <nz-tag class="m-r5"
+                              *ngIf="
+                                member?.partySide ==
+                                'RULING_PARTY'
+                              "
+                              [nzColor]="'red'"
+                              >RULING</nz-tag
+                            >
+                            <nz-tag class="m-r5"
+                              *ngIf="
+                                member?.partySide ==
+                                'TREASURY_BENCH'
+                              "
+                              [nzColor]="'green'"
+                              >TREASURY BENCH</nz-tag
+                            >
+                      </div>
+                      <i *ngIf="editable.members" nz-icon nzType="delete" class="flr ml-6 mrt-5" nzTheme="outline"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Do you want to delete this Member?"
+                        (nzOnConfirm)="deleteMember(member,memIndex)"
+                      ></i>
+                    </div>
+                  </nz-card>
+                </div>
+                <button *ngIf="editable.members"
+                  nz-button
+                  nzType="primary"
+                  class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center"
+                  (click)="showAddmemberPopup('member', committee)"
+                >
+                  <i nz-icon nzType="plus"></i>
+                  Add Member
+                </button>
+              </div>
+            </nz-card>
+          </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+<nz-modal
+  [(nzVisible)]="showAddmember"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  [nzTitle]="tabType == 'member' ? 'Add Member' : 'Appoint Chairman'"
+  nzWidth="800"
+>
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-6">
+        <nz-card
+          [nzTitle]="null"
+          style="width: 100%; height: 300px; overflow-y: scroll"
+          class="committee_blk"
+        >
+          <!-- <ul nz-menu filterTable class="checkbox-style"> -->
+          <ul class="checklis">
+            <p *ngFor="let box of allMembers; let i = index">
+              <label
+                nz-checkbox
+                [(ngModel)]="box.checked"
+                name="checkbox{{ i }}"
+                [nzDisabled]="box.disable"
+                (ngModelChange)="disableMemeber()"
+                >{{ box.details.fullName }}</label
+              >
+            </p>
+          </ul>
+        </nz-card>
+      </div>
+      <div class="col-md-3 text-align-right" style="padding-left: 0px">
+        <div class="width-100" style="margin-top: 115px;">
+          <div class="row margnrtp-15">
+            <button
+              (click)="addMember()"
+              nzType="'default'"
+              class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+              style="margin-left: 50px;"
+            >
+              {{tabType == 'member' ? 'Add Member' : 'Appoint Chairman'}}
+            </button>
+          </div>
+          <div class="row margnrtp-15">
+            <button
+              nzType="'default'"
+              class="ant-btn ant-btn-default mrb-5 mrb-5 width-100"
+              style="margin-left: 50px;"
+              (click)="handleCancel()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

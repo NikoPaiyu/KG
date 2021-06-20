@@ -1,0 +1,35 @@
+<div class="report-holder">
+    <table cellpadding="0" cellspacing="0" class="table">
+        <tr>
+            <td class="tc pt">
+                <strong>2020-2021 സാമ്പത്തിക വർഷത്തേക്കുള്ള ചെലവുകൾക്കായി താഴെപ്പറയുന്ന ധനാഭ്യർത്ഥനകൾ അവതരിപ്പിക്കുന്നതും സഭയുടെ വോട്ടിനു സമർപ്പിക്കുന്നതുമാണ്.</strong>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="0" cellspacing="0" class="table tb-border">
+                    <tr>
+                        <th style="width: 10%;"> ധനാഭ്യർത്ഥന നമ്പർ </th>
+                        <th style="width: 20%;">ബന്ധപ്പെട്ട സർവീസ് / വകുപ്പ് </th>
+                        <th style="width: 70%;">ബന്ധപ്പെട്ട മന്ത്രിയും തുകയും </th>
+
+                    </tr>
+                    <tr class="td-border">
+                        <td class="tc">(1)</td>
+                        <td class="tc">(2)</td>
+                        <td class="tc">(3)</td>
+                    </tr>
+                    <tr *ngFor="let item of grnBKData; index as i">
+                        <td>{{item.demandNumber}}</td>
+                        <td>{{item.demandNameMal}}</td>
+                        <td>{{item.portfolio}} {{item.ministerName}} {{item.total}} രൂപയ്ക്കുള്ള ഗ്രാന്റിനു വേണ്ടി പ്രമേയം അവതരിപ്പിക്കുന്നതാണ് </td>
+                    </tr>
+                    <tr class="td-border ">
+                        <td colspan="2 " class="tr ">ആകെ </td>
+                        <td>12639123 രൂപ</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

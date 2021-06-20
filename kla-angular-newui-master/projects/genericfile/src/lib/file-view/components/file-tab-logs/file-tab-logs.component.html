@@ -1,0 +1,15 @@
+<ng-container *ngFor="let log of logDetails; index as i">
+  <div class="bg_block">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-7 pdzero">
+          <div class="width-100 d-flex marginbtm-15">
+            <div class="overflow-blt">
+              {{ 1 + i + "." + log.action | titlecase }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

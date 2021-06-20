@@ -1,0 +1,52 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                Dashboard
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <a> Question </a>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h3>Create Notice</h3>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-12">
+        <p>Please select the notice type</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h6>Notice Category</h6>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="row" *ngFor="let row of rows">
+            <div class="col-md-3" *ngFor="let colm of coloums">
+                <button nz-button nzType="default">Notice Type</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h6>Notice Category</h6>
+            </div>
+        </div>
+        <div class="row" *ngFor="let row of rows">
+            <div class="col-md-3" *ngFor="let colm of coloums">
+                <button nz-button nzType="default">Notice Type</button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <nz-card style="width:500px;height:200px">
+            Notice Preview
+        </nz-card>
+    </div>
+</div>

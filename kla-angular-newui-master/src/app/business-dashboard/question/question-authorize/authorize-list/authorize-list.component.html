@@ -1,0 +1,206 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item [routerLink]="['/business-dashboard/question/question-dept-dashboard']">
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.authorize.request" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">
+      {{ "business-dashboard.question.authorize.request" | translate }}
+    </h2>
+  </div>
+</div>
+
+<nz-divider></nz-divider>
+<div class="row margnrtp-15 justify-content-end">
+  <div class="col-md-4">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+              'business-dashboard.question.questionlist.inputsearch' | translate
+            }}" (ngModelChange)="onSearchUser()" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="listOfData" class="table-all">
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th>{{ "business-dashboard.question.slno" | translate }}</th>
+      <th nzShowSort nzSortKey="questionHeading">
+        {{ "business-dashboard.question.authorize.qheading" | translate }}
+      </th>
+      <th nzShowSort nzSortKey="fromMember">
+        {{ "business-dashboard.question.authorize.memberfrom" | translate }}
+      </th>
+      <th nzShowSort nzSortKey="toMember">
+        {{ "business-dashboard.question.authorize.memberto" | translate }}
+      </th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let list of filterTable.data; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>
+        <a (click)="view(list.questionId)" href="javascript:void(0);" class="td_heading">{{ list.questionHeading }}</a>
+      </td>
+      <td>{{ list.fromMember }}</td>
+      <td>{{ list.toMember}}</td>
+      <td><button nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttoapprove" | translate}}'
+          nzCancelText="No" nzOkText="Yes"
+          (nzOnConfirm)="ApproveAuthorizeRequest(list.id)">{{"business-dashboard.question.approve" | translate}}</button></td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="showQuestionDeatils" (nzOnCancel)="showQuestionDeatils = false" nzClassName="pdngs"
+  [nzFooter]="null" [nzWidth]="'800'">
+  <div class="pading-all width-100">
+    <div class="padding-15">
+      <div class="col-md-12" *ngIf="questionDetails">
+        <div class="row paddingT15" *ngIf="questionDetails.assemblyId && questionDetails.sessionId">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.assembly" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblyV1">
+            <span>{{ questionDetails.assemblyId }}</span>
+          </div>
+          <div class="col-md-4">
+            {{ "business-dashboard.question.session" | translate }} :
+          </div>
+          <div class="col-md-2" id="assemblySessionV1">
+            <span>{{ questionDetails.sessionId }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="
+            questionDetails.clubbingDetails &&
+            questionDetails.clubbingDetails.length > 0
+          ">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.mlaName" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div class="row input-style" *ngFor="let ma of questionDetails.clubbingDetails; let i = index">
+              <span>{{ ma.memberName }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="
+            questionDetails.clubbingDetails &&
+            questionDetails.clubbingDetails.length > 0
+          ">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeno" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div *ngFor="let ma of questionDetails.clubbingDetails; let i = index">
+              <span>{{ ma.noticeNumber }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.registrationDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.dateofreg" | translate }} :
+          </div>
+          <div class="col-md-8" id="regDateV1">
+            <span>{{ questionDetails.registrationDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.questionDate">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questiondate" | translate }} :
+          </div>
+          <div class="col-md-8" id="questionDateV1">
+            <span>{{ questionDetails.questionDate }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.category">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ncategory" | translate }}:
+          </div>
+          <div class="col-md-8">
+            <span>{{ questionDetails.category }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.priority">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questionpriority" | translate }} :
+          </div>
+          <div class="col-md-8" id="priorityV1">
+            <span>{{ questionDetails.priority }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.subjectName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ministersubject" | translate }} :
+          </div>
+          <div class="col-md-8" id="ministerSubjectV1">
+            <span>{{ questionDetails.subjectName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.portfolioName">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.portfolio" | translate }}
+            :
+          </div>
+          <div class="col-md-8" id="ministerV1">
+            <span>{{ questionDetails.portfolioName }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questionheading" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <span class="word-break">{{
+              questionDetails.heading
+            }}</span>
+          </div>
+        </div>
+        <div class="row paddingT15" *ngIf="questionDetails.tags && questionDetails.tags.length > 0">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.versioning.tags" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-auto tag-style" *ngFor="let tag of questionDetails.tags; let i = index">
+                <span>{{ tag.tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="paddingT15" *ngIf="questionDetails.clauses && questionDetails.clauses.length > 0">
+          <div class="col-md-12 clause-style">
+            <ng-container *ngFor="let clause of questionDetails.clauses; let i = index">
+              <div class="row paddingT15">
+                <div class="col-md-2">{{ "Clause " + clauseNo[i] }} :</div>
+
+                <div class="col-md-10">
+                  <div id="clauseV1">
+                    <span class="word-break">{{
+                      clause.clause
+                    }}</span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

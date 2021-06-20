@@ -1,0 +1,44 @@
+.fullHieght {
+    height: 100%;
+    margin-left: 2vw;
+    width: 93%;
+}
+.report-holder {
+    width: 800px;
+    padding: 15px;
+  }
+  .table {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+  .table td {
+    width: auto;
+    padding: 5px;
+    line-height: 22px;
+  }
+  .tl {
+    text-align: left;
+  }
+  .tc {
+    text-align: center;
+  }
+  .tr {
+    text-align: right;
+  }
+  .pt {
+    padding-top: 10px !important;
+  }
+  .width100 {
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+  }
+  .border td {
+    border: #ccc solid 1px;
+  }
+  .border th {
+    border: #ccc solid 1px;
+    padding: 5px;
+  }
+  .pdt{padding-top: 35px !important;}

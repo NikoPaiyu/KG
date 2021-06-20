@@ -1,0 +1,105 @@
+@import "~src/sass/utilities/variables";
+@import "~src/sass/utilities/mixin";
+
+// .admin-page-heading {
+//   color: $dark;
+//   font-size: $admin-heading-font;
+// }
+.st0 {
+  fill: #e0e0e0;
+}
+.st1 {
+  fill: rgb(189, 189, 189);
+}
+.st2 {
+  fill: #ffffff;
+}
+.st3 {
+  fill: none;
+  stroke: #bdbdbd;
+}
+.st4 {
+  fill: #295c8d;
+}
+.st5 {
+  font-family: "Roboto-Bold";
+}
+.st6 {
+  font-size: 13px;
+}
+.st7 {
+  font-family: "Roboto-Medium";
+}
+.st8 {
+  fill: #585858;
+}
+.st9 {
+  font-size: 12px;
+}
+.st10 {
+  opacity: 0.502;
+  fill: #f2f2f2;
+  enable-background: new;
+}
+.st11 {
+  fill: #be2edd;
+}
+.st12 {
+  fill: #4834d4;
+}
+.st13 {
+  fill: #0abde3;
+}
+.p-20 {
+  padding: 20px;
+}
+.speaker_color {
+  fill: #008080 !important;
+}
+
+.legend-box {
+  display: flex;
+  justify-content: center;
+  border: #dfe8ef solid 1px;
+  border-radius: 5px;
+  padding: 15px;
+  flex-wrap: wrap;
+}
+.chair-legend {
+  width: 120px;
+  margin-bottom: 10px !important;
+}
+.legend-box .d-flex {
+  margin: 0px 5px;
+}
+
+.legend-box span {
+  margin: 0px 5px;
+}
+.mzero {
+  margin: 0px;
+}
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+.ml-6 {
+  margin-left: 6px;
+}
+.m-r5 {
+  margin-right: 5px;
+}
+.mrgL20 {
+  margin-right: 20px;
+}
+.mr-6 {
+  margin-right: 6px;
+}
+.blthd {
+  font-weight: 600;
+  margin-bottom: 15px;
+  width: 100%;
+  float: left;
+}

@@ -1,0 +1,278 @@
+
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.bill-management.dashboard" | translate }} 
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "bill-amendments.general-amendment.amendments" | translate }} 
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+
+<div class="row">
+    <div class="col-md-12 marginbtm-15">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">
+            {{ "bill.bill-clause.list.ordinancedisapprovallist" | translate }}
+          </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button class="back-button" nz-button nzType="default" (click)="goToPrevpage()" class="mr-6">{{ "business-dashboard.question.questionview.back" | translate }}</button>
+          <button nz-button nzType="default" *ngIf="ballotflag==true && (currentdate > ord_date )"  (click)="balloting()" class="mr-6">{{ "bill.bill-clause.list.viewballoting" | translate }}</button>
+          <button nz-button nzType="default" *ngIf="ballotflag==false && (currentdate > ord_date )" (click)="balloting()" class="mr-6"> {{ "business-dashboard.question.balloting" | translate }}</button>
+      </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+
+  <div class="row">
+    <div class="col-md-6 word-break">
+      <div class="row">
+          <div class="col-md-2 word-break">
+            {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }} :
+          </div> 
+          <div class="col-md-10 word-break">
+            {{Billtitle}}
+         </div>
+          <div class="col-md-2 word-break" style="margin-top: 10px;">
+            {{ "business-dashboard.responses.ordapprove.billno" | translate }} :
+        </div>
+        <div class="col-md-10 word-break" style="margin-top: 10px;">
+         {{billnumber}}
+      </div>
+      </div>
+  </div>
+
+
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              [(ngModel)]="searchParam"
+              name="search"
+              nz-input
+              placeholder=""
+              (ngModelChange)="searchBill()"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" 
+              nz-dropdown
+              nzTrigger="click"
+              [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+          </button>
+        </div>
+      
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul
+                  nz-menu
+                  fileTable
+                  *ngFor="let box of colCheckboxes; let i = index"
+                  class="checkbox-style"
+                >
+                  <li>
+                    <label nz-checkbox 
+                    [nzDisabled]="box.disable" 
+                    [(ngModel)]="box.check" name="i" 
+                    (ngModelChange)="disableCheckBox()">{{
+                      box.label
+                    }}</label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of filtrParams.tableDto">
+      <div class="row align-items-center" *ngIf="filter.filtersel">
+        <div class="col-md-4 wordbreak">
+          {{ filter.label }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filter.selValue"
+            name="{{ filter.label }}"
+            (ngModelChange)="searchCol()"
+          >
+            <nz-option
+              *ngFor="let data of filter.data"
+              [nzLabel]="data"
+              [nzValue]="data"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(filter)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="amendmentList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr *ngIf="!tableParams.colSpan; else viewColFilter">
+        <!-- <th
+          nzShowCheckbox
+          [(nzChecked)]="checkbxParams.allDtCheckd"
+          (nzCheckedChange)="_checkAllRows($event)"
+        ></th> -->
+        <th></th>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="no">
+          {{ "business-dashboard.question.questionlist.noticenumber" | translate }}
+        </th> 
+
+        <!-- <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="bill_No">
+            {{"business-dashboard.bill-amendments.obj-introduction-list.billno" | translate}}
+        </th> -->
+
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="ministerName">
+            {{"business-dashboard.bill-amendments.obj-introduction-list.nameofmember" | translate}}
+        </th>
+
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="subdate">
+          {{"business-dashboard.bill-amendments.obj-introduction-list.subdate" | translate}}
+      </th>
+
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="ballot_priority">
+            {{"business-dashboard.bill-amendments.obj-introduction-list.ballot_priority" | translate}}
+        </th>
+      
+        <!-- <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="status">
+            {{ "business-dashboard.bill-amendments.obj-introduction-list.status" | translate }}
+          </th>
+           -->
+        
+      </tr>
+      <ng-template #viewColFilter>
+        <tr>
+          <th
+            nzShowCheckbox
+            [(nzChecked)]="checkbxParams.allDtCheckd"
+            (nzCheckedChange)="_checkAllRows($event)"
+          ></th>
+          <th colspan="10" class="tb-data">
+            {{ checkbxParams.numberOfChecked }} Selected :
+            <button class="ant-btn" (click)="addToPriorityList()">
+              {{"business-dashboard.bill-management.billlist.addtoPriorityList" | translate}}
+            </button>
+          </th>
+        </tr>
+      </ng-template>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of filterTable.data; let i = index">
+        <td
+          nzShowCheckbox
+        ></td>
+        <!-- <td>{{i + 1}}</td> -->
+        <td *ngIf="colCheckboxes[0].check">{{list.noticeNumber}}</td>
+        <!-- <td *ngIf="colCheckboxes[1].check">
+          <tr>
+            {{
+              list.billNumber
+            }}
+          </tr>
+          
+        </td> -->
+        <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.billId)" (mouseleave)="hideLinks(list.billId)">
+          <tr>{{ list.memberName}}</tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+                <td>
+                    <a class="viewlink" (click)="view_content(list.content)">View Notice</a>
+                </td>
+               
+            </div>
+        </tr>
+        </td>
+        <td *ngIf="colCheckboxes[2].check">{{ list.createdDate | date: "dd-MM-yyyy"}}</td>
+        <td *ngIf="colCheckboxes[3].check">{{ list.ballotPriority }}</td>
+        <!-- <td *ngIf="colCheckboxes[4].check">
+          <nz-tag> {{list.status}}</nz-tag>
+        </td> -->
+        
+      </tr>
+    </tbody>
+  </nz-table>
+  <div class="row margnrtp-15">
+    <div class="col-md-4">
+      <ng-container
+        ><div>
+          <!-- showing {{ paginationParams.pageIndex  }} to
+            {{ paginationParams.numberOfItem }} of
+            {{ paginationParams.total }} entries -->
+        </div>
+      </ng-container>
+    </div>
+   
+  </div>
+  
+  <!-- Starting Filter popup -->
+  <nz-modal
+    [(nzVisible)]="filtrParams.rowFilter || filtrParams.colFilter"
+    nzTitle=""
+    (nzOnCancel)="showFilter(null)"
+    (nzOnOk)="_confrmFilter()"
+  >
+    <div class="padding_15">
+      <p *ngFor="let box of filtrParams.tableDto; let i = index">
+        <label
+          nz-checkbox
+          name="checkbox{{ i }}"
+          (ngModelChange)="_chooseFilter(box)"
+          [(ngModel)]="box.checked"
+          >{{ box.label }}</label
+        >
+      </p>
+    </div>
+  </nz-modal>
+
+  <nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="isVisible"
+  nzTitle='{{"noticeprocessing.notice.createnotice.prevew" | translate}}'
+  nzWidth="1000"
+>
+  <div class="d-flex justify-content-center">
+    <div class="pading-all" [innerHtml]="content"></div>
+  </div>
+</nz-modal>
+  <!-- Ending filter popup -->
+  
+ 

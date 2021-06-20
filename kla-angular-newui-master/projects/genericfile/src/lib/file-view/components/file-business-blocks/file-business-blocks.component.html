@@ -1,0 +1,527 @@
+<nz-tabset [nzSelectedIndex]="activeTabIndex">
+  <nz-tab nzTitle="Blocks" (nzClick)="showtab(0)">
+    <div
+      class="row"
+      *ngIf="fileDetails.currentAssignee || fileDetails.status === 'APPROVED'"
+    >
+      <div class="business_block col-md-12" (click)="showModel()">
+        <!-- <i
+          nz-icon
+          nzType="folder-add"
+          class="folder-icon"
+          nzTheme="outline"
+        ></i> -->
+        <img src="../../assets/img/Icon-feather-folder-plus.svg" alt="" />
+      </div>
+    </div>
+    <div class="row" style="padding: 15px">
+      <ul class="folder-list-view d-flex flex-wrap">
+        <li *ngFor="let item of file_blocks_list" class="mr-10">
+          <div class="row" (click)="ViewDocumentList(item.id)">
+            <div class="col-md-6">
+              <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+            </div>
+            <div class="col-md-6 d-flex justify-content-end block-padding-0">
+              <span>
+                <nz-tag [nzColor]="'green'">
+                  {{ item?.status }}
+                </nz-tag></span
+              >
+            </div>
+          </div>
+          <div>
+            <span *ngIf="item.title">
+              <a
+                class="block-title"
+                nz-tooltip
+                nzTooltipTitle="{{ item.title }}"
+                nzTooltipPlacement="bottom"
+                nzTooltipVisible="item.title.length > 17 ? true : false"
+              >
+                {{ item.title }}
+              </a>
+            </span>
+          </div>
+          <span>
+            <button
+              class="mr-6"
+              nz-button
+              *ngIf="item?.description"
+              nzType="text"
+              nzTooltipTitle="{{ item.description }}"
+              nzTooltipPlacement="bottom"
+              nz-button
+              nz-tooltip
+            >
+              <i nz-icon nzType="eye" nzTheme="outline"></i>
+            </button>
+            <button
+              nz-button
+              nzType="text"
+              class="block-buttons mr-6"
+              *ngIf="item.documents.length === 0 && fileDetails.currentAssignee"
+              nz-popconfirm
+              nzPopconfirmTitle="Are you sure you want to Delete ?"
+              (nzOnConfirm)="deleteBlock(item.id)"
+            >
+              <i nz-icon nzType="delete" nzTheme="outline"></i>
+            </button>
+
+            <button
+              nz-button
+              class="block-buttons mr-6"
+              (click)="showModel(item.id)"
+              nzType="text"
+              *ngIf="item.status !== 'APPROVED' && fileDetails.currentAssignee"
+            >
+              <i nz-icon nzType="edit" nzTheme="outline"></i>
+            </button>
+          </span>
+        </li>
+      </ul>
+    </div>
+    <!--<div class="row">
+     <div
+      class="business_block col-md-4"
+      *ngFor="let item of file_blocks_list"
+    >
+      <div (click)="ViewDocumentList(item.id)">
+        <i nz-icon class="folder-icon" nzType="folder" nzTheme="outline"></i>
+      </div>
+      <span *ngIf="item.title">
+        <ng-container
+          class="block-title"
+          nz-tooltip
+          nzTooltipTitle="{{ item.title }}"
+          nzTooltipPlacement="bottom"
+          nzTooltipVisible="item.title.length > 17 ? true : false"
+        >
+          {{ item.title }}
+        </ng-container>
+      </span><br/>
+      <nz-tag [nzColor]="'green'">
+        {{ item?.status }}
+      </nz-tag> <br/>
+      <span>
+        <button
+          nz-button
+          *ngIf="item?.description"
+          nzType="text"
+          nzTooltipTitle="{{ item.description }}"
+          nzTooltipPlacement="bottom"
+          nz-button
+          nz-tooltip
+        >
+          <i nz-icon nzType="eye" nzTheme="outline"></i>
+        </button>
+        <button
+          nz-button
+          nzType="text"
+          class="block-buttons"
+          *ngIf="item.documents.length === 0"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to Delete ?"
+          (nzOnConfirm)="deleteBlock(item.id)"
+        >
+          <i nz-icon nzType="delete" nzTheme="outline"></i>
+        </button>
+
+        <button
+          nz-button
+          class="block-buttons"
+          (click)="showModel(item.id)"
+          nzType="text"
+          *ngIf="item.status !== 'APPROVED'"
+        >
+          <i nz-icon nzType="edit" nzTheme="outline"></i>
+        </button>
+      </span>
+      </div>
+    </div> -->
+  </nz-tab>
+  <nz-tab
+    [nzTitle]="selectedDocumentListTitle"
+    (nzClick)="showtab(1)"
+    *ngIf="documentListTabShow"
+  >
+    <div
+      class="row"
+      *ngIf="
+        (fileDetails.currentAssignee && selectedBlock?.documents?.length > 0) ||
+        (fileDetails.status === 'APPROVED' &&
+          selectedBlock?.documents?.length > 0)
+      "
+    >
+      <div class="col-md-4 d-flex justify-content-end">
+        <nz-select
+          nzShowSearch="true"
+          [ngModel]="allSelectedData"
+          class="ml-6 m-r5"
+          [nzPlaceHolder]="'Select'"
+          (ngModelChange)="SelectAll($event)"
+        >
+          <nz-option
+            nzValue="APPROVED"
+            nzLabel="Select all APPROVED"
+          ></nz-option>
+
+          <nz-option
+            nzValue="SUBMITTED"
+            nzLabel="Select All SUBMITTED"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-8 d-flex justify-content-end">
+        <button
+          class="mr-6"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to APPROVE the checked documents?"
+          (nzOnConfirm)="partialApprove()"
+          *ngIf="partialApproveButtonVisible"
+        >
+          Approve Partially
+        </button>
+
+        <button
+          class="mr-6"
+          nz-button
+          nzType="primary"
+          (click)="showShareModel()"
+          *ngIf="shareButtonVisible"
+        >
+          Share
+        </button>
+      </div>
+    </div>
+    <div
+      class="bg_block"
+      (click)="showModel()"
+      *ngIf="fileDetails.currentAssignee || fileDetails.status === 'APPROVED'"
+    >
+      <i nz-icon nzType="plus" nzTheme="outline"></i>
+      Document
+    </div>
+    <div class="row bg_block" *ngFor="let item of selectedBlock.documents">
+      <div
+        class="col-md-1"
+        *ngIf="fileDetails.currentAssignee || fileDetails.status === 'APPROVED'"
+      >
+        <label
+          nz-checkbox
+          [ngModel]="item.checked"
+          (ngModelChange)="documentCheckbox(item.id)"
+        ></label>
+      </div>
+      <div class="col-md-5" (click)="ViewDocument(item.id)">
+        <h6>{{ item?.title }}</h6>
+      </div>
+      <div class="col-md-6 text-align-right">
+        <button
+          nz-button
+          class="block-buttons mr-6"
+          (click)="showModel(item.id)"
+          nzType="text"
+          *ngIf="item.status !== 'APPROVED' && fileDetails.currentAssignee"
+        >
+          <i nz-icon nzType="edit" nzTheme="outline"></i>
+        </button>
+        <button
+          nz-button
+          nzType="text"
+          class="block-buttons mr-6"
+          nz-popconfirm
+          nzPopconfirmTitle="Are you sure you want to Delete ?"
+          (nzOnConfirm)="deleteAttachment(item.id)"
+          *ngIf="fileDetails.currentAssignee"
+        >
+          <i nz-icon nzType="delete" nzTheme="outline"></i>
+        </button>
+        <nz-tag>{{ item.status }}</nz-tag>
+      </div>
+    </div>
+  </nz-tab>
+  <nz-tab
+    [nzTitle]="selectedDocumentViewTitle"
+    *ngIf="documentViewTabShow"
+    (nzClick)="pdfDetails = null; showPdfViewerTab = false"
+  >
+    <button nz-button class="doc-download-btn" (click)="docToPDF()">
+      <i nz-icon nzType="download" nzTheme="outline"></i>
+    </button>
+    <!-- <div [innerHTML]="selectedDocument?.description"></div> -->
+    <ckeditor
+      [disabled]="true"
+      [editor]="Editor"
+      [data]="selectedDocument?.description"
+      [config]="ckeConfig"
+      debounce="500"
+    >
+    </ckeditor>
+    <h5 *ngIf="selectedDocument.attachment.length > 0">Attachments</h5>
+    <ul class="folder-list-view d-flex flex-wrap justify-content-between">
+      <li
+        (click)="showPdfTab(item)"
+        *ngFor="let item of selectedDocument.attachment"
+      >
+        <img src="../../assets/img/File_Icon.png" alt="" />
+        <span>{{ item.title }}</span>
+      </li>
+    </ul>
+    <!-- <span class="pdfdoc" *ngFor="let item of selectedDocument.attachment"  (click)="showPdfTab(item)">
+      <i nz-icon nzType="file-pdf" nzTheme="outline"></i>
+      <h6>{{ item.title }}</h6>
+    </span> -->
+  </nz-tab>
+  <nz-tab [nzTitle]="pdfDetails?.title" *ngIf="showPdfViewerTab" nzClosable>
+    <div class="row">
+      <div class="col-md-12">
+        <ngx-doc-viewer
+          [url]="pdfDetails?.url"
+          viewer="url"
+          style="width: 100%; height: 800px"
+        ></ngx-doc-viewer>
+      </div>
+    </div>
+  </nz-tab>
+</nz-tabset>
+<nz-modal
+  [(nzVisible)]="isModelVisible"
+  [nzTitle]="modelTitle | translate"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+  [nzWidth]="modelWidth"
+  (nzAfterClose)="handleCancel()"
+>
+  <nz-tabset [nzSelectedIndex]="modalTabIndex">
+    <nz-tab
+      [nzTitle]="modelTitle | translate"
+      (nzClick)="showModalTab(0, null)"
+    >
+      <form nz-form [formGroup]="businessForm" class="form">
+        <div>
+          <div class="padding_25">
+            <ng-template #errorTpl let-control>
+              <ng-container>
+                {{ "bill.prioritylist.create.errortpl" | translate }}
+              </ng-container>
+            </ng-template>
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-label>{{
+                  "miscellaneous-business-file.business.title" | translate
+                }}</nz-form-label>
+                <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                  <input nz-input formControlName="title" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-12 mr-tp" *ngIf="activeTabIndex === 1">
+              <nz-form-item>
+                <nz-form-label>{{
+                  "miscellaneous-business-file.business.template" | translate
+                }}</nz-form-label>
+                <nz-form-control class="border">
+                  <nz-select
+                    nzShowSearch="true"
+                    [ngModel]="selectedDocumentTemplate"
+                    class="ml-6 m-r5"
+                    [nzPlaceHolder]="'Select Template'"
+                    [ngModelOptions]="{ standalone: true }"
+                    (ngModelChange)="SelectTemplate($event)"
+                  >
+                    <nz-option nzValue="" nzLabel="No Template"></nz-option>
+                    <ng-container *ngFor="let element of documentTemplateList">
+                      <nz-option
+                        nzValue="{{ element.id }}"
+                        nzLabel="{{ element.name }}"
+                      ></nz-option>
+                    </ng-container>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-12 mr-tp">
+              <nz-form-item>
+                <nz-form-label>{{
+                  "miscellaneous-business-file.business.content" | translate
+                }}</nz-form-label>
+
+                <nz-form-control
+                  nzHasFeedback
+                  [nzErrorTip]="errorTpl"
+                  class="border"
+                >
+                  <textarea
+                    nz-input
+                    rows="6"
+                    formControlName="description"
+                    *ngIf="activeTabIndex === 0"
+                  ></textarea>
+                  <div
+                    *ngIf="activeTabIndex === 1"
+                    style="background-color: white"
+                  >
+                    <ckeditor
+                      [editor]="Editor"
+                      formControlName="description"
+                      [config]="ckeConfig"
+                      debounce="500"
+                    >
+                    </ckeditor>
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div *ngIf="activeTabIndex === 1" class="col-md-12">
+              <h6 class="mr-tp">Attachments</h6>
+              <div class="row">
+                <div class="col-6">
+                  <nz-form-item>
+                    <nz-form-control nzHasFeedback [nzErrorTip]="errorTpl">
+                      <input
+                        [(ngModel)]="attachmentTitle"
+                        nz-input
+                        placeholder="Subject"
+                        formControlName="attachmentTitle"
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+                <div class="col-2">
+                  <nz-upload
+                    [nzBeforeUpload]="beforeUpload"
+                    formControlName="attachmentFile"
+                    [nzLimit]="0"
+                    ngDefaultControl
+                  >
+                    <button nz-button>
+                      <i nz-icon nzType="upload"></i>Select File
+                    </button>
+                  </nz-upload>
+                </div>
+                <div class="col-3">
+                  <button
+                    *ngIf="attachmentTitle !== '' && selectedFile"
+                    nz-button
+                    nzType="primary"
+                    nzShape="circle"
+                    (click)="attachmentUpload()"
+                  >
+                    <i nz-icon nzType="plus" nzTheme="outline"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-6">
+                  <div class="attachment-box" *ngIf="fileList.length > 0">
+                    <ul>
+                      <li *ngFor="let item of fileList">
+                        <i nz-icon nzType="file-pdf" nzTheme="outline"></i
+                        >{{ item.title }}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *nzModalFooter>
+          <div class="col-md-12 ant-modal-footer">
+            <button nz-button nzType="default" (click)="handleCancel()">
+              Cancel
+            </button>
+            <button
+              nz-button
+              type="submit"
+              (click)="SaveData()"
+              nzType="primary"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </form>
+    </nz-tab>
+    <nz-tab [nzTitle]="pdfDetails?.title" *ngIf="showPdfViewer" nzClosable>
+      <div class="row">
+        <div class="col-md-12">
+          <ngx-doc-viewer
+            [url]="pdfDetails?.url"
+            viewer="url"
+            style="width: 100%; height: 800px"
+          ></ngx-doc-viewer>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="isShareModelVisible"
+  [nzTitle]="'Share'"
+  [nzFooter]="null"
+  (nzOnCancel)="handleShareCancel()"
+  [nzWidth]="modelWidth"
+  (nzAfterClose)="handleShareCancel()"
+>
+  <div>
+    <div class="padding_25">
+      <div class="row">
+        <div class="col-md-8">
+          <nz-cascader
+            [nzPlaceHolder]="'Select Designation'"
+            [(ngModel)]="cascaderValues"
+            [nzLoadData]="loadData"
+            (ngModelChange)="onChanges($event)"
+            class="user-cascade"
+          >
+          </nz-cascader>
+
+          <ng-container *ngFor="let item of selectedUsers">
+            <nz-tag
+              [nzMode]="'closeable'"
+              (nzOnClose)="handleSelectedUserClose(item.value)"
+              >{{ item?.label }}</nz-tag
+            >
+          </ng-container>
+        </div>
+        <div class="col-md-4">
+          <nz-select
+            nzShowSearch="true"
+            [(ngModel)]="selectedUser"
+            class="ml-6 m-r5 file-flow-select"
+            [nzPlaceHolder]="'Select User'"
+            (ngModelChange)="selectUser($event)"
+          >
+            <ng-container *ngFor="let element of usersList">
+              <nz-option
+                nzValue="{{ element.value }}"
+                nzLabel="{{ element.label }}"
+              ></nz-option>
+            </ng-container>
+          </nz-select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 ant-modal-footer">
+          <button nz-button nzType="default" (click)="handleShareCancel()">
+            Cancel
+          </button>
+          <button
+            [disabled]="selectedUsers.length <= 0"
+            nz-button
+            type="submit"
+            nzType="primary"
+            nz-popconfirm
+            nzPopconfirmTitle="Are you sure you want to SHARE the documents?"
+            (nzOnConfirm)="ShareDocument()"
+          >
+            Share
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

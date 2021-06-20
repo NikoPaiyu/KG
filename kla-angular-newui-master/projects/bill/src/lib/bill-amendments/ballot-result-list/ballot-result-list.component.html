@@ -1,0 +1,187 @@
+
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "bill.ballotresult.list" | translate }}
+         </nz-breadcrumb-item> 
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row">
+    <!-- title -->
+    <div class="col-md-6">
+      <h2 class="admin-page-heading"> {{ "bill.ballotresult.ballotresults" | translate }}</h2>
+    </div>
+    <div class="col-md-6 justify-content-end d-flex">
+      <button nz-button nzType="default">...</button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row d-flex">
+     <div class="col-md-6"></div> 
+  <div class="col-md-6 justify-content-end d-flex">
+    <nz-input-group
+      class="table-operations"
+      [nzSuffix]="suffixIconSearch"
+    >
+      <input
+        type="text"
+        [(ngModel)]="searchBallot"
+        (ngModelChange)="searchAmendmentList()"
+        nz-input
+        placeholder='{{ "business-dashboard.question.questionlist.inputsearch" | translate }}'
+      />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+    <button
+    type="button"
+    class="ant-btn ant-btn-default margnlft-15"
+    nz-dropdown
+    nzTrigger="click"
+    [nzDropdownMenu]="menu"
+  >
+    <i nz-icon nzType="plus" nzTheme="outline" class="mr-6 white"></i>
+    {{
+      "business-dashboard.billregister.billregisterlist.cols" | translate
+    }}
+  </button>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <div>
+      <ul
+        nz-menu
+        dileTable
+        
+        class="checkbox-style"
+      >
+        <li  *ngFor="let col of colCheckboxes; let i = index" class="pd5">
+          <label
+            nz-checkbox
+            [nzDisabled]="col.disable"
+            [(ngModel)]="col.check"
+            name="j"
+            (ngModelChange)="disableCheckBox()"
+            >{{ col.label }}</label
+          >
+        </li>
+      </ul>
+    </div>
+  </nz-dropdown-menu>
+  </div>
+</div>
+<!-- general amendment table -->
+<nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="ballotList"
+class="table-all">
+<thead (nzSortChange)="sort($event)" nzSingleSort>
+<tr>
+  <th>{{ "noticeprocessing.staff.personalregister.slno" | translate }}</th>
+<th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="noticetype">
+  {{ "noticeprocessing.notice.listnotice.noticetype" | translate }}
+</th>
+<th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNo">
+  {{ "business-dashboard.responses.ordapprove.billno" | translate }}
+</th>
+<th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+  {{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}
+</th>
+<th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+  {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}
+</th>
+<!-- <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="Minister">
+  Hon'ble minister
+</th>
+<th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="publicopinion">
+  Public opinion
+</th>
+<th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="committee">
+Committee -->
+<!-- </th> -->
+<th *ngIf="colCheckboxes[3].check && commonService.doIHaveAnAccess('FILE', 'READ')" nzShowSort nzSortKey="fileNo">
+  {{ "business-dashboard.responses.ordapprove.fileNo" | translate }}
+</th>
+<th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="status">
+  {{ "business-dashboard.bill-amendments.obj-introduction-list.status" | translate }}
+</th>
+<th>{{ "cpl.correspondencelist.view" | translate }}</th>
+<!-- <th>
+Preview
+</th> -->
+</tr>
+</thead>
+<tbody>
+<tr *ngFor="let list of filterTable.data; let i = index">
+  <td>{{i+1}}</td>
+  <td *ngIf="colCheckboxes[5].check">{{list?.noticeType?.split('_').join(' ')}}</td>
+<td *ngIf="colCheckboxes[0].check">{{list.billNumber}}</td>
+<td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+<tr>
+{{
+list.title
+}}
+</tr>
+<!-- <tr *ngIf="list.viewLinks">
+<div>
+  <td>
+    <a class="viewlink" (click)="viewList(list.ballotId)">View </a>
+  </td>
+</div>
+</tr> -->
+</td>
+<td *ngIf="colCheckboxes[2].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+<!-- <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.publicOpinion"></i>
+<i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.publicOpinion"></i> -->
+{{list?.type?.split('_').join(' ')}}
+</td>
+<!-- <td *ngIf="colCheckboxes[2].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{ list.minister }}</td>
+<td *ngIf="colCheckboxes[3].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+<i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.publicOpinion"></i>
+<i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.publicOpinion"></i> 
+</td>
+<td *ngIf="colCheckboxes[4].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{ list.motionCommitteeType}}</td> -->
+<td *ngIf ="commonService.doIHaveAnAccess('FILE', 'READ') && colCheckboxes[3].check"><a style="text-decoration: underline; color: blue;"
+  (click)="openFile(list.fileId)">{{ list.fileNumber }}</a></td>
+<td *ngIf="colCheckboxes[4].check"><nz-tag> {{ list.ballotStatus =='PUBLISHED'? 'APPROVED':list.ballotStatus?.split('_')?.join(' ')}}</nz-tag></td>
+<td (click)="viewList(list.ballotId)">
+  <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+</td>
+<!-- <td  (click)="getContent(list.motionContent)">
+<i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+</td> -->
+</tr>
+</tbody>
+</nz-table>
+
+<nz-modal
+  [(nzVisible)]="showBallotList"
+  nzTitle='{{ "business-dashboard.question.ballotresult" | translate }}'
+  (nzOnCancel)="closeBallotList()"
+  [nzFooter]="null"
+>
+<div class="row padding_25">
+  <div class="col-md-12">
+    <nz-table #basicTable [nzData]="List" nzShowPagination nzShowSizeChanger>
+      <thead>
+        <tr>
+          <th> {{ "business-dashboard.question.report.slno" | translate }}</th>
+          <th> {{ "noticeprocessing.notice.listnotice.noticeno" | translate }}</th>
+          <th>{{ "business-dashboard.question.member" | translate }}</th>
+        </tr>
+        </thead>
+      <tbody>
+          <tr *ngFor="let data of basicTable.data; let i = index">
+            <td>{{i+1}}</td>
+              <td>{{data.noticeNumber}}</td>
+              <td>{{data.member}}</td>
+          </tr>
+      </tbody>
+  </nz-table>
+  </div>
+</div>
+</nz-modal>

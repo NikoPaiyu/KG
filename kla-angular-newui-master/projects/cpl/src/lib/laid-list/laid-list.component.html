@@ -1,0 +1,162 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "cpl.laidlist.laiddocuments" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">{{"cpl.laidlist.laiddocuments"|translate}}</h2>
+    </div>
+    <div class="col-md-6 justify-content-end">
+    <button class="ml-6" nz-button [nzType]="'default'" 
+    class="float-right"
+    (click)="goBack()">
+    {{"cpl.docupload.back"|translate}}
+    </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+<div class="row d-flex justify-content-space-between marginbtm-25">
+  <div class="col-md-8">
+    <div class="row">
+    <div class="col-md-3 d-flex align-items-cente">
+      {{"cpl.docupload.assembly"|translate}}
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assemblyId"
+        (ngModelChange)="getSessionForAssembly()">
+        <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id"></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-3 d-flex align-items-cente">
+      {{"cpl.docupload.session"|translate}}
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="sessionId"
+        (ngModelChange)="getLayedDoCList()">
+        <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-3 d-flex align-items-cente">
+      {{"cpl.actregistration.doctype"|translate}} :
+      <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="doctype" [(ngModel)]="documentType"
+        (ngModelChange)="getLayedDoCList()">
+        <nz-option *ngFor="let item of docType" [nzLabel]="item" [nzValue]="item"></nz-option>
+      </nz-select>
+    </div>
+   
+    </div>
+    </div>
+    <div class="col-md-4 ">
+      <div class="d-flex justify-content-end">
+        <button
+          class="margnrt-5"
+          nz-button
+          nzType="default"
+          (click)="resetFilter()"
+        >
+        {{"cpl.documents.clearfilter"|translate}}
+        </button>
+      <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          name="search"
+          nz-input
+          [(ngModel)]="searchText"
+          (ngModelChange)="search()"
+          placeholder="{{'cpl.documents.search'|translate}}"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div> 
+    </div>
+  </div>
+  <div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-8">
+      <div class="row">
+  <div class="col-md-4 d-flex align-items-cente">
+    {{"cpl.cplview.laiddate"|translate}} :
+    <!-- <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="laidDate" [(ngModel)]="laidDate"
+      (ngModelChange)="getLayedDoCList()"> -->
+      <nz-date-picker
+          #datepicker
+          [nzDisabledDate]="disabledDate"
+          nzFormat="dd/MM/yyyy"
+          [(ngModel)]="laidDate"
+          [nzShowToday]= "false"
+          (ngModelChange)="filterLaidDate()"
+        >
+        </nz-date-picker>
+    <!-- </nz-select> -->
+    </div>
+    </div>
+    </div>
+  </div>
+    <nz-table #docTable nzShowPagination nzShowSizeChanger [nzData]="docList" class="table-all">
+    <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+      <tr>
+        <!-- <th nzShowSort nzSortKey="currNo">
+         {{"cpl.documents.currno"|translate}}
+        </th> -->
+        <th  nzShowSort nzSortKey="typeName">
+          {{"cpl.documents.documenttitle"|translate}}
+        </th>
+        <th nzShowSort nzSortKey="docType">
+          {{"cpl.actregistration.doctype"|translate}}
+        </th>
+        <th nzShowSort nzSortKey="fileNumber">
+          {{"cpl.docamendments.fileno"|translate}}
+        </th>
+        <!-- <th nzShowSort nzSortKey="dateOfReg">
+          {{"cpl.documents.submissiondate"|translate}}
+        </th> -->
+        <th nzShowSort nzSortKey="dateOfReg">
+          {{"cpl.cplview.laiddate"|translate}}
+        </th>
+        <th>
+          {{"cpl.cplview.Dalatstatement"|translate}}
+        </th>
+        <th>
+         {{"cpl.docamendments.status"|translate}}
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let list of docTable.data" nz-popover nzType="primary" nzPopoverPlacement="left"
+      (click)="viewDocument(list.id)">
+        <!-- <td>
+          <a>{{ list.currentNumber }}</a>
+        </td> -->
+        <td>
+          {{ list.typeName }}
+        </td>
+        <td>
+          {{ list.type }}
+        </td>
+        <td>
+          {{ list.regFileNumber }}
+        </td>
+        <!-- <td>
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td> -->
+        <td>
+          {{ list.laidStartDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td>
+          <nz-tag>{{ list.delayStatus.replace('_', ' ') }}</nz-tag>
+        </td>
+        <td>
+          <nz-tag [nzColor]="'green'">{{ list.status }}</nz-tag>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+
+ 

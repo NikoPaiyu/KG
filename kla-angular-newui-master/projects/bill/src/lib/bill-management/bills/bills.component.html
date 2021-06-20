@@ -1,0 +1,842 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.bill-management.bills" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <h2 class="admin-page-heading">
+                    {{ "business-dashboard.bill-management.billlist.bills" | translate }}
+                </h2>
+            </div>
+            <div class="col-md-6 d-flex justify-content-end">
+                <!-- <button nz-button nzType="default" class="mr-6">...</button> -->
+                <button *ngIf="permissions.create" nz-button nzType="primary" (click)="createBillPopup()">
+          {{ "business-dashboard.bill-management.billlist.create" | translate }}
+        </button>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+      {{ "business-dashboard.bill-management.billlist.addFilter" | translate }}
+    </button>
+        <button type="button" class="ant-btn" (click)="clearFilter()">
+      {{
+        "business-dashboard.bill-management.billlist.clearFilter" | translate
+      }}
+    </button>
+    </div>
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="" (ngModelChange)="searchBill()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+                <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+          <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+        </button>
+            </div>
+
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <div>
+                    <ul nz-menu fileTable class="checkbox-style">
+                        <li class="pdm" *ngFor="let box of colCheckboxes; let i = index">
+                            <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i" (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                        </li>
+                    </ul>
+                </div>
+            </nz-dropdown-menu>
+        </div>
+    </div>
+</div>
+<div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of checkedFilters">
+        <div class="row align-items-center">
+            <div class="col-md-4 wordbreak">
+                {{ filter.label }}
+            </div>
+            <div class="col-md-7">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filter.selValue" name="{{ filter.label }}" (ngModelChange)="searchCol()">
+                    <nz-option *ngFor="let data of filter.data" [nzLabel]="data" [nzValue]="data">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(filter)"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-tabset>
+    <nz-tab nzTitle='{{ "bill.bill-clause.list.billsforaction" | translate }}' (nzClick)="getBillsForAction()" *ngIf="permissions.billsForAction">
+        <ng-template [ngTemplateOutlet]="billsForactionTable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "bill.bill-clause.list.allbills" | translate }}' (nzClick)="getBillsList()" *ngIf="permissions.allBills">
+        <ng-template [ngTemplateOutlet]="allBillstable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "bill.bills.settolob" | translate }}' (nzClick)="getBillsForFirstReading()" *ngIf="isAssistant()">
+        <ng-template [ngTemplateOutlet]="settolobtable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "bill.bills.latedocumentsubmission" | translate }}' (nzClick)="getBillsForLateDocSubmission()"*ngIf="isAssistant()">
+        <ng-template [ngTemplateOutlet]="latedocumentsubmission"></ng-template>
+    </nz-tab>
+</nz-tabset>
+<!-- ----------------- ALL BILLS Table starts here .------------------------ ----------->
+<ng-template #allBillstable>
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="billList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th></th>
+                <!-- <th
+        nzShowCheckbox
+        [(nzChecked)]="checkbxParams.allDtCheckd"
+        (nzCheckedChange)="_checkAllRows($event)"
+      ></th> -->
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNumber">
+                    {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+                    {{ "business-dashboard.bill-management.billlist.title" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+                    {{ "business-dashboard.bill-management.billlist.type" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="natureOfBill">
+                    {{ "business-dashboard.bill-management.billCreate.billNature" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="language">
+                    {{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="minister">
+                    {{ "business-dashboard.bill-management.billlist.minister" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[6].check" nzShowSort nzSortKey="department">
+                    {{ "business-dashboard.bill-management.billlist.dept" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[13].check" nzShowSort nzSortKey="subject">
+                    {{ "business-dashboard.question.ministersubject" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.bill-management.billlist.status" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[8].check">
+                    {{ "business-dashboard.bill-management.billlist.actReference" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[9].check">
+                    {{ "business-dashboard.bill-management.billlist.oldActref" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[10].check">
+                    {{ "business-dashboard.bill-management.billlist.ordinance" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[11].check">
+                    {{ "business-dashboard.bill-management.billlist.govrec" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[12].check">
+                    {{ "business-dashboard.bill-management.billlist.artilce" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="tableParams.colSpan">
+                <th colspan="10" class="tb-data">
+                    {{ checkbxParams.numberOfChecked }} {{ "business-dashboard.question.questionlist.selected" | translate }} :
+                    <button *ngIf="isCreator()" class="ant-btn mr-6" (click)="addToPriorityList()">
+            {{
+              "business-dashboard.bill-management.billlist.addtoPriorityList"
+                | translate
+            }}
+          </button>
+                    <button *ngIf="isApprover()" class="ant-btn mr-6" (click)="onSendMinistersMotion(null)">
+            {{
+              "business-dashboard.bill-management.billlist.sendMinistersmotion"
+                | translate
+            }}
+          </button>
+                </th>
+            </tr>
+            <tr *ngFor="let list of filterTable.data">
+                <td nzShowCheckbox [nzDisabled]="
+            list.ministersMotion || (isApprover() && list.status == 'SAVED')
+          " [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="refreshStatus(list)"></td>
+                <td *ngIf="colCheckboxes[0].check">{{ list.billNumber}}</td>
+                <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id, list.status)">
+                    <tr>
+                        <td class="titlestyle">
+                            {{ list.title }}
+                        </td>
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td>
+                                <a class="viewlink" (click)="bill_full_View(list.id)"> {{ "cpl.correspondencelist.view" | translate }} </a>
+                            </td>
+                            <td *ngIf="(isCreator() && !(list.status == 'SAVED' || list.status == 'UNDER_APPROVER'))">
+                                <a class="viewlink" (click)="onRequestErrata(list.id)">{{ "bill.bill-clause.list.adderrata" | translate }}
+            </a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="list.errataCount > 0" (click)="gotoErrataView(list.id)">{{ "bill.bill-clause.list.viewerrata" | translate }}</a>
+                            </td>
+                            <td *ngIf="
+                  isApprover() &&
+                  !list.ministersMotion &&
+                  list.status != 'SAVED'
+                ">
+                                <a class="viewlink" (click)="onSendMinistersMotion(list)">{{ "bill.bill-clause.list.sendministermotion" | translate }}</a>
+                            </td>
+                            <td *ngIf="
+                  list.ministersMotion
+                ">
+                                <a class="viewlink" (click)="viewMinistersMotion(list.id)">{{ "bill.bill-clause.list.viewministermotion" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="list.fileNumber && permissions.fileView" [routerLink]="['/business-dashboard/bill/file-view', 'bill', list.fileId ]">{{ list.fileNumber }}</a>
+                            </td>
+                            <td *ngIf="permissions.createBulletin &&list.fileNumber && list.language == 'ENGLISH' 
+          && list.status === 'APPROVED' && !list.bulletinId">
+                                <a href="javascript:;" class="viewlink" (click)="createBulletinPart2(list)">{{ "bill.performballo.createbullentinpart2" | translate }}</a>
+                            </td>
+                            <!-- <td>
+                <a
+                  class="viewlink"
+                  *ngIf="!list.fileNumber && permissions.fileView"
+                  (click) ="showcreateFileModal(list.id)"
+                  >CreateFile</a
+                >
+              </td> -->
+                            <td>
+                                <a class="viewlink" *ngIf="permissions.addToBillRegister && !list.addedToRegister && list.status !='SENT TO LEGISLATION'" nz-popconfirm nzPopconfirmTitle='Are you sure want to add "{{list.title}}" to bill register?' (nzOnConfirm)="addToBillRegister(list.id,'edit')">Add to BillRegister</a>
+                                <a *ngIf="permissions.viewBillRegister && list.addedToRegister&&!isMember()" class="viewlink" (click)="bill_View(list.id, 'edit')">{{ "business-dashboard.billregister.billregisterlist.billreg" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="list.committeReportId" (click)="viewCommiteeReport(list)">
+                                   View Committee Report
+                                </a>
+                            </td>
+                        </div>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list.type.split('_').join(' ') }}</td>
+                <td *ngIf="colCheckboxes[3].check">{{list.natureOfBill}}</td>
+                <td *ngIf="colCheckboxes[4].check">{{ list.language }}</td>
+                <td *ngIf="colCheckboxes[5].check">{{ list.minister }}</td>
+                <td *ngIf="colCheckboxes[6].check">{{ list.department }}</td>
+                <td *ngIf="colCheckboxes[13].check">{{ list.subject }}</td>
+                <td *ngIf="colCheckboxes[7].check">
+                    <nz-tag> {{ list.status.split('_').join(' ') }}</nz-tag>
+                </td>
+                <td *ngIf="colCheckboxes[8].check">
+                    <div *ngFor="let act of list.referenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[9].check">
+                    <div *ngFor="let act of list.oldReferenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[10].check">{{ list.ordinance }}</td>
+                <td *ngIf="colCheckboxes[11].check">
+                    {{ list.governerRecommendation }}
+                </td>
+                <td class="titlestyle" *ngIf="colCheckboxes[12].check">{{ list.articalNo }}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<!-- ----------------- ALL BILLS Table ends here .------------------------ ----------->
+<!-- ----------------- Bills  Actiforon Table Starts here .------------------------ -->
+<ng-template #billsForactionTable>
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="billList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="checkbxParams.allDtCheckd" (nzCheckedChange)="_checkAllRows($event)"></th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNumber">
+                    {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+                    {{ "business-dashboard.bill-management.billlist.title" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+                    {{ "business-dashboard.bill-management.billlist.type" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="natureOfBill">
+                    {{ "business-dashboard.bill-management.billCreate.billNature" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="language">
+                    {{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="minister">
+                    {{ "business-dashboard.bill-management.billlist.minister" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[6].check" nzShowSort nzSortKey="department">
+                    {{ "business-dashboard.bill-management.billlist.dept" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[13].check" nzShowSort nzSortKey="subject">
+                    {{ "business-dashboard.question.ministersubject" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.bill-management.billlist.status" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[8].check">
+                    {{ "business-dashboard.bill-management.billlist.actReference" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[9].check">
+                    {{ "business-dashboard.bill-management.billlist.oldActref" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[10].check">
+                    {{ "business-dashboard.bill-management.billlist.ordinance" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[11].check">
+                    {{ "business-dashboard.bill-management.billlist.govrec" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[12].check">
+                    {{ "business-dashboard.bill-management.billlist.artilce" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="tableParams.colSpan && isSectionOfficer()">
+                <th colspan="10" class="tb-data">
+                    {{ checkbxParams.numberOfChecked }} Selected :
+                    <button class="ant-btn mr-6" (click)="assignToAssistant()">
+                        {{ "cpl.documents.assigntoassisstant" | translate }}
+          </button>
+                </th>
+            </tr>
+            <tr *ngFor="let list of filterTable.data">
+                <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="refreshStatus(list)"></td>
+                <td *ngIf="colCheckboxes[0].check">{{ list.billNumber}}</td>
+                <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id, list.status)">
+                    <tr>
+                        <td class="titlestyle">
+                            {{list.title}}
+                        </td>
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td>
+                                <a class="viewlink" (click)="bill_full_View(list.id)">{{ "cpl.docpreparion.view" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" (click)="editBillMetaform(list.id)" *ngIf="edit">{{ "noticeprocessing.noticeprocess.edit" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" (click)="editBillContent(list.id)" *ngIf="edit">{{ "bill.bill-clause.list.editcontent" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="list.fileNumber && permissions.fileView" [routerLink]="['/business-dashboard/bill/file-view', 'bill', list.fileId ]">
+                  {{ list.fileNumber }}
+                </a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="!list.fileNumber && permissions.fileView" (click)="showcreateFileModal(list.id,list.assemblyId,list.sessionId)">{{ "cpl.docpreparion.createfile" | translate }}</a>
+                            </td>
+                            <td>
+                                <a *ngIf="permissions.addToBillRegister && !list.addedToRegister && list.status !='SENT TO LEGISLATION'" class="viewlink" nz-popconfirm nzPopconfirmTitle='Are you sure want to add "{{list.title}}" to bill register?' (nzOnConfirm)="addToBillRegister(list.id, 'edit')">{{ "bill.bill-clause.list.addtobillregister" | translate }}</a>
+                                <a *ngIf="permissions.viewBillRegister && list.addedToRegister&& !isMember()" class="viewlink" (click)="bill_View(list.id, 'edit')">{{ "business-dashboard.billregister.billregisterlist.billreg" | translate }}</a>
+                            </td>
+                            <!-- *ngIf="
+                permissions.fileView &&
+                list.fileNumber &&
+                list.language == 'ENG'
+              " -->
+                            <!-- <td *ngIf="permissions.fileView &&list.fileNumber &&list.language == 'ENGLISH'">
+                <a href="javascript:;" class="viewlink" (click)="createBulletinPart2(list)">Create Bullentin Part2</a>
+              </td> -->
+                        </div>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list.type.split('_').join(' ') }}</td>
+                <td *ngIf="colCheckboxes[3].check">{{ list.natureOfBill}}</td>
+                <td *ngIf="colCheckboxes[4].check">{{ list.language }}</td>
+                <td *ngIf="colCheckboxes[5].check">{{ list.minister }}</td>
+                <td *ngIf="colCheckboxes[6].check">{{ list.department }}</td>
+                <td *ngIf="colCheckboxes[13].check">{{ list.subject }}</td>
+                <td *ngIf="colCheckboxes[7].check">
+                    <nz-tag> {{ list.status.split('_').join(' ') }}</nz-tag>
+                </td>
+                <td *ngIf="colCheckboxes[8].check">
+                    <div *ngFor="let act of list.referenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[9].check">
+                    <div *ngFor="let act of list.oldReferenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[10].check">{{ list.ordinance }}</td>
+                <td *ngIf="colCheckboxes[11].check">
+                    {{ list.governerRecommendation }}
+                </td>
+                <td *ngIf="colCheckboxes[12].check">{{ list.articalNo }}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<!-- ----------------- Bills for Action Table ends here .------------------------ -->
+<div class="row margnrtp-15">
+    <div class="col-md-4">
+        <ng-container>
+            <div></div>
+        </ng-container>
+    </div>
+</div>
+
+<!-- Starting Filter popup -->
+<nz-modal [(nzVisible)]="filtrParams.rowFilter || filtrParams.colFilter" nzTitle="" (nzOnCancel)="showFilter(null)" (nzOnOk)="_confrmFilter()">
+    <div class="padding_15">
+        <p *ngFor="let box of filtrParams.tableDto; let i = index">
+            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+        </p>
+    </div>
+</nz-modal>
+<!-- Ending filter popup -->
+
+<!-- Starting Add to Priority Popup  -->
+<nz-modal [(nzVisible)]="filtrParams.showPriorityPopup" nzTitle='{{ "business-dashboard.bill-management.billlist.addtoPriorityList" | translate }}' nzOkText="Create" nzCancelText="Cancel" (nzOnCancel)="onCancelPopup()" (nzOnOk)="onOKPriorityList()" [nzOkDisabled]="
+    !(
+      priorityList.assembly &&
+      priorityList.session &&
+      priorityList.categoryTitle
+    )
+  ">
+    <div class="padding_25">
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.bill-management.billlist.selectassembly" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="priorityList.assembly">
+                            <nz-option *ngFor="let type of assemblies" [nzLabel]="type.assemblyId" [nzValue]="type.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <div class="row d-flex align-items-center">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.bill-management.billlist.selectsession" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="priorityList.session">
+                            <nz-option *ngFor="let type of sessions" [nzLabel]="type.sessionId" [nzValue]="type.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.bill-management.billlist.selectcategory" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select nzShowSearch nzAllowClear [(ngModel)]="priorityList.categoryTitle">
+                            <nz-option *ngFor="let type of categorys" [nzLabel]="type.description" [nzValue]="type.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- Ending Add to Priority Popup -->
+
+<!-- Start Request Errata -->
+<nz-modal [(nzVisible)]="requestErrata.showpopUp" nzTitle='{{ "bill.bill-clause.list.adderrata" | translate }}' nzOkText="Submit" nzWidth="1000" [nzFooter]="modalFooter" (nzOnCancel)="onCancelPopup()">
+    <div class="padding_25">
+        <div class="row mrgB20"></div>
+        <div class="row mrgB20">
+            <div class="col-md-12">
+                <quill-editor class="quillstyle" [(ngModel)]="requestErrata.errataFile" [modules]="modules"></quill-editor>
+                <div *ngIf="requestErrata.showValidation">
+                    <span class="text-danger">{{ "noticeprocessing.noticetemplate.createtemplate.input" | translate }}</span>
+                </div>
+            </div>
+        </div>
+        <ng-template #modalFooter>
+            <button nz-button nzType="default" (click)="onCancelPopup()">{{ "business-dashboard.question.cancel" | translate }}</button>
+            <button nz-button nzType="primary" (click)="onSaveErrata()">{{ "business-dashboard.question.save" | translate }}</button>
+            <button nz-button nzType="primary" (click)="onSubmitErrata()">{{ "business-dashboard.question.submit" | translate }}</button>
+        </ng-template>
+    </div>
+</nz-modal>
+
+<!-- end Request Errata -->
+
+<!-- Start Send Ministers Motion -->
+<nz-modal [(nzVisible)]="sendMinistersMotion.showpopUp" nzTitle='{{ "bill.bill-clause.list.sendministermotion" | translate }}' nzOkText="Submit" nzCancelText="Cancel" [nzOkDisabled]="selectedCommittie.invalid" (nzOnCancel)="onCancelPopup()" (nzOnOk)="onSubmitSendMinistersMotion()">
+    <div class="padding_25">
+        <div class="row marginbtm-15">
+            <div class="col-md-12">
+                <div class="row d-flex align-items-center">
+                    {{ "business-dashboard.bill-management.billlist.refertocommitiee" | translate }}
+                </div>
+                <div class="row d-flex align-items-center">
+                    <nz-radio-group [formControl]="selectedCommittie">
+                        <label nz-radio nzValue="SUBJECT_COMMITTEE">{{ "bill.bill-clause.list.subjectcommittee" | translate }}</label>
+                        <label nz-radio nzValue="SELECT_COMMITTEE">{{ "bill.bill-clause.list.selectcommittee" | translate }}</label>
+                    </nz-radio-group>
+                </div>
+                <div class="row d-flex align-items-center">
+                    <quill-view-html [content]="motionHtmlContent"></quill-view-html>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end  Send Ministers Motion-->
+
+<!-- START CREATE BILL  -->
+<nz-modal [(nzVisible)]="showCreateBill" nzTitle='{{ "business-dashboard.bill-management.billlist.create" | translate }}' nzClosable="false" [nzFooter]="null" nzWidth="600">
+    <lib-createbill-metaform *ngIf="showCreateBill" (showCreate)="showCreateBillPopup($event)">
+    </lib-createbill-metaform>
+</nz-modal>
+
+<!-- END CREATE BILL -->
+<nz-modal [(nzVisible)]="showEditBill" nzTitle='{{ "bill.bill-clause.list.editbill" | translate }}' nzClosable="false" [nzFooter]="null" nzWidth="600">
+    <lib-createbill-metaform *ngIf="showEditBill && billId" [billId]="billId" (showCreate)="showEditBillPopup($event)">
+    </lib-createbill-metaform>
+</nz-modal>
+
+<!-- Assign to Assistant -->
+<nz-modal nzTitle='{{ "cpl.documents.assigntoassisstant" | translate }}' [(nzVisible)]="assignAssistant.visible" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15 align-items-center">
+                    <div class="col-md-4">
+                        {{ "cpl.documents.assigntoassisstant" | translate }}
+                    </div>
+                </div>
+                <div class="row margnrtp-15 align-items-center">
+                    <div class="col-md-4">{{ "cpl.documents.Filter" | translate }}</div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-12">
+                        <input nz-input placeholder='{{ "business-dashboard.notice-proc.searchnamehere" | translate }}' [(ngModel)]="assignAssistant.searchPerson" (ngModelChange)="personSearch()" />
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-12">
+                        <nz-card [nzTitle]="null" class="checklist-all">
+                            <nz-table #assistantListTable [nzData]="assignAssistant.assistantList">
+                                <tbody>
+                                    <tr *ngFor="let person of assistantListTable.data">
+                                        <td>
+                                            <nz-radio-group [(ngModel)]="assignAssistant.assigneeId">
+                                                <label nz-radio [nzValue]="person.userId"></label>
+                                            </nz-radio-group>
+                                        </td>
+                                        <td>{{ person.fullName }}</td>
+                                        <td>{{ person.name }}</td>
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </nz-card>
+                    </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" nz-button nzType="default" (click)="onCancelAssistant()">
+                            {{ "business-dashboard.question.cancel" | translate }}
+            </button>
+                        <button type="button" nz-button nzType="primary" (click)="onSubmitAssistant()" class="margnlft-15" [disabled]="assignAssistant.assigneeId === null">
+                            {{ "business-dashboard.question.questionlist.assign" | translate }}
+            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- assign to assitant -->
+<!-- create file modal-->
+<nz-modal [(nzVisible)]="fileCreateModel" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <b>{{ "cpl.docpreparion.createfile" | translate }}</b>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "business-dashboard.cpl.view.filesubject" | translate }}</div>
+                    <div class="col-md-8">
+                        <input nz-input placeholder='{{ "business-dashboard.cpl.view.filesubject" | translate }}' [(ngModel)]="file.subject" />
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "business-dashboard.question.questionlist.priority" | translate }}</div>
+                    <div class="col-md-8">
+                        <nz-radio-group [(ngModel)]="file.priority">
+                            <label nz-radio nzValue="URGENT">{{ "cpl.docamendments.urgent" | translate }}</label>
+                            <label nz-radio nzValue="NORMAL">{{ "cpl.docamendments.normal" | translate }}</label>
+                            <label nz-radio nzValue="ACTION_TODAY"> {{ "cpl.docamendments.actiontoday" | translate }}</label>
+                            <label nz-radio nzValue="ASSEMBLY_URGENT">{{ "cpl.docamendments.assemblyurgent" | translate }}</label>
+                        </nz-radio-group>
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "cpl.docamendments.description" | translate }}</div>
+                    <div class="col-md-8">
+                        <textarea nz-input rows="2" placeholder='{{ "cpl.docamendments.filedescription" | translate }}' [(ngModel)]="file.description"></textarea>
+                    </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font" (click)="handlePreviewCancel()">
+                            {{ "cpl.correspondencelist.cancel" | translate }}
+            </button>
+                        <button type="button" nz-button nzType="primary" nz-popconfirm nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttocreatefile" | translate }}' (nzOnConfirm)="createFile()" class="btn btn-primary primary-button" [disabled]="file.subject === '' || file.priority === null">
+                            {{ "cpl.docpreparion.createfile" | translate }}
+            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!--end of create file modal-->
+<!-- create bulletin popup -->
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle=' {{ "bill.bill-clause.list.createbulletinpart2" | translate }}' (nzOnCancel)="cancelBulletin()">
+    <lib-create-bulletin-form [bulletinData]="bulletinData" (afterCreate)="afterCreateBulletin($event)">
+    </lib-create-bulletin-form>
+</nz-modal>
+<!-- end of create bulletin popup -->
+
+<!--set to lob list starts here-->
+<ng-template #settolobtable>
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="lobBillList | search: 'title':searchParam" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNumber">
+                    {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+                    {{ "business-dashboard.bill-management.billlist.title" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+                    {{ "business-dashboard.bill-management.billlist.type" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="natureOfBill">
+                    {{ "business-dashboard.bill-management.billCreate.billNature" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="language">
+                    {{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </th>
+                <!-- <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="minister">
+                    {{ "business-dashboard.bill-management.billlist.minister" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[6].check" nzShowSort nzSortKey="department">
+                    {{ "business-dashboard.bill-management.billlist.dept" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[13].check" nzShowSort nzSortKey="subject">
+                    Minister Subject
+                </th> -->
+                <th>
+                    {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.action" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of filterTable.data">
+                <td *ngIf="colCheckboxes[0].check">{{ list.bill.billNumber}}</td>
+                <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinksinLobBills(list?.bill?.id)">
+                    <tr>
+                        <td class="titlestyle">
+                            {{ list.title }}
+                        </td>
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td>
+                                <a class="viewlink" (click)="bill_full_View(list?.bill?.id)">View </a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="list.errataCount > 0" (click)="gotoErrataView(list.id)">View Errata</a>
+                            </td>
+                        </div>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list?.bill?.type.split('_').join(' ') }}</td>
+                <td *ngIf="colCheckboxes[3].check">{{list?.bill?.natureOfBill}}</td>
+                <td *ngIf="colCheckboxes[4].check">{{ list?.bill?.language==="MAL"?'MALAYALAM':'ENGLISH' }}</td>
+                <!-- <td *ngIf="colCheckboxes[5].check">{{ list?.minister }}</td>
+                <td *ngIf="colCheckboxes[6].check">{{ list?.department }}</td>
+                <td *ngIf="colCheckboxes[13].check">{{ list?.subject }}</td> -->
+                <td *ngIf="colCheckboxes[7].check">
+                    <button nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwantSettoLOB" | translate }}' (nzOnConfirm)="setToLOB(list.bill.id)" nz-button nzType="default" class="mrgL6">
+                        {{ "bill.bills.settolob" | translate }}
+                  </button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<!--set to lob table ends here-->
+
+<!-- late document submission table starts -->
+<ng-template #latedocumentsubmission>
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="billList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <th nzShowCheckbox [(nzChecked)]="checkbxParams.allDtCheckd" (nzCheckedChange)="_checkAllRows($event)"></th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNumber">
+                    {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+                    {{ "business-dashboard.bill-management.billlist.title" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+                    {{ "business-dashboard.bill-management.billlist.type" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="natureOfBill">
+                    {{ "business-dashboard.bill-management.billCreate.billNature" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="language">
+                    {{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="minister">
+                    {{ "business-dashboard.bill-management.billlist.minister" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[6].check" nzShowSort nzSortKey="department">
+                    {{ "business-dashboard.bill-management.billlist.dept" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[13].check" nzShowSort nzSortKey="subject">
+                    {{ "business-dashboard.question.ministersubject" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="status">
+                    {{ "business-dashboard.bill-management.billlist.status" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[8].check">
+                    {{ "business-dashboard.bill-management.billlist.actReference" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[9].check">
+                    {{ "business-dashboard.bill-management.billlist.oldActref" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[10].check">
+                    {{ "business-dashboard.bill-management.billlist.ordinance" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[11].check">
+                    {{ "business-dashboard.bill-management.billlist.govrec" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[12].check">
+                    {{ "business-dashboard.bill-management.billlist.artilce" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- <tr *ngIf="tableParams.colSpan && isSectionOfficer()">
+                <th colspan="10" class="tb-data">
+                    {{ checkbxParams.numberOfChecked }} Selected :
+                    <button class="ant-btn mr-6" (click)="assignToAssistant()">
+                        {{ "cpl.documents.assigntoassisstant" | translate }}
+                    </button>
+                </th>
+            </tr> -->
+            <tr *ngFor="let list of filterTable.data">
+                <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="refreshStatus(list)"></td>
+                <td *ngIf="colCheckboxes[0].check">{{ list.billNumber}}</td>
+                <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id, list.status)">
+                    <tr>
+                        <td class="titlestyle">
+                            {{list.title}}
+                        </td>
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td>
+                                <a class="viewlink" (click)="bill_full_View(list.id)">{{ "cpl.docpreparion.view" | translate }}</a>
+                            </td>
+                            <!-- <td>
+                                <a class="viewlink" (click)="editBillMetaform(list.id)" *ngIf="edit">{{ "noticeprocessing.noticeprocess.edit" | translate }}</a>
+                            </td>
+                            <td>
+                                <a class="viewlink" (click)="editBillContent(list.id)" *ngIf="edit">{{ "bill.bill-clause.list.editcontent" | translate }}</a>
+                            </td> -->
+                            <td>
+                                <a class="viewlink" *ngIf="list.fileNumber && permissions.fileView" [routerLink]="['/business-dashboard/bill/file-view', 'bill', list.fileId ]">
+                                    {{ list.fileNumber }}
+                                </a>
+                            </td>
+                            <td>
+                                <a class="viewlink" *ngIf="!list.fileNumber && permissions.fileView" (click)="showcreateFileModal(list.id,list.assemblyId,list.sessionId)">{{ "cpl.docpreparion.createfile" | translate }}</a>
+                            </td>
+                            <!-- <td>
+                                <a *ngIf="permissions.addToBillRegister && !list.addedToRegister && list.status !='SENT TO LEGISLATION'" class="viewlink" nz-popconfirm nzPopconfirmTitle='Are you sure want to add "{{list.title}}" to bill register?' (nzOnConfirm)="addToBillRegister(list.id, 'edit')">{{ "bill.bill-clause.list.addtobillregister" | translate }}</a>
+                                <a *ngIf="permissions.viewBillRegister && list.addedToRegister&& !isMember()" class="viewlink" (click)="bill_View(list.id, 'edit')">{{ "business-dashboard.billregister.billregisterlist.billreg" | translate }}</a>
+                            </td> -->
+                        </div>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list.type.split('_').join(' ') }}</td>
+                <td *ngIf="colCheckboxes[3].check">{{ list.natureOfBill}}</td>
+                <td *ngIf="colCheckboxes[4].check">{{ list.language }}</td>
+                <td *ngIf="colCheckboxes[5].check">{{ list.minister }}</td>
+                <td *ngIf="colCheckboxes[6].check">{{ list.department }}</td>
+                <td *ngIf="colCheckboxes[13].check">{{ list.subject }}</td>
+                <td *ngIf="colCheckboxes[7].check">
+                    <nz-tag> {{ list.status.split('_').join(' ') }}</nz-tag>
+                </td>
+                <td *ngIf="colCheckboxes[8].check">
+                    <div *ngFor="let act of list.referenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[9].check">
+                    <div *ngFor="let act of list.oldReferenceAct">
+                        {{ act }}
+                    </div>
+                    <br />
+                </td>
+                <td *ngIf="colCheckboxes[10].check">{{ list.ordinance }}</td>
+                <td *ngIf="colCheckboxes[11].check">
+                    {{ list.governerRecommendation }}
+                </td>
+                <td *ngIf="colCheckboxes[12].check">{{ list.articalNo }}</td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<!-- late document submission table ends -->
+
+<!-- View Commitee Report Previeww Starts here -->
+<nz-modal [(nzVisible)]="viewReport.showpopUp" nzTitle='Committee Report Preview' nzClosable="false" [nzFooter]="null" nzWidth="1100">
+   <lib-committee-report-preview *ngIf="viewReport.showpopUp" (cancelReportPreview)="cancelReportPreview($event)"
+   [billDetails]="viewReport.billDetails"></lib-committee-report-preview>
+</nz-modal>
+<!-- View Commitee Report Previeww Ends here -->

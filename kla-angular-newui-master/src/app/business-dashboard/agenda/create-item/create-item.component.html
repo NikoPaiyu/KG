@@ -1,0 +1,131 @@
+<div>
+  <form
+    nz-form
+    [formGroup]="validateForm"
+    (ngSubmit)="submitForm(validateForm.value)"
+  >
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSpan]="5" nzRequired>{{"business-dashboard.agenda.create-item.title" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="17" nzHasFeedback [nzErrorTip]="errorTpl">
+        <input nz-input formControlName="title" />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+              {{"business-dashboard.agenda.agenda-create.inisreq" | translate }}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>{{"business-dashboard.agenda.create-item.member" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="17" nzHasFeedback [nzErrorTip]="errorTpl">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Select a person"
+          formControlName="memberId"
+        >
+          <ng-container *ngFor="let member of members">
+            <nz-option [nzLabel]="member.label" [nzValue]="member"></nz-option>
+          </ng-container>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSpan]="5" nzRequired>{{"business-dashboard.agenda.create-item.desc" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="17" nzErrorTip="Please write something here!">
+        <textarea nz-input formControlName="description"></textarea>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item nzFlex>
+      <nz-form-label [nzSpan]="5">{{"business-dashboard.agenda.create-item.time" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="17" nzHasFeedback [nzErrorTip]="errorTpl">
+        <input nz-input type="number" formControlName="allotedTime" />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+              {{"business-dashboard.agenda.agenda-create.inisreq" | translate }}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="mrgTB-10">
+      <nz-form-label [nzSpan]="8">{{"business-dashboard.agenda.create-item.doc" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="Please write something here!">
+        <nz-upload
+          [(nzFileList)]="fileList"
+          [nzShowButton]="fileList.length < 1"
+          [nzBeforeUpload]="beforeUpload"
+          [nzRemove]="handleRemoveFIle"
+        >
+          <button nz-button type="button">
+            <i nz-icon nzType="upload"></i><span>{{"business-dashboard.agenda.create-item.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item class="mrgTB-10">
+      <nz-form-label [nzSpan]="8">{{"business-dashboard.agenda.create-item.response" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="Please write something here!">
+        <nz-upload
+          [(nzFileList)]="answerFileList"
+          [nzShowButton]="answerFileList.length < 1"
+          [nzBeforeUpload]="beforeUploadAnswer"
+          [nzRemove]="handleRemoveAnswerFile"
+        >
+          <button nz-button type="button">
+            <i nz-icon nzType="upload"></i><span>{{"business-dashboard.agenda.create-item.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+      <nz-form-control nzOffset="8" [nzSpan]="14" class="mrgT-10">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder="Select Respondent/Minister"
+          formControlName="secondaryOwnerId"
+        >
+          <ng-container *ngFor="let member of members">
+            <nz-option [nzLabel]="member.label" [nzValue]="member"></nz-option>
+          </ng-container>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="mrgTB-10">
+      <nz-form-label [nzSpan]="8">{{"business-dashboard.agenda.create-item.speakernote" | translate}}</nz-form-label>
+      <nz-form-control [nzSpan]="14" nzErrorTip="Please write something here!">
+        <nz-upload
+          [(nzFileList)]="speaketNoteFileList"
+          [nzShowButton]="speaketNoteFileList.length < 1"
+          [nzBeforeUpload]="beforeUploadSpeakerNote"
+          [nzRemove]="handleRemoveSpeakerNoteFile"
+        >
+          <button nz-button type="button">
+            <i nz-icon nzType="upload"></i><span>{{"business-dashboard.agenda.create-item.clicktoupload" | translate}}</span>
+          </button>
+        </nz-upload>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="mrgTB-10">
+      <nz-form-control class="col-md-12 d-flex justify-content-center">
+        <button
+          nz-button
+          nzType="primary"
+          [nzLoading]="isLoading"
+          [disabled]="!validateForm.valid"
+          class="margnrtp-15"
+        >
+            {{"business-dashboard.agenda.agenda-create.submit" | translate}}
+        </button>
+        <button
+          nz-button
+          type="button"
+          (click)="resetForm()"
+          class="margnrtp-15"
+        >
+            {{"business-dashboard.agenda.agenda-create.reset" | translate}}
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>

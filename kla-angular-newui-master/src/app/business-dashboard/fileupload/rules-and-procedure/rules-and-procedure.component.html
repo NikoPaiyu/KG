@@ -1,0 +1,88 @@
+<form nz-form [formGroup]="validateForm" (ngSubmit)="handleUpload()">
+  <nz-form-item>
+    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired nzFor="date"
+      >{{"cpl.registration.Date" | translate}}</nz-form-label
+    >
+    <nz-form-control
+      [nzSm]="14"
+      [nzXs]="24"
+      nzErrorTip='{{"business-dashboard.rules&proc.inputnotvaliddate" | translate}}'
+    >
+      <nz-date-picker
+        [nzFormat]="dateFormat"
+        formControlName="date"
+      ></nz-date-picker>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired>{{"business-dashboard.rules&proc.SelectFile" | translate}}</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip='{{"business-dashboard.rules&proc.selectvalidfile" | translate}}'>
+      <input
+        formControlName="uplaodfilename"
+        #myInput
+        (change)="onFileSelected($event.target.files)"
+        type="file"
+        id="file"
+        class="secondary-button dark-font dark-border"
+      />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="4" [nzXs]="24" nzRequired nzFor="FileName"
+      >{{"business-dashboard.rules&proc.FileName" | translate}}</nz-form-label
+    >
+    <nz-form-control
+      [nzSm]="14"
+      [nzXs]="24"
+      nzErrorTip='{{"business-dashboard.rules&proc.inputnotvalidfilename" | translate}}'
+    >
+      <input nz-input formControlName="FileName" id="email" />
+    </nz-form-control>
+  </nz-form-item>
+  <button
+    nz-button
+    nzType="'primary'"
+    nz-button
+    class="btn-align ant-btn ant-btn-primary"
+  >
+    {{ uploading ? "Uploading" : "Upload" }}
+  </button>
+</form>
+
+<nz-table
+  #rowSelectionTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzShowQuickJumper]
+  [nzData]="FileUpalodDetails"
+>
+  <thead>
+    <tr>
+      <th class="bg-head">{{"cpl.correspondencelist.sno" | translate}}</th>
+      <th class="bg-head">{{"business-dashboard.question.questionmlalisting.name" | translate}}</th>
+      <th class="bg-head">{{"cpl.registration.Date" | translate}}</th>
+      <th class="bg-head">{{"cpl.docpreparion.delete" | translate}}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of rowSelectionTable.data; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ item.label }}</td>
+      <td>
+        {{ item.createdAt | date: "dd/MM/yyyy" }}
+      </td>
+      <td>
+        <button
+          class="btn btn-default"
+          mwlConfirmationPopover
+          [popoverMessage]="popoverMessage"
+          placement="left"
+          (confirm)="deleteFileUplaod(item.id)"
+        >
+        {{"cpl.docpreparion.delete" | translate}}
+        </button>
+        <!-- <button (click)="deleteFileUplaod(item.id)">Delete</button> -->
+      </td>
+    </tr>
+  </tbody>
+</nz-table>

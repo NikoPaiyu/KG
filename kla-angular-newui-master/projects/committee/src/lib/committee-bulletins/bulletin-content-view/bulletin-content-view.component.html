@@ -1,0 +1,31 @@
+<div class="modal-header">
+  <div class="row fullwidth">
+    <div class="col-md-6">
+      <h4>Bulletin Preview</h4>
+    </div>
+    <div
+      *ngIf="buttonControls.publish &&
+        bulletin.fileStatus == 'APPROVED' &&
+        bulletin.status != 'PUBLISHED'
+      "
+      class="col-md-6"
+      style="text-align: right; padding-right: 50px"
+    >
+      <button
+      *ngIf="buttonControls.publish"
+        type="button"
+        class="btn btn-outline-info"
+        nz-popconfirm
+        nzCancelText="No"
+        nzOkText="Yes"
+        nzPopconfirmTitle="Do you want to publish?"
+        (nzOnConfirm)="publishBulletin()"
+        nzPopconfirmPlacement="bottomLeft"
+        style="margin-left: 6px"
+      >
+        Publish
+      </button>
+    </div>
+  </div>
+</div>
+<p *ngIf="bulletin" [innerHTML]="bulletin.reportData | safeHtml"></p>

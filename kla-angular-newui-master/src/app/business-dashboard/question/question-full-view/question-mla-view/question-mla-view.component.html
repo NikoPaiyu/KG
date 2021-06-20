@@ -1,0 +1,351 @@
+<ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+  <div class="row">
+    <div class="col-md-12">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{
+          "business-dashboard.question.questionmlalisting.mladetails"
+            | translate
+        }}
+      </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      <button nz-button nzType="default" (click)="clickBack()">
+        {{ "business-dashboard.question.questionview.back" | translate }}
+      </button>
+    </div>
+
+  
+  
+  </div>
+  </div>
+<nz-divider></nz-divider>
+
+<div class="row" *ngIf="mladetail">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionrequestconsent.mlaname"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.fullName }}
+        </div>
+      </div>
+      <br />
+
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.constituency"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.constituencyName }}
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.mlaministerspeaker"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.roleDisplay }}
+        </div>
+      </div>
+      <br />
+
+      <!-- <br>
+        <div class="row">
+            <div class="col-md-4">
+                {{
+                    "business-dashboard.question.report.pacontactno" | translate
+                  }}:
+            </div>
+            <div class="col-md-8">9447706782
+                {{ mladetail.paContactNumber}}
+
+            </div>
+        </div>
+        <br> -->
+      <!-- <div class="row">
+            <div class="col-md-4">
+                {{
+                    "business-dashboard.question.report.mlacurrentlyactive" | translate
+                  }}
+            </div>
+            <div class="col-md-8">
+                <nz-radio-group [(ngModel)]="radioValue"
+                nzName="radiogroup"
+                name="radioValue"  [nzDisabled]="true">
+                    <label nz-radio nzValue="ACTIVE">{{
+                        "business-dashboard.question.questionrequestconsent.yes" | translate
+                      }}</label>
+                    <label nz-radio nzValue="INACTIVE">{{
+                        "business-dashboard.question.questionrequestconsent.no" | translate
+                      }}</label>
+                </nz-radio-group>
+
+            </div>
+        </div>
+        <br> -->
+    </div>
+    <div class="col-md-6">
+      <!-- <div class="row">
+            <div class="col-md-4">
+                {{
+                        "business-dashboard.question.report.mlacode" | translate
+                      }}:
+            </div>
+            <div class="col-md-8">
+                {{ mladetail.userId}}
+
+            </div>
+        </div> -->
+      <!-- <br> -->
+      <!-- <div class="row">
+            <div class="col-md-4">
+                {{
+                    "business-dashboard.question.report.politicalparty" | translate
+                  }}:
+            </div>
+            <div class="col-md-8">
+                {{ mladetail.details.keralaPolicticalPartyName}}
+
+            </div>
+        </div> -->
+      <!-- <br> -->
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.partySide"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.memberGroup }}
+        </div>
+      </div>
+      <br />
+      <!-- <div class="row">
+            <div class="col-md-4">
+                {{
+                    "business-dashboard.question.questionmlalisting.contactNumber" | translate
+                  }}:
+            </div>
+            <div class="col-md-8">9446400828
+                {{ mladetail.contactNumber}}
+
+            </div>
+        </div>
+        <br> -->
+      <div class="row">
+        <div class="col-md-4">{{ "dashboard.email" | translate }}:</div>
+        <div class="col-md-8">
+          {{ mladetail.email }}
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.report.mobileno" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.mobileNumber }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+  <div class="row margntp-25 inhouse">
+    <div class="col-md-12">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+
+  <div class="row d-flex justify-content-between inhouse">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{
+          "business-dashboard.question.questionmlalisting.mladetails"
+            | translate
+        }}
+      </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      <button nz-button nzType="default" (click)="clickBack()">
+        {{ "business-dashboard.question.questionview.back" | translate }}
+      </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+
+  <div class="row margntp-25">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionrequestconsent.mlaname"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.fullName }}
+        </div>
+      </div>
+      <br />
+
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.constituency"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.constituencyName }}
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.mlaministerspeaker"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.roleDisplay }}
+        </div>
+      </div>
+      <br />
+
+      <!-- <br>
+            <div class="row">
+                <div class="col-md-4">
+                    {{
+                        "business-dashboard.question.report.pacontactno" | translate
+                      }}:
+                </div>
+                <div class="col-md-8">9447706782
+                    {{ mladetail.paContactNumber}}
+    
+                </div>
+            </div>
+            <br> -->
+      <!-- <div class="row">
+                <div class="col-md-4">
+                    {{
+                        "business-dashboard.question.report.mlacurrentlyactive" | translate
+                      }}
+                </div>
+                <div class="col-md-8">
+                    <nz-radio-group [(ngModel)]="radioValue"
+                    nzName="radiogroup"
+                    name="radioValue"  [nzDisabled]="true">
+                        <label nz-radio nzValue="ACTIVE">{{
+                            "business-dashboard.question.questionrequestconsent.yes" | translate
+                          }}</label>
+                        <label nz-radio nzValue="INACTIVE">{{
+                            "business-dashboard.question.questionrequestconsent.no" | translate
+                          }}</label>
+                    </nz-radio-group>
+    
+                </div>
+            </div>
+            <br> -->
+    </div>
+    <div class="col-md-6">
+      <!-- <div class="row">
+                <div class="col-md-4">
+                    {{
+                            "business-dashboard.question.report.mlacode" | translate
+                          }}:
+                </div>
+                <div class="col-md-8">
+                    {{ mladetail.userId}}
+    
+                </div>
+            </div> -->
+      <!-- <br> -->
+      <!-- <div class="row">
+                <div class="col-md-4">
+                    {{
+                        "business-dashboard.question.report.politicalparty" | translate
+                      }}:
+                </div>
+                <div class="col-md-8">
+                    {{ mladetail.details.keralaPolicticalPartyName}}
+    
+                </div>
+            </div> -->
+      <!-- <br> -->
+      <div class="row">
+        <div class="col-md-4">
+          {{
+            "business-dashboard.question.questionmlalisting.partySide"
+              | translate
+          }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.memberGroup }}
+        </div>
+      </div>
+      <br />
+      <!-- <div class="row">
+                <div class="col-md-4">
+                    {{
+                        "business-dashboard.question.questionmlalisting.contactNumber" | translate
+                      }}:
+                </div>
+                <div class="col-md-8">9446400828
+                    {{ mladetail.contactNumber}}
+    
+                </div>
+            </div>
+            <br> -->
+      <div class="row">
+        <div class="col-md-4">{{ "dashboard.email" | translate }}:</div>
+        <div class="col-md-8">
+          {{ mladetail.email }}
+        </div>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.report.mobileno" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ mladetail.mobileNumber }}
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>

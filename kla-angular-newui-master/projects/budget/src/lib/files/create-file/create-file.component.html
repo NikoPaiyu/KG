@@ -1,0 +1,67 @@
+<form nz-form [formGroup]="validateFile">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <b>{{"Create File" | translate}}</b>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{"committee.committe-files.filesubject" | translate}}</div>
+                    <div class="col-md-8">
+                        <nz-form-item>
+                            <nz-form-control nzErrorTip="{{
+                                   'committee.committe-files.filesubject.err' | translate
+                                 }}">
+                                <input nz-input placeholder="{{'committee.committe-files.filesubject' | translate}}"
+                                    formControlName="filesubject" />
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{"committee.committe-files.priority" | translate}}</div>
+                    <div class="col-md-8">
+                        <nz-form-item>
+                            <nz-form-control nzErrorTip="{{
+                                   'committee.committe-files.priority.err' | translate
+                                 }}">
+                                <nz-radio-group formControlName="priority">
+                                    <label nz-radio
+                                        nzValue="URGENT">{{"committee.committe-files.priority.urgent" | translate}}</label>
+                                    <label nz-radio
+                                        nzValue="NORMAL">{{"committee.committe-files.priority.normal" | translate}}</label>
+                                    <label nz-radio nzValue="ACTION_TODAY">
+                                        {{"committee.committe-files.priority.action-today" | translate}}</label>
+                                    <label nz-radio
+                                        nzValue="ASSEMBLY_URGENT">{{"committee.committe-files.priority.assembly-urgent" | translate}}</label>
+                                </nz-radio-group>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{"committee.committe-files.description" | translate}}</div>
+                    <div class="col-md-8">
+                        <nz-form-item>
+                            <nz-form-control nzErrorTip="{{
+                                   'committee.committe-files.filesubject.err' | translate
+                                 }}">
+                                <textarea nz-input rows="2"
+                                    placeholder="{{'committee.committe-files.description' | translate}}"
+                                    formControlName="description"></textarea>
+                            </nz-form-control>
+                        </nz-form-item>
+
+                    </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" nz-button nzType="primary" nz-popconfirm
+                            nzPopconfirmTitle="{{'committee.committe-files.cnfrm' | translate}}"
+                            (nzOnConfirm)="createFile()" class="btn btn-primary primary-button">
+                            {{"Create File" | translate}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,68 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{"business-dashboard.question.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b> {{"business-dashboard.aod.ministergroup-list.minstergrouplist" | translate}} </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <nz-tabset>
+    <nz-tab nzTitle="{{'business-dashboard.aod.ministergroup-list.minstergrouplist' | translate}}">
+      <nz-table #rowSelectionTable [nzData]="aodList">
+        <thead>
+          <tr>
+            <th nzShowCheckbox></th>
+            <!-- <th nzShowSort nzSortKey="serialNo">
+                serialNo
+              </th> -->
+            <!-- <th nzShowSort nzSortKey="fileId">
+              FileId
+            </th> -->
+            <th nzShowSort nzSortKey="fileNumber">
+              {{"business-dashboard.aod.aod-list.filenumber" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="subject">
+              {{"business-dashboard.aod.aod-list.subject" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="type">
+              {{"business-dashboard.aod.aod-list.type" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="priority">
+              {{"business-dashboard.aod.aod-list.priority" | translate}}
+            </th>
+            <th nzShowSort nzSortKey="status">
+              {{"business-dashboard.aod.aod-list.status" | translate}}
+            </th>
+            <!-- <th nzShowSort nzSortKey="workflowId">
+              WorkflowId
+            </th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let data of rowSelectionTable.data; let i = index">
+            <tr nz-popover nzType="primary" nzPopoverPlacement="left" [nzPopoverContent]="contentTemplate"
+              (click)="viewFile(data.fileId)">
+              <ng-template #contentTemplate>
+                <div>
+                  <span style="cursor:pointer" class="sortable" (click)="viewFile(data.fileId)">View</span>
+                </div>
+              </ng-template>
+              <td nzShowCheckbox></td>
+              <!-- <td>{{i+1}}</td> -->
+              <!-- <td>{{data.fileId}}</td> -->
+              <td>{{data.fileNumber}}</td>
+              <td>{{data.subject}}</td>
+              <td>{{data.type}}</td>
+              <td>{{data.priority}}</td>
+              <td>{{data.status}}</td>
+              <!-- <td>{{data.workflowId}}</td> -->
+            </tr>
+          </ng-container>
+        </tbody>
+      </nz-table>
+    </nz-tab>

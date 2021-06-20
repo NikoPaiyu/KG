@@ -1,0 +1,32 @@
+<nz-collapse class="erratum-collapse">
+    <nz-collapse-panel
+      *ngFor="let panel of ballotList"
+      [nzActive]="panel.status == 'SUBMITTED'"
+      [nzExtra]="extraTpl"
+      [nzHeader]="setnoticetype(panel.noticeType)"
+    >
+    <nz-tabset>
+    <nz-tab nzTitle='{{ "business-dashboard.question.ballotresult" | translate }}'>
+        <ng-container>
+          <lib-balloting-file [ballotresponse]="panel">
+          </lib-balloting-file>
+        </ng-container>
+      </nz-tab>
+      <nz-tab nzTitle='{{ "cpl.docamendments.amendmentlist" | translate }}' *ngIf="panel.noticeType !== 'ORDINANCE_DISAPPROVAL'">
+        <ng-container>
+          <lib-ballot-list-view
+           [assembly]="assembly"
+           [session]="session"
+           [billTitle]="billTitle"
+           [showHeader]="true"
+           [ballotList]="panel.ballotedList"
+           [listNumber]="listNumber">
+          </lib-ballot-list-view>
+        </ng-container>
+    </nz-tab>
+   </nz-tabset>
+      <ng-template #extraTpl>
+        <nz-tag [ngClass]="{'bold' : panel.status === 'SUBMITTED'}">{{panel.status.split('_').join(' ')}}</nz-tag>
+      </ng-template>
+    </nz-collapse-panel>
+</nz-collapse>

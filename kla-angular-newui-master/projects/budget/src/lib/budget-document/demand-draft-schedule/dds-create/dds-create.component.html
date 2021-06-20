@@ -1,0 +1,143 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"budget.budgetspeech.document" |translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"> {{"Prepare Demand Draft Schedule" |translate}} </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+            <button class="d-flex align-items-center mr-6" nz-button nzType="primary" (click)="savedds()" [disabled]="disableDDSBtns()">
+                    {{"Save" |translate}}
+                </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="primary" [disabled]="disableDDSBtns()" nz-popconfirm nzPopconfirmTitle='{{"are you sure you want to submit?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="submitdds()">
+                    {{"Submit" |translate}}
+                </button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<nz-tabset [nzSelectedIndex]="buttons">
+    <nz-tab nzTitle='{{"Demand Draft Schedule" |translate}}'>
+        <ng-container *ngIf="!ddsMainDto.ddsId && assemblySession">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6" *ngIf="assemblySession.assembly">
+                        <div>{{ "Assembly"}}:{{assemblySession.assembly['currentassemblyVal']}}</div>
+                    </div>
+                    <div class="col-md-6" *ngIf="assemblySession.session">
+                        <div>{{ "Session"}}:{{assemblySession.session['currentsessionVal']}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6" style="padding: 18px;">
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ "Select SDFG/VOA"}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select [(ngModel)]="ddsMainDto.sdfgId" name="selsdfgId" [ngModelOptions]="{standalone: true}" (ngModelChange)="getSDFGByLineId($event)" nzShowSearch>
+                            <nz-option *ngFor="let option of ddsMainDto['sdfgList']" [nzLabel]="option.title" [nzValue]="option">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngFor="let dds of ddsMainDto.ddsList; index as i">
+            <div class="row mrgT20">
+                <div class="col-md-12">
+                    <nz-card style="width: 800px">
+                        <div class="row mrgT20">
+                            <div class="col-md-12">
+                                <div class="chose-date">
+                                    Choose Date:
+                                    <nz-date-picker [nzFormat]="'yyyy-MM-dd'" [(ngModel)]="dds.cosDate" [nzDisabledDate]="disabledDate" (ngModelChange)="assignSDFGLinedate(dds)">
+                                    </nz-date-picker>
+                                </div>
+                                <div class="chose-date">
+                                    Allocated Time:
+                                    <nz-time-picker [(ngModel)]="dds.fromTime" [nzUse12Hours]="true" nzFormat="h:mm a" (ngModelChange)="assignSDFGLinedate(dds)"></nz-time-picker>
+                                    <nz-time-picker class="ml-6" [(ngModel)]="dds.toTime" [nzUse12Hours]="true" nzFormat="h:mm a" (ngModelChange)="assignSDFGLinedate(dds)"></nz-time-picker>
+                                </div>
+                                <div class="chose-date">
+                                    Cutmotion Deadline Time:
+                                    <nz-date-picker [nzDisabledDate]="cutmotionDeadlineDates" [nzShowTime]="{ nzFormat: 'h:mm a' }" nzFormat="yyyy-MM-dd h:mm a" [(ngModel)]="dds.cutmotionDeadlineTime" (ngModelChange)="assignSDFGLinedate(dds)"></nz-date-picker>
+                                </div>
+                                <nz-table #borderedTable nzBordered [nzData]="dds.ddsLines" [nzShowPagination]="false" nzTitle="Demand Draft Schedule -  Day {{i+1}}">
+                                    <thead>
+                                        <tr>
+                                            <th class="bg-head">{{"Sl No." | translate}}</th>
+                                            <th class="bg-head">{{"Head No." | translate}}</th>
+                                            <th class="bg-head">{{"Date" | translate}} </th>
+                                            <th class="bg-head">{{"Allocated Time" | translate}} </th>
+                                            <th class="bg-head">{{"Cutmotion Deadline Time" | translate}} </th>
+                                            <th class="bg-head">{{"Action" |translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of dds.ddsLines; index as j">
+                                            <td> {{j+1 }}</td>
+                                            <td>
+                                                <nz-select [(ngModel)]="item.sdfgLineId" (ngModelChange)="onChangeHead()" nzShowSearch>
+                                                    <nz-option *ngFor="let type of demandsList" [nzLabel]="type.demandNameEng" [nzValue]="type.id"></nz-option>
+                                                </nz-select>
+                                            </td>
+                                            <td>
+                                                <span> {{item.cosDate ? (item.cosDate | date: 'dd-MM-yyyy'): ''}}</span>
+                                            </td>
+                                            <td>
+                                                {{item.fromTime ? findTime(item.fromTime): ''}} - {{item.toTime ? findTime(item.toTime): ''}} </td>
+                                            <td>
+                                                <span> {{item.cutmotionDeadlineTime | date: 'dd-MM-yyyy'}} - {{item.cutmotionDeadlineTime ? findTime(item.cutmotionDeadlineTime): ''}}</span>
+                                            </td>
+                                            <td>
+                                                <div class="row">
+                                                    <!-- <div class="col-md-4">
+                                                        <button *ngIf="!item.canEdit" [disabled]="ddsListById && ddsListById.status !== 'SAVED'" (click)="item.canEdit=true" nz-button nzType="primary" class="mr-6">
+                                            <i nz-icon nzType="edit" nzTheme="outline"></i>
+                                        </button>
+                                                        <button *ngIf="item.canEdit" [disabled]="ddsListById && ddsListById.status !== 'SAVED'" nz-popconfirm nzPopconfirmTitle='{{"Are you sure you want to save?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="saveddsLine(item)" nz-button nzType="primary"
+                                                            class="mr-6">
+                                            {{"Save" |translate}}
+                                        </button>
+                                                    </div> -->
+                                                    <div class="col-md-4">
+                                                        <button [disabled]="disableddsDeleteIcon(dds)" (click)="removeHead(item, i, j)" nz-button nzType="primary" class="mr-6">
+                                                            <i nz-icon nzType="delete" nzTheme="outline"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <button nz-button [disabled]="disableDDSBtns()" nzType="primary" class="add-button margnrtp-15 width-100 d-flex align-items-center justify-content-center" (click)="addNewHead(dds, i)">
+                                                <i nz-icon nzType="plus"></i>
+                                                Add Head
+                                            </button>
+                                        </tr>
+                                    </tbody>
+                                </nz-table>
+                            </div>
+                        </div>
+                    </nz-card>
+                </div>
+            </div>
+        </ng-container>
+    </nz-tab>
+</nz-tabset>
+<ng-template #buttons>
+    <button nz-button>Action</button>
+</ng-template>

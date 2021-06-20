@@ -1,0 +1,169 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        "
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.question" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{ "business-dashboard.question.performballoting" | translate }}</h2>
+  </div>
+  <div class="col-md-6 d-flex justify-content-end">
+    <button
+      *ngIf="canCancelBallot && buttonList && buttonList.Cancel"
+      class="mr-6"
+      nz-button
+      nzType="primary"
+      nz-popconfirm
+      nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantcancelballot" | translate}}'
+      nzCancelText = "No"
+      nzOkText = "Yes"
+      (nzOnConfirm)="cancelBallot()"
+      nzPopconfirmPlacement="bottomLeft"
+    >
+    {{ "business-dashboard.question.cancelballoting" | translate }} 
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-3 d-flex align-items-center whitespace">
+    {{ "business-dashboard.question.assembly" | translate }} : 
+    {{
+      assemblySession["assembly"]
+        ? assemblySession["assembly"].currentassemblyLabel
+        : ""
+    }}
+  </div>
+  <div class="col-md-3 d-flex align-items-center whitespace">
+    {{ "business-dashboard.question.questionlist.session" | translate }} :
+    {{
+      assemblySession["session"]
+        ? assemblySession["session"].currentsessionLabel
+        : ""
+    }}
+  </div>
+  <div class="col-md-4 d-flex align-items-center">
+    <div class="row align-items-center width-100">
+      <div class="col-md-5 wordbreak">
+        {{ "business-dashboard.question.questiondate" | translate }} : 
+      </div>
+      <div class="col-md-7">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+            <nz-select
+              nzRequired
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="{{
+                'business-dashboard.question.questioncreate.placehldqdate'
+                  | translate
+              }}"
+              [(ngModel)]="questionDate"
+              (ngModelChange)="getBallotInitialData()"
+            >
+              <nz-option
+                *ngFor="let item of questionDates"
+                [nzLabel]="item | date: 'dd/MM/yyyy'"
+                [nzValue]="item"
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+  </div>
+  <div
+    class="col-md-2 d-flex align-items-center whitespace justify-content-end"
+  >
+    <button
+      *ngIf="canPerformBallot && !showProgress"
+      nz-button
+      nzType="primary"
+      (click)="performBallot()"
+    >
+    {{ "business-dashboard.question.performballot" | translate }}
+    </button>
+    <nz-progress
+      *ngIf="showProgress"
+      [nzPercent]="persntage"
+      nzType="circle"
+      [nzWidth]="60"
+    ></nz-progress>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 border-right">
+    <span class="blthd">
+      {{ "business-dashboard.question.noticesubmittedmembers" | translate }}
+      </span>
+    <div class="overflow-blt">
+      <nz-table nzTemplateMode>
+        <thead>
+          <tr class="bltth">
+            <th>{{ "business-dashboard.question.slno" | translate }}</th>
+            <th>{{ "business-dashboard.question.member" | translate }}</th>
+            <!-- <th>Ruling / Opposition</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let details of memberList; let i = index"
+            class="ballot-nonruling"
+          >
+            <!-- <tr
+          *ngFor="let details of memberList; let i = index"
+          [ngClass]="i == 2 || i == 5 ? 'ballot-ruling' : 'ballot-nonruling'"
+        > -->
+            <td>{{ i + 1 }}</td>
+            <td>{{ details.memberName }}</td>
+            <!-- <td>Ruling</td> -->
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <span class="blthd">{{ "business-dashboard.question.ballotresult" | translate }}</span>
+    <div class="overflow-blt">
+      <nz-table nzTemplateMode>
+        <thead>
+          <tr class="bltth">
+            <th>{{ "business-dashboard.question.slno" | translate }}</th>
+            <th>{{ "business-dashboard.question.member" | translate }}</th>
+            <!-- <th>Ruling / Opposition</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let details of ballotResult; let i = index"
+            class="ballot-ruling"
+          >
+            <!-- <tr
+            *ngFor="let details of ballotResult; let i = index"
+            [ngClass]="i == 1 || i == 5 ? 'ballot-ruling' : 'ballot-nonruling'"
+          > -->
+            <td>{{ i + 1 }}</td>
+            <td>{{ details.memberName }}</td>
+            <!-- <td>Ruling</td> -->
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>

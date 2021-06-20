@@ -1,0 +1,961 @@
+<form nz-form>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.listnotice.noticelist" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">{{ "noticeprocessing.notice.listnotice.noticelist" | translate }}</h2>
+    </div>
+
+    <div class="col-md-6 text-align-right">
+      <!-- <button nz-button nzType="default" class="mrgL6">...</button> -->
+      <button type="button" nz-button nzType="primary" class="mrgL6" *ngIf="notice.doIHaveAnAccess('NOTICE', 'CREATE')"
+        (click)="gotoCreatenotice($event)">
+        {{ "noticeprocessing.notice.createnotice.create" | translate }}
+      </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <nz-tabset>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('NOTICE', 'READ')" nzTitle="{{'noticeprocessing.noticedashboard.processing' | translate}}">
+      <ng-template #Notices>
+        {{isMLA() ? 'Notices': 'Notices For Action'}}
+      </ng-template>
+      <div class="row d-flex justify-content-space-between marginbtm-25">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.assembly" | translate }}
+              <nz-select nzShowSearch nzAllowClear name="selectedValue" [(ngModel)]="filter.assemblyId"
+                (ngModelChange)="filterNoticeAssembly()">
+                <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                </nz-option>
+              </nz-select>
+              <!-- <i
+            nz-icon
+            nzType="close-circle"
+            class="nz-close-style"
+            nzTheme="outline" (click) ="removeAssemblyId()"
+          ></i> -->
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.session" | translate }}
+              <nz-select nzShowSearch nzAllowClear name="select" [(ngModel)]="filter.sessionId"
+                (ngModelChange)="getAllNotice(0)">
+                <nz-option *ngFor="let item of noticeSessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+              </nz-select>
+              <!-- <i
+            nz-icon
+            nzType="close-circle"
+            class="nz-close-style"
+            nzTheme="outline" (click) ="removeSessionId()"
+          ></i> -->
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.status" | translate }}
+              <nz-select nzPlaceHolder="{{'noticeprocessing.notice.listnotice.selstatus' | translate}}" nzShowSearch nzAllowClear name="status"
+                [(ngModel)]="filter.status" (ngModelChange)="getAllNotice(0)">
+                <nz-option *ngFor="let item of noticeStatusList" [nzLabel]="item" [nzValue]="item"></nz-option>
+              </nz-select>
+              <!-- <button nz-button [nzType]="'primary'" class="btn-style-flex">
+            <i nz-icon nzType="plus"></i>
+          </button> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end" style="width: 98%;">
+            <button type="button" class="margnrt-5" nz-button nzType="default" (click)="resetFilter()">
+              {{
+                "noticeprocessing.noticetemplate.listtemplate.clearfilter"
+                  | translate
+              }}
+            </button>
+
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" name="search" nz-input [(ngModel)]="filter.searchText"
+                (ngModelChange)="getAllNotice(0)" placeholder="{{
+                  'usermanagement.listrole.searchhere' | translate
+                }}" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row d-flex">
+        <div class="col" *ngIf="false">
+          <ng-container>
+            <strong nz-dropdown [nzDropdownMenu]="menu">
+              Quick Options
+              <i nz-icon nzType="down"></i>
+            </strong>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <ul nz-menu>
+                <li nz-menu-item>Can be admitted</li>
+                <li nz-menu-item>Can be disallowed as per rule</li>
+                <li nz-menu-item>Not allowed as per rule</li>
+                <li nz-menu-item>basic rule</li>
+                <!-- <nz-tag
+                *ngFor="let tag of quickOptions; let i = index"
+                  nzMode="checkable"
+                  [nzChecked]="selectedTags.indexOf(tag.label) > -1"
+                >
+              <li>
+                {{ tag.label }}
+              </li>
+              </nz-tag> -->
+              </ul>
+            </nz-dropdown-menu>
+          </ng-container>
+        </div>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="row d-flex">
+        <div class="col-md-11">
+          <div class="row align-items-center">
+            <div class="col-md-2 d-flex align-items-center" *ngIf="notice.doIHaveAnAccess('ASSIGN_TASK', 'READ')">
+              <span nz-span nzType="primary" (click)="showTask()" style="cursor: pointer;"
+              *ngIf="setOfCheckedId.size !== 0 && notice.doIHaveAnAccess('ASSIGN_TASK', 'READ')"
+              ><b>{{
+                "cpl.uploadedlist.assigntask" | translate
+              }}</b></span>
+              <nz-modal [(nzVisible)]="popupFlag" [nzFooter]="null" [nzClosable]="false">
+                <div class="width-100 pading-all">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <h4>{{
+                        "cpl.uploadedlist.assigntask" | translate
+                      }}</h4>
+                    </div>
+                  </div>
+                  <div class="row margnrtp-15 align-items-center">
+                    <div class="col-md-4"><h5>Filter:</h5></div>
+                  </div>
+                  <div class="row margnrtp-15">
+                    <div class="col-md-12">
+                      <input nz-input placeholder="Search Name Here" [(ngModel)]="searchPerson" name="searchPerson"
+                        (ngModelChange)="personSearch()" />
+                    </div>
+                  </div>
+                  <div class="row margnrtp-15">
+                    <div class="col-md-12"
+                   >
+                   <nz-card [nzTitle]="null"
+                   style = 
+                   "width: 100%;
+                   align-self: center;
+                   height: 200px;
+                   overflow-y: scroll;" 
+                   >
+                         <!-- <nz-table #assigneeListTable [nzData]=" data">
+                    <tbody>
+                      <tr *ngFor="let person of assigneeListTable.data">
+                        <td> -->
+                          <div class="row margnrtp-15 align-items-center">
+                           
+                          <nz-radio-group [(ngModel)]="radioValue" [ngModelOptions]="{standalone: true}"
+                            (ngModelChange)="getrolename($event)">
+                            <ng-container *ngFor="let person of data">
+                            <label nz-radio [nzValue]="person">{{person.fullName}}</label><br>
+                            </ng-container>
+                          </nz-radio-group>
+                          
+                          </div>
+                        <!-- </td>
+                        <td>{{ person.fullName }}</td>
+                      </tr>
+                    </tbody>
+                    </nz-table> -->
+                    <!-- <nz-radio-group [(ngModel)]="radioValue" name="radioValue">
+                      <ng-container *ngFor="let item of data">
+                        <label nz-radio [nzValue]="item" name="fileId">{{
+                          item.f
+                        }}</label>
+                      </ng-container>
+                    </nz-radio-group> -->
+                  
+                  </nz-card>
+
+                    </div>
+                  </div>
+                  <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                      <button type="button" nz-button nzType="default"
+                        class="secondary-button button-admin-radius button-font dark-border dark-font"
+                        (click)="Cancel()">
+                        Cancel
+                      </button>
+                      <button type="button" nz-button nzType="primary" (click)="forwardAllWithAssignee()"
+                        class="primary-button button-admin-radius button-font" [disabled]="radioValue === null">
+                        Assign
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </nz-modal>
+            </div>
+            <div class="col-md-3 d-flex align-items-center">
+              <span style="cursor: pointer;" nz-span nzType="primary" class="mrgL6" (click)="attachToFile()"
+                *ngIf="notice.doIHaveAnAccess('ATTACH_TO_FILE', 'READ') && setOfCheckedId.size !== 0">
+                <b> Create and Attach File</b>
+              </span>
+            </div>
+            <div class="col-md-2 d-flex align-items-center">
+              <span *ngIf="noOfChecked"> {{ noOfChecked }} Selected </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-1 text-align-right" *ngIf="true">
+          <a class="abs_btn" nzType="default" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="layout" nzTheme="outline"></i>
+            <span class="mrgL6">{{"noticeprocessing.staff.personalregister.cols" | translate}}</span>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu filterTable class="checkbox-style">
+                <li *ngFor="let box of filterCheckboxes; let i = index">
+                  <label nz-checkbox [(ngModel)]="box.checked" name="i">{{
+                    box.label
+                  }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="row">
+        <div class="col-md-12 mrgt10">
+          <nz-table #filterTable [nzData]="noticeList" [nzShowPagination]="false">
+            <thead>
+              <tr>
+                <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
+                            [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th> -->
+                <!-- <th nzShowCheckbox nzShowRowSelection></th> -->
+                <!-- <th nzShowCheckbox
+            [nzSelections]="listOfSelection"
+            [(nzChecked)]="checked"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)" -->
+                <th *ngIf="!isMLA()"></th>
+
+                <th *ngIf="filterCheckboxes[0].checked" nzShowSort nzSortKey="serialNo">
+                  {{
+                    "noticeprocessing.notice.listnotice.serialNo" | translate
+                  }}
+                </th>
+
+                <th *ngIf="filterCheckboxes[1].checked" nzShowSort nzSortKey="noticeNo">
+                  {{
+                    "noticeprocessing.notice.listnotice.noticeno" | translate
+                  }}
+                </th>
+
+                <th *ngIf="filterCheckboxes[2].checked" nzShowSort nzSortKey="NoticeHeading">
+                  {{
+                    "noticeprocessing.notice.listnotice.noticeheading"
+                      | translate
+                  }}
+                </th>
+                <th *ngIf="filterCheckboxes[3].checked" nzShowSort nzSortKey="NoticeType">
+                  {{
+                    "noticeprocessing.notice.listnotice.noticetype" | translate
+                  }}
+                </th>
+                <th *ngIf="filterCheckboxes[4].checked" nzShowSort nzSortKey="FileNo" class="rd">
+                  {{"noticeprocessing.notice.listnotice.submittedby" | translate}}
+                </th>
+                <th *ngIf="filterCheckboxes[5].checked" nzShowSort nzSortKey="regDate">
+                  {{ "noticeprocessing.notice.listnotice.regdate" | translate }}
+                </th>
+                <th *ngIf="filterCheckboxes[6].checked" nzShowSort nzSortKey="Status">
+                  {{ "noticeprocessing.notice.listnotice.status" | translate }}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="cursor: pointer;" *ngFor="let data of noticeList; let i = index">
+                <td *ngIf="!isMLA()" nzShowCheckbox [nzChecked]="setOfCheckedId.has(data.noticeId)"
+                  (nzCheckedChange)="onItemChecked(data.noticeId, $event)" [nzDisabled]="data.fileNumber"></td>
+                <td *ngIf="filterCheckboxes[0].checked">
+                  {{ pageIndex * numberOfItem + (i + 1) }}
+                </td>
+                <td *ngIf="filterCheckboxes[1].checked">
+                  <a style="text-decoration: underline; color: blue;"
+                    (click)="processNotice(data)">{{ data.noticeNumber }}
+                  </a>
+                  <!-- <label  *ngIf="data.fileNumber && !isMLA()">{{ data.noticeNumber }}</label> -->
+                  <!-- <label  *ngIf="data.fileNumber && !isMLA()" class="whitespace">{{ data.noticeNumber }}</label> -->
+                </td>
+                <td *ngIf="filterCheckboxes[2].checked">
+                  <a (click)="processNotice(data)">{{ data.title }}</a>
+                  <!-- <label *ngIf="data.fileNumber">{{ data.title }}</label> -->
+                </td>
+                <td *ngIf="filterCheckboxes[3].checked">
+                  {{ data.templateName }}
+                </td>
+                <td *ngIf="filterCheckboxes[4].checked" class="whitespace">
+                  {{ data.primaryMemberName }}
+                </td>
+                <td *ngIf="filterCheckboxes[5].checked">
+                  {{ data.createdDate | date: "dd/MM/yyyy" }}
+                </td>
+                <td *ngIf="filterCheckboxes[6].checked">
+                  {{ data.statusText }}
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+      <nz-pagination [nzPageIndex]="1" [nzPageSize]="numberOfItem" [nzTotal]="total"
+        (nzPageIndexChange)="pageIndexChange($event - 1)" nzShowSizeChanger (nzPageSizeChange)="pageSizeChange($event)">
+      </nz-pagination>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('ALL_NOTICES', 'READ')" nzTitle='{{"noticeprocessing.notice.listconvenience.allnotices" | translate}}'>
+      <ng-template nz-tab>
+        <app-notice-list></app-notice-list>
+      </ng-template>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('FILE', 'READ')" [nzTitle]="filesforaction">
+      <ng-template #filesforaction>
+        {{"business-dashboard.notproc.notice.list-notice.filesForAction" | translate}}
+      </ng-template>
+      <div class="row d-flex justify-content-space-between marginbtm-25">
+        <div class="col-md-8">
+          <div class="row">
+            <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.assembly" | translate }}
+              <nz-select nzShowSearch nzAllowClear name="selectedValue" [(ngModel)]="filter.assemblyId"
+              (ngModelChange)="filterFiles()">
+                <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.session" | translate }}
+              <nz-select nzShowSearch nzAllowClear name="select" [(ngModel)]="filter.sessionId"
+                (ngModelChange)="getPendingFile()">
+                <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                </nz-option>
+              </nz-select>
+            </div>
+            <div class="col-md-4 d-flex align-items-center">
+              <!-- <i nz-icon nzType="plus-circle" nzTheme="outline"></i> -->
+              <!-- <button nz-button [nzType]="'primary'" class="btn-style-flex">
+                <i nz-icon nzType="plus"></i>
+              </button> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end">
+            <!-- <button
+              class="margnrt-5"
+              nz-button
+              nzType="default"
+              (click)="resetFilter()"
+            >
+              {{
+                "noticeprocessing.noticetemplate.listtemplate.clearfilter"
+                  | translate
+              }}
+            </button> -->
+
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" name="search" nz-input [(ngModel)]="searchPendingFilesParam"
+                (ngModelChange)="filterPendingFiles()" placeholder="{{ 'Search File No/Subject' }}" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-12 d-flex justify-content-end" *ngIf="true">
+          <a class="abs_btn" nzType="default" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="layout" nzTheme="outline" class="mr-6"></i>
+            <span>cols</span>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable>
+                <li *ngFor="let box of checkboxes; let i = index" class="checkbox-style">
+                  <label nz-checkbox [(ngModel)]="box.check" name="i">{{
+                    box.label
+                  }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-table #fileTable [nzData]="pendingFileList" nzShowPagination nzShowSizeChanger>
+            <thead>
+              <tr>
+                <!-- <th nzShowCheckbox nzShowRowSelection [nzSelections]="listOfSelection" [(nzChecked)]="isAllDisplayDataChecked"
+                                [nzIndeterminate]="isIndeterminate" (nzCheckedChange)="checkAll($event)"></th> -->
+                <!-- <th nzShowCheckbox nzShowRowSelection></th> -->
+
+                <th nzShowSort nzSortKey="fileNo">
+                  File No
+                </th>
+
+                <th nzShowSort nzSortKey="fileSubject">
+                  File Subject
+                </th>
+
+                <th nzShowSort nzSortKey="priority">
+                  Priority
+                </th>
+
+                <th nzShowSort nzSortKey="Regdate">
+                  Reg Date
+                </th>
+                <th nzShowSort nzSortKey="status">
+                  Status
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr
+            *ngFor="let data of filterTable.data"
+            routerLink="[
+              '/business-dashboard/notice/process',
+              data.notice.noticeId
+            ]"
+          >
+            <td nzShowCheckbox></td>
+            <td>{{ data.notice.noticeNumber }}</td>
+            <td>{{ data.notice.title }}</td>
+            <td>{{ data.title }}</td>
+            <td>{{ data.title }}</td>
+            <td>{{ data.title }}</td>
+          </tr> -->
+              <tr style="cursor: pointer;" *ngFor="let data of fileTable.data; let i = index">
+                <td>
+                  <a style="text-decoration: underline; color: blue;"
+                    (click)="openFile(data.fileId)">{{ data.fileNumber }}</a>
+                </td>
+                <td>{{ data.subject }}</td>
+                <td>{{ data.priority }}</td>
+                <td>
+                  {{ data.createdDate | date: "dd-MM-yyyy" }}
+                </td>
+                <td>
+                  <nz-tag [nzColor]="'green'">
+                    {{ data.status }}
+                  </nz-tag>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('ALL FILES', 'READ')" [nzTitle]="allfiles">
+      <ng-template #allfiles>
+        {{"cpl.files.AllFiles" | translate}}
+      </ng-template>
+      <app-file-list [FileType]="1"></app-file-list>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('MY FILES', 'READ')" [nzTitle]="myfiles">
+      <ng-template #myfiles>
+        {{"business-dashboard.notproc.notice.list-notice.myfiles" | translate}}
+      </ng-template>
+      <app-file-list [FileType]="2"></app-file-list>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('NOTICE_BAC_LIST', 'READ')" [nzTitle]="BAC">
+      <ng-template #BAC>
+        {{"business-dashboard.notproc.notice.list-notice.bac" | translate}}
+      </ng-template>
+      <div class="row d-flex justify-content-space-between marginbtm-25">
+        <div class="col-md-8">
+          <div class="row">
+            <!-- <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.assembly" | translate }}
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                name="selectedValue"
+                [(ngModel)]="filter.assemblyId"
+                (ngModelChange)="getAllNotice(0)"
+              >
+                <nz-option
+                  *ngFor="let item of assemblyList"
+                  [nzLabel]="item.assemblyId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div> -->
+
+            <!-- <div class="col-md-4 d-flex align-items-center">
+              {{ "noticeprocessing.notice.listnotice.session" | translate }}
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                name="select"
+                [(ngModel)]="filter.sessionId"
+                (ngModelChange)="getAllNotice(0)"
+              >
+                <nz-option
+                  *ngFor="let item of sessionList"
+                  [nzLabel]="item.sessionId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </div> -->
+            <div class="col-md-4 d-flex align-items-center">
+              <!-- <i nz-icon nzType="plus-circle" nzTheme="outline"></i> -->
+              <!-- <button nz-button [nzType]="'primary'" class="btn-style-flex">
+                <i nz-icon nzType="plus"></i>
+              </button> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end">
+            <!-- <button
+              class="margnrt-5"
+              nz-button
+              nzType="default"
+              (click)="resetFilter()"
+            >
+              {{
+                "noticeprocessing.noticetemplate.listtemplate.clearfilter"
+                  | translate
+              }}
+            </button> -->
+
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" name="search" nz-input [(ngModel)]="searchBACParam" (ngModelChange)="filterBACList()"
+                placeholder="{{ 'Search Name' }}" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-table #dataTable [nzData]="bacList" nzShowPagination nzShowSizeChanger>
+            <thead>
+              <tr>
+                <th nzShowSort nzSortKey="serialNo">
+                  Serial No
+                </th>
+
+                <th nzShowSort nzSortKey="name">
+                  Name
+                </th>
+
+                <th nzShowSort nzSortKey="Date">
+                  Date
+                </th>
+                <th nzShowSort nzSortKey="preview">
+                  Preview
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr
+               *ngFor="let data of filterTable.data"
+               routerLink="[
+                 '/business-dashboard/notice/process',
+                 data.notice.noticeId
+               ]"
+             >
+               <td nzShowCheckbox></td>
+               <td>{{ data.notice.noticeNumber }}</td>
+               <td>{{ data.notice.title }}</td>
+               <td>{{ data.title }}</td>
+               <td>{{ data.title }}</td>
+               <td>{{ data.title }}</td>
+             </tr> -->
+              <tr style="cursor: pointer;" *ngFor="let data of dataTable.data; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ data.title }}</td>
+                <td class="d-flex">
+                  <form [formGroup]="dateForm">
+                    <nz-form-item>
+                      <nz-form-control>
+                        <nz-date-picker [nzAllowClear]="true" formControlName="date" [nzDisabledDate]="disabledDate">
+                        </nz-date-picker>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </form>
+                  <div class="d-flex" style="align-items: center;">
+                    <button nz-button nzType="default" class="mrgL6 btn-primary-1" nz-popconfirm
+                      nzPopconfirmTitle="Would you like to add these notice to LOB?" (nzOnConfirm)="setToLob(data)"
+                      (nzOnCancel)="cancel()" nzPopconfirmPlacement="rightTop">
+                      Add To LOB
+                    </button>
+                  </div>
+                </td>
+                <td (click)="showModal1(data.noticeData)">
+                  <button nz-button nzType="default">
+                    <span>Preview</span>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <nz-modal (nzOnCancel)="handleCancel1()" [nzFooter]="null" [(nzVisible)]="isVisible1" nzTitle="Preview"
+            nzWidth="1000">
+            <div class="d-flex justify-content-center">
+              <quill-view-html [content]="viewContent" style="width: 210mm;"></quill-view-html>
+            </div>
+          </nz-modal>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab *ngIf="notice.doIHaveAnAccess('PENDING_TIME_ALLOCATION', 'READ')" nzTitle="Pending Time Allocation"
+    (nzClick)="getPendingForTimeAllocation()">
+      <div class="row d-flex justify-content-space-between marginbtm-25">
+        <div class="col-md-8">
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" name="search" nz-input [(ngModel)]="searchTAParam" (ngModelChange)="filterTimeAllocationList()"
+                placeholder="{{ 'Search Here' }}" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <nz-table #TATable [nzData]="pendingTimeAllocationList" nzShowPagination nzShowSizeChanger>
+            <thead>
+              <tr>
+                <th nzShowSort nzSortKey="serialNo">
+                  Serial No
+                </th>
+
+                <th nzShowSort nzSortKey="name">
+                  Name
+                </th>
+                <th>
+                  Preview
+                </th>
+                <th *ngIf="notice.doIHaveAnAccess('PENDING_TIME_ALLOCATION', 'FORWARD')">
+                  Forward
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="cursor: pointer;" *ngFor="let data of TATable.data; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ data.title }}</td>
+                <td (click)="showModal1(data.noticeData)">
+                  <button nz-button nzType="default">
+                    <span>Preview</span>
+                  </button>
+                </td>
+                 <td class="d-flex" *ngIf="notice.doIHaveAnAccess('PENDING_TIME_ALLOCATION', 'FORWARD')">
+                  <div class="d-flex" style="align-items: center;">
+                    <button nz-button nzType="primary" class="mrgL6" (click)="showForwardModal(data)">
+                       Forward
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+          <nz-modal (nzOnCancel)="handleCancel1()" [nzFooter]="null" [(nzVisible)]="isVisible1" nzTitle="Preview"
+            nzWidth="1000">
+            <div class="d-flex justify-content-center">
+              <quill-view-html [content]="viewContent" style="width: 210mm;"></quill-view-html>
+            </div>
+          </nz-modal>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</form>
+<nz-modal [(nzVisible)]="isVisible" [nzOkDisabled]="true" (nzOnCancel)="handleCancel()" [nzFooter]="null">
+  <div class="p-20 width-100">
+    <nz-tabset [(nzSelectedIndex)]="tabIndex">
+      <nz-tab nzTitle="Attach To File">
+        <form [formGroup]="attachFileForm">
+          <p>Search Existing File</p>
+          <div class="row">
+            <div class="col-md-12">
+              <nz-form-item>
+                <nz-form-control>
+                  <input type="text" name="search" nz-input formControlName="searchParamForFiles"
+                    (ngModelChange)="onSearchFilesForAttach()" placeholder="FileNo/Subject" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <div class="row" *ngIf="advancedFiltersFlag">
+            <div class="col-md-8"></div>
+            <div class="col-md-4 text-align-right">
+              <button class="mrgTB10" nz-button nzType="default" (click)="onAdvancedFilterclick()">
+                Advanced Filter
+              </button>
+            </div>
+          </div>
+          <div class="row" *ngIf="!advancedFiltersFlag">
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">File No</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <input nz-input placeholder="" (ngModelChange)="onSearchFilesForAttach()" formControlName="fileNo" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">Subject</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <input nz-input placeholder="" (ngModelChange)="onSearchFilesForAttach()" formControlName="subject" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+          <!-- <div class="row" *ngIf="!advancedFiltersFlag">
+            <div class="col-md-6 marginbtm-15">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">Section</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder=""
+                    formControlName="section"
+                  >
+                    <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6 marginbtm-15">
+              <nz-form-item>
+                <nz-form-label [nzSpan]="9">User</nz-form-label>
+                <nz-form-control [nzSpan]="15">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder=""
+                    formControlName="any"
+                  >
+                    <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div> -->
+          <nz-form-item>
+            <nz-form-control>
+              <nz-card style="
+                  width: 100%;
+                  align-self: center;
+                  height: 300px;
+                  overflow-y: scroll;
+                ">
+                <div>
+                  <!-- <input type="radio" name="" id="">
+              <span>{{item.fileNumber}}</span> -->
+
+                  <nz-radio-group formControlName="fileId" nzName="fileNumber">
+                    <ng-container *ngFor="let item of fileList">
+                      <label nz-radio [nzValue]="item.fileId" name="fileId">{{
+                        item.fileNumber
+                      }}</label>
+                    </ng-container>
+                  </nz-radio-group>
+                </div>
+              </nz-card>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+
+        <div class="width-100">
+          <div class="d-flex justify-content-space-end text-align-right">
+            <button nz-button [nzType]="'primary'" (click)="attachFile()">
+              <span>Attach To File</span>
+            </button>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle="Create File">
+        <div>
+          <form [formGroup]="createFileForm">
+            <div class="row marginbtm-15">
+              <div class="col-md-12" *ngIf="false">
+                <nz-form-item>
+                  <nz-radio-group [formControl]="TypeSelection" nzName="radiogroup" style="display: flex;">
+                    <label nz-radio nzValue="0">Current No for File No</label>
+                  </nz-radio-group>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-select nzShowSearch nzAllowClear name="No" [nzDisabled]="TypeSelection?.value != 0"
+                      formControlName="currentNumber" nzErrorTip="Select file number!">
+                      <nz-option [nzLabel]="10001" [nzValue]="10001"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-radio-group [formControl]="TypeSelection" nzName="radiogroup" style="display: flex;">
+                    <label nz-radio nzValue="1">Arising File</label>
+                  </nz-radio-group>
+                  <nz-form-control [nzSpan]="24">
+                    <nz-select nzAllowClear [nzDisabled]="TypeSelection?.value != 1"
+                      formControlName="currentNumber" nzErrorTip="Select file number!"> 
+                      <nz-option [nzLabel]="arisingFileNumber" [nzValue]="arisingFileNumber"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    File Subject
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input nz-input placeholder="File Subject Goes Here" formControlName="subject" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <div class="row">
+                  <nz-form-item>
+                    <div class="col-md-12">
+                      <nz-form-label>
+                        File Priority
+                      </nz-form-label>
+                    </div>
+                    <div class="col-md-12">
+                      <nz-form-control>
+                        <nz-radio-group formControlName="priority" nzName="radiogroup">
+                          <label nz-radio nzValue="URGENT">Urgent</label>
+                          <label nz-radio nzValue="NORMAL">Normal</label>
+                          <label nz-radio nzValue="ACTION_TODAY">Action Today</label>
+                          <label nz-radio nzValue="ASSEMBLY_URGENT">Assembly Urgent</label>
+                        </nz-radio-group>
+                      </nz-form-control>
+                    </div>
+                  </nz-form-item>
+                </div>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    Description
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input nz-input placeholder="File Description Goes Here" formControlName="description" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+            <div class="row marginbtm-15">
+              <div class="col-md-12">
+                <nz-form-item>
+                  <nz-form-label [nzSpan]="24">
+                    Back File Reference
+                  </nz-form-label>
+                  <nz-form-control [nzSpan]="24">
+                    <input nz-input placeholder="Backfile Reference" formControlName="backFileReference" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+          </form>
+          <div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button nz-button [nzType]="'primary'" style="margin-right: 6px;" (click)="handleCancel()">
+                      <span>Cancel</span>
+                    </button>
+                    <button nz-button [nzType]="'primary'" (click)="createFile()" [disabled]="createFileForm.invalid">
+                      <span>Create</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="isForwardVisible" (nzOnCancel)="cancelForwardModal()" [nzFooter]="null" nzTitle="Forward For Time Allocation">
+  <div class="p-20 width-100">
+    <div class="row marginbtm-15">
+      <div class="col-md-4">
+        Business Dates
+      </div>
+      <div class="col-md-8">
+        <nz-select
+        nzShowSearch nzAllowClear [(ngModel)]="selectedDates"
+        nzMode="multiple" [nzMaxMultipleCount]="businessMapForTA?businessMapForTA[forwardNoticeData?.workflowCode].days:1">
+        <nz-option *ngFor="let item of dateList" [nzLabel]="item| date: 'dd/MM/yyyy'" [nzValue]="item">
+        </nz-option>
+      </nz-select>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-4">
+        Forwarded Date
+      </div>
+      <div class="col-md-8">
+        <nz-date-picker [nzAllowClear]="true" [(ngModel)]="forwardedDate" nzFormat="dd/MM/yyyy">
+        </nz-date-picker>
+      </div>
+    </div>
+    <div class="row marginbtm-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button nz-button [nzType]="'primary'" style="margin-right: 6px;" (click)="cancelForwardModal()">
+          Cancel
+        </button>
+        <button nz-button [nzType]="'primary'"  nz-popconfirm
+        nzPopconfirmTitle="DO you want to forward for time allocation?" (nzOnConfirm)="forwardForTimeAllocation()"
+        (nzOnCancel)="cancel()" nzPopconfirmPlacement="rightTop" [disabled]="
+        (businessMapForTA  && businessMapForTA[forwardNoticeData?.workflowCode].days !== selectedDates.length)">
+          Forward
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

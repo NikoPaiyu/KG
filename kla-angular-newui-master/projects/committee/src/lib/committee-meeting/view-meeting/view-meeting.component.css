@@ -1,0 +1,55 @@
+.m-r5 {
+    margin-right: 5px;
+}
+
+.m-r2 {
+    margin-right: 2px;
+}
+
+.viewlink {
+    color: blue;
+}
+
+.margn-top-7 {
+    margin-top: 7px;
+}
+.margn-btm-7 {
+    margin-bottom: 7px;
+}
+.mr-6 {
+    margin-right: 6px;
+}
+
+.viewlink {
+    color: blue;
+}
+
+.margnrtp-5 {
+    margin-top: 5px;
+}
+
+.white_pd {
+    background-color: #fff;
+    padding: 20px;
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+.margn-top-7 {
+    margin-top: 7px;
+}
+.margn-top-10 {
+    margin-top: 10px;
+}
+.preview-main {
+    background-color: #eee;
+    padding: 20px 15px;
+    margin-top: 10px;
+  }
+  .preview-main-text {
+    background-color: #eee;
+    padding: 20px 15px;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+    } 

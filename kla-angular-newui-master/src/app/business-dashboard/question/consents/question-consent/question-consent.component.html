@@ -1,0 +1,654 @@
+<form nz-form>
+<!-- start html content for loading admin side-->
+  <ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item
+          [routerLink]="
+            isMLA()
+              ? ['/business-dashboard/question/question-dashboard']
+              : ['/business-dashboard/question/question-dept-dashboard']
+          "
+        >
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.notice" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">
+            {{
+              "business-dashboard.question.questionconsent.consents" | translate
+            }}
+          </h2>
+        </div>
+        <div class="col-md-6">
+          <div class="d-flex justify-content-flex-end">
+            <button
+              *ngIf="!isPpo"
+              (click)="goToRequestConsent('membertomember')"
+              nz-button
+              nzType="primary"
+              class="ml-6"
+            >
+              {{
+                "business-dashboard.question.questionconsent.requestconsent"
+                  | translate
+              }}
+            </button>
+            <button
+              *ngIf="isPpo"
+              (click)="goToRequestConsent('ppotomember')"
+              nz-button
+              nzType="primary"
+              class="ml-6"
+            >
+            {{ "business-dashboard.question.requestconsenttomember" | translate }}
+            </button>
+            <button
+              *ngIf="isPpo"
+              (click)="goToRequestConsent('ppotoppo')"
+              nz-button
+              nzType="primary"
+              class="ml-6"
+            >
+            {{ "business-dashboard.question.requestconsenttoppo" | translate }}
+            </button>
+
+            <!--            
+            <button
+              nzType="primary"
+              (click)="goToGrantConsent()"
+              nz-button
+              class="margnlft-15"
+            >
+              {{
+                "business-dashboard.question.questionconsent.grantconsents"
+                  | translate
+              }}
+            </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </ng-container>
+  <!-- end html content for loading admin side-->
+
+<!-- start html content for loading in-house-->
+  <ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+    <div class="row d-flex justify-content-space-between inhouse">
+      <div class="col-md-12 col-sm-12 mb-2 margntp-25">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item
+            [routerLink]="
+              isMLA()
+                ? ['/business-dashboard/question/question-dashboard']
+                : ['/business-dashboard/question/question-dept-dashboard']
+            "
+          >
+            {{ "business-dashboard.question.dashboard" | translate }}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            {{ "business-dashboard.question.notice" | translate }}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+  
+      <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between inhouse">
+          <div class="col-md-6">
+            <h2 class="admin-page-heading">
+              {{
+                "business-dashboard.question.questionconsent.consents" | translate
+              }}
+            </h2>
+          </div>
+          <div class="col-md-6">
+            <div class="d-flex justify-content-flex-end">
+              <button
+                *ngIf="!isPpo"
+                (click)="goToRequestConsent('membertomember')"
+                nz-button
+                nzType="primary"
+                class="ml-6"
+              >
+                {{
+                  "business-dashboard.question.questionconsent.requestconsent"
+                    | translate
+                }}
+              </button>
+              <button
+                *ngIf="isPpo"
+                (click)="goToRequestConsent('ppotomember')"
+                nz-button
+                nzType="primary"
+                class="ml-6"
+              >
+              {{ "business-dashboard.question.requestconsenttomember" | translate }}
+              </button>
+              <button
+                *ngIf="isPpo"
+                (click)="goToRequestConsent('ppotoppo')"
+                nz-button
+                nzType="primary"
+                class="ml-6"
+              >
+              {{ "business-dashboard.question.requestconsenttoppo" | translate }}
+              </button>
+  
+              <!--            
+              <button
+                nzType="primary"
+                (click)="goToGrantConsent()"
+                nz-button
+                class="margnlft-15"
+              >
+                {{
+                  "business-dashboard.question.questionconsent.grantconsents"
+                    | translate
+                }}
+              </button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    </ng-container>
+
+<!-- end html content for loading in-house-->
+  <nz-divider></nz-divider>
+
+  <div class="row custom_tabstyle">
+    
+    <div class="col-md-12">
+      <nz-tabset>
+        <nz-tab nzTitle="{{
+          'business-dashboard.questionconsent.requestreceived'
+            | translate
+        }}" (nzClick)="getAllRequestRecieved()">
+          <ng-template [ngTemplateOutlet]="ppo_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="ppo_member_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="member_Card"></ng-template>
+
+          <!-- <div
+            *ngFor="let item of RequestRecieved; index as i"
+            class="consent-box"
+          >
+            <nz-card nz-row class="m-b-10">
+              <nz-comment nzAuthor="{{ item.memberFrom.details.fullName }}">
+                <nz-avatar
+                  nz-comment-avatar
+                  nzIcon="user"
+                  nzSrc="{{ item.memberFrom.details.profilePhoto }}"
+                ></nz-avatar>
+                <nz-comment-content>
+                  <div nz-row>
+                    <div nz-col nzSpan="18">
+                      <p>
+                        {{ item.memberFrom.details.keralaConstituencyName }}({{
+                          item.memberFrom.details.keralaConstituencyId
+                        }})
+                      </p>
+                      <p *ngIf="item.fromDate && item.toDate">
+                        From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                        <span>
+                          &nbsp;&nbsp;To:
+                          {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                        >
+                      </p>
+                    </div>
+                    <div nz-col nzSpan="6">
+                      <div class="m-b-10">
+                        <button
+                          nz-button
+                          nzType="primary"
+                          nz-popconfirm
+                          nzPopconfirmTitle="Are you sure you want to accept this?"
+                          (nzOnConfirm)="
+                            acceptRejectRevokeRequest(item.id, 'ACCEPTED')
+                          "
+                          nzPopconfirmPlacement="topLeft"
+                        >
+                          Accept
+                        </button>
+                      </div>
+                      <div class="m-b-10">
+                        <button
+                          nz-button
+                          nzType="default"
+                          nz-popconfirm
+                          nzPopconfirmTitle="Are you sure you want to reject this?"
+                          (nzOnConfirm)="
+                            acceptRejectRevokeRequest(item.id, 'REJECTED')
+                          "
+                          nzPopconfirmPlacement="topLeft"
+                        >
+                          Reject
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </nz-comment-content>
+              </nz-comment>
+            </nz-card>
+          </div> -->
+        </nz-tab>
+        <!-- <nz-tab nzTitle="Request Granted" (nzClick)="getAllRequestGrant()">
+          <div
+            *ngFor="let item of RequestGrant; index as i"
+            class="consent-box"
+          >
+            <nz-card nz-row class="m-b-10">
+              <nz-comment nzAuthor="{{ item.memberFrom.details.fullName }}">
+                <nz-avatar
+                  nz-comment-avatar
+                  nzIcon="user"
+                  nzSrc="{{ item.memberFrom.details.profilePhoto }}"
+                ></nz-avatar>
+                <nz-comment-content>
+                  <div nz-row>
+                    <div nz-col nzSpan="18">
+                      <p>
+                        {{ item.memberFrom.details.keralaConstituencyName }}({{
+                          item.memberFrom.details.keralaConstituencyId
+                        }})
+                      </p>
+                      <p *ngIf="item.fromDate && item.toDate">
+                        From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                        <span>
+                          &nbsp;&nbsp; To:
+                          {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                        >
+                      </p>
+                    </div>
+                    <div nz-col nzSpan="6">
+                      <button
+                        nz-button
+                        nzType="default"
+                        class="txt-align-R"
+                        nz-popconfirm
+                        nzPopconfirmTitle="Are you sure you want to revoke this?"
+                        (nzOnConfirm)="
+                          acceptRejectRevokeRequest(item.id, 'REVOKED')
+                        "
+                        nzPopconfirmPlacement="topLeft"
+                      >
+                        {{
+                          "business-dashboard.question.questionconsent.revoke"
+                            | translate
+                        }}
+                      </button>
+                    </div>
+                  </div>
+                </nz-comment-content>
+              </nz-comment>
+            </nz-card>
+          </div>
+        </nz-tab> -->
+        <nz-tab nzTitle="{{
+          'business-dashboard.questionconsent.requestaccepted'
+            | translate
+        }}" (nzClick)="getAllRequestAccept()">
+          <!-- <div
+            *ngFor="let item of RequestAccept; index as i"
+            class="consent-box"
+          >
+            <nz-card nz-row class="m-b-10">
+              <nz-comment nzAuthor="{{ item.fullName }}">
+                <nz-avatar
+                  nz-comment-avatar
+                  nzIcon="user"
+                  nzSrc="{{ item.profilePhoto }}"
+                ></nz-avatar>
+                <nz-comment-content>
+                  <div nz-row>
+                    <div nz-col nzSpan="18">
+                  <p>
+                    {{ item.keralaConstituencyName }}({{
+                      item.keralaConstituencyId
+                    }})
+                  </p>
+                  <p *ngIf="item.fromDate && item.toDate">
+                    From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                    <span>
+                      &nbsp;&nbsp; To:
+                      {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                    >
+                  </p>
+                </div>
+                <div nz-col nzSpan="6">
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="txt-align-R"
+                    nz-popconfirm
+                    nzPopconfirmTitle="Are you sure you want to revoke this?"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REVOKED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{
+                      "business-dashboard.question.questionconsent.revoke"
+                        | translate
+                    }}
+                  </button>
+                </div>
+              </div>
+                </nz-comment-content>
+              </nz-comment>
+            </nz-card>
+          </div> -->
+
+          <ng-template [ngTemplateOutlet]="ppo_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="ppo_member_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="member_Card"></ng-template>
+        </nz-tab>
+        <nz-tab nzTitle="{{
+          'business-dashboard.questionconsent.requestsent'
+            | translate
+        }}" (nzClick)="getAllRequestSent()">
+          <!-- <div
+            *ngFor="let item of ConsentsRequested; index as i"
+            class="consent-box"
+          >
+            <nz-card nz-row class="m-b-10">
+              <nz-comment nzAuthor="{{ item.memberTo.details.fullName }}">
+                <nz-avatar
+                  nz-comment-avatar
+                  nzIcon="user"
+                  nzSrc="{{ item.memberTo.details.profilePhoto }}"
+                ></nz-avatar>
+                <nz-comment-content>
+                  <p>
+                    {{ item.memberTo.details.keralaConstituencyName }}({{
+                      item.memberTo.details.keralaConstituencyId
+                    }})
+                  </p>
+                  <p *ngIf="item.fromDate && item.toDate">
+                    From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                    <span>
+                      &nbsp;&nbsp; To:
+                      {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                    >
+                  </p>
+                </nz-comment-content>
+              </nz-comment>
+            </nz-card>
+          </div> -->
+          <ng-template [ngTemplateOutlet]="ppo_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="ppo_member_Card"></ng-template>
+          <ng-template [ngTemplateOutlet]="member_Card"></ng-template>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+  <ng-template #ppo_Card>
+    <div *ngFor="let item of ppoPpo; index as i" class="consent-box">
+      <nz-card nz-row class="m-b-10">
+        <nz-tag [nzColor]="'magenta'">{{ requestInfo }}</nz-tag>
+        <nz-comment nzAuthor="{{ item.fullName }}">
+          <nz-avatar
+            nz-comment-avatar
+            nzIcon="user"
+            nzSrc="{{ item.profilePhoto }}"
+            class="img_mla"
+          ></nz-avatar>
+          <nz-comment-content>
+            <div nz-row>
+              <div nz-col nzSpan="18">
+                <p>
+                  {{ item.kerelaPoliticalPartyName }}({{
+                    item.kerelaPoliticalPartyId
+                  }})
+                </p>
+                <p *ngIf="item.fromDate && item.toDate">
+                  From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                  <span>
+                    &nbsp;&nbsp;To:
+                    {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                  >
+                </p>
+              </div>
+              <div nz-col nzSpan="6">
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantacceptthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'ACCEPTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{"business-dashboard.question.questionconsent.accept" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantrejectthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REJECTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{"business-dashboard.question.questionconsent.reject" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showRevoke" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="txt-align-R"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.questionconsent.revokecngmsg" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REVOKED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{
+                      "business-dashboard.question.questionconsent.revoke"
+                        | translate
+                    }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nz-comment-content>
+        </nz-comment>
+      </nz-card>
+    </div>
+  </ng-template>
+
+  <ng-template #ppo_member_Card>
+    <div *ngFor="let item of ppoMember; index as i" class="consent-box">
+      <nz-card nz-row class="m-b-10">
+        <nz-tag *ngIf="!isPpo" [nzColor]="'magenta'">{{ requestInfo }}</nz-tag>
+        <nz-comment nzAuthor="{{ item.fullName }}">
+          <nz-avatar
+            nz-comment-avatar
+            nzIcon="user"
+            nzSrc="{{ item.profilePhoto }}"
+            class="img_mla"
+          ></nz-avatar>
+          <nz-comment-content>
+            <div nz-row>
+              <div nz-col nzSpan="18">
+                <p>
+                  {{ item.kerelaPoliticalPartyName }}({{
+                    item.kerelaPoliticalPartyId
+                  }})
+                </p>
+                <p *ngIf="item.fromDate && item.toDate">
+                  From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                  <span>
+                    &nbsp;&nbsp;To:
+                    {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                  >
+                </p>
+              </div>
+              <div nz-col nzSpan="6">
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantacceptthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'ACCEPTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                  {{"business-dashboard.question.questionconsent.accept" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantrejectthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REJECTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                  {{"business-dashboard.question.questionconsent.reject" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showRevoke" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="txt-align-R"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.questionconsent.revokecngmsg" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REVOKED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{
+                      "business-dashboard.question.questionconsent.revoke"
+                        | translate
+                    }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nz-comment-content>
+        </nz-comment>
+      </nz-card>
+    </div>
+  </ng-template>
+  <ng-template #member_Card>
+    <div *ngFor="let item of memberMember; index as i" class="consent-box">
+      <nz-card nz-row class="m-b-10">
+        <nz-comment nzAuthor="{{ item.fullName }}">
+          <nz-avatar
+            nz-comment-avatar
+            nzIcon="user"
+            nzSrc="{{ item.profilePhoto }}"
+            class="img_mla"
+          ></nz-avatar>
+          <nz-comment-content>
+            <div nz-row>
+              <div nz-col nzSpan="18">
+                <p>
+                  {{ item.keralaConstituencyName }}({{
+                    item.keralaConstituencyId
+                  }})
+                </p>
+                <p *ngIf="item.fromDate && item.toDate">
+                  From: {{ item.fromDate | date: "dd-MM-yyyy" }}
+                  <span>
+                    &nbsp;&nbsp;To:
+                    {{ item.toDate | date: "dd-MM-yyyy" }}</span
+                  >
+                </p>
+              </div>
+              <div nz-col nzSpan="6">
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="primary"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantacceptthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'ACCEPTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                  {{"business-dashboard.question.questionconsent.accept" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showAccept" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.areusureuwantrejectthis" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REJECTED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                  {{"business-dashboard.question.questionconsent.reject" | translate}}
+                  </button>
+                </div>
+                <div *ngIf="showRevoke" class="m-b-10">
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="txt-align-R"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"business-dashboard.question.questionconsent.revokecngmsg" | translate}}'
+                    nzCancelText = "No"
+                    nzOkText = "Yes"
+                    (nzOnConfirm)="
+                      acceptRejectRevokeRequest(item.id, 'REVOKED')
+                    "
+                    nzPopconfirmPlacement="topLeft"
+                  >
+                    {{
+                      "business-dashboard.question.questionconsent.revoke"
+                        | translate
+                    }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nz-comment-content>
+        </nz-comment>
+      </nz-card>
+    </div>
+  </ng-template>
+</form>

@@ -1,0 +1,85 @@
+
+<ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.question" | translate }} </a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6 col-sm-12">
+    <h2 class="admin-page-heading">{{ "business-dashboard.question.shortnoticequestion" | translate }}</h2>
+    
+  </div>
+  <div class="col-md-6 col-sm-12 d-flex justify-content-end">
+    <button
+      nz-button
+      nzType="primary"
+      (click)="onBack()"
+      class="mr-6"
+    >
+      {{"cpl.docupload.back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="width-100">
+  <div class="over" *ngIf="!isEmpty()">
+    <app-short-notice-preview
+      [previewData]="componentParams['qDetail']"
+      [assembly]="componentParams['assembly']"
+      [session]="componentParams['session']"
+      [hidePrint]="true"
+    ></app-short-notice-preview>
+  </div>
+</div>
+</ng-container>
+<ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 mb-2 margntp-25 inhouse">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <a>{{ "business-dashboard.question.question" | translate }} </a>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row inhouse">
+    <div class="col-md-6 col-sm-12">
+      <h2 class="admin-page-heading">{{ "business-dashboard.question.shortnoticequestion" | translate }}</h2>
+      
+    </div>
+    <div class="col-md-6 col-sm-12 d-flex justify-content-end">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="onBack()"
+        class="mr-6"
+      >
+        {{"cpl.docupload.back" | translate }}
+      </button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="width-100">
+    <div class="over" *ngIf="!isEmpty()">
+      <app-short-notice-preview
+        [previewData]="componentParams['qDetail']"
+        [assembly]="componentParams['assembly']"
+        [session]="componentParams['session']"
+        [hidePrint]="true"
+      ></app-short-notice-preview>
+    </div>
+  </div>
+  </ng-container>

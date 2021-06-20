@@ -1,0 +1,132 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          <a>Dashboard</a>
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          Notice
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-8">
+      <h3>Notice #122</h3>
+    </div>
+    <div class="col-md-4">
+      <button nz-button nzType="default">...</button>
+      <button nz-button nzType="default" (click)="drawer()">Note(5)</button>
+      <button nz-button nz-dropdown [nzDropdownMenu]="menu">
+        Version(3)<i nz-icon nzType="down"></i>
+      </button>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+          <li nz-menu-item>
+            <a>Version 1</a>
+          </li>
+          <li nz-menu-item>
+            <a>Version 2</a>
+          </li>
+          <li nz-menu-item>
+            <a>Version 3</a>
+          </li>
+        </ul>
+      </nz-dropdown-menu>
+      <button nz-button nzType="primary">Edit</button>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-1">
+      <h5>Stage</h5>
+    </div>
+    <div class="col-md-8">
+      <nz-steps nzSize="small">
+        <nz-step
+          *ngFor="let status of stepStatus"
+          [nzStatus]="status"
+        ></nz-step>
+      </nz-steps>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6" *ngFor="let label of labels">
+      <nz-form-label>{{ label }}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label>Member</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label>Description</nz-form-label>
+    </div>
+  </div>
+  <nz-drawer
+    [nzWidth]="510"
+    [nzClosable]="true"
+    [nzVisible]="visible"
+    nzPlacement="right"
+    nzTitle="Notes and Comments"
+    (nzOnClose)="drawer()"
+  >
+    <nz-card *ngFor="let card of notesCard">
+      <div class="row">
+        <div class="col-md-8">
+          <h6>Username</h6>
+          <p>Role</p>
+        </div>
+        <div class="col-md-4 p-L0">
+          <button nz-button nzType="default" class="m-r5">Edit</button>
+          <button nz-button nzType="default">Delete</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <p>
+            Section details ............... ........... ..............
+            ................ .......... ................ ....................
+            .................. ................... ............
+            ................................ .........
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-8">
+          <p>Version</p>
+        </div>
+        <div class="col-md-2">
+          <p>Date</p>
+        </div>
+        <div class="col-md-2">
+          <p>Time</p>
+        </div>
+      </div>
+    </nz-card>
+    <div class="footer-chat">
+      <div class="type_msg col-md-12 p-L0">
+        <div class="col-md-10 p-0 p-L0">
+          <textarea rows="2" nz-input placeholder="Type a message"></textarea>
+        </div>
+        <button nz-button nzType="primary" class="send-btn-style p-R15">
+          send
+        </button>
+      </div>
+
+      <!-- <div class="type_msg">
+        <div class="input_msg_write">
+          <div class="row">
+            <input type="text" class="write_msg" placeholder="Type a message" />
+            <button nz-button nzType="primary" class="send-btn-style">
+              save
+            </button>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </nz-drawer>
+</div>

@@ -1,0 +1,212 @@
+
+<div class="row">
+	<div class="col-md-12 col-sm-12 mb-2">
+		<nz-breadcrumb>
+			<nz-breadcrumb-item>
+				{{ "business-dashboard.question.dashboard" | translate }}
+			</nz-breadcrumb-item>
+			<nz-breadcrumb-item>
+				<a>Section seat configuration </a>
+			</nz-breadcrumb-item>
+		</nz-breadcrumb>
+	</div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between">
+	<div class="col-auto">
+		<h2 class="admin-page-heading">Section seat configuration</h2>
+	</div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<form nz-form [formGroup]="sectionSeatForm" class="cpl-register">
+ <div class="row  margnrtp-15 marginbtm-15">
+<div class="col-md-7">
+    <nz-form-item>
+      <div class="row">
+        <div class="col-md-4">
+          <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+          <nz-form-control nzErrorTip='{{"cpl.docupload.selectklasection" | translate}}'>
+            <nz-select
+              nzAllowClear
+              nzPlaceHolder='{{"cpl.docupload.selectklasection" | translate}}'
+              formControlName="sectionId" (ngModelChange)="listofSeat()"
+            >
+              <nz-option
+                *ngFor="let item of klasessionList"
+                [nzLabel]="item.klaSectionName"
+                [nzValue]="item.klaSectionId"
+               
+              >
+              </nz-option>
+            </nz-select>
+          </nz-form-control>
+        </div>
+      </div>
+    </nz-form-item>
+  </div>
+  <div class="col-md-5 txt-align-R">
+    <button
+      nz-button
+      [nzType]="'primary'"
+      (click)="showModal()"
+    >
+    {{ "business-dashboard.seatmanagement.addseat" | translate }}
+    </button>
+  </div>
+</div>
+</form>
+
+<nz-table #basicTable [nzData]="listOfData">
+    <thead>
+      <tr>
+        <th> {{ "noticeprocessing.notice.listnotice.serialNo" | translate }}</th>
+        <th>{{ "business-dashboard.seatmanagement.seatnumber" | translate }}</th>  
+        <th>{{ "business-dashboard.seatmanagement.assistant" | translate }}</th>
+        <!-- <th>{{ "lobview.view.description" | translate }}</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data; let i = index">
+          <td>{{ i + 1 }}</td>
+        <td>{{ data.seatNumber }}
+            <tr>
+                <!-- <a  href="javascript:;" (click)="removeSeat(data.seatId)">delete</a> | -->
+                <a  href="javascript:;" nz-popconfirm
+                nzPopconfirmTitle='{{"business-dashboard.seatmanagement.removetheseat" | translate}}' (nzOnConfirm)="removeSeat(data.seatId)"
+                (nzOnCancel)="handleCancel()">{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}</a>
+            </tr>
+        </td>
+        <td *ngIf="data.userInformation?.details?.lastName !== null">{{ data.userInformation?.userName }}
+          <tr>
+            <!-- <a  href="javascript:;" (click)="removeSeat(data.seatId)">delete</a> | -->
+            <a  href="javascript:;" nz-popconfirm
+            nzPopconfirmTitle='{{"business-dashboard.seatmanagement.unassigntheseat" | translate}}' (nzOnConfirm)="unAssignSectionSeat(data.userInformation?.userId)"
+            (nzOnCancel)="handleCancel()">{{ "business-dashboard.seatmanagement.unassign" | translate }}</a>
+        </tr>
+        </td>
+        <td *ngIf="data.userInformation?.details?.lastName === null">
+            <a  href="javascript:;" (click)="showModal1(data.seatId)">{{ "business-dashboard.question.questionlist.assign" | translate }}</a>
+        </td>
+        <!-- <td>
+          {{data.seatBusiness?.description}}
+          <nz-divider nzType="vertical"></nz-divider>
+          <a>{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}</a>
+        </td> -->
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-modal [(nzVisible)]="isVisible" nzTitle='{{"business-dashboard.seatmanagement.addseat" | translate}}' (nzOnCancel)="handleCancel()" (nzOnOk)="saveSectionSeat()">
+    <form nz-form [formGroup]="sectionSeatForm" class="cpl-register">
+   
+      <div class="row pading-all">
+      <div class="col-md-12 margnrtp-15">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"cpl.registration.enteraNumber" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{ "business-dashboard.seatmanagement.seatnumber" | translate }}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <input
+                  nz-input
+                  type="number"
+                  max="999"
+                  min="0"
+                  onKeyDown="if((this.value.length == 0 && event.keyCode == 48) ||(this.value.length==3 && event.keyCode>47 && event.keyCode<58) )return false;"
+                  placeholder='{{"business-dashboard.seatmanagement.seatnumber" | translate}}'
+                  formControlName="seatnumber"
+                  [(ngModel)]="seatNumber"
+                />
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-12 margnrtp-15">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"business-dashboard.seatmanagement.seatbusiness" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{ "business-dashboard.seatmanagement.seatbusiness" | translate }}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <nz-form-control nzErrorTip='{{"business-dashboard.seatmanagement.pleaseprovideseatbuisness" | translate}}'>
+                    <nz-select
+                      nzAllowClear
+                      nzPlaceHolder=""
+                      formControlName="businesslist"
+                      [(ngModel)]="businessList"
+                    >
+                      <nz-option
+                        *ngFor="let item of allBusiness"
+                        [nzLabel]="item.description"
+                        [nzValue]="item.id" 
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </nz-form-control>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-12 margnrtp-15">
+        <nz-form-item>
+          <nz-form-control nzErrorTip='{{"lobview.view.description" | translate}}'>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{ "lobview.view.description" | translate }}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <input
+                  nz-input
+                  [(ngModel)]="seatDescription"
+                  placeholder='{{"lobview.view.description" | translate}}'
+                  formControlName="description"
+                />
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+    </div>    
+
+      </form>
+  </nz-modal>
+  <nz-modal [(nzVisible)]="isVisible1" nzTitle='{{"business-dashboard.seatmanagement.assistant" | translate}}' (nzOnCancel)="handleCancel()"  (nzOnOk)="assignSectionSeat()">
+    <form nz-form [formGroup]="sectionSeatForm" class="cpl-register">
+      <div class="row pading-all">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control nzErrorTip='{{"business-dashboard.seatmanagement.selectassistant" | translate}}'>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{ "business-dashboard.seatmanagement.assistant" | translate }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-select
+              nzAllowClear
+              nzPlaceHolder=""
+              formControlName="assistentlist"
+              [(ngModel)]="assistantLists"
+            >
+              <nz-option
+                *ngFor="let item of assignAssistant"
+                [nzLabel]="item.userName"
+                [nzValue]="item.userId" 
+              >
+              </nz-option>
+            </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    </div>
+
+  </form>
+  </nz-modal>

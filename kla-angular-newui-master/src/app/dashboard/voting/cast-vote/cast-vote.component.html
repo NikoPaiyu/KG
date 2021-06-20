@@ -1,0 +1,56 @@
+<div class="model-content">
+  <div class="modal-header">
+    <h4 class="modal-title" id="myModalLabel">{{'dashboard.cast-vote.voting-title'|translate}}</h4>
+  </div>
+  <div class="d-flex justify-content-between width-100 align-items-center content-padding">
+    <div></div>
+    <div>
+      <nz-countdown *ngIf="(!isSpeaker() && !isNewActiveSpeaker())" white [nzValue]="deadline"></nz-countdown>
+    </div>
+  </div>
+  <div class="voting-section">
+    <!-- <div class="voting-section" *ngIf="!showAuthentication"> -->
+    <div nz-row margntp-25>
+      <span class="vote-q">{{ question }}</span>
+      <div class="pading-all" *ngIf="(isSpeaker() || isNewActiveSpeaker())">അനുകൂലമായും പ്രതികൂലമായും രേഖപ്പെടുത്തിയ
+        വോട്ടുകൾ തുല്യമായി
+        വന്നിരിക്കുന്ന സാഹചര്യത്തിൽ ഇന്ത്യൻ ഭരണഘടനയിലെ അനുച്ഛേദം 189 (1) പ്രകാരം, സഭാദ്ധ്യക്ഷൻ എന്ന നിലയിലുള്ള എൻ്റെ
+        കാസ്റ്റിംഗ് വോട്ട് ഞാൻ രേഖപ്പെടുത്തുന്നു.</div>
+    </div>
+    <div *nzModalFooter>
+      <div nz-row nzType="flex" nzJustify="center" class="align-items-center">
+        <button *ngIf="(!isSpeaker() && !isNewActiveSpeaker())" nz-button [nzSize]="yesbuttonsize"
+          (click)="castVote('YES')" nzType="primary" class="shadow-true" [disabled]="clickedYes">
+          <span nz-icon nzType="check" nzTheme="outline"></span>{{'dashboard.cast-vote.choice-yes'| translate}}
+        </button>
+        <button *ngIf="(!isSpeaker() && !isNewActiveSpeaker())" nz-button [nzSize]="nobuttonsize"
+          (click)="castVote('NO')" nzType="danger" class="shadow-false" [disabled]="clickedNo">
+          <span nz-icon nzType="close" nzTheme="outline"></span>{{'dashboard.cast-vote.choice-no'| translate}}
+        </button>
+        <button *ngIf="(isSpeaker() || isNewActiveSpeaker())" nz-button nzType="primary" nz-popconfirm
+          nzPopconfirmTitle="തിരഞ്ഞെടുത്ത ഓപ്ഷനിൽ തുടരാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?" (nzOnConfirm)="castVote('YES')"
+          [nzSize]="yesbuttonsize" nzType="primary" class="shadow-true" [disabled]="clickedYes">
+          <span nz-icon nzType="check" nzTheme="outline"></span>{{'dashboard.cast-vote.choice-yes'| translate}}
+        </button>
+        <button *ngIf="(isSpeaker() || isNewActiveSpeaker())" nz-button nzType="primary" nz-popconfirm
+          nzPopconfirmTitle="തിരഞ്ഞെടുത്ത ഓപ്ഷനിൽ തുടരാൻ നിങ്ങൾ ആഗ്രഹിക്കുന്നുണ്ടോ?" (nzOnConfirm)="castVote('NO')"
+          [nzSize]="nobuttonsize" nzType="danger" class="shadow-false" [disabled]="clickedNo">
+          <span nz-icon nzType="close" nzTheme="outline"></span>{{'dashboard.cast-vote.choice-no'| translate}}
+        </button>
+        <button nz-button [nzSize]="neutralbuttonsize" (click)="castVote('ABSTAIN')" nzType="primary"
+          class="shadow-none" nzGhost *ngIf="(!isSpeaker() && !isNewActiveSpeaker())" [disabled]="clickedAbstain">
+          <span nz-icon nzType="stop"></span>{{'dashboard.cast-vote.abstain'| translate}}
+        </button>
+      </div>
+      <div></div>
+    </div>
+  </div>
+  <!-- <div class="auth-section" *ngIf="showAuthentication">
+    <button class="mla-button">
+      <img [src]="fingerprintImageSource" width="30px" class="margnrgt-15" />
+      {{ 'dashboard.cast-vote.press-finger' | translate }}
+    </button>
+    <p class="auth-text">{{ResponseText}}</p>
+    <div *nzModalFooter></div>
+  </div> -->
+</div>

@@ -1,0 +1,343 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.forms.form-list.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.swearing-in" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <h3>{{"business-dashboard.swearing-in" | translate}}</h3>
+  </div>
+  <div class="col-md-6 d-flex justify-content-end">
+    <button
+      nzType="primary"
+      class="mrgL6"
+      nz-button
+      nz-button
+      nz-popconfirm
+      *ngIf="
+        fullData &&
+        fullData?.status !== 'COMPLETED' &&
+        swearingInList?.length > 0 &&
+        permission.markSwearingCompleted
+      "
+      nzPopconfirmTitle="Are you sure you want to mark swearing in completed?"
+      (nzOnConfirm)="swornInCompleted()"
+    >
+    {{"business-dashboard.swearing-in.mark-swearing-in-completed" | translate}}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-6">
+    {{"business-dashboard.swearing-in.assembly" | translate}}: <strong>{{ fullData?.assembly }}</strong>
+  </div>
+  <div class="col-md-6">
+    {{"business-dashboard.swearing-in.election-type" | translate}}: <strong>{{ fullData?.type }}</strong>
+  </div>
+</div>
+<div class="row mr-tp">
+  <div class="col-md-6">
+    {{"business-dashboard.swearing-in.election-subject" | translate}}: <strong>{{ fullData?.subject }}</strong>
+  </div>
+  <div class="col-md-6">
+    {{"business-dashboard.swearing-in.year" | translate}}: <strong>{{ fullData?.year }}</strong>
+  </div>
+</div>
+<div class="row mr-tp">
+  <div class="col-md-6">
+    {{"business-dashboard.swearing-in.election-description" | translate}}: <strong>{{ fullData?.description }}</strong>
+  </div>
+  <div class="col-md-6">
+    {{"business-dashboard.forms.form-list.status" | translate}}:
+    <strong>
+      <nz-tag>{{ fullData?.status }}</nz-tag>
+    </strong>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-8">
+    <button
+      nzType="primary"
+      *ngIf="fullData?.rollOfMember"
+      (click)="showSwornModel()"
+      class="mrgL6"
+      nz-button
+    >
+    {{"business-dashboard.swearing-in.roll-of-members" | translate}}
+    </button>
+  </div>
+  <div class="col-md-4 d-flex justify-content-end">
+    <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+      <input
+        type="text"
+        [(ngModel)]="search"
+        name="search"
+        nz-input
+        placeholder= '{{ "business-dashboard.forms.form-list.search-here" | translate }}'
+        (ngModelChange)="searchList()"
+      />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+</div>
+<div class="row marginbtm-15">
+  <nz-table
+    #speakerTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="swearingInList"
+    class="table-all"
+  >
+    <thead>
+      <tr>
+        <!-- <th nzShowCheckbox [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+                    (nzCheckedChange)="_checkAllRows($event)" *ngIf="permissions.assignTask"></th> -->
+        <th>{{"business-dashboard.forms.form-list.sl-no" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.first-name" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.last-name" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.full-name" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.constituency" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.party" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.swearing-in-date" | translate}}</th>
+        <th>{{"business-dashboard.swearing-in.oath-from" | translate}}</th>
+        <th>{{"business-dashboard.forms.form-list.status" | translate}}</th>
+        <th *ngIf="fullData?.status !== 'COMPLETED'"></th>
+      </tr>
+    </thead>
+    <!-- <tr *ngIf="setOfCheckedId.size !== 0">
+            <th colspan="2">
+                <span>{{ setOfCheckedId.size }} selected</span>
+            </th>
+            <th colspan="3">
+                <button (click)="assignModal()" nz-button [nzType]="'default'">
+                    {{"cpl.uploadedlist.assigntask" |translate}}
+                </button>
+            </th>
+        </tr> -->
+    <tbody>
+      <tr *ngFor="let list of speakerTable.data; let i = index">
+        <!-- <td nzShowCheckbox [nzChecked]="setOfCheckedId.has(list.id)"
+                    (nzCheckedChange)="onItemChecked(list.id, $event)" *ngIf="permissions.assignTask"></td> -->
+        <td>
+          {{ i + 1 }}
+        </td>
+        <td>
+          {{ list.firstName }}
+        </td>
+        <td>
+          {{ list.user?.details?.lastName }}
+        </td>
+        <td>
+          {{ list.user?.details?.fullName }}
+        </td>
+        <td>
+          {{ list.constituencyName }}
+        </td>
+        <td>
+          {{ list.partyName }}
+        </td>
+        <td>
+          {{ list.swearingInDate }}
+        </td>
+        <td>
+          <a *ngIf="list?.formId" class="viewlink" (click)="showOath(list?.formId)">{{
+            list?.oathForm?.split("_").join(" ") | titlecase
+          }}</a>
+        </td>
+        <td>
+          <nz-tag>{{ list?.status?.split("_").join(" ") }}</nz-tag>
+        </td>
+        <td *ngIf="fullData?.status !== 'COMPLETED'">
+          <button
+            nzType="primary"
+            class="mrgL6"
+            nz-button
+            *ngIf="list.status === 'ELECTED' && permission.submitOath"
+            nz-button
+            (click)="showSwornInModal(list, 'Submit Oath')"
+          >
+          {{"business-dashboard.swearing-in.submit-oath-from" | translate}}
+          </button>
+          <button
+            nzType="primary"
+            class="mrgL6"
+            nz-button
+            *ngIf="list.status === 'OATH_FORM_SUBMITTED' && permission.addToLOB"
+            nz-button
+            (click)="showSwornInModal(list, 'Add To LOB')"
+          >
+          {{"business-dashboard.swearing-in.add-to-lob" | translate}}
+          </button>
+          <button
+            nzType="primary"
+            class="mrgL6"
+            nz-button
+            *ngIf="list.status === 'ADDED_TO_LOB' && permission.markSwornIn"
+            nz-button
+            nz-popconfirm
+            nzPopconfirmTitle="Are you sure you want to mark as sworn in?"
+            (nzOnConfirm)="markAsSwornIn(list)"
+          >
+          {{"business-dashboard.swearing-in.mark-as-sworn-in" | translate}}
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</div>
+
+<nz-modal
+  [(nzVisible)]="swornInModal"
+  [nzFooter]="null"
+  nzWidth="550"
+  [nzTitle]="formData.purpose"
+  (nzOnCancel)="cancelSwornInModal()"
+>
+  <div class="p-20 width-100">
+    <div class="row margnrtp-15" *ngIf="formData.purpose === 'Add To LOB'">
+      <div class="col-md-12">
+        <nz-form-item>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"business-dashboard.swearing-in.sworn-in-date" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-form-control nzErrorTip="Sworn in Date required">
+                <nz-date-picker
+                  [nzFormat]="'dd-MM-yyyy'"
+                  [nzDisabledDate]="disabledDates"
+                  [(ngModel)]="formData.swornInDate"
+                >
+                </nz-date-picker>
+              </nz-form-control>
+            </div>
+          </div>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15" *ngIf="formData.purpose === 'Submit Oath'">
+      <div class="col-md-12">
+        <nz-form-item>
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"business-dashboard.swearing-in.form-of-oath" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <nz-form-control nzErrorTip="Form of Oath Required">
+                <nz-select
+                  nzAllowClear
+                  nzPlaceHolder="Form of Oath"
+                  [(ngModel)]="formData.formOfOath"
+                >
+                  <nz-option
+                    *ngFor="let item of oathList"
+                    nzLabel="{{ translate.getDefaultLang()=='mal' ?  item.nameMl :  item.name}}"
+                    [nzValue]="item.code"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </div>
+          </div>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <button
+          nzType="primary"
+          class="mrgL6"
+          nz-button
+          (click)="cancelSwornInModal()"
+        >
+          {{"business-dashboard.forms.form-list.cancel" | translate}}
+        </button>
+        <button
+          nzType="primary"
+          class="mrgL6"
+          nz-button
+          nz-popconfirm
+          *ngIf="formData.purpose === 'Submit Oath'"
+          [disabled]="!formData.formOfOath"
+          nzPopconfirmTitle="Are you sure you want to submit oath form?"
+          (nzOnConfirm)="submitOathForm()"
+        >
+        {{"business-dashboard.swearing-in.submit-oath-form" | translate}}
+        </button>
+        <button
+          nzType="primary"
+          class="mrgL6"
+          nz-button
+          nz-popconfirm
+          *ngIf="formData.purpose === 'Add To LOB'"
+          [disabled]="!formData.swornInDate"
+          nzPopconfirmTitle="Are you sure you want to add to LOB?"
+          (nzOnConfirm)="addToLob()"
+        >
+        {{"business-dashboard.swearing-in.add-to-lob" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="oathModal"
+  [nzFooter]="null"
+  nzWidth="1000"
+  nzTitle='{{ "business-dashboard.swearing-in.oath-form-preview" | translate }}'
+  (nzOnCancel)="cancelOathModal()"
+>
+  <div class="p-20 width-100">
+    <div class="row margnrtp-15">
+      <div class="col-md-12">
+        <ngx-doc-viewer
+          [url]="oathUrl"
+          viewer="url"
+          style="width: 100%; height: 500px"
+        ></ngx-doc-viewer>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="swornReportModel"
+  [nzFooter]="null"
+  nzWidth="1000"
+  nzTitle='{{ "business-dashboard.swearing-in.roll-of-members" | translate }}'
+  (nzOnCancel)="cancelSwornModel()"
+>
+  <div class="p-20 width-100">
+    <div class="row margnrtp-15">
+      <div class="col-md-12 t-a-center">
+        <div class="frame-pdf" *ngIf="finalPrintUrl">
+          <ng2-pdfjs-viewer
+            *ngIf="finalPrintUrl"
+            [pdfSrc]="finalPrintUrl"
+            scroll="V"
+            [downloadFileName]="'Report.pdf'"
+            [openFile]="false"
+            [viewBookmark]="false"
+            [download]="true"
+            [print]="true"
+            spread="N"
+            [fullScreen]="false"
+            [showSpinner]="true"
+          >
+          </ng2-pdfjs-viewer>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>

@@ -1,0 +1,94 @@
+<div class="col-md-6" *ngIf="fromMainDash else elseBlock">
+  <h4>{{"business-dashboard.question.question" | translate}}</h4>
+</div>
+<ng-template #elseBlock>
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.question.dashboard" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <h3>
+      {{"business-dashboard.question.dashboard" | translate}}
+    </h3>
+  </div>
+  <div class="col-md-6">
+    <span class="d-flex justify-content-end"> {{"dashboard.welcome" | translate}}
+       &nbsp;<strong> {{currentUser.fullName}}</strong></span>
+  </div>
+</div>
+</ng-template>
+<nz-divider></nz-divider>
+<div class="row mrtb-25 colors">
+  <div class="col-md-3 marginbtm-25 boxss" *ngFor="let menu of dashBoardMenuList">
+    <div
+      class="card-link-container bg-blue-Q1"
+      style="cursor: pointer;"
+      (click)="loadPage(menu.key, menu.submittedBy, menu.question,menu.type)"
+    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="47" viewBox="0 0 44 47" class="dot_pos">
+      <g id="Group_1" data-name="Group 1" transform="translate(-450 -209)">
+        <circle id="Ellipse_1" class="dotcolor" data-name="Ellipse 1" cx="1" cy="1" r="1" transform="translate(450 209)"/>
+        <circle id="Ellipse_2" class="dotcolor" data-name="Ellipse 2" cx="1" cy="1" r="1" transform="translate(457 209)" />
+        <circle id="Ellipse_3"  class="dotcolor"data-name="Ellipse 3" cx="1" cy="1" r="1" transform="translate(464 209)" />
+        <circle id="Ellipse_4" class="dotcolor" data-name="Ellipse 4" cx="1" cy="1" r="1" transform="translate(471 209)" />
+        <circle id="Ellipse_5"  class="dotcolor" data-name="Ellipse 5" cx="1" cy="1" r="1" transform="translate(478 209)"/>
+        <circle id="Ellipse_6" class="dotcolor" data-name="Ellipse 6" cx="1" cy="1" r="1" transform="translate(485 209)"/>
+        <circle id="Ellipse_7" class="dotcolor" data-name="Ellipse 7" cx="1" cy="1" r="1" transform="translate(492 209)"/>
+        <circle id="Ellipse_8" class="dotcolor" data-name="Ellipse 8" cx="1" cy="1" r="1" transform="translate(450 218)"/>
+        <circle id="Ellipse_9" class="dotcolor" data-name="Ellipse 9" cx="1" cy="1" r="1" transform="translate(457 218)"/>
+        <circle id="Ellipse_10" class="dotcolor" data-name="Ellipse 10" cx="1" cy="1" r="1" transform="translate(464 218)"/>
+        <circle id="Ellipse_11" class="dotcolor" data-name="Ellipse 11" cx="1" cy="1" r="1" transform="translate(471 218)"/>
+        <circle id="Ellipse_12" class="dotcolor" data-name="Ellipse 12" cx="1" cy="1" r="1" transform="translate(478 218)"/>
+        <circle id="Ellipse_13" class="dotcolor" data-name="Ellipse 13" cx="1" cy="1" r="1" transform="translate(485 218)"/>
+        <circle id="Ellipse_14" class="dotcolor" data-name="Ellipse 14" cx="1" cy="1" r="1" transform="translate(492 218)" />
+        <circle id="Ellipse_15" class="dotcolor" data-name="Ellipse 15" cx="1" cy="1" r="1" transform="translate(450 227)" />
+        <circle id="Ellipse_16" class="dotcolor" data-name="Ellipse 16" cx="1" cy="1" r="1" transform="translate(457 227)" />
+        <circle id="Ellipse_17" class="dotcolor" data-name="Ellipse 17" cx="1" cy="1" r="1" transform="translate(464 227)" />
+        <circle id="Ellipse_18" class="dotcolor" data-name="Ellipse 18" cx="1" cy="1" r="1" transform="translate(471 227)" />
+        <circle id="Ellipse_19" class="dotcolor" data-name="Ellipse 19" cx="1" cy="1" r="1" transform="translate(478 227)" />
+        <circle id="Ellipse_20" class="dotcolor" data-name="Ellipse 20" cx="1" cy="1" r="1" transform="translate(485 227)"/>
+        <circle id="Ellipse_21" class="dotcolor" data-name="Ellipse 21" cx="1" cy="1" r="1" transform="translate(492 227)" />
+        <circle id="Ellipse_22" class="dotcolor" data-name="Ellipse 22" cx="1" cy="1" r="1" transform="translate(450 236)" />
+        <circle id="Ellipse_23" class="dotcolor" data-name="Ellipse 23" cx="1" cy="1" r="1" transform="translate(457 236)" />
+        <circle id="Ellipse_24" class="dotcolor" data-name="Ellipse 24" cx="1" cy="1" r="1" transform="translate(464 236)" />
+        <circle id="Ellipse_25" class="dotcolor" data-name="Ellipse 25" cx="1" cy="1" r="1" transform="translate(471 236)" />
+        <circle id="Ellipse_26" class="dotcolor" data-name="Ellipse 26" cx="1" cy="1" r="1" transform="translate(478 236)" />
+        <circle id="Ellipse_27" class="dotcolor" data-name="Ellipse 27" cx="1" cy="1" r="1" transform="translate(485 236)" />
+        <circle id="Ellipse_28" class="dotcolor" data-name="Ellipse 28" cx="1" cy="1" r="1" transform="translate(492 236)" />
+        <circle id="Ellipse_29" class="dotcolor" data-name="Ellipse 29" cx="1" cy="1" r="1" transform="translate(450 245)" />
+        <circle id="Ellipse_30" class="dotcolor" data-name="Ellipse 30" cx="1" cy="1" r="1" transform="translate(457 245)" />
+        <circle id="Ellipse_31" class="dotcolor" data-name="Ellipse 31" cx="1" cy="1" r="1" transform="translate(464 245)" />
+        <circle id="Ellipse_32" class="dotcolor" data-name="Ellipse 32" cx="1" cy="1" r="1" transform="translate(471 245)" />
+        <circle id="Ellipse_33" class="dotcolor" data-name="Ellipse 33" cx="1" cy="1" r="1" transform="translate(478 245)" />
+        <circle id="Ellipse_34" class="dotcolor" data-name="Ellipse 34" cx="1" cy="1" r="1" transform="translate(485 245)"/>
+        <circle id="Ellipse_35" class="dotcolor" data-name="Ellipse 35" cx="1" cy="1" r="1" transform="translate(492 245)"/>
+        <circle id="Ellipse_36" class="dotcolor" data-name="Ellipse 36" cx="1" cy="1" r="1" transform="translate(450 254)" />
+        <circle id="Ellipse_37" class="dotcolor" data-name="Ellipse 37" cx="1" cy="1" r="1" transform="translate(457 254)"/>
+        <circle id="Ellipse_38" class="dotcolor" data-name="Ellipse 38" cx="1" cy="1" r="1" transform="translate(464 254)"/>
+        <circle id="Ellipse_39" class="dotcolor" data-name="Ellipse 39" cx="1" cy="1" r="1" transform="translate(471 254)" />
+        <circle id="Ellipse_40" class="dotcolor" data-name="Ellipse 40" cx="1" cy="1" r="1" transform="translate(478 254)" />
+        <circle id="Ellipse_41" class="dotcolor" data-name="Ellipse 41" cx="1" cy="1" r="1" transform="translate(485 254)"/>
+        <circle id="Ellipse_42" class="dotcolor" data-name="Ellipse 42" cx="1" cy="1" r="1" transform="translate(492 254)" />
+      </g>
+    </svg>
+    
+      <h4>{{ menu.value }}</h4>
+      <p>{{ returnTile(menu) }}</p>   </div>
+  </div>
+</div>
+
+<!-- <div class="row">
+  <div class="col-md-12">
+    <div class="white_blk">
+   <img src="../../assets/img/bldg3.jpg" alt="" width="100%"
+   />
+  </div>
+   
+  </div>
+</div> -->

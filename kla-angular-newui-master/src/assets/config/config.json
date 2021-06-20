@@ -1,0 +1,7 @@
+{
+  "voteNoteRequiredUserIds": [
+    53,
+    127
+  ],
+  "delayStatementRequiredAfterDays": 14
+}

@@ -1,0 +1,134 @@
+<div class="row">
+  <div class="col-md-6">
+    <button type="button" class="ant-btn ant-btn-default mr-6" (click)="showFilter('row')">
+      {{
+        "business-dashboard.billregister.billregisterlist.addfilter" | translate
+      }}
+    </button>
+    <button type="button" class="ant-btn ant-btn-default" (click)="clearFilter()">
+      {{
+        "business-dashboard.listprioritylist.prioritylist.clearfilter"
+          | translate
+      }}
+    </button>
+  </div>
+  <div class="col-md-6">
+    <div class="row d-flex justify-content-end">
+      <div class="col-md-6">
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchParam"
+            name="search"
+            nz-input
+            placeholder="Search"
+            (ngModelChange)="searchOnList()"
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+  <div class="col-md-4" *ngFor="let filter of checkedFilters">
+    <div class="row align-items-center">
+      <div class="col-md-4 wordbreak">
+        {{ filter.label }}
+      </div>
+      <div class="col-md-7">
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          nzPlaceHolder=""
+          [(ngModel)]="filter.selValue"
+          name="{{ filter.label }}"
+          (ngModelChange)="searchCol()"
+        >
+          <nz-option
+            *ngFor="let data of filter.data"
+            [nzLabel]="data"
+            [nzValue]="data"
+          >
+          </nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero">
+        <i
+          nz-icon
+          nzType="close-circle"
+          nzTheme="outline"
+          (click)="disableFilter(filter)"
+        ></i>
+      </div>
+    </div>
+  </div>
+</div>
+<br />
+<nz-table
+  #bullettinTable
+  nzShowPagination
+  nzShowSizeChanger
+  [nzData]="listOfData"
+>
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th nzShowCheckbox></th>
+      <th nzShowSort nzSortKey="bulletinNumber"> {{ "committee.attendence.attendencelist.no" | translate }}</th>
+      <th nzShowSort nzSortKey="title">{{ "business-dashboard.viewbullettin.bullettintitle" | translate }}</th>
+
+      <th *ngIf="buttonControls.fileColumn" nzShowSort nzSortKey="fileNumber">
+        {{ "business-dashboard.aod.aod-list.filenumber" | translate }}
+      </th>
+      <th nzShowSort nzSortKey="type">{{ "business-dashboard.aod.aod-list.type" | translate }}</th>
+      <th nzShowSort nzSortKey="date">{{ "noticeprocessing.noticeprocess.date" | translate }}</th>
+      <th nzShowSort nzSortKey="fileStatus">{{ "business-dashboard.question.questionlist.status" | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      style="cursor: pointer"
+      *ngFor="let data of bullettinTable.data; let i = index"
+    >
+      <!-- <td>{{ pageIndex * numberOfItem + (i + 1) }}</td> -->
+      <td nzShowCheckbox></td>
+      <td>{{ data.bulletinNumber }}</td>
+      <td>
+        <a href="javascript:;" (click)="openBulletin(data.id)">{{
+          data.title
+        }}</a>
+      </td>
+
+      <td *ngIf="buttonControls.fileColumn">
+        <a href="javascript:;" (click)="viewFile(data.fileId)">{{
+          data.fileNumber ? data.fileNumber : data.fileId ? "View File" : ""
+        }}</a>
+      </td>
+      <td>{{ data.type }}</td>
+      <td>{{ data.date | date: "dd-MM-yyyy" }}</td>
+      <td>{{ data.status }}</td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<nz-modal
+  [(nzVisible)]="filtrParams.rowFilter"
+  nzTitle=""
+  (nzOnCancel)="showFilter(null)"
+  (nzOnOk)="_confrmFilter()"
+>
+  <div class="padding_15">
+    <p *ngFor="let box of filtrParams.tableDto; let i = index">
+      <label
+        nz-checkbox
+        name="checkbox{{ i }}"
+        (ngModelChange)="_chooseFilter(box)"
+        [(ngModel)]="box.checked"
+        >{{ box.label }}</label
+      >
+    </p>
+  </div>
+</nz-modal>

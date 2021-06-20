@@ -1,0 +1,678 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.pmbr.resolution-list.pmbrmanagement" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{ "business-dashboard.pmbr.resolution-list.resolution" | translate }}</h2>
+  </div>
+  <div class="col-md-6 d-flex justify-content-between">
+    <div></div>
+    <div class="d-flex justify-content-between">
+      <!-- <button class="d-flex align-items-center mr-6" nz-button nzType="default">
+          ...
+        </button> -->
+      <!-- <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="balloting()">
+          Balloting
+        </button> -->
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<nz-tabset>
+  <nz-tab nzTitle='{{"business-dashboard.pmbr.resolution-list.resolution" |translate}}' (nzClick)="getResolutionList()">
+    <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+          <!-- <div class="col-md-3"><b>Add Filter</b></div> -->
+          <div class="col-md-6">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchResolution" name="searchResolution" nz-input placeholder=""
+                (ngModelChange)="searchResolutionList()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <br>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionList" class="table-all">
+      <thead>
+        <tr>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="bill">
+            {{ "business-dashboard.pmbr.resolution-list.titleresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            {{ "bill.addtobillregister.lang" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            {{ "business-dashboard.pmbr.resolution-list.honblemember" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[4].check">
+            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[5].check">
+            {{ "business-dashboard.question.status" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[6].check">
+            {{ "Action" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr>
+            <td *ngIf="colCheckboxes[0].check" (mouseover)="showResolutionLinks(list.billMetaDataDto.id)">
+          <tr>
+            {{list.billMetaDataDto.title}}
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td *ngIf="list?.billMetaDataDto?.fileId !== null">
+                <a class="viewlink" (click)="viewFile(list.billMetaDataDto.fileId)">
+                  {{ "bill.performballo.viewfile" | translate }}</a>
+              </td>
+            </div>
+          </tr>
+          </td>
+          <td *ngIf="colCheckboxes[1].check">
+            {{ list.billMetaDataDto.type }}
+          </td>
+          <td *ngIf="colCheckboxes[2].check">
+            {{ list.billMetaDataDto.language }}
+          </td>
+          <td *ngIf="colCheckboxes[3].check">
+            {{ list.billMetaDataDto.member }}
+          </td>
+          <td *ngIf="colCheckboxes[4].check">
+            {{ list.billMetaDataDto.department }}
+          </td>
+          <td *ngIf="colCheckboxes[5].check">
+            <nz-tag [nzColor]="'green'">{{list.billMetaDataDto.status?.replace("_", " ")?.replace("_", " ") }}
+            </nz-tag>
+          </td>
+          <td *ngIf="colCheckboxes[6].check">
+            <button nz-button  nzType="default" class="mrgL6"
+            *ngIf="list.billMetaDataDto.status == 'APPROVED' && list.billMetaDataDto.stage =='FIRST_READING_ADDED_TO_LOB'"
+            nz-popconfirm nzCancelText="No" nzOkText="Yes" 
+            nzPopconfirmTitle='{{ "pmbr.resolution-lists.dowantpresentresolution" | translate }}' 
+            (nzOnConfirm)="updateResolutionStatus(list.billMetaDataDto.id, i)" nzPopconfirmPlacement="bottomLeft">
+            {{ "pmbr.resolution-lists.presentreading" | translate }}
+            </button> &nbsp;
+            <button nz-button  nzType="default" class="mrgL6"
+            *ngIf="list.billMetaDataDto.status == 'APPROVED'&& list.billMetaDataDto.stage =='SECOND_READING_ADDED_TO_LOB'"
+            nz-popconfirm nzCancelText="No" nzOkText="Yes" 
+            nzPopconfirmTitle='{{ "pmbr.resolution-lists.dowantpresentresolution" | translate }}' 
+            (nzOnConfirm)="updateFinalResolutionPresent(list.billMetaDataDto.id, i)" nzPopconfirmPlacement="bottomLeft">
+            {{ "pmbr.resolution-lists.presentSecondreading" | translate }}
+            </button>
+          </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-list.submittedresolution" | translate }}'
+    *ngIf="submittedResolution" (nzClick)="getSubmittedResolutionList()">
+    <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+          <!-- <div class="col-md-3"><b>Add Filter</b></div> -->
+          <div class="col-md-6">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchSubmitted" name="searchSubmitted" nz-input placeholder=""
+                (ngModelChange)="searchSubmittedList()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <br>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionSubmittedList" class="table-all">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="checked" [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="_checkAllRows($event)"></th>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="bill">
+            {{ "business-dashboard.pmbr.resolution-list.titleresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            {{ "bill.addtobillregister.lang" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            {{ "business-dashboard.pmbr.resolution-list.honblemember" | translate }}
+          </th>
+          <!-- <th *ngIf="colCheckboxes[4].check">
+            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+          </th> -->
+          <th *ngIf="colCheckboxes[5].check">
+            {{ "business-dashboard.question.status" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tr *ngIf="setOfCheckedId.size !== 0">
+        <th colspan="2">
+          <span>{{ setOfCheckedId.size }} {{ "business-dashboard.question.questionlist.selected" | translate }}</span>
+        </th>
+        <th colspan="3">
+          <button (click)="assignModal()" nz-button [nzType]="'default'"
+            class="secondary-button button-admin-radius button-font dark-border dark-font">
+            {{"cpl.uploadedlist.assigntask" |translate}}
+          </button>
+        </th>
+      </tr>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr>
+            <td nzShowCheckbox [nzChecked]="setOfCheckedId.has(list.bill.id)"
+              (nzCheckedChange)="onItemChecked(list.bill.id, $event)">
+            </td>
+            <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)">
+          <tr>
+            {{list.title}}
+          </tr>
+          </td>
+          <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.bill.id)">
+            <tr>{{ list.bill.type }}</tr>
+            <tr *ngIf="list.viewLinks">
+              <div>
+                <!-- <td>
+                  <a class="viewlink" (click)="assignToAssistant()">View</a>
+                </td> -->
+                <!-- <td>
+                  <a class="viewlink" (click)="editBill(list.billMetaDataDto.id)">Edit</a>
+                </td> -->
+                <!-- <td *ngIf="list.billMetaDataDto.stage=='PMBR_FINAL_APPROVED'">
+                  <a class="viewlink" (click)="billRegister(list.billMetaDataDto.id)">Add to bill register</a>
+                </td> -->
+              </div>
+            </tr>
+          </td>
+          <td *ngIf="colCheckboxes[1].check">
+            {{ list.bill.language }}
+          </td>
+          <td *ngIf="colCheckboxes[2].check">
+            {{ list.memberName }}
+          </td>
+          <!-- <td *ngIf="colCheckboxes[3].check">
+            {{ list.department }}
+          </td> -->
+          <td *ngIf="colCheckboxes[4].check">
+            <nz-tag [nzColor]="'green'">{{list.bill.status?.replace("_", " ")?.replace("_", " ") }}</nz-tag>
+          </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-list.assignedResolution" | translate }}'
+    *ngIf="submittedResolution" (nzClick)="getAssignedResolutionList()">
+    <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+          <!-- <div class="col-md-3"><b>Add Filter</b></div> -->
+          <div class="col-md-6">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchAssigned" name="searchAssigned" nz-input placeholder=""
+                (ngModelChange)="searchAssignedList()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <br>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionAssignedList" class="table-all">
+      <thead>
+        <tr>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="bill">
+            {{ "business-dashboard.pmbr.resolution-list.titleresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            {{ "bill.addtobillregister.lang" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            {{ "business-dashboard.pmbr.resolution-list.honblemember" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[4].check">
+            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[5].check">
+            {{ "business-dashboard.question.status" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr>
+
+            <td *ngIf="colCheckboxes[0].check" (mouseover)="showAssignedLinks(list.bill.id)">
+          <tr>
+            {{list.title}}
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td *ngIf="list?.bill?.fileId !== null">
+                <a class="viewlink" (click)="viewFile(list.bill.fileId)">
+                  {{ "bill.performballo.viewfile" | translate }}</a>
+              </td>
+
+            </div>
+          </tr>
+          </td>
+          <td *ngIf="colCheckboxes[1].check">
+            {{ list.bill.type }}
+          </td>
+          <td *ngIf="colCheckboxes[2].check">
+            {{ list.bill.language }}
+          </td>
+          <td *ngIf="colCheckboxes[3].check">
+            {{ list.memberName }}
+          </td>
+          <td *ngIf="colCheckboxes[4].check">
+            {{ list.department }}
+          </td>
+          <td *ngIf="colCheckboxes[5].check">
+            <nz-tag [nzColor]="'green'">{{list.bill.status?.replace("_", " ")?.replace("_", " ") }}</nz-tag>
+          </td>
+          
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-list.resolutionforaction" | translate }}'
+    *ngIf="!submittedResolution" (nzClick)="getResolutionsForAction()">
+    <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+          <!-- <div class="col-md-3"><b>Add Filter</b></div> -->
+          <div class="col-md-6">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchForAction" name="searchForAction" nz-input placeholder=""
+                (ngModelChange)="searchResolutionForActionList()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <br>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionForAction" class="table-all">
+      <thead>
+        <tr>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="bill">
+            {{ "business-dashboard.pmbr.resolution-list.titleresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            {{ "bill.addtobillregister.lang" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            {{ "business-dashboard.pmbr.resolution-list.honblemember" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[4].check">
+            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[5].check">
+            {{ "business-dashboard.question.status" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr>
+            <!-- <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)">
+                        {{list.title}}               
+                      </td> -->
+            <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.bill.id)">
+          <tr>
+            {{list.title}}
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td *ngIf="list?.bill?.fileId !== null">
+                <a class="viewlink" *ngIf="list?.bill?.fileId !== null" (click)="viewFile(list.bill.fileId)">
+                  {{ "bill.performballo.viewfile" | translate }}</a>
+              </td>
+              <td *ngIf="list?.bill?.fileId == null">
+                <a class="viewlink" (click)="attachFile(list)">{{ "bill.performballo.attachtofile" | translate }}</a>
+              </td>
+              <td *ngIf="list.bill.status=='WAITING_FOR_SUBMISSION'">
+                <a class="viewlink" *ngIf="!list?.department" (click)="editResolutionMetaData(list.bill.id)">{{ "business-dashboard.pmbr.resolutionList.addDept" | translate }}</a>
+                <a class="viewlink" *ngIf="list?.department" (click)="editResolutionMetaData(list.bill.id)">{{ "business-dashboard.pmbr.resolutionList.editDept" | translate }}</a>
+              </td>
+              <td>
+                <a href="javascript:;" (click)='viewResolutionContent(list.bill.id)'
+                  class="viewlink">{{ "cpl.correspondencelist.view" | translate }}</a>
+              </td>
+            </div>
+          </tr>
+          </td>
+          <td *ngIf="colCheckboxes[1].check">
+            {{ list.bill.type }}
+          </td>
+          <td *ngIf="colCheckboxes[2].check">
+            {{ list.bill.language }}
+          </td>
+          <td *ngIf="colCheckboxes[3].check">
+            {{ list.memberName }}
+          </td>
+          <td *ngIf="colCheckboxes[4].check">
+            {{ list.department }}
+          </td>
+          <td *ngIf="colCheckboxes[5].check">
+            <nz-tag [nzColor]="'green'">{{list.bill.status?.replace("_", " ")?.replace("_", " ") }}</nz-tag>
+          </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{ "business-dashboard.pmbr.resolution-list.myresolution" | translate }}'
+    *ngIf="!submittedResolution" (nzClick)="getResolutionsProcessed()">
+    <div class="row">
+      <div class="col-md-6"></div>
+      <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+          <!-- <div class="col-md-3"><b>Add Filter</b></div> -->
+          <div class="col-md-6">
+            <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchMyResolution" name="searchMyResolution" nz-input placeholder=""
+                (ngModelChange)="searchMyResolutionList()" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-3 d-flex align-items-center justify-content-end">
+            <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "noticeprocessing.staff.personalregister.cols" | translate }}
+            </button>
+          </div>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                <li>
+                  <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                    (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </div>
+      </div>
+    </div>
+    <br>
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionProcessed" class="table-all">
+      <thead>
+        <tr>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="bill">
+            {{ "business-dashboard.pmbr.resolution-list.titleresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            {{ "bill.addtobillregister.lang" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            {{ "business-dashboard.pmbr.resolution-list.honblemember" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[4].check">
+            {{ "cpl.fileworkflowdocs.departMent" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[5].check">
+            {{ "business-dashboard.question.status" | translate }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let list of fileTable.data; let i = index">
+          <tr>
+            <td *ngIf="colCheckboxes[0].check" (mouseover)="showMyResolutionLinks(list.bill.id)">
+          <tr>
+            {{list.title}}
+          </tr>
+          <tr *ngIf="list.viewLinks">
+            <div>
+              <td *ngIf="list?.bill?.fileId !== null">
+                <a class="viewlink" (click)="viewFile(list.bill.fileId)">
+                  {{ "bill.performballo.viewfile" | translate }}</a>
+              </td>
+
+            </div>
+          </tr>
+          </td>
+          <td *ngIf="colCheckboxes[1].check">
+            {{ list.bill.type }}
+          </td>
+          <td *ngIf="colCheckboxes[2].check">
+            {{ list.bill.language }}
+          </td>
+          <td *ngIf="colCheckboxes[3].check">
+            {{ list.memberName }}
+          </td>
+          <td *ngIf="colCheckboxes[4].check">
+            {{ list.department }}
+          </td>
+          <td *ngIf="colCheckboxes[5].check">
+            <nz-tag [nzColor]="'green'">{{list.bill.status?.replace("_", " ")?.replace("_", " ") }}</nz-tag>
+          </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+ 
+
+</nz-tabset>
+<nz-modal [(nzVisible)]="isAssignVisible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4"> {{"cpl.uploadedlist.assigntask" |translate}}</div>
+        </div>
+        <!-- <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4">{{"cpl.documents.Filter" |translate}}</div>
+        </div> -->
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <!-- <input
+              nz-input
+              placeholder="{{'cpl.uploadedlist.searchname'|translate}}"
+              [(ngModel)]="searchPerson"
+              (ngModelChange)="personSearch()"
+            /> -->
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-card [nzTitle]="null" class="checklist-all">
+              <nz-table #assistantListTable [nzData]="assistantList">
+                <tbody>
+                  <tr *ngFor="let person of assistantListTable.data">
+                    <td>
+                      <nz-radio-group [(ngModel)]="radioValue">
+                        <label nz-radio [nzValue]="person.userId"></label>
+                      </nz-radio-group>
+                    </td>
+                    <td>{{ person.fullName }}</td>
+                    <td>{{ person.name }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-card>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="default"
+              class="secondary-button button-admin-radius button-font dark-border dark-font"
+              (click)="onCancelCreateFilePopup()">
+              {{"cpl.correspondencelist.cancel" |translate}}
+            </button>
+            <button type="button" nz-button nzType="primary" (click)="assignTOAssistant()"
+              class="primary-button button-admin-radius button-font" [disabled]="radioValue === null">
+              {{"cpl.documents.assign" |translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [nzFooter]="null" [(nzVisible)]="createFilePopUp" (nzOnCancel)="onCancelCreateFilePopup()">
+  <nz-tabset>
+
+    <nz-tab nzTitle='{{"cpl.docpreparion.createfile" |translate}}'>
+      <div class="row margnrtp-15">
+        <div class="col-md-4">{{"cpl.docamendments.filesubject" |translate}}</div>
+        <div class="col-md-8">
+          <input nz-input placeholder="" [(ngModel)]="file.subject" />
+        </div>
+      </div>
+      <div class="row margnrtp-15">
+        <div class="col-md-4">{{"business-dashboard.aod.aod-list.priority" |translate}}</div>
+        <div class="col-md-8">
+          <nz-radio-group [(ngModel)]="file.priority">
+            <label nz-radio nzValue="URGENT">{{"committee.committe-files.priority.urgent" |translate}}</label>
+            <label nz-radio nzValue="NORMAL">{{"committee.committe-files.priority.normal" |translate}}</label>
+            <label nz-radio nzValue="ACTION_TODAY"> {{"committee.committe-files.priority.action-today"
+              |translate}}</label>
+            <label nz-radio nzValue="ASSEMBLY_URGENT">{{"committee.committe-files.priority.assembly-urgent"
+              |translate}}</label>
+          </nz-radio-group>
+        </div>
+      </div>
+      <div class="row margnrtp-15">
+        <div class="col-md-4">{{"committee.committe-files.description" |translate}}</div>
+        <div class="col-md-8">
+          <textarea nz-input rows="2" placeholder="" [(ngModel)]="file.description"></textarea>
+        </div>
+      </div>
+      <div class="row mrt-50 margnrtp-15">
+        <div class="col-md-12 d-flex justify-content-end">
+          <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font"
+            (click)="onCancelCreateFilePopup()">
+            {{"business-dashboard.question.cancel" |translate}}
+          </button>
+          <button type="button" nz-button nzType="primary" nz-popconfirm
+            nzPopconfirmTitle='{{"bill.bill-clause.list.wanttocreatefile" |translate}}' (nzOnConfirm)="attachToFile()"
+            class="btn btn-primary primary-button">
+            {{"bill.performballo.attachtofile" |translate}}
+          </button>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+
+</nz-modal>
+
+<!-- edit resolutionmetada -->
+<nz-modal *ngIf="showHideResolutionMetaData" [(nzVisible)]="showHideResolutionMetaData" (nzOnCancel)="hidePopUp()"
+  [nzMaskClosable]="false" nzTitle='{{ "pmbr.resolutions.updateResolution" | translate }}' nzClosable="true" [nzFooter]="null"
+  nzWidth="600">
+  <pmbr-create-resolution-metadata [resolutionId]="selectedResolutionId" [resolutionLottingResultId]='null'
+    (resolutionCreateOrCancel)="updateOrCancelResolutionMetaData($event)">
+  </pmbr-create-resolution-metadata>
+</nz-modal>
+<!-- end edit resolution metadata -->

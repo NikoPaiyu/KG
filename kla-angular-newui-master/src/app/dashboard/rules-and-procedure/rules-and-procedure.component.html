@@ -1,0 +1,10 @@
+<ul class="folder-list-view d-flex flex-wrap justify-content-between">
+  <li (click)="openBudgetTemplate(item.fileUrl)" *ngFor="let item of FileUpalodDetails">
+    <img src="../../assets/img/File_Icon.png" alt="" />
+    <!-- <img src="../../assets/img/05.png" alt="" /> -->
+    <span>{{ item.label }}</span>
+    <div>
+      <span>{{"dashboard.summary.date" | translate}}: </span><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span>
+    </div>
+  </li>
+</ul>

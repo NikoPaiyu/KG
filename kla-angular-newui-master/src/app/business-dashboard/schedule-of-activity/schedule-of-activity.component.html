@@ -1,0 +1,63 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{
+                    "business-dashboard.question.dashboard" | translate
+                  }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{
+                    "business-dashboard.sod.scheduleofactivity" | translate
+                  }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-6">
+        {{
+            "business-dashboard.sod.scheduleofactivity" | translate
+          }}
+    </div>
+    <div class="col-md-6">
+        <div nz-row nzType="flex" nzJustify="end">
+            <button nz-button nzType="default" (click)="submitForm()">Save Schedule Of Activity</button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<nz-table #borderedTable nzBordered [nzData]="getSoa">
+    <thead>
+        <tr>
+            <th>ക്രമ നമ്പർ</th>
+            <th>ചോദ്യങ്ങൾക്ക് ഉത്തരം നൽകേണ്ട തീയതി </th>
+            <th>നറുക്കെടുപ്പ് തീയതി </th>
+            <th>ചോദ്യങ്ങൾ പ്രെസ്സിൽ അയക്കേണ്ട തീയതി </th>
+            <th>ചോദ്യങ്ങൾ പ്രെസ്സിൽ നിന്നും അച്ചടിച്ച് ലഭിക്കേണ്ട തീയതി </th>
+            <th>ചോദ്യങ്ങൾ വകുപ്പുകൾക് അയക്കേണ്ട തീയതി </th>
+            <th>അംഗങ്ങൾക് വിതരണം ചെയ്യേണ്ട തീയതി </th>
+            <th>ഉത്തരം നിയമസഭ സെക്രെട്ടറിയേറ്റിൽ ലഭിക്കേണ്ട തീയതി,സമയം [ചട്ടം47(1)] </th>
+            <th>ഡിലേ സ്റ്റേറ്റ്മെൻറ് ഇല്ലാതെ താത്കാലിക മറുപടി ലഭ്യമാക്കിയവയ്ക്കുള്ള അന്തിമ മറുപടി നൽകുന്നതിനുള്ള അവസാന
+                തീയതി [ചട്ടം 47(2)]</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let data of borderedTable.data;let i = index;">
+            <td>{{i+1}}</td>
+            <td>{{data.toAnswer}}</td>
+            <td><nz-date-picker [(ngModel)]="data.lottingDate" name="lottingDate_{{i}}" nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.sendToPress" name="sendToPress_{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.printedAndReceivedFromPress" name="printedAndReceivedFromPress_{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.sendToDepartments" name="sendToDepartments_{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.distributedToMembers" name="distributedToMembers_{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.answerToBeReceivedAtSecretriat" name="answerToBeReceivedAtSecretriat_{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+            <td><nz-date-picker [(ngModel)]="data.deadlineToIssueTempReply" name="deadlineToIssueTempReply{{i}}"nzRequired (ngModelChange)="dateOnChange(i)"></nz-date-picker></td>
+        </tr>
+    </tbody>
+</nz-table>
+
+
+

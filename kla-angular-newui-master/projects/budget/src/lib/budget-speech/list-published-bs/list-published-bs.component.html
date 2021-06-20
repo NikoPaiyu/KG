@@ -1,0 +1,150 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"budget.budgetspeech" |translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"> {{"budget.budgetspeech.list" |translate}} </h2>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-10">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10" *ngIf="assemblySession['assembly']">
+                {{"table.listga.assembly" |translate}}
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="assemblySession['assembly'].currentassembly" name="selectedAssembly" (ngModelChange)="findSessionListByAssembly()">
+                    <nz-option *ngFor="let assembly of assemblySession['assembly']" [nzLabel]="assembly.assemblyId" [nzValue]="assembly.id">
+                    </nz-option>
+                </nz-select>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-center icon-color marginbtm-10" *ngIf="assemblySession['session']">
+                {{"table.listga.session" |translate}}
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="assemblySession['session'].currentsession" name="selectedSession" (ngModelChange)="getPublishedBudgetSpeech()">
+                    <nz-option *ngFor="let session of assemblySession['session']" [nzLabel]="session.sessionId" [nzValue]="session.id">
+                    </nz-option>
+                </nz-select>&nbsp;
+            </div>
+            <div class="col-md-3 d-flex align-items-center marginbtm-10">
+                <button class="plus-arrange margnrt-5" nz-button [nzType]="'primary'" (click)="showModal()">
+                    <i nz-icon nzType="plus"></i>
+                </button>
+
+                <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle="{{
+              'business-dashboard.cpl.documents.filtercoloums'
+                | translate
+            }}" (nzOnCancel)="_hideFilter()" (nzOnOk)="_showFilter()">
+                    <div class="pading-all">
+                        <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+                        </p>
+                    </div>
+                </nz-modal>
+
+                <button nz-button nzType="default" (click)="clearFilter()" (keyup.enter)="DoNothing()">
+                    {{"table.listga.clearFilter" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row fltr">
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.budgetTitledisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ "budget.budgetspeech.title" | translate }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['budgetTitle']" name="budgetTitle" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let budgetTitle of budgetfiltrParams.data.budgetTitle" nzLabel="{{ budgetTitle }}" nzValue="{{ budgetTitle }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.datedisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ ("cpl.filelistflow.createddate" | translate) }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['date']" name="date" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let date of budgetfiltrParams.data.date" nzLabel="{{ date }}" nzValue="{{ date }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row margnrtp-15 justify-content-end">
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-12">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                'business-dashboard.question.questionlist.inputsearch' | translate
+              }}" (ngModelChange)="onSearchUser()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<nz-table #filterTable [nzShowPagination]="false" nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="currentPageDataChange($event)" class="table-all">
+    <thead>
+        <tr>
+            <th nzSortKey="budgetTitle">
+                {{"budget.budgetspeech.title" |translate}}
+            </th>
+            <th nzSortKey="createdDate">
+                {{"business-dashboard.question.questionlist.createdat" |translate}}
+            </th>
+            <th nzSortKey="budgetUrl"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let list of filterTable.data">
+            <td (mouseover)="showLinks(list.id)">
+                <tr>
+                    <td class="titlestyle">
+                        {{ list.budgetTitle }}
+                    </td>
+                </tr>
+            </td>
+            <td>{{ list.createdDate | date: "dd-MM-yyyy"}}</td>
+            <td (click)="view_doc(list)">
+                <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-pagination [nzPageIndex]="1" [nzPageSize]="paginationParams.numberOfItem" [nzTotal]="paginationParams.total" (nzPageIndexChange)="pageIndexChange($event - 1)" nzShowSizeChanger (nzPageSizeChange)="pageSizeChange($event)">
+</nz-pagination>
+<nz-modal [(nzVisible)]="previewVisible" [nzFooter]="null" (nzOnCancel)="cancelPreview()" nzWidth="800">
+    <div class="width-100 pading-all" *ngIf="this.docUrl !== null">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <ngx-doc-viewer [url]="docUrl" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+            </div>
+        </div>
+    </div>
+</nz-modal>

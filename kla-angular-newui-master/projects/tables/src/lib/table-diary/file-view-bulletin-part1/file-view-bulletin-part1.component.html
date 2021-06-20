@@ -1,0 +1,216 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item> DashBoard </nz-breadcrumb-item>
+        <nz-breadcrumb-item> Bulletin Part 1 </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-3">
+          <h3>Bulletin Part 1</h3>
+        </div>
+        <div class="col-md-5">
+          <h5>{{ diaryData?.assemblyValue}}th Assembly , {{ diaryData?.sessionValue }} th Session, {{diaryData?.date | date: 'dd/MM/yyyy' }}</h5></div>
+        <div class="col-md-4 d-flex justify-content-end">
+          
+          
+          <button nz-button nzType="default" class="mr-6" (click)="back()">Back</button>
+          <!-- <button nz-button nzType="default" class="mr-6" (click)="listBulletinPart1()">List</button> -->
+          <button nz-button nzType="primary" class="mr-6" (click)="isPreviewVisible = true">Preview</button>
+          <button nz-button nzType="default" class="mr-6" (click)="publishBulletinPart1()">Publish</button>
+          
+          <!-- <button nz-button nzType="primary" (click)="saveBulletinPart1()">Save</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-3">
+      <nz-collapse class="nominee-collapses" nzAccordion [nzBordered]="false">
+        <ng-container
+          class="mrgT20"
+          *ngFor="let parentPanel of diaryData?.lobLines; let parentIndex = index"
+        >
+          <nz-collapse-panel
+          [nzDisabled]="parentPanel?.disable"
+          [nzActive]="parentPanel?.active"
+         
+          [nzHeader]="parentExtra">
+           <ng-template  
+           #parentExtra>
+            <span  class="pos">
+              {{parentPanel?.businessName}}
+            </span>
+            <div [ngClass]="{activeBusiess: parentPanel?.active}" style="position: absolute;" ></div>
+           </ng-template>
+            <nz-collapse nzAccordion nzExpandIconPosition="right">
+              <nz-collapse-panel
+                *ngFor="
+                  let childPanel of parentPanel.businessLines;
+                  let childIndex = index
+                "
+                [nzHeader]="childExtra"
+                [nzActive]="activeBusiness?.lobId === childPanel?.id"
+                (click)="setDatas(childPanel, childIndex, parentIndex)"
+              >
+              <ng-template  
+           #childExtra>
+            <span class="pos">
+             {{ childPanel?.title}}
+            </span>
+            <div style="position: absolute;" [ngClass]="{activeChildBusiess:activeBusiness?.lobId === childPanel?.id}">&nbsp;</div>
+           </ng-template>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </nz-collapse-panel>
+        </ng-container>
+      </nz-collapse>
+    </div>
+    <div class="col-md-5" *ngIf="selectedBusiness">
+      <nz-card>
+        <div class="row">
+          {{ selectedBusiness?.title }}
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="row">
+              <div class="col-md-12">
+                <nz-card
+                  class="margnrtp-15"
+                  *ngFor="
+                    let dairy of selectedBusiness?.tableDiaryLines;
+                    let diaryIndex = index
+                  "
+                >
+                  <div class="row">
+                    <div class="col-md-8">
+                      <span class="mr-6"><b>{{ dairy?.time }}</b></span>
+                      <nz-tag class="ml-6" *ngIf="dairy?.type != 'DIARY_NOTE'" [nzColor]="getTagColor(dairy?.type)">
+                        {{getTagName(dairy?.type)}}
+                      </nz-tag>
+                    </div>
+                    <div class="col-md-4 align-right">
+                      <button *ngIf="!dairy?.isEdit" (click)="editDiaryLines(diaryIndex)" nzSize="small" class="mr-6" nz-button nzType="default">
+                        Edit
+                      </button>
+                      <button *ngIf="dairy?.isEdit" (click)="saveBulletinLines(dairy,diaryIndex)" nzSize="small" nz-button nzType="primary" class="mr-6">
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row margnrtp-5">
+                    <div class="col-md-12">
+                    <quill-editor *ngIf="dairy.isEdit"
+                      [styles]="{ height: '100px' }"
+                      [(ngModel)]="dairy.description"
+                      [modules]="modules"
+                    ></quill-editor>
+                    <quill-view-html  *ngIf="!dairy.isEdit" [content]="dairy?.description">
+                    </quill-view-html>
+                   </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-myDiv only-show-on-hover align-right">
+                <nz-tag
+                  *ngFor="let tags of buttonList"
+                  [nzColor]="tags.color"
+                  (click)="addNew(tags)"
+                  >{{ tags.title }}
+                </nz-tag>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+    <div class="col-md-4" *ngIf="selectedBusiness">
+      <div class="row">
+        <div class="col-md-12">
+        <nz-card class="width-100">
+          <div class="row  margnrtp-5" *ngIf="selectedBusiness?.allotedTime">
+            <div class="col-md-6">
+              Allocated Time:
+            </div>
+            <div class="col-md-6">
+              {{selectedBusiness?.allotedTime}} Minutes
+            </div>
+          </div>
+          <div class="row margnrtp-5" *ngIf="selectedBusiness?.primaryMemberName">
+            <div class="col-md-6">
+              Member Name: 
+            </div>
+            <div class="col-md-6">
+              {{selectedBusiness?.primaryMemberName}}
+            </div>
+          </div>
+          <div class="row  margnrtp-5" *ngIf="selectedBusiness?.secondaryMemberName">
+            <div class="col-md-6">
+              Minister Name: 
+            </div>
+            <div class="col-md-6">
+              {{selectedBusiness?.secondaryMemberName}}
+            </div>
+          </div>
+          <div class="row  margnrtp-5" *ngIf="selectedBusiness?.description">
+            <div class="col-md-6">
+              Description: 
+            </div>
+            <div class="col-md-6">
+              {{selectedBusiness?.description}}
+            </div>
+          </div>
+        </nz-card>
+      </div>
+      </div>
+      <div class="row margnrtp-15">
+        <div class="col-md-12">
+        <nz-card class="width-100"> 
+          <div class="row margnrtp-15">  Speaker Note : 
+            <button *ngIf="selectedBusiness?.speakerNoteUrl" (click)="isPdfVisible = true" nz-button nzType="default" class="mr-6">Preview</button>
+          </div>
+          <div class="row margnrtp-15" *ngIf="selectedBusiness?.speakerNoteUrl">
+            <ngx-doc-viewer
+                      [url]="selectedBusiness?.speakerNoteUrl"
+                      viewer="url"
+                      style="width: 100%;"
+              ></ngx-doc-viewer>
+          </div>
+          <div class="row margnrtp-15" *ngIf="!selectedBusiness?.speakerNoteUrl">
+            <h6>{{"cpl.fileworkflowdocs.nodocumentuploadedtoview" | translate }}</h6>
+          </div>
+        </nz-card>
+      </div>
+      </div>
+    </div>
+  </div>
+  
+  <nz-modal [nzVisible]="isPdfVisible" nzWidth ="800"[nzContent]="modalContent" [nzFooter]="null" (nzOnCancel)="isPdfVisible = false">
+    <ng-template #modalContent>
+      <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+          <div class="col-md-12 align-items-center">
+            <ngx-doc-viewer
+                      [url]="selectedBusiness?.speakerNoteUrl"
+                      viewer="url"
+                      style="width: 100%; height: 800px;"
+              ></ngx-doc-viewer>
+          </div>
+        </div>
+      </div>
+     
+    </ng-template>
+  </nz-modal>
+  
+  <nz-modal [nzVisible]="isPreviewVisible" nzWidth ="800" [nzFooter]="null" (nzOnCancel)="isPreviewVisible = false">
+    <tables-bulletin-part1-preview *ngIf="isPreviewVisible"
+    [diaryData]="diaryData"
+    >
+    </tables-bulletin-part1-preview>
+  </nz-modal>
+  
+

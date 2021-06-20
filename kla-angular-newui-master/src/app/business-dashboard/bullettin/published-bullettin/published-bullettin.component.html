@@ -1,0 +1,120 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.viewbullettin.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                <b>{{"business-dashboard.bullettin.publishedBullettin" | translate}}</b>
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">{{"business-dashboard.bullettin.publishedBullettin" | translate}}</h2>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selassembly" | translate}}'>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{"cpl.docupload.assembly" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select [(ngModel)]="assemblyId" name="currentAssembly" nzPlaceHolder='{{"cpl.docupload.assembly" | translate}}'
+                        (ngModelChange)="filterAssembly()">
+                            <nz-option *ngFor="let assemblyItems of assemblyList" [nzLabel]="assemblyItems.assemblyId"
+                                [nzValue]="assemblyItems.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+    <div class="col-md-4">
+        <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{"cpl.docupload.session" | translate}}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-select [(ngModel)]="sessionId" name="currentSession" 
+                            nzPlaceHolder='{{"cpl.docupload.session" | translate}}'
+                            (ngModelChange)="getBullettinList()">
+                            <nz-option *ngFor="let sessionItems of sessionList" [nzLabel]="sessionItems.sessionId"
+                                [nzValue]="sessionItems.id"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+            </nz-form-control>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <nz-table #rowSelectionTable [nzData]="bullettinList">
+            <thead>
+                <tr>
+                    <th nzShowSort nzSortKey="bullettinNumber">
+                        {{"business-dashboard.bullettin.bullettinNumber" | translate}}
+                    </th>
+                    <th nzShowSort nzSortKey="title">
+                        {{"business-dashboard.bullettin.title" | translate}}
+                    </th>
+                    <th nzShowSort nzSortKey="part">
+                        {{"business-dashboard.bullettin.part" | translate}}
+                    </th>
+                    <th nzShowSort nzSortKey="publishedDate">
+                        {{"business-dashboard.bullettin.publishedDate" | translate}}
+                    </th>
+                    <th>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let data of rowSelectionTable.data; let i = index">
+                    <!-- <tr nz-popover nzType="primary" nzPopoverPlacement="left" [nzPopoverContent]="contentTemplate"
+                        style="cursor: pointer;">
+                        <ng-template #contentTemplate>
+                            <div>
+                                <span style="cursor:pointer" class="sortable">
+                                    {{"cpl.docpreparion.view" | translate}}
+                                </span>
+                            </div>
+                        </ng-template> -->
+                    <tr>
+                        <td>{{data.bulletinNumber}}</td>
+                        <td>{{data.title}}</td>
+                        <td>{{data.part}}</td>
+                        <td>{{data.publishedDate | date : "dd-MM-yyyy"}}</td>
+                        <td (click)="showPdfModal(data.data)"><i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i></td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+<nz-modal (nzOnCancel)="handleCancel()" [nzFooter]="null" [(nzVisible)]="isVisible"
+    nzTitle='{{"noticeprocessing.notice.createnotice.prevew" | translate}}' nzWidth="1000"
+    [nzStyle]="{ top: '10px' }">
+    <div class="d-flex justify-content-center">
+        <div class="frame-pdf" *ngIf="finalUrl">
+            <ng2-pdfjs-viewer *ngIf="finalUrl" 
+                [pdfSrc]="finalUrl" scroll="V" 
+                [downloadFileName]="'Report.pdf'"
+                [openFile]="false" [viewBookmark]="false" 
+                [download]="true" [print]="true" spread="N"
+                [fullScreen]="false" [showSpinner]="true" 
+                [viewerId]="auth.getCurrentUser().userId">
+            </ng2-pdfjs-viewer>
+        </div>
+    </div>
+</nz-modal>

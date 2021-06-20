@@ -1,0 +1,206 @@
+<!-- <p>staff-allocation works!</p> -->
+<ng-container *ngIf="!fileView">
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "committee.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b>
+            {{ "committee.committe-mgmnt" | translate}}
+          </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">  {{ "committee.list.staffallocation" | translate}}</h2>
+            
+          </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="gotoBack()">
+           Back
+           </button>
+          <!-- <button class="ml-6 m-r5" style="margin:5px;"  nz-button [nzType]="'default'">
+            {{ "committee.list.letterofnoc" | translate}}
+          </button> -->
+          
+          <button *ngIf="purpose == 'fullview' && !editMode" class="ml-6 m-r5" style="margin:5px;" nz-button nzType="primary"(click)="editStaff()">
+           Edit
+           </button>
+           <button *ngIf="purpose == 'fullview' && editMode" class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="cancelStaff()">
+            Cancel
+           </button>
+           <button *ngIf="purpose == 'fullview' && editMode" class="ml-6 m-r5" style="margin:5px;" nz-button nzType="primary"(click)="saveStaffData()">
+            Update
+            </button>
+          <button *ngIf="meetingDetails?.staffAllocationId == null && purpose == 'create' && editMode" class="ml-6 m-r5" style="margin:5px;" nz-button nzType="primary" (click)="saveandResubmitData()">
+            Save and Attach to File
+          </button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  
+</ng-container>
+<div class="row">
+
+
+  <div class="col-md-8">
+    <h6 *ngIf="meetingDetails">{{meetingDetails?.title}} : {{meetingDetails?.time | date: "dd-MM-yyyy" }} : {{ meetingDetails?.time | date: "hh:mm a" }}  </h6>   
+  </div>
+  <div class="col-md-2 align-right">
+    <button *ngIf="fileView"class="ml-6 m-r5" style="margin:5px;" nz-button [nzType]="'default'" (click)="gotoFullview()">
+      Full View
+     </button>
+  </div>
+</div>
+  <nz-divider></nz-divider>
+  <div class="container" class="card1">
+    <div class="row">
+      <div class="col-md-12" style="padding-right: 0px;">
+        
+            <!-- <div class="overflow-blt row"> -->
+          <div class="col-md-4"
+          style="padding-right: 0px;"
+          >
+              <!-- <nz-card
+                nzTitle=""
+                class="marginbtm-15 sortable committee_blk"
+                style="border:#bdbdbd solid 1px;"
+              > -->
+
+                <strong>Assistant:</strong>
+                
+                <div
+                  *ngFor="
+                    let assistant of assistantArray;
+                    let asindex = index
+                  "
+                >  
+                  <nz-card class="committee_blk marginbtm-15">
+                    <span>{{ assistant.details.fullName }}</span>
+                    <i *ngIf="editMode" nz-icon nzType="delete" class="flr mrt-5" nzTheme="outline" (click)="deleteAssistant(assistant,asindex)"></i>
+                  </nz-card>
+                </div>
+                <button *ngIf="editMode"
+                nz-button nzType="dashed" class="add-button  width-75 d-flex align-items-left justify-content-center marginbtm-15"
+                (click)="showStaffPopup('assistant')"
+                >
+                  <i nz-icon nzType="plus" ></i>
+                  {{ "committee.list.addperson" | translate}}
+                </button>
+                <div *ngIf="assistantArray.length == 0 && isSubmitted">
+                  <span class="text-danger">Please add atleast one Assistant</span>
+                </div>
+                <strong>Officer:</strong>
+                  <div>
+                    
+                <div
+                *ngFor="
+                let officer of officerArray
+                let officerindex = index
+              "
+                >
+                  <nz-card class="committee_blk marginbtm-15">
+                    <span>{{ officer.details.fullName }}</span>
+                    <i  *ngIf="editMode"  nz-icon nzType="delete" class="flr mrt-5" nzTheme="outline"
+                    (click)="deleteOfficer(officer,officerindex)"
+                    ></i>
+                  </nz-card>
+                </div>
+                <button *ngIf="editMode"
+                 nz-button nzType="dashed" class="add-button  width-75 d-flex align-items-left justify-content-center marginbtm-15"
+                (click)="showStaffPopup('officer')"
+                >
+                  <i nz-icon nzType="plus"></i>
+                  {{ "committee.list.addperson" | translate}}
+                </button>
+                <div *ngIf="officerArray.length == 0 && isSubmitted">
+                  <span class="text-danger">Please add atleast one Officer</span>
+                </div>
+              </div>
+
+                <div class="row margntp-25">
+                  <div class="col-md-12"><strong>Office Attendant:</strong></div>
+                </div>
+                <!-- <div class="mbr_ht"> -->
+                  <div>
+                  <div
+                  *ngFor="
+                  let attend of officeAttendantArray
+                  let officerAttendindex = index
+                "
+                  >
+                    <nz-card class="committee_blk  marginbtm-15">
+                          <span>{{ attend.details.fullName }}</span>
+                          <i *ngIf="editMode"  nz-icon nzType="delete" (click)="deleteOfficeAttendent(attend,officerAttendindex)"
+                          class="flr mrt-5" nzTheme="outline"></i>
+                    </nz-card>
+                  </div>
+                  <button *ngIf="editMode"
+                   nz-button nzType="dashed" class="add-button  width-75 d-flex align-items-left justify-content-center marginbtm-15"
+                  (click)="showStaffPopup('officeAttendant')"
+                  >
+                    <i nz-icon nzType="plus"></i>
+                    {{ "committee.list.addperson" | translate}}
+                  </button>
+                  <div *ngIf="officeAttendantArray.length == 0 && isSubmitted">
+                    <span class="text-danger">Please add atleast one Office Attendant</span>
+                  </div>
+                </div>
+                <div class="row margntp-25">
+                  <div class="col-md-12"><strong>Reporter:</strong></div>
+                </div>
+                <!-- <div class="mbr_ht"> -->
+                  <div>
+                  <div
+                  *ngFor="
+                  let reporter of reporterArray;
+                  let reporterIndex = index
+                "
+                  >
+                    <nz-card class="committee_blk  marginbtm-15">
+                          <span>{{ reporter.details.fullName }}</span>
+                          <i *ngIf="editMode" nz-icon nzType="delete" 
+                          (click)="deleteReporter(reporter,reporterIndex)"
+                          class="flr mrt-5" nzTheme="outline"></i>
+                    </nz-card>
+                  </div>
+                  <button *ngIf="editMode"
+                   nz-button nzType="dashed" class="add-button  width-75 d-flex align-items-left justify-content-center marginbtm-15"
+                  (click)="showStaffPopup('reporter')"
+                  >
+                    <i  nz-icon nzType="plus"></i>
+                    {{ "committee.list.addperson" | translate}}
+                  </button>
+                  <div *ngIf="reporterArray.length == 0 && isSubmitted">
+                    <span class="text-danger">Please add atleast one Reporter</span>
+                  </div>
+                </div>
+             
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-modal [(nzVisible)]="showAddStaff" [nzFooter]="null" [nzClosable]="false" [nzTitle]="staffTitle" nzWidth="800">
+    <committee-add-staff *ngIf="showAddStaff"
+    [allAssistant]="allAssistant"
+    [allOfficer]="allOfficer"
+    [allOfficeAttendent]="allOfficeAttendent"
+    [allReporter]="allReporter"
+    [tabType]="tabType"
+    (hideAddMember)="hideStaffPopUp($event)"
+    (ListOfSelected)="addStaffFromPopUp($event)"
+    >
+    </committee-add-staff>
+  </nz-modal>

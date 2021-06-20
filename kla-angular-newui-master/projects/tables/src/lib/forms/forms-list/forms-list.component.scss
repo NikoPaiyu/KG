@@ -1,0 +1,27 @@
+.table-all tr td {
+  vertical-align: top !important;
+}
+
+.table-all tr td td {
+  background-color: #ccc0 !important;
+  padding-bottom: 0px !important;
+  padding-top: 5px !important;
+}
+
+.viewlink {
+  color: blue;
+}
+
+.mrgL6 {
+  margin-left: 6px;
+}
+
+.p-20 {
+  padding: 20px !important;
+}
+
+[nz-radio] {
+  display: block;
+  height: 32px;
+  line-height: 32px;
+}

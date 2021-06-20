@@ -1,0 +1,245 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.bill-management.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.bill-management" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-3">
+        <h2 class="admin-page-heading">
+            {{ heading }}
+        </h2>
+    </div>
+    <div class="col-md-9 text-align-right">
+
+        <button *ngIf="billId && billDetails?.stage !== 'SUBMITTED_FOR_FINAL_APPROVAL'" (click)="viewBill()" nz-button
+            nzType="default" class="mrgL6">
+            <span>{{ "cpl.correspondencelist.view" | translate }}</span>
+        </button>
+        <button nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwantsubmit" | translate }}'
+            (nzOnConfirm)="submitBill()" nz-button nzType="default" class="mrgL6"
+            *ngIf="billDetails?.status == 'SAVED'||billDetails?.status == 'REJECTED'">
+            <span>{{"business-dashboard.bill-management.billCreate.submit" | translate}}</span>
+        </button>
+        <button *ngIf="isApprover() && billDetails && billDetails.status == 'UNDER_APPROVER' && 
+            billDetails.stage !== 'SEND_FOR_VETTING'" nz-popconfirm
+            nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttosend" | translate }}'
+            (nzOnConfirm)="approveAndSendBill()" nz-button nzType="default" class="mrgL6">
+            <span>{{"business-dashboard.bill-management.billCreate.send" | translate}}</span>
+        </button>
+        <button *ngIf="isAssistant() && !billDetails?.fileNumber && billDetails?.status === 'WAITING_FOR_SUBMISSION'"
+            (click)="showcreateFileModal()" nz-button nzType="default" class="mrgL6">
+            <span>{{ "cpl.docpreparion.createfile" | translate }}</span>
+        </button>
+        <button nz-button nzType="default" class="mrgL6"
+            *ngIf="rbsPermission.reSubmitFile && billDetails?.status === 'APPROVED'" (click)="reSubmitBill()">
+            {{ "bill.bill-clause.list.resubmit" | translate }}
+        </button>
+        <button nz-button nzType="default" class="mrgL6" (click)="backToList()">
+            {{ "business-dashboard.bill-management.billCreate.back" | translate }}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<!-- tabs -->
+<nz-tabset *ngIf="billDetails">
+    <nz-tab nzTitle="Bill">
+        <lib-create-bill-content [billDetails]="billDetails" (blockCreated)="isBlockCreated($event)">
+        </lib-create-bill-content>
+    </nz-tab>
+    <nz-tab nzTitle="Bill Info">
+        <div class="row mrgB20">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button nz-button nzSize="small" (click)="editBillDetails()">
+                    <i nz-icon nzType="edit" class="baseline" nzTheme="outline"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.bill-management.billlist.billno" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ billDetails.billNumber }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.bill-management.billCreate.billtitle" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ billDetails.blocks[0].content }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.bill-management.billlist.type" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ billDetails.type.split("_").join(" ") }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.bill-management.billCreate.billNature" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ billDetails.natureOfBill }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.bill-management.billlist.billstatus" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ billDetails.status.split("_").join(" ") }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong *ngIf="billDetails.language == 'MAL'"> {{ "bill.bill-clause.list.malayalm" | translate }}
+                </strong>
+                <strong *ngIf="billDetails.language == 'ENG'"> {{ "bill.bill-clause.list.english" | translate }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "business-dashboard.question.questionlist.priority" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong> {{ billDetails.priority }}
+                </strong>
+            </div>
+        </div>
+        <div *ngIf='billDetails.ministerId' class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "business-dashboard.question.portfolio.ministername" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong> {{ billDetails.minister }}
+                </strong>
+            </div>
+        </div>
+        <div *ngIf='billDetails.departmentId' class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "cpl.documents.ministerdepartment" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong> {{ billDetails.department}}
+                </strong>
+            </div>
+        </div>
+        <div *ngIf='billDetails.subjectId' class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "business-dashboard.question.ministersubject" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong> {{ billDetails.subject }}
+                </strong>
+            </div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+<!-- end tabs -->
+
+<!-- edit bill model -->
+<nz-modal (nzOnCancel)="handlePreviewCancel()" [nzFooter]="null" [(nzVisible)]="ebitBillDetailsModel"
+    nzTitle='{{ "bill.bill-clause.list.editbilldetails" | translate }}' nzWidth="1000"
+    (nzOnCancel)="handlePreviewCancel()">
+    <div class="pading-all width-100 word-break">
+        <div class="col-md-12">
+            <pmbr-create-bill-metaform *ngIf="ebitBillDetailsModel" [billId]="billId"
+                (billCreateOrCancel)="afterEditBillDetails()"></pmbr-create-bill-metaform>
+        </div>
+    </div>
+</nz-modal>
+<!-- end edit bill model -->
+<!-- create file modal -->
+<nz-modal [(nzVisible)]="fileCreateModel" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <b>{{ "cpl.docpreparion.createfile" | translate }}</b>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "business-dashboard.cpl.view.filesubject" | translate }}</div>
+                    <div class="col-md-8">
+                        <input nz-input placeholder='{{ "business-dashboard.cpl.view.filesubject" | translate }}'
+                            [(ngModel)]="file.subject" />
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "business-dashboard.question.questionlist.priority" | translate }}</div>
+                    <div class="col-md-8">
+                        <nz-radio-group [(ngModel)]="file.priority">
+                            <label nz-radio nzValue="URGENT">{{ "cpl.docamendments.urgent" | translate }}</label>
+                            <label nz-radio nzValue="NORMAL">{{ "cpl.docamendments.normal" | translate }}</label>
+                            <label nz-radio nzValue="ACTION_TODAY"> {{ "cpl.docamendments.actiontoday" | translate
+                                }}</label>
+                            <label nz-radio nzValue="ASSEMBLY_URGENT">{{ "cpl.docamendments.assemblyurgent" | translate
+                                }}</label>
+                        </nz-radio-group>
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-4">{{ "cpl.docamendments.description" | translate }}</div>
+                    <div class="col-md-8">
+                        <textarea nz-input rows="2" placeholder='{{ "cpl.docamendments.filedescription" | translate }}'
+                            [(ngModel)]="file.description"></textarea>
+                    </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" nz-button nzType="primary"
+                            class="secondary-button button-font dark-border dark-font" (click)="handlePreviewCancel()">
+                            {{ "cpl.correspondencelist.cancel" | translate }}
+                        </button>
+                        <button type="button" nz-button nzType="primary" nz-popconfirm
+                            nzPopconfirmTitle='{{ "bill.bill-clause.list.wanttocreatefile" | translate }}'
+                            (nzOnConfirm)="createFile()" class="btn btn-primary primary-button"
+                            [disabled]="file.subject === '' || file.priority === null">
+                            {{ "cpl.docpreparion.createfile" | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of create file modal -->

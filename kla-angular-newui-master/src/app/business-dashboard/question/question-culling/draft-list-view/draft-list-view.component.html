@@ -1,0 +1,415 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.question" | translate }} </a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{ "business-dashboard.question.assurances" | translate }}</a>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<ng-container
+  *ngIf="
+    DraftlistData &&
+    DraftlistData.answerAssuranceList &&
+    DraftlistData.assurances
+  "
+>
+<div class="sticky_action_bar">
+
+  <div class="row">
+    <div class="col-md-3">
+      <h2 class="admin-page-heading">{{ DraftlistData.answerAssuranceList["listName"] }}</h2>
+    </div>
+    <div class="col-md-9 align-right">
+      <ng-container>
+        <button
+          nz-button
+          nzType="default"
+          class="mr-6"
+          (click)="handleNotes(true)"
+        >
+          {{ "business-dashboard.question.notes" | translate }}({{
+            notesList.length
+          }})
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          class="mr-6"
+          (click)="getWorkflowTracking(true)"
+        >
+          {{ "business-dashboard.question.assurances.info" | translate }}
+        </button>
+        <button
+          nz-button
+          nzType="default"
+          *ngIf="rbsService.doIHaveAnAccess('FORWARD_ASSURANCE', 'READ')"
+          nz-popconfirm
+          nzCancelText="No"
+          nzOkText="Yes"
+          [nzPopconfirmTitle]="claimParams['prompt']"
+          (nzOnConfirm)="claimUnclaim()"
+          nzPopconfirmPlacement="bottomLeft"
+          class="mr-6"
+        >
+          {{ claimParams["BtnLbl"] }}
+        </button>
+        <nz-select
+          *ngIf="rbsService.doIHaveAnAccess('FORWARD_ASSURANCE', 'READ')"
+          class="col-md-4"
+          nzPlaceHolder="Staffname (Role)"
+          [(ngModel)]="wrkflowBtnParams['forwardToQS']"
+          (ngModelChange)="forwardAssuranceTo($event)"
+        >
+          <nz-option
+            *ngFor="let data of wrkflowBtnParams['QsRoles']"
+            [nzLabel]="data.displayName"
+            [nzValue]="data"
+          ></nz-option>
+        </nz-select>
+        <button
+          *ngIf="rbsService.doIHaveAnAccess('FORWARD_ASSURANCE', 'READ')"
+          nz-button
+          nzType="default"
+          nz-popconfirm
+          nzCancelText="No"
+          nzOkText="Yes"
+          nzPopconfirmTitle="Are you sure you want to {{
+            wrkflowBtnParams['FrwrBtnlabel']
+          }}? "
+          (nzOnConfirm)="forwardAssuranceList()"
+          nzPopconfirmPlacement="bottomLeft"
+          class="mr-6"
+          [disabled]="!claimParams['IsClaimed']"
+        >
+          {{ wrkflowBtnParams["FrwrBtnlabel"] }}
+        </button>
+        <button
+          *ngIf="rbsService.doIHaveAnAccess('APPROVE_ASSURANCE', 'READ')"
+          nz-button
+          nzType="default"
+          nz-popconfirm
+          nzCancelText="No"
+          nzOkText="Yes"
+          nzPopconfirmTitle='{{"business-dashboard.question.areusureuwanttoapprove" | translate}}'
+          (nzOnConfirm)="admitAssuranceList()"
+          nzPopconfirmPlacement="bottomLeft"
+          class="mr-6"
+          [disabled]="!claimParams['IsClaimed']"
+        >
+          {{ "Approve" }}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+  <nz-tabset
+    *ngIf="DraftlistData.assurances && DraftlistData.assurances.length > 0"
+    [nzTabBarExtraContent]="extraTemplate"
+  >
+    <nz-tab nzTitle="Draft Assurance List">
+      <div class="row margnrtp-20">
+        <div class="col-md-12">
+          <!-- <ngx-sortable
+            [items]="DraftlistData.assurances"
+            (listSorted)="listOrderChanged($event)"
+          >
+            <ng-template let-data> -->
+              <nz-card style="width: 100%;"  *ngFor="let data of DraftlistData.assurances">
+                <div class="row margnrtp-15 marginbtm-25">
+                  <div class="col-md-9">
+                    <div class="row">
+                      <div
+                        class="col-auto"
+                        style="max-width: 500px !important;"
+                      >
+                        {{ data.questionTitle }}
+                      </div>
+                      <div class="col-md-2">{{ data.clauseTitle }}</div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 d-flex justify-content-end">
+                    <strong>{{ data.assuranceNo }}</strong>
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-auto" style="max-width: 50% !important;">
+                    {{ data.title }}
+                  </div>
+                  <div class="col-md-auto" style="max-width: 50% !important;">
+                    {{ data.ministerSubjectName }}
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">{{ data.assurance }}</div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button
+                      nz-button
+                      nzType="default"
+                      (click)="editAssurance(data)"
+                      [disabled]="!claimParams['IsClaimed']"
+                    >
+                      <a>{{"cpl.cplview.edit" | translate}}</a>
+                    </button>
+                  </div>
+                </div>
+              </nz-card>
+            <!-- </ng-template>
+          </ngx-sortable> -->
+        </div>
+
+        <!-- <ng-template #extraTemplateoncard>
+          <i nz-icon nzType="menu" nzTheme="outline"></i>
+        </ng-template> -->
+      </div>
+    </nz-tab>
+  </nz-tabset>
+  <ng-template #extraTemplate>
+    <button nz-button nzType="default" class="mb-6" (click)="printPreview()">
+      {{ "business-dashboard.question.assurances.printpreview" | translate }}
+    </button>
+    <!-- <button nz-button nzType="default"  class="mb-6" (click)="saveAssuranceOrder()">
+      {{ "business-dashboard.question.assurances.saveorder" | translate }}
+    </button> -->
+  </ng-template>
+</ng-container>
+<div class="">
+  <nz-modal
+    nzTitle="Info"
+    [(nzVisible)]="showFileInfo"
+    (nzOnCancel)="showFileInfoPopUp()"
+    nzClassName="pdngs"
+    [nzFooter]="null"
+    [nzWidth]="'800'"
+  >
+    <div class="width-100">
+      <div class="input-group">
+        <div class="row align-items-center width-100">
+          <div
+            class="col-md-2 align-items-center"
+            *ngIf="workflowFlowList && workflowFlowList.length > 0"
+          >
+            <span class="workflowhd">
+              {{"business-dashboard.question.assurancelistworkflow" | translate}}
+            </span>
+          </div>
+          <div class="col-md-10 marginbtm-10 margnrtp-15">
+            <div class="overflow">
+              <nz-steps nzSize="small">
+                <nz-step
+                  *ngFor="let data of workflowFlowList"
+                  [nzStatus]="data.reason == 'completed' ? 'finish' : 'process'"
+                  [ngClass]="{ dropFlow: data.endWrkflow }"
+                  [nzTitle]="capitalize(data.owner)"
+                ></nz-step>
+              </nz-steps>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-modal>
+</div>
+<!-- custom note popup -->
+<div class="custom_note" [ngClass]="{ shownote: shownotes }">
+  <div class="ant-drawer-header ant-drawer-header-no-title ng-star-inserted">
+    <!---->
+    <div class="ant-drawer-title ng-star-inserted">
+      <!---->
+      <!---->
+      <div class="ng-star-inserted">{{"business-dashboard.aod.file-tracking.notes" | translate}} &amp; {{"business-dashboard.question.questionlist.comments" | translate}}</div>
+    </div>
+    <!----><button
+      aria-label="Close"
+      class="ant-drawer-close ng-star-inserted"
+      (click)="handleNotes(false)"
+    >
+      <i nz-icon="" nztype="close" class="anticon anticon-close"></i>
+    </button>
+  </div>
+  <div #scrollMe class="chat-main-body" [scrollTop]="scrollMe.scrollHeight">
+    <nz-card *ngFor="let data of notesList; let i = index" class="mrgn-15">
+      <div>
+        <div class="input-group">
+          <div class="row d-flex justify-content-between width-100">
+            <div class="col-md-9">
+              <div class="row">
+                <div class="col-md-12">
+                  {{ data?.owner?.details?.fullName }}
+                </div>
+                <div class="col-md-12">
+                  <span class="font-w">
+                    {{ (data?.owner?.roles)[0]?.roleName }}</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end pr-0">
+              <div nz-row hover>
+                <button
+                  *ngIf="data.editNote"
+                  nz-button
+                  nzType="default"
+                  (click)="editNotes(i)"
+                >
+                {{"business-dashboard.question.edit" | translate }}</button
+                >&nbsp;&nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div>
+              <span *ngIf="data.noteditable">
+                <nz-input-group
+                  nzSearch
+                  nzSize="large"
+                  [nzAddOnAfter]="suffixButton"
+                >
+                  <input
+                    type="text"
+                    nzSize="large"
+                    nz-input
+                    [(ngModel)]="editedNote"
+                    name="editedNote"
+                    nz-input
+                    placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}'
+                  />
+                </nz-input-group>
+                <ng-template #suffixButton>
+                  <button
+                    nzType="default"
+                    (click)="updateNotes(i, data)"
+                    nz-button
+                    [disabled]="!claimParams['IsClaimed']"
+                  >
+                    {{"business-dashboard.question.save" | translate}}
+                  </button>
+                </ng-template>
+              </span>
+              <span *ngIf="!data.noteditable"
+                ><b>{{ data.note }}</b></span
+              >
+              <div>
+                <div class="d-flex justify-content-between mt-20 w-100">
+                  <div class="col-md-5 pl0">
+                  </div>
+                  <div class="col-md-7 d-flex justify-content-end pr0">
+                    <div>
+                      {{ data.createDate | date: "dd MMMM yyyy" }}
+                    </div>
+                    <div class="margnlft-15">
+                      {{ data.createDate | date: "hh:mm a" }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+  <div class="chat-footer">
+    <div>
+      <div class="col">
+        <div>
+          <span>
+            <nz-input-group
+              nzSearch
+              nzSize="large"
+              [nzAddOnAfter]="suffixButton"
+            >
+              <input
+                type="text"
+                nzSize="large"
+                nz-input
+                [(ngModel)]="noteGiven"
+                name="noteGiven"
+                nz-input
+                placeholder='{{"business-dashboard.question.typeyourcomments&notes" | translate}}'
+              />
+            </nz-input-group>
+            <ng-template #suffixButton>
+              <button  [disabled]="!claimParams['IsClaimed']" nzType="default" (click)="saveNotes()" nz-button>
+                {{"business-dashboard.question.save" | translate}}
+              </button>
+            </ng-template>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-modal
+  [(nzVisible)]="isVisibleModel"
+  nzTitle='{{"business-dashboard.question.editAssurance" | translate}}'
+  (nzOnCancel)="cancelNewAssurance()"
+  (nzOnOk)="saveAnsAssurance()"
+>
+  <div class="lob_form" *ngIf="isVisibleModel">
+    <form nz-form [formGroup]="validateForm">
+      <ng-template #errorTpl let-control>
+        <ng-container *ngIf="control.hasError('required')">
+          {{"business-dahsboard.question.inputisrequired" | translate}}
+        </ng-container>
+      </ng-template>
+      <nz-form-item>
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <input
+            [disabled]="true"
+            placeholder='{{"business-dashboard.question.clausetitle" | translate}}'
+            rows="4"
+            nz-input
+            formControlName="clauseTitle"
+          />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="margnrtp-15">
+        {{"business-dahsboard.question.titleofassurance" | translate}}
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <input
+            placeholder='{{"business-dahsboard.question.titleofassurance" | translate}}'
+            rows="4"
+            nz-input
+            formControlName="title"
+          />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="margnrtp-15">
+        {{"business-dashboard.question.assurances.dept" | translate}}
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <nz-select nzShowSearch formControlName="ministerSubjectId">
+            <nz-option
+              *ngFor="let dept of departmentList"
+              [nzLabel]="dept.title"
+              [nzValue]="dept.id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="margnrtp-15">
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <textarea
+            placeholder='{{"business-dashboard.question.inputtheAssurancehere" | translate}}'
+            rows="4"
+            nz-input
+            formControlName="assurance"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+</nz-modal>

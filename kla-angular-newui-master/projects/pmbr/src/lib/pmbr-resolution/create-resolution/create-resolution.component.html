@@ -1,0 +1,147 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.bill-management.dashboard" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.pmbr.resolution-list.pmbrmanagement" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-3">
+        <h2 class="admin-page-heading">
+            {{ "pmbr.createResolution.editResolution" | translate }}
+        </h2>
+    </div>
+    <div class="col-md-9 text-align-right">
+        <button class="mrgL6" nz-button [nzType]="'default'" (click)="back()">
+            {{"committee.attendence.attendencelist.back" | translate}}
+        </button>
+        <button class="mrgL6" nz-button [nzType]="'default'" *ngIf="!checkWhetherItsNoticeCreateOrNot()" 
+            (click)="createOrViewNotice('PMR_REQUEST')">
+            {{"noticeprocessing.notice.createnotice.create" | translate}}
+        </button>
+        <button nz-button class= "mrgL6" [nzType] ="'default'" *ngIf="checkWhetherItsNoticeCreateOrNot()"
+            (click)="createOrViewNotice('PMR_REQUEST')">
+            {{"resolution.viewnotice" |translate}}
+        </button>
+        <button *ngIf="resolutionId" (click)='viewResolution()' nz-button nzType="default" class="mrgL6">
+            <span>{{ "resolution.viewresolution" | translate }}</span>
+        </button>
+        <button *ngIf="resolutionDetails?.status == 'SAVED'" nz-popconfirm
+            nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwantsubmit" | translate }}'
+            (nzOnConfirm)="submitResolution()" nz-button nzType="primary" class="mrgL6">
+            <span>{{"business-dashboard.bill-management.billCreate.submit" | translate}}</span>
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<!-- tabs -->
+<nz-tabset *ngIf="resolutionDetails">
+    <nz-tab nzTitle="Resolution">
+        <pmbr-create-resolution-content [resolutionDetails]="resolutionDetails" (blockCreated)='IsBlockCreate($event)'>
+        </pmbr-create-resolution-content>
+    </nz-tab>
+    <nz-tab nzTitle="Resolution Info">
+        <div class="row mrgB20">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button (click)='showHideResolutionMetaData=true' nz-button nzSize="small">
+                    <i nz-icon nzType="edit" class="baseline" nzTheme="outline"></i>
+                </button>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "pmbr.lists.resolutionNumber" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ resolutionDetails.billNumber }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "pmbr.resolutions.resolutionTitle" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ resolutionDetails.blocks[0].content }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "business-dashboard.pmbr.resolution-list.typeresolution" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ resolutionDetails.type.split("_").join(" ") }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "pmbr.resolutions.natureResolution" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ resolutionDetails.natureOfBill }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>
+                    {{ "pmbr.resolutions.resolutionStatus" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong>
+                    {{ resolutionDetails.status.split("_").join(" ") }}
+                </strong>
+            </div>
+        </div>
+        <div class="row mrgB20">
+            <div class="col-md-3">
+                <nz-form-label>{{ "business-dashboard.bill-management.billlist.lang" | translate }}
+                </nz-form-label>
+            </div>
+            <div class="col-md-9">
+                <strong *ngIf="resolutionDetails.language == 'MAL'"> {{ "bill.bill-clause.list.malayalm" | translate }}
+                </strong>
+                <strong *ngIf="resolutionDetails.language == 'ENG'"> {{ "bill.bill-clause.list.english" | translate }}
+                </strong>
+            </div>
+        </div>
+    </nz-tab>
+</nz-tabset>
+<!-- end tabs -->
+
+<nz-modal *ngIf="showHideResolutionMetaData" [(nzVisible)]="showHideResolutionMetaData" (nzOnCancel)="hidePopUp()"
+    [nzMaskClosable]="false" nzTitle='{{ "create-resolution" | translate }}' nzClosable="true" [nzFooter]="null"
+    nzWidth="600">
+    <pmbr-create-resolution-metadata [resolutionId]="resolutionId"
+        (resolutionCreateOrCancel)="updateOrCancelResolutionMetaData($event)">
+    </pmbr-create-resolution-metadata>
+</nz-modal>
+<nz-modal *ngIf="showHideCreateNotice" [(nzVisible)]="showHideCreateNotice" (nzOnCancel)="hidePopUp()"
+  [nzMaskClosable]="false" nzTitle='{{title}}' nzClosable="true"
+  [nzFooter]="null" nzWidth="1000">
+  <pmbr-resolution-create-notice [noticeDetails]='noticeDetails' (noticeCreateOrCancel)='saveNotice($event)'>
+  </pmbr-resolution-create-notice>
+</nz-modal>

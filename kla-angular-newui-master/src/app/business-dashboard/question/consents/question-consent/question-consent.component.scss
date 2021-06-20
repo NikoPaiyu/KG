@@ -1,0 +1,43 @@
+.justify-content-space-between {
+	justify-content: space-between;
+}
+.justify-content-flex-end {
+	justify-content: flex-end;
+}
+.align-item-center {
+	align-items: center;
+}
+.txt-align-R {
+	float: right;
+}
+.m-b-10 {
+	margin-bottom: 10px;
+}
+.ant-avatar {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	color: rgba(0, 0, 0, 0.65);
+	font-size: 14px;
+	font-variant: tabular-nums;
+	line-height: 1.5;
+	list-style: none;
+	font-feature-settings: "tnum";
+	position: relative;
+	display: inline-block;
+	overflow: hidden;
+	color: #fff;
+	white-space: nowrap;
+	text-align: center;
+	vertical-align: middle;
+	background: #ccc;
+	width: 100px !important;
+	height: 100px !important;
+	line-height: 32px;
+	border-radius: 0px !important;
+}
+.custom_tabstyle .ant-tabs {width: 100% !important;}
+.consent-box{width: 48%;
+	float: left;
+	margin: 1%;}
+	.ml-6{margin-left: 6px;}

@@ -1,0 +1,12 @@
+.mrgtop10 {
+  margin-top: 10px;
+}
+.viewlink {
+  color: blue;
+}
+.myDiv .only-show-on-hover {
+  visibility: hidden;
+}
+.myDiv:hover .only-show-on-hover {
+  visibility: visible;
+}

@@ -1,0 +1,58 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+          <nz-breadcrumb-item>
+              {{"Dashboard" | translate}}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+              {{"Constituency" | translate}}
+          </nz-breadcrumb-item>
+      </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+        <h4>{{"Constituency list" | translate}}</h4>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-8"></div>
+    <div class="col-md-3 d-flex justify-content-end">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+            <input type="text" name="search" [(ngModel)]="search" (ngModelChange)="onSearch()" nz-input
+                placeholder="Search here" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+        </ng-template>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+     <div class="row marginbtm-15">
+        <nz-table #constituencyTable nzShowPagination nzShowSizeChanger [nzData]="constituencyList" class="table-all">
+           <thead>
+               <tr>
+                <th>
+                  Sl.No
+                </th>
+                <th>
+               Constituency Code
+                </th>
+                <th>
+               Constituency Name
+                </th>
+               </tr>
+           </thead>
+           <tbody>
+               <tr *ngFor="let list of constituencyTable.data; let i = index">
+                 <td>{{i+1}}</td>
+                 <td>{{list?.kerelaContituencyCode}}</td>
+                 <td>{{list?.kerelaContituencyName}}</td>
+               </tr>
+           </tbody>
+        </nz-table>
+      </div>
+     </div>
+   </div>

@@ -1,0 +1,84 @@
+<div class="width-100 pdng20">
+  <div class="row">
+    <div class="col-md-12">
+      <nz-tabset>
+        <nz-tab nzTitle="Notice">
+        <div class="row" style="margin-bottom: 15px;" *ngIf="isPPO()">
+          <div class="col-md-2">
+            <label>Member</label>
+          </div>
+          <div class="col-md-4">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder="Select a member"
+              [(ngModel)]="memberDetail"
+              (ngModelChange)="processNoticeView()"
+            >
+              <nz-option *ngFor="let item of memberList"
+                [nzLabel]="item?.details?.malayalamFullName"
+                [nzValue]="item"
+              ></nz-option>
+            </nz-select>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom: 15px;">
+          <div class="col-md-2">
+            <label>Place</label>
+          </div>
+          <div class="col-md-4">
+            <input
+              nz-input
+              placeholder="Place"
+              [(ngModel)]="place"
+              (ngModelChange)="processNoticeView()"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="width-100 flt">
+            <quill-editor
+              [(ngModel)]="content"
+              (ngModelChange)="processNoticeView()"
+            ></quill-editor>
+          </div>
+          </div>
+        </div>
+        </nz-tab>
+        <nz-tab nzTitle="View">
+          <div class="p-L0 preview-main">
+            <quill-view-html [content]="htmlContent"></quill-view-html>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <div class="col-md-12 margnrtp-15">
+      <div class="row">
+        <div class="col-md-6">
+          <span *ngIf="false"> Last date 25/8/2020 2:00pm</span>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button
+            nz-button
+            nzType="default"
+            class="mr6 ant-btn ant-btn-default"
+            (click)="closeNoticepopup(null)"
+          >
+            Back
+          </button>
+          <button
+            nz-button
+            nzType="primary"
+            class="ant-btn ant-btn-primary"
+            (click)="submitNotice()"
+            [disabled]="!content || checkForPpo() || !place"
+          >
+            Confirm and Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

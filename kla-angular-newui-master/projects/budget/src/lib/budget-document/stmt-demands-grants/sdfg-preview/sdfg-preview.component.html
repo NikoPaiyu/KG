@@ -1,0 +1,51 @@
+<div class="report-holder">
+    <nz-table #sdfgList [nzData]="sdfgListById" nzBordered nzShowPagination nzShowSizeChanger cellpadding="0" cellspacing="0" class="table">
+        <tr>
+            <td class="tc" colspan="5">
+                <strong>2020-2021 സാമ്പത്തികവർഷത്തേക്കുള്ള ബഡ്ജറ്റിലെ ധനാഭ്യർത്ഥനകളുടെ സ്റ്റേറ്റ്മെൻ്റ്</strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="tc brdr_btm" colspan="5">
+                <p>
+                    2020-2021 സാമ്പത്തികവർഷത്തേക്കുള്ള ചെലവുകൾക്കായി താഴെ താഴെക്കൊടുത്തിരിക്കുന്ന സ്റ്റേറ്റ്മെൻറിലെ (1)-ഉം (2)- ഉം കോളത്തിൽ പറഞ്ഞിരിക്കുന്ന ഡിമാന്റ് ഹെഡ്ഡിനുനേരെ (5)-ാം യഥാക്രമം പറഞ്ഞിട്ടുള്ള തുകയ്ക്ക് വേണ്ടി പ്രമേയം അവതരിപ്പിക്കുന്നതാണ്.
+                </p>
+            </td>
+        </tr>
+        <tr *ngIf="from === 'CUT_MOTION'">
+            <td class="tc brdr_btm" colspan="5">
+                <nz-select nzShowSearch nzPlaceHolder="--select date--" [(ngModel)]="selcosDate" [ngModelOptions]="{standalone: true}" (ngModelChange)="renderSDFGDemands($event)">
+                    <nz-option *ngFor="let date of cosdates" [nzLabel]="date.value | date: 'dd/MM/yyyy'" [nzValue]="date"></nz-option>
+                </nz-select>
+            </td>
+        </tr>
+        <tr>
+            <td class="tc brdr_btm">ധനാഭ്യർത്ഥയുടെ നമ്പർ </td>
+            <td class="tc brdr_btm">ധനാഭ്യർത്ഥയുടെ പേര് </td>
+            <td class="tc brdr_btm" colspan="3">സഭയുടെ വോട്ടിന് സമർപ്പിക്കുന്ന ധനാഭ്യർത്ഥന തുക </td>
+        </tr>
+
+        <tr>
+            <td class="tc brdr_btm" colspan="2"></td>
+            <td class="tc brdr_btm">റെവന്യൂ രൂപ </td>
+            <td class="tc brdr_btm">മൂലധനം രൂപ </td>
+            <td class="tc brdr_btm">ആകെ തുക </td>
+        </tr>
+
+        <tr>
+            <td class="tc brdr_btm">(1)</td>
+            <td class="tc brdr_btm">(2) </td>
+            <td class="tc brdr_btm">(3)</td>
+            <td class="tc brdr_btm">(4) </td>
+            <td class="tc brdr_btm">(5) </td>
+        </tr>
+
+        <tr *ngFor="let data of sdfgList.data; let i = index" (click)="showCutmotion(data)" [ngClass]="{ selRow: data.selRow}">
+            <td>{{data.demandNumber ? data.demandNumber : ''}}</td>
+            <td>{{data.demandNameEng ? data.demandNameEng: ''}}</td>
+            <td>{{data.revenue ? data.revenue : ''}}</td>
+            <td>{{data.capital ? data.capital : ''}}</td>
+            <td>{{data.total ? data.total: ''}}</td>
+        </tr>
+    </nz-table>
+</div>

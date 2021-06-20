@@ -1,0 +1,18 @@
+<div class="row marginbtm-15">
+    <div class="col-md-4">
+        {{ "cpl.correspondence.correspondence" | translate }}:
+    </div>
+    <div class="col-md-6">
+        <button class="ml-6" nz-button nzType="primary"
+            *ngIf="fileDetails.letter === null && doIHaveAnAccess(); else labelAttachCorrespondance"(click)="draftCorrespondence()">
+            {{ "bill.bill-clause.list.attachcorrespondence" | translate }}
+        </button>
+        <ng-template #labelAttachCorrespondance>
+            <nz-alert nzType="warning" nzMessage='{{ "bill.bill-clause.list.attachcorrespondencetocontinue" | translate }}'></nz-alert>
+        </ng-template>
+        <a class="viewlink" (click)="viewCorrespondence(rejectionLetter.correspondenceId)"
+        *ngIf="rejectionLetter?.correspondenceId !== null">
+            View
+        </a>
+    </div>
+</div>

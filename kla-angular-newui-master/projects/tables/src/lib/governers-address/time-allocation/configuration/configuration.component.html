@@ -1,0 +1,192 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "committee.dashboard" | translate}}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{"table.listga.table" |translate}}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">
+                {{"table.listga.ta" |translate}}
+            </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div></div>
+            <div class="d-flex justify-content-between" *ngIf="partyTimeDetails">
+                <button *ngIf="!timeObj.canEdit" class="d-flex align-items-center mr-6" nz-button nzType="default"
+                    (click)="timeObj.canEdit=true">
+                    {{"Edit" |translate}}
+                </button>
+                <button *ngIf="timeObj.canSave" class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="save('save')">
+                    {{"table.listga.save" |translate}}
+                </button>
+                <button *ngIf="timeObj.canSubmit" class="d-flex align-items-center mr-6" nz-button nzType="default"
+                    (click)="save('SUBMIT')">
+                    {{"table.listga.submit" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+</ng-container>
+<form [formGroup]="TimeallocationForm">
+    <div class="row margnrtp-5">
+        <div class="col-md-10">
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4">
+                    {{"table.listga.session" |translate}} :
+                </div>
+                <div class="col-md-8">
+                    <form-item>
+                        <form-control [nzSpan]="15" nzErrorTip="Enter Session">
+                            {{assemblySessionObj.currentsessionVal}}
+                        </form-control>
+                    </form-item>
+                </div>
+            </div>
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4">
+                    {{"table.listga.day" |translate}} :
+                </div>
+                <div class="col-md-8">
+             <div class="row">
+                <div class="col-md-6">
+                    <nz-form-control *ngIf="timeObj.canEdit else showDay" [nzSpan]="24" nzErrorTip="Select Day">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" formControlName="timeAllocatedDay"
+                            name="timeAllocatedDay" (ngModelChange)="getByFileIdAndDay($event)">
+                            <nz-option *ngFor="let day of days; let j = index" [nzLabel]="day" [nzValue]="j+1">
+                            </nz-option>
+                        </nz-select>
+                    </nz-form-control>
+                    <ng-template #showDay>
+                        {{TimeallocationForm.value.timeAllocatedDay}} Day
+                    </ng-template>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-control *ngIf="timeObj.canEdit else showDate" [nzSpan]="24"
+                    nzErrorTip="Select Allocation Date">
+                    <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="timeAllocatedDate"
+                        [nzDisabledDate]="disabledDate">
+                    </nz-date-picker>
+                </nz-form-control>
+                <ng-template #showDate>
+                    {{TimeallocationForm.value.timeAllocatedDate | date: "dd-MM-yyyy"}}
+                </ng-template>
+                </div>
+             </div>
+                   
+
+                   
+                </div>
+            </div>
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4">
+                    {{"table.listga.totaltime" |translate}} :
+                </div>
+                <div class="col-md-5">
+                    <form-item *ngIf="timeObj.canEdit else showtotalTime">
+                        <nz-form-control nzErrorTip="Select Total Time">
+                            <input nz-input type='number' min="1" max="3" placeholder="Entet Total Time in Minutes" name="total time" nzSize="small"
+                                formControlName="totalTime" />
+                        </nz-form-control>
+                    </form-item>
+                    <ng-template #showtotalTime>
+                        {{TimeallocationForm.value.totalTime}}
+                    </ng-template>
+                </div>
+                <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+            </div>
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4">
+                    {{"table.listga.movertime" |translate}} :
+                </div>
+                <div class="col-md-5">
+                    <form-item *ngIf="timeObj.canEdit else showmoverTime">
+                        <nz-form-control nzErrorTip="Select Mover Time">
+                            <input nz-input type='number' min="1" max="3" placeholder="Entet Mover Time in minutes" name="mover time"
+                                formControlName="moverTime" />
+                        </nz-form-control>
+                    </form-item>
+                    <ng-template #showmoverTime>
+                        {{TimeallocationForm.value.moverTime}}
+                    </ng-template>
+                </div>
+                <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+            </div>
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4">
+                    {{"table.listga.replytime" |translate}} :
+                </div>
+                <div class="col-md-5">
+                    <form-item *ngIf="timeObj.canEdit else showministersReplyTime">
+                        <nz-form-control nzErrorTip="Select Reply Time">
+                            <input nz-input type='number' min="1" max="3" placeholder="Entet Reply Time in minutes" name="reply time"
+                                formControlName="ministersReplyTime" />
+                        </nz-form-control>
+                    </form-item>
+                    <ng-template #showministersReplyTime>
+                        {{TimeallocationForm.value.ministersReplyTime}}
+                    </ng-template>
+                </div>
+                <div class="col-md-3"><span> {{"table.listga.minute" |translate}}</span></div>
+            </div>
+            <div class="row margnrtp-5 marginbtm-15">
+                <div class="col-md-4"></div>
+        <div class="col-md-8">
+            <button *ngIf="!isFileView && timeObj.canSave" class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="generateTA()"
+            [disabled]="!(TimeallocationForm.valid)">
+            {{"table.listga.generate" |translate}}
+        </button>
+        </div>
+               
+            </div>
+        </div>
+        <!-- </div> -->
+        <div class="col-md-2 d-flex justify-content-flex-end">
+            <!-- <div class="rotated">
+                <button nz-button nzType="default" (click)="drawer()" class="mrgR6">
+           Notes(20)
+          </button>
+            </div> -->
+        </div>
+    </div>
+</form>
+<div class="row margnrtp-5" *ngIf="partyTimeDetails">
+    <div class="col-md-8">
+        <div class="row margnrtp-5">
+            <div class="col-md-6"><b style="color:blue;">{{ "table.listga.partyname" |translate}}</b></div>
+            <div class="col-md-3"><b style="color:blue;">{{ "table.listga.strength" |translate}}</b></div>
+            <div class="col-md-3"><b style="color:blue;">{{ "table.listga.timeallocated" |translate}} (In Minutes)</b></div>
+        </div>
+        <div class="row">
+            <nz-divider></nz-divider>
+        </div>
+        <div class="row margnrtp-10">
+            <div class="col-md-9"><strong>{{ "table.listga.ruling" |translate}}</strong></div>
+            <div class="col-md-3"><b>{{rulingParty?.totalTime}}</b></div>
+        </div>
+        <div class="row margnrtp-10" *ngFor="let data of rulingParty.parties">
+            <div class="col-md-6"><span>{{data.partyName}}</span></div>
+            <div class="col-md-3"><span>{{data.partyCount}}</span></div>
+            <div class="col-md-3"><span>{{data.timeAllocated}}</span></div>
+        </div>
+        <div class="row margnrtp-20">
+            <div class="col-md-9"><strong> {{"table.listga.opposition" |translate}}</strong></div>
+            <div class="col-md-3"><b>{{oppositionParty?.totalTime}}</b></div>
+        </div>
+        <div class="row margnrtp-10" *ngFor="let data of oppositionParty.parties">
+            <div class="col-md-6"><span>{{data.partyName}}</span></div>
+            <div class="col-md-3"><span>{{data.partyCount}}</span></div>
+            <div class="col-md-3"><span>{{data.timeAllocated}}</span></div>
+        </div>
+    </div>
+</div>

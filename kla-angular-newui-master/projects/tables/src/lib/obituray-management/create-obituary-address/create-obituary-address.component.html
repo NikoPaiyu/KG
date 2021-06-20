@@ -1,0 +1,99 @@
+<div class="row d-flex jusleify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>{{"tables.obituary-management.table-management" | translate}}</nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h3>{{"tables.obituary-management.create-obituary-address" | translate}}</h3>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button nzType="default" class="mr-6" (click)="goBack()">
+          {{"business-dashboard.question.questionview.back" | translate}}
+        </button>
+        <button nz-button nzType="primary"  class="mr-6"(click)="createObituary()"
+        [disabled]="fgObituary.get('status').value === 'SUBMITTED' || fgObituary.invalid || fileStatus === 'SUBMITTED'">
+          {{"business-dashboard.question.save" | translate}}
+        </button>
+        <button  nz-button nzType="primary" class="mr-6"
+        [disabled]="fgObituary.get('fileId').value || !(fgObituary.get('id').value)"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to attach obituary to file?"
+        (nzOnConfirm)="attachToFile()"
+        >{{"business-dashboard.election-management.protem-speaker.attach-file" | translate}}
+      </button>
+        <button 
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to resubmit the file?"
+        nz-button nzType="primary" *ngIf="fgObituary.get('isResubmitable').value && fileStatus === 'APPROVED'" class="mr-6"
+        (nzOnConfirm)="resubmitFile()">
+        {{"bill.bill-clause.list.resubmitfile" | translate}}
+      </button>
+        <button 
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to set obituary details to LOB?"
+        nz-button nzType="primary" *ngIf="fgObituary.get('stage').value === 'LOB_READY'" class="mr-6" 
+        (nzOnConfirm)="setToLob()">
+        {{"business-dashboard.question.settolob" | translate}}
+      </button>
+      </div>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="padding_25">
+  <div class="row margnrtp-15" [formGroup]="fgObituary">
+    <div class="col-md-4">
+      <nz-select [nzDisabled]="fgObituary.get('id').value" nzShowSearch nzAllowClear formControlName="assemblyId"(ngModelChange)="getSessionList()">
+        <nz-option *ngFor="let type of assemblyList" [nzLabel]="type.assemblyId" [nzValue]="type.id"></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-4">
+      <nz-select [nzDisabled]="fgObituary.get('id').value" nzShowSearch nzAllowClear formControlName="sessionId" (ngModelChange)="getDateList()">
+        <nz-option *ngFor="let type of sessionList" [nzLabel]="type.sessionId" [nzValue]="type.id"></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-4">
+      <nz-date-picker formControlName="sessionDate" [nzDisabled]="fgObituary.get('id').value"
+      nzPlaceHolder='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'
+      [nzDisabledDate]="disabledCosDates"></nz-date-picker>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <label nz-checkbox formControlName="isDecicated" [nzDisabled]="fileStatus === 'SUBMITTED'">
+        {{"tables.obituary-management.is-dedicated" | translate}}
+      </label>
+    </div>
+  </div>
+</div>
+<div class="padding_25">
+  <div class="row margnrtp-15">
+    <div class="col-md-12">
+      <nz-tabset>
+        <nz-tab nzTitle='{{"business-dashboard.tables-files.file-view.obituary-gist" | translate}}'>
+          <tables-obituary-gist (gistChange)="updateGist($event)"></tables-obituary-gist>
+        </nz-tab>
+        <nz-tab nzTitle='{{"business-dashboard.tables-files.file-view.supporting-documents" | translate}}'>
+          <tables-supporting-doc (docChange)="updateDoc($event)"></tables-supporting-doc>
+        </nz-tab>
+        <nz-tab nzTitle='{{"business-dashboard.tables-files.file-view.obituary-note" | translate}}'>
+          <tables-obituary-note (notechange)="updateNote($event)"> </tables-obituary-note>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</div>
+<nz-modal [nzFooter]="null" [(nzVisible)]="filePopup" (nzOnCancel)="onCancelFilePopup()">
+  <tables-attach-to-file *ngIf="fgObituary.get('id').value" [obituaryId]="fgObituary.get('id').value"
+   (closePopup)="onCancelFilePopup()"></tables-attach-to-file>
+</nz-modal>

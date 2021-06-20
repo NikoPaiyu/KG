@@ -1,0 +1,26 @@
+<div class="padding_15" *ngIf="!reportDto.ministerReadingDto">
+    <div class="row margnrtp-15 mrb-10">
+        <div class="col-md-12 align-right">
+            <button class="mr-6" nz-button (click)="cancel()">Cancel</button>
+            <button nzType="primary" nz-button (click)="createMinisterReading()">Create Minister Reading</button>
+        </div>
+    </div>
+    <div class="row margntp-15">
+        <div class="col-md-8">
+            Reading Representative:
+        </div>
+    </div>
+    <div class="row margntp-15 mrb-10">
+        <div class="col-md-8">
+            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="select a member" [(ngModel)]="memberId"
+            (ngModelChange)="generateContent()">
+                <nz-option *ngFor="let data of memberList" [nzValue]="data.memberId" [nzLabel]="data.memberName">
+                </nz-option>
+            </nz-select>
+        </div>
+    </div>
+    <p [innerHTML]="readingContent | safeHtml"></p>
+</div>
+<div class="padding_15" *ngIf="reportDto?.ministerReadingDto">
+    <p [innerHTML]="readingContent | safeHtml"></p>
+</div>

@@ -1,0 +1,31 @@
+.pdf-container {
+  height: 82vh;
+  width: 100%;
+  z-index: 9;
+  overflow-y: auto;
+  background-image: none !important;
+}
+.live_start .enlage {
+}
+
+.abs-adj {
+  position: absolute;
+  z-index: 99;
+  right: 35px;
+  bottom: 0px;
+  background: #e3edf7;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding-bottom: 10px;
+  padding-right: 10px;
+}
+.enlarge .abs-adj {background: #eef5fb !important;
+  bottom: 15px !important;
+  padding-right: 45px;}
+.paddingT30 {
+  padding-top: 30vh;
+}
+
+.greenbtn{background: #1db41d !important;color: #fff;}
+.pdf_pd{padding-bottom: 100px;}

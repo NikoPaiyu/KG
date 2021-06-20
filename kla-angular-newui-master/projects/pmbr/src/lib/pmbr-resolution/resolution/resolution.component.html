@@ -1,0 +1,137 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.pmbr.resolution-list.pmbr"|translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between">
+  <div class="col-md-6">
+<<<<<<< HEAD
+    <h2 class="admin-page-heading">Resolution Register</h2>
+=======
+    <h4>{{ "pmbr.resolutions.list.resolutionregister"|translate}}</h4>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+  </div>
+  <div class="col-md-6 d-flex justify-content-between">
+    <div></div>
+    <div class="d-flex justify-content-between">
+      <button class="d-flex align-items-center mr-6" nz-button nzType="default">
+        ...
+      </button>
+      <button class="d-flex align-items-center mr-6" nz-button nzType="default">
+        {{ "pmbr.resolutions.list.createbulletin"|translate}}
+      </button>
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-6"></div>
+  <div class="col-md-6">
+    <div class="row d-flex justify-content-end">
+      <div class="col-md-3"><b>{{"pmbr.resolutions.list.addFilter"|translate}}</b></div>
+      <div class="col-md-6">
+        <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+          <input type="text" [(ngModel)]="search" name="search" nz-input placeholder=""
+            (ngModelChange)="searchList()" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+
+      <div class="col-md-3 d-flex align-items-center justify-content-end">
+        <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+          <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+          {{ "pmbr.resolutions.list.cols"|translate}}
+        </button>
+      </div>
+      <nz-dropdown-menu #menu="nzDropdownMenu">
+        <div>
+          <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+            <li>
+              <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+            </li>
+          </ul>
+        </div>
+      </nz-dropdown-menu>
+    </div>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class="col-md-12">
+    <nz-table #fileTable nzShowPagination nzShowSizeChanger [nzData]="resolutionList" class="table-all">
+      <thead (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+          <th></th>
+          <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="date">
+            Date
+          </th>
+          <th *ngIf="colCheckboxes[1].check">
+            File No
+          </th>
+          <th *ngIf="colCheckboxes[2].check">
+            Session
+          </th>
+          <th *ngIf="colCheckboxes[3].check">
+            Hon'ble Member
+          </th>
+          <th *ngIf="colCheckboxes[4].check">
+            Status
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of fileTable.data; let i = index">
+          <td nzShowCheckbox> </td>
+          <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)">
+        <tr>
+          {{list.date | date: "dd-MM-yyyy"}}
+        </tr>
+        <tr *ngIf="list.viewLinks">
+          <div>
+            <td>
+              <a href="javascript:;" class="viewlink" (click)="viewResolution()">{{"pmbr.resolutions.list.view"|translate}}</a>
+            </td>
+            <td>
+              <a href="javascript:;" class="viewlink">{{"pmbr.resolutions.list.createfile"|translate}}</a>
+            </td>
+          </div>
+        </tr>
+        </td>
+        <td *ngIf="colCheckboxes[1].check" (mouseover)="showLink(list.id)">
+          <tr>
+            {{list.fileno}}
+          </tr>
+          <tr *ngIf="list.viewLink">
+            <div>
+              <td>
+                <a href="javascript:;" class="viewlink">{{"pmbr.resolutions.list.editwithamendments"|translate}}</a>
+              </td>
+            </div>
+          </tr>
+        </td>
+        <td *ngIf="colCheckboxes[2].check">
+          {{ list.session }}
+        </td>
+        <td *ngIf="colCheckboxes[3].check">
+          {{ list.honblemember }}
+        </td>
+        <td *ngIf="colCheckboxes[4].check">
+          <nz-tag [nzColor]="'green'">{{list.status }}</nz-tag>
+        </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+</div>

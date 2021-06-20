@@ -1,0 +1,817 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.question.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{"business-dashboard.calendarofsittings.cosfileinfo" | translate}}</b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-4">
+      <h4>
+       {{fileDetails.fileResponse.fileNumber}}
+      </h4>
+</div>
+</div>
+<div class="row">
+  <div class="col-md-6"></div>
+  <div class="col-md-6 d-flex justify-content-flex-end">
+    <div>
+      <nz-select
+        style="width: 290px;"
+        placeholder="Select to forward"
+        nzAllowClear
+        [(ngModel)]="userId"
+        *ngIf="workFlowActionUsers.length > 0  && fileDetails.fileResponse.currentAssignee"
+      >
+        <ng-container *ngFor="let role of workFlowActionUsers">
+          <nz-option
+            nzValue="{{
+              role.userId + '-' + role.actionRow + '-' + role.actionGroup
+            }}"
+            nzLabel="{{ role.fullName + ' - ' + role.actionName }}"
+          ></nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+    <button
+      class="ml-6"
+      nz-button
+      [nzType]="'default'"
+      class="ml-6 ant-btn ant-btn-default"
+      nz-popconfirm
+      nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}}  {{ getCurrentAction() }} ?'
+      (nzOnConfirm)="forwardFile(fileId)"
+      (nzOnCancel)="cancel()"
+      [disabled]="!userId"
+      *ngIf="workFlowActionUsers.length > 0 && fileDetails.fileResponse.currentAssignee"
+    >
+      {{ getCurrentAction() }}
+    </button>
+    <button
+      class="ml-6"
+      nz-button
+      nzType="primary"
+      nz-popconfirm
+      nzPopconfirmTitle='{{"business-dashboard.bullettin-details.areusureuwantpull" | translate}}'
+      (nzOnConfirm)="showPullpopup()"
+      (nzOnCancel)="cancel()"
+      *ngIf="
+        canPull &&
+        fileDetails?.fileResponse?.status !== 'APPROVED' &&
+        pullGroup != currentUserActionRow.userId
+      "
+    >
+      {{"cpl.fileworkflow.pull" | translate}}
+    </button>
+    <button nz-button nzType="default" class="mrgL6" nz-popconfirm 
+      nzPopconfirmTitle='{{"business-dashboard.bullettin-details.douwanttoapprove" | translate}}'
+      (nzOnConfirm)="approveFile()" *ngIf="fileButtons.Approve && fileDetails.fileResponse.currentAssignee" 
+      (nzOnCancel)="cancel()">
+      {{"cpl.filelistflow.approve" | translate}}
+    </button>
+    <button nz-button nzType="default" class="mrgL6" 
+    nz-popconfirm nzPopconfirmTitle='{{"business-dashboard.calendarofsittings.douwanttodisallow" | translate}}'
+    (nzOnConfirm)="disallowFile()"
+      *ngIf="fileButtons.Disallow">{{"business-dashboard.question.questionlist.disallow" | translate}}</button>
+    <!-- <button nz-button nzType="default" class="mrgL6" *ngIf="fileButtons.Return"
+    nz-popconfirm nzPopconfirmTitle="Do you want to return?"(nzOnConfirm)="returnFile()"(nzOnCancel)="cancel()">
+    return</button> -->
+    <!-- <button nz-button nzType="default" class="mrgL6" *ngIf="fileButtons.Submit"
+    nz-popconfirm nzPopconfirmTitle="Do you want to submit?"(nzOnConfirm)="submitFile()"(nzOnCancel)="cancel()">
+    submit</button> -->
+    <button nz-button nzType="default" class="mrgL6" (click)="goToList()">{{"business-dashboard.question.questionview.back" | translate}}</button>
+  </div>
+</div>
+<!--   
+    <button nz-button nzType="default"  class="mrgL6" >Forward</button>
+    <button
+    nz-button
+    nzType="default"
+    class="mrgL6"
+    nz-popconfirm
+    nzPopconfirmTitle="Do you want to approve?"
+    (nzOnConfirm)="approveFile()"
+    (nzOnCancel)="cancel()"
+  
+  >
+    Approve
+  </button>
+      <button nz-button nzType="default"  class="mrgL6"
+   
+       (click)  = "disallowFile()">Disallow</button>
+     
+      <button nz-button nzType="default"  class="mrgL6" 
+    
+       (click) = "returnFile()">return</button>
+    
+      <button nz-button nzType="default"  class="mrgL6" 
+     
+       (click) ="submitFile()">submit</button>
+       <button nz-button nzType="default"  class="mrgL6" 
+       (click) ="goToList()">Back</button> -->
+
+
+<nz-divider> </nz-divider>
+<!-- <div class="row marginbtm-25 margntp-25">
+      <div class="col-md-6">
+        <nz-tabset [nzType]="'card'" [nzTabBarExtraContent]="extraTemplate">
+
+          <nz-tab *ngFor="let item of noticeDetails;index as i" [nzTitle]="item?.notice?.noticeNumber" 
+            (nzClick) ="getAllNote(item?.notice?.noticeId); setLatestVersion(i);">
+            <nz-tabset>
+
+             
+   
+              
+               <nz-tab nzTitle="Notice">
+                <div class="row d-flex justify-content-flex-end">
+                  <div class="col-md-2"> Versions</div>
+                  <div class="col-md-6">
+                    <nz-select [(ngModel)]="selectedVersion">
+                      <ng-container *ngFor="let version of item.versionOptions">
+                        <nz-option
+                          nzCustomContent
+                          nzLabel="{{ 'Ver ' + version.version }}"
+                          [nzValue]="version.version"
+                        >
+                          <div class="row dropdown-option">
+                            <table>
+                              <tr>
+                                <td><strong>{{ "Ver " + version.version }}</strong></td>
+                                <td><strong>{{ version.versionOwnerName }}</strong></td>
+                              </tr>
+                              <tr>
+                                <td>{{ version.createdDate | date: "dd-MM-yyyy hh:mm a" }}</td>
+                                <td>{{ getRoles(version.roles) }}</td>
+                              </tr>
+                            </table>
+                          </div>
+                        </nz-option>
+                      </ng-container>
+                    </nz-select>
+                  </div>
+                  <div class="col-md-3"><button nz-button nzType="default" (click)="noticeProcess(item.notice.noticeId)"
+                    *ngIf = "fileButtons.noticeEdit"
+                    >Edit</button></div> 
+                </div>
+                <quill-view-html [content]="item.versions[selectedVersion]"></quill-view-html> 
+              </nz-tab>
+              <nz-tab  
+             
+                (nzClick) ="getAllNote(item?.notice?.noticeId)" nzTitle="Notes">
+                <div class="chat-main-body" #scrollme [scrollTop]="scrollme.scrollHeight">
+                  <nz-card
+                    class="margin-10 notesp" *ngFor = "let data of notesData; let index; of: i"
+                  > 
+                 <div class="row">
+                   <div class="col-md-7" > 
+                     <h6> {{data.note}}</h6>
+                     <p>{{data?.owner?.userName}}</p>
+                     <p *ngFor = "let role of data?.owner?.roles;index as i;">
+                      <span  *ngIf="i === 0">{{ getRoles(data.owner.roles) }}</span>
+                      </p>
+                   </div>
+                   <div class="col-md-5 d-flex justify-content-flex-end">
+                    <p>{{data.createdDate |  date: "hh:mm a | dd/MM/yyyy" }}</p>
+                    <br>
+                    <p>{{data.createdDate |  date: "dd/MM/yyyy"}}</p> 
+                   </div>
+                </div> 
+               </nz-card>
+               </div>
+               <div class="footer-chat">
+               <form [formGroup]="createNoticeNoteForm" (ngSubmit)="createNoticeNote(item?.notice?.noticeId)">
+                <div class="type_msg col-md-12 p-R250 ">
+                  <div class="col-md-8 bg_txtarea">
+                    <nz-form-item>
+                      <nz-form-control>
+                  <textarea
+                    rows="2"
+                    nz-input
+                    placeholder="Type a message"
+                    name="note"
+                    formControlName="Note"
+                  ></textarea>
+                  </nz-form-control>
+                  </nz-form-item>
+                 </div>
+                 <div
+                  class="col-md-4 d-flex justify-content-end"
+                 >
+                <button
+                type="submit"
+                nz-button
+                nzType="primary"
+                class="send-btn-style p-R15"
+              >
+              Save
+              </button>
+              </div>
+              </div>
+            </form>
+            </div> -->
+<!-- </nz-tab>
+            </nz-tabset>
+          </nz-tab> -->
+
+<!-- </nz-tabset>
+        <div> -->
+          <div class="row marginbtm-25 margntp-25">
+            <div class="col-md-1">
+              <h5>{{"business-dashboard.aod.file-tracking.stage" | translate}}</h5>
+            </div>
+            <div class="col-md-11">
+              <div class="overflownote" style="overflow-x: scroll;">
+                <nz-steps nzSize="small" [nzDirection]="'horizontal'">
+                  <nz-step
+                    *ngFor="let status of stepStatusDetail"
+                    [nzStatus]="getStatusByReason(status.reason)"
+                    [nzTitle]="status.taskDefinitionKeyName"
+                    [nzDescription]="status.reason"
+                  ></nz-step>
+                </nz-steps>
+              </div>
+            </div>
+          </div>
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-6">
+    <div class="row marginbtm-15 align-items-center">
+      <div class="col-md-9">
+        <h6>
+          {{"business-dashboard.aod.file-tracking.cos" | translate}}
+        </h6>
+      </div>
+
+      <div class="col-md-3 d-flex justify-content-end">
+        <button nz-button nzType="default" *ngIf ='fileDetails.fileResponse.currentAssignee' (click)="cosedit1()">Edit</button></div>
+      <div class="col-md-12">
+        <nz-divider> </nz-divider>
+      </div>
+    </div>
+
+    <div class="row align-items-center" *ngFor="let item of cosDetailsList">
+      <div class="col-md-9" style="text-align: center;" *ngIf="item.month">
+        <h5>{{item.month | date: 'MMMM yyyy'}}</h5>
+      </div>
+      <div class="col-md-3" *ngIf="item.month"></div>
+      <div class="col-md-6">
+        <ul class="data_lis">
+          <li *ngFor="let obj of item.dateList">
+            {{ obj | date: "EEEE, MMMM dd" }}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul class="data_lis">
+          <li *ngFor="let business of item.businessDetails">{{ ShowBusiness(business) }}</li>
+        </ul>
+      </div>
+
+      <div class="col-md-12">
+        <nz-divider> </nz-divider>
+      </div>
+    </div>
+    <div class="row align-items-center" *ngFor="let item of cosDetailsList">
+      <div class="col-md-9" style="text-align: center;" *ngIf="item.month">
+        <h5>{{cosService.getMalayalamMonth(item.month)}}</h5>
+      </div>
+      <div class="col-md-3" *ngIf="item.month"></div>
+      <div class="col-md-6">
+        <ul class="data_lis">
+          <li *ngFor="let obj of item.dateList">
+            {{cosService.getMalayalamDate(obj)}}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <ul class="data_lis">
+          <li *ngFor="let business of item.businessDetails">{{ ShowMalayalamBusiness(business) }}</li>
+        </ul>
+      </div>
+
+      <div class="col-md-12">
+        <nz-divider> </nz-divider>
+      </div>
+    </div>
+
+
+  </div>
+
+  <div class="col-md-6">
+    <nz-tabset>
+      <nz-tab nzTitle="Notes">
+        <div class="chat-main-body" #scrollme [scrollTop]="scrollme.scrollHeight">
+          <nz-card class="marginbtm-10 notesp" *ngFor="let data of notesList; let index; of: i"
+            [ngClass]="data.temporary == true ? 'temporary' : 'normal'">
+            <div class="row">
+              <div class="col-md-7">
+                <p>{{data?.user?.details?.fullName}}</p>
+                <small *ngFor="let role of data?.user?.roles;index as i;">
+                  <span *ngIf="i === 0">{{ getRoles(data.user.roles) }}</span>
+                </small>
+              </div>
+              <div class="col-md-5 d-flex justify-content-flex-end">
+                <p>{{data.createdDate |  date: "hh:mm a | dd/MM/yyyy" }}</p>
+                <!-- <br>
+            <p>{{data.createdDate |  date: "dd/MM/yyyy"}}</p> -->
+              </div>
+            </div>
+            <div class="row marginbtm-15 margnrtp-15">
+              <div class="col-md-12">
+                <h6>{{data.note}}</h6>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-9">
+                <button nz-button nzType="default" class="m-r5" *ngIf="data.userId === currentUserID && data.noteId === latest.noteId && fileDetails.fileResponse.currentAssignee"
+                  (click)="editNote(data)">{{"business-dashboard.question.edit" | translate}}</button>
+                <button nz-button nzType="default" class="m-r5" nzType="info" nz-popconfirm
+                  nzPopconfirmTitle='{{"business-dashboard.soa.douwanttodelete" | translate}}' (nzOnConfirm)="deleteNote(data.noteId)"
+                  (nzOnCancel)="cancel()" *ngIf="data.userId === currentUserID && data.noteId === latest.noteId  && fileDetails.fileResponse.currentAssignee">{{"cpl.docpreparion.delete" | translate}}</button>
+                <button nz-button nzType="default" class="m-r5" nzType="info" nz-popconfirm
+                  nzPopconfirmTitle='{{"business-dashboard.calendarofsittings.douwantconvertnotetonornote" | translate}}'
+                  (nzOnConfirm)="convertTONormal(data.noteId)" (nzOnCancel)="cancel()"
+                  *ngIf="data.temporary == true &&  fileDetails.fileResponse.currentAssignee">{{"cpl.filelistflow.converttonormal" | translate}}</button>
+              </div>
+              <div class="col-md-3">
+                <span class="note_num">{{ data.noteNumber }}</span>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+        <div class="row">
+          <form [formGroup]="createNoteForm" class="width-100">
+            <!-- <div class="width-100 d-flex bg_txtarea  "> -->
+            <div class="txt-area-main width-100 marginbtm-10"  *ngIf="fileButtons.Note && false">
+              <div class="col-md-12">
+                <strong>{{"cpl.fileworkflow.quickoptions" | translate}}: </strong>
+                <nz-tag *ngFor="let tag of quickOptions; let i = index" nzMode="checkable"
+                  [nzChecked]="selectedTags.indexOf(tag.label) > -1" (nzCheckedChange)="CheckforRules($event, tag, i)">
+                  <div>
+                    {{ tag.label }}
+                  </div>
+                </nz-tag>
+
+              </div>
+            </div>
+
+            <div class="type_msg col-md-12" *ngIf ='fileButtons.Note'>
+              <div class="col-md-7 bg_txtarea">
+                <textarea rows="2" nz-input placeholder='{{"business-dashboard.question.typeamessage" | translate}}' name="note" formControlName="note"></textarea>
+              </div>
+              <div class="col-md-5 d-flex justify-content-end">
+                <div class="row">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <nz-form-item>
+                      <nz-form-control>
+                        <nz-radio-group formControlName="tempFlag" nzName="radiogroup">
+                          <label nz-radio-button nzValue="true" style="background-color: yellow;">{{"cpl.filelistflow.yellow" | translate}}</label>
+                          <label nz-radio-button nzValue="false" [nzDisabled] = "!hideNormal">{{"cpl.docamendments.normal" | translate}}</label>
+                        </nz-radio-group>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button *ngIf="!editMode && fileDetails.fileResponse.currentAssignee" type="submit" nz-button nzType="primary" class="send-btn-style p-R15"
+                      (click)="createNote()">
+                      {{"cpl.docupload.save" | translate}}
+                    </button>
+                    <button *ngIf="editMode && fileDetails.fileResponse.currentAssignee" type="submit" nz-button nzType="primary" class="send-btn-style p-R15"
+                      (click)="updateNote()">
+                      {{"cpl.docupload.update" | translate}}
+                    </button>
+                  </div>
+                </div>
+
+
+
+              </div>
+
+
+            </div>
+            <div class="">
+              <nz-modal [(nzVisible)]="ShowRules" nzTitle='{{"business-dashboard.question.rulesanddirections" | translate}}' (nzOnCancel)="cancelRuleSelection()"
+                (nzOnOk)="applyRule()">
+                <div class="width-100 pading-all">
+                  <nz-table #rulesForNotes [nzData]="allRules" [nzPageSize]="5">
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>{{"business-dashboard.question.ruleno" | translate}}</th>
+                        <th>{{"business-dashboard.question.description" | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let data of rulesForNotes.data">
+                        <td nzShowCheckbox [(nzChecked)]="data.checked"></td>
+                        <td>{{ data.code }}</td>
+                        <td>{{ data.englishDescription }}</td>
+                      </tr>
+                    </tbody>
+                  </nz-table>
+                </div>
+              </nz-modal>
+            </div>
+          </form>
+        </div>
+      </nz-tab>
+      <nz-tab nzTitle='{{"business-dashboard.aod.file-tracking.logs" | translate}}'>
+        <ng-container *ngFor="let log of logDetails.slice(); index as i;">
+          <div class="row" *ngIf="log.action">
+            <div class="col-md-12">
+              <div class="bg_block">
+                <div class="col-md-7 pdzero">
+                  <div class="width-100 d-flex marginbtm-15">
+                    <div class="overflow-blt">{{(1+i)+ '.' + (log.action) | titlecase }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        &nbsp;&nbsp;
+      </nz-tab>
+
+      <nz-tab nzTitle='{{"business-dashboard.aod.file-tracking.fileinfo" | translate}}'>
+        <ng-container>
+
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row">
+                <div class="bg_block">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">{{"cpl.docamendments.filesubject" | translate}}:</div>
+                        <span class="blthd col-md-9">{{fileDetails.fileResponse.subject}}</span>
+                      </div>
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">{{"cpl.filelistflow.createddate" | translate}}:</div>
+                        <span
+                          class="blthd col-md-9">{{fileDetails.fileResponse.createdDate | date: "dd/MM/yyyy"}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="row marginbtm-15">
+                        <div class="overflow-blt col-md-3">{{"cpl.docamendments.filepriority" | translate}}:</div>
+                        <span class="blthd col-md-9">
+                          <nz-tag [nzColor]="'red'"> {{fileDetails.fileResponse.priority}} </nz-tag>
+                        </span>
+                      </div>
+                      <div class="row">
+                        <div class="overflow-blt col-md-3">{{"cpl.cplview.section" | translate}}:</div>
+                        <span class="blthd col-md-9">{{"business-dashboard.calendarofsittings.Table" | translate}}</span>
+                      </div>
+
+                      <nz-modal [(nzVisible)]="isVisible" nzTitle='{{"business-dashboard.aod.file-tracking.fileinfo" | translate}}' (nzOnCancel)="handleCancel()"
+                        [nzOkLoading]="isOkLoading" [nzFooter]=null>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p> {{"cpl.documents.fileno" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                {{fileDetails.fileResponse.fileNumber}}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6"> </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"cpl.docamendments.filesubject" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>{{fileDetails.fileResponse.subject}}</p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"cpl.docamendments.filepriority" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>{{fileDetails.fileResponse.priority}}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"cpl.filelistflow.createddate" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"cpl.docupload.fromwhom" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"cpl.cplview.section" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"business-dashboard.calendarofsittings.BackFile" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p></p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <p>{{"business-dashboard.question.description" | translate}}</p>
+                              </div>
+                              <div class="col-md-6">
+                                <p>{{fileDetails.fileResponse.description}}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </nz-modal>
+                    </div>
+                  </div>
+                      
+                </div>
+                <button class="abs_btn" (click)="showpopup()" 
+                *ngIf="fileDetails.fileResponse.currentAssignee">{{"cpl.docupload.update" | translate}}</button>
+              </div>
+              <nz-modal
+              [(nzVisible)]="isVisible1"
+              nzTitle='{{"business-dashboard.calendarofsittings.Fileupdate" | translate}}'
+              (nzOnCancel)="handleCancel()"
+              [nzOkLoading]="isOkLoading"
+              [nzFooter]="null"
+            >
+            <form [formGroup]="createFileForm"  class="pading-all">
+              <div class="row marginbtm-15">
+                <div class="col-md-12">
+                  <nz-form-item>
+                    <nz-form-label [nzSpan]="24">
+                      {{"cpl.docamendments.filesubject" | translate}}
+                    </nz-form-label>
+                    <nz-form-control [nzSpan]="24">
+                      <input
+                        nz-input
+                        placeholder='{{"business-dashboard.calendarofsittings.FileSubjectgoeshere" | translate}}'
+                        formControlName="subject"
+                      />
+                    </nz-form-control>
+                  </nz-form-item>
+                </div>
+              </div>
+              <div class="row marginbtm-15">
+                <div class="col-md-12">
+                  <div class="row">
+                    <nz-form-item>
+                      <div class="col-md-12">
+                        <nz-form-label>
+                          {{"cpl.docamendments.filepriority" | translate}}
+                        </nz-form-label>
+                      </div>
+                      <div class="col-md-12">
+                        <nz-form-control>
+                          <nz-radio-group
+                            formControlName="priority"
+                            nzName="radiogroup"
+                          >
+                            <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                            <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                            <label nz-radio nzValue="ACTION_TODAY"
+                              >{{"cpl.docamendments.actiontoday" | translate}}</label
+                            >
+                            <label nz-radio nzValue="ASSEMBLY_URGENT"
+                              >{{"cpl.docamendments.assemblyurgent" | translate}}</label
+                            >
+                          </nz-radio-group>
+                        </nz-form-control>
+                      </div>
+                    </nz-form-item> 
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="row">
+                  <div class="overflow-blt col-md-3">{{"cpl.cplview.section" | translate}}:</div>
+                  <span class="blthd col-md-9">{{"business-dashboard.calendarofsittings.Table" | translate}}</span>
+                </div> 
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="row">
+                      <div class="col-md-12 d-flex justify-content-end">
+                        <button
+                          nz-button
+                          [nzType]="'primary'"
+                          style="margin-right: 6px;"
+                          (click)="handleCancel()"
+                        >
+                          <span>{{"cpl.correspondencelist.cancel" | translate}}</span>
+                        </button>
+                        <button
+                          nz-button
+                          [nzType]="'primary'"
+                          [disabled]="createFileForm.invalid"
+                          (click)="updateFile()"
+                        >
+                          <span>{{"cpl.docupload.update" | translate}}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            </nz-modal>
+
+
+            </div>
+          </div>
+        </ng-container>
+        &nbsp;&nbsp;
+        <ng-container *ngIf="fileDetails?.fileResponse?.subFile && fileDetails?.fileResponse?.subFile.length > 0">
+          <div class="row">
+            <div class="col-md-12">
+              <strong>Sub-Files</strong>
+            </div>
+          </div>
+          <div class="row flex-end mrB10" *ngFor="let file of fileDetails?.fileResponse?.subFile; let i=index">
+            <div class="blthd col-md-6">
+              {{i+1}}.{{file?.subject}}
+            </div>
+            <div class="blthd col-md-6">
+              <a href="javascript:;" (click)="viewFile(file?.fileId, file?.filType)">
+                {{file?.fileNumber}}</a>
+            </div>
+          </div>
+      </ng-container>
+      </nz-tab>
+
+    </nz-tabset>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- <div class="row">
+  <span class="col-md-6 marginbtm-10" *ngFor="let groups of ministerGroups; let n = index">
+    <div class="sitting-view-details">
+      <span (click)="selectGroup(groups.groupId, n)">
+        <nz-card [ngClass]="{ clicked: groups.selectedGrpId }">
+          <ul class="minister_grp">
+            <li *ngFor="
+                          let portfolio of groups.portfolioMockNames;
+                          let i = index
+                        ">
+              {{ portfolio }}
+            </li>
+          </ul>
+        </nz-card>
+        <nz-form-item class="m-b-35">
+          <nz-form-label [nzSpan]="6" nzFor="email" required>alloted days</nz-form-label>
+          <nz-form-control [nzSpan]="11" *ngFor="let data of dateRange; let i = index" class="w-auto">
+            <nz-tag nzMode="closeable" >
+              {{ data.date | date: "dd/MM/yyyy" }}</nz-tag>
+          </nz-form-control>
+          <nz-form-control [nzSpan]="18">
+            <nz-date-picker [(ngModel)]="Aoddate" [nzFormat]="dateFormat" [nzDisabledDate]="disabledDate"
+              (ngModelChange)="calenderOnChange($event)"></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </span>
+    </div>
+  </span>
+</div> -->
+
+
+
+
+
+
+<nz-modal [(nzVisible)]="isVisibleApprovalForm" nzTitle='{{"business-dashboard.calendarofsittings.ApproveNotice" | translate}}' [nzFooter]="null"
+  (nzOnCancel)="handleCancelApprovalForm()">
+  <div class="lob_form">
+    <form nz-form [formGroup]="approvalForm" class="p-20">
+      <ng-template #errorTpl let-control>
+        <ng-container *ngIf="control.hasError('required')">
+
+        </ng-container>
+      </ng-template>
+      <nz-form-item class="width-100 pading-all">
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <label nz-checkbox formControlName="checked" #checkbox (click)="datepicker.nzValue = null">{{"business-dashboard.calendarofsittings.forwardtoBAC" | translate}}</label>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item class="width-100 pading-all">
+        <nz-form-label [nzSpan]="10" nzRequired>{{"business-dashboard.calendarofsittings.ScheduledDate" | translate}}</nz-form-label>
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <nz-date-picker #datepicker (click)="checkbox.nzChecked = false" [nzDisabledDate]="disabledDate"
+            formControlName="date">
+          </nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+    <div class="row">
+      <div class="col-md-4"></div>
+      <div class="col-md-8">
+        <button nz-button nzType="primary" class="margnrtp-15" [disabled]="approvalForm.invalid"
+          (click)="approveFile()">
+          {{"business-dashboard.question.submit" | translate}}
+        </button>
+        &nbsp;
+        <button nz-button type="button" (click)="handleCancelApprovalForm()" class="margnrtp-15">
+          {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+  <div class="pading-all">
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        {{"cpl.fileworkflow.reasontopull" | translate}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 marginbtm-15">
+        <textarea
+          nz-input
+          placeholder='{{"cpl.fileworkflow.reasontopull" | translate}}'
+          [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+          maxlength="256"
+          [(ngModel)]="pullRemark"
+          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+        >
+        </textarea>
+      </div>
+    </div>
+    <div class="row mrt-50 margnrtp-15">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="cancelPull()"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+        >
+          {{"business-dashboard.question.cancel" | translate}}
+        </button>
+        <button
+          type="button"
+          [disabled]="!pullRemark"
+          nz-button
+          nzType="primary"
+          nz-popconfirm
+          nzPopconfirmTitle='{{"business-dashboard.bullettin-details.areusureuwantpull" | translate}}'
+          (nzOnConfirm)="pullFile()"
+          (nzOnCancel)="cancel()"
+          class="primary-button button-admin-radius button-font"
+        >
+          {{"cpl.fileworkflow.pullfile" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>

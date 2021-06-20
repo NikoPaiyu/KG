@@ -1,0 +1,368 @@
+<form nz-form>
+  <ng-container *ngIf="rbsService.getloggedUserType() === 'ADMIN'">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+            {{ "business-dashboard.question.dashboard" | translate }}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            {{ "business-dashboard.question.notice" | translate }}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+
+      <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between">
+          <div class="col-md-4">
+            <h2 _ngcontent-pei-c9="" class="admin-page-heading">
+              {{
+              "business-dashboard.question.questionconsent.requestconsent"
+                | translate
+            }}
+            </h2>
+          </div>
+          <div class="col-md-8">
+            <div class="row justify-content-flex-end">
+              <!-- <div class="col-md-2">
+                            <button nz-button nzType="default">...</button>
+                        </div> -->
+              <div class="col-md-8 txt-align-R">
+                <button nz-button nzType="default" (click)="onBack()" class="mr-6">
+                  {{"business-dashboard.question.questionview.back" | translate}}
+                </button>
+                <button (click)="requestConsent()" nz-button nzType="primary" class="margnlft-15">
+                  {{
+                  "business-dashboard.question.questionconsent.requestconsent"
+                    | translate
+                }}
+                </button>
+              </div>
+              <div class="col-md-4">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                  <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                    'business-dashboard.question.questionlist.inputsearch'
+                      | translate
+                  }}" (ngModelChange)="searchPipe()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search"></i>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nz-divider></nz-divider>
+    <div class="row">
+      <div class="col-md-6" *ngIf="!isPpo || (isPpo && toWhom == 'ppotomember')">
+        <nz-form-label [nzSpan]="5" nzFor="Party">{{
+        "business-dashboard.question.questionmlalisting.party" | translate
+      }}</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{
+            'business-dashboard.question.questiongrantconsent.selparty'
+              | translate
+          }}" [(ngModel)]="selectedPartyId" (ngModelChange)="searchPipe()" name="parties">
+            <nz-option [nzLabel]="'All'" [nzValue]="0"> </nz-option>
+            <nz-option *ngFor="let data of parties" [nzLabel]="data.kerelaPoliticalPartyName"
+              [nzValue]="data.kerelaPoliticalPartyId"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </div>
+
+      <div class="col-md-6" *ngIf="!isPpo">
+        {{
+        "business-dashboard.question.questionrequestconsent.onlineconsent"
+          | translate
+      }}
+        <nz-radio-group [(ngModel)]="radioValue" name="radiogroup">
+          <label nz-radio nzValue="yes" (click)="bindRadioValue('yes')">{{
+          "business-dashboard.question.questionrequestconsent.yes" | translate
+        }}</label>
+          <label nz-radio nzValue="no" (click)="bindRadioValue('no')">{{
+          "business-dashboard.question.questionrequestconsent.no" | translate
+        }}</label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="row" *ngIf="isVisible">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="Party">{{
+          "business-dashboard.question.questiongrantconsent.clubbedfrom"
+            | translate
+        }}</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker [(ngModel)]="clubbedFrom" name="clubbedFrom" nzPlaceHolder="{{
+              'business-dashboard.question.questiongrantconsent.clubbedfrom'
+                | translate
+            }}" nzFormat="dd-MM-yyyy" [nzDisabledDate]="disabledDateClubbedFrom"
+              (ngModelChange)="getMembersWithDates()">
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="Party">{{
+          "business-dashboard.question.questiongrantconsent.clubbedto"
+            | translate
+        }}</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker [(ngModel)]="clubbedTo" name="clubbedTo" nzPlaceHolder="{{
+              'business-dashboard.question.questiongrantconsent.clubbedto'
+                | translate
+            }}" nzFormat="dd-MM-yyyy" [nzDisabledDate]="disabledDateClubbedTo" (ngModelChange)="getMembersWithDates()">
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-divider></nz-divider>
+    <nz-table *ngIf="!isPpo || (isPpo && toWhom == 'ppotomember')" #rowSelectionTable [nzLoading]="loading"
+      nzShowPagination [(nzPageIndex)]=changeIndex nzShowSizeChanger [nzData]="MLADetails"
+      (nzCurrentPageDataChange)="currentPageDataChange($event)">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)" class="chkbox width-50"></th>
+          <th class="width-50">#</th>
+          <th>
+            {{
+            "business-dashboard.question.questionrequestconsent.mlaname"
+              | translate
+          }}
+          </th>
+          <th>
+            {{
+            "business-dashboard.question.questionmlalisting.constituency"
+              | translate
+          }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data; index as i">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[item.id]" (nzCheckedChange)="refreshStatus()" class="chkbox">
+          </td>
+          <td>{{ item.slNo }}</td>
+          <td>{{ item.fullName }}</td>
+          <td>{{ item.keralaConstituencyName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+
+    <nz-table *ngIf="isPpo && toWhom == 'ppotoppo'" #rowSelectionTable [nzLoading]="loading" nzShowPagination
+      [(nzPageIndex)]=changeIndex nzShowSizeChanger [nzData]="partyDetails"
+      (nzCurrentPageDataChange)="currentPageDataChange($event)">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)" class="chkbox width-50"></th>
+          <th class="width-50">#</th>
+          <th>
+            Party Name
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data; index as i">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[item.id]" (nzCheckedChange)="refreshStatus()" class="chkbox">
+          </td>
+          <td>{{ item.slNo }}</td>
+          <td>{{ item.kerelaPoliticalPartyName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </ng-container>
+  <ng-container *ngIf="rbsService.getloggedUserType() === 'IN_HOUSE'">
+    <div class="row d-flex justify-content-space-between inhouse">
+      <div class="col-md-12 col-sm-12 mb-2 margntp-25">
+        <nz-breadcrumb>
+          <nz-breadcrumb-item [routerLink]="dashBoardUrl">
+            {{ "business-dashboard.question.dashboard" | translate }}
+          </nz-breadcrumb-item>
+          <nz-breadcrumb-item>
+            {{ "business-dashboard.question.notice" | translate }}
+          </nz-breadcrumb-item>
+        </nz-breadcrumb>
+      </div>
+
+      <div class="col-md-12 inhouse">
+        <div class="row d-flex justify-content-space-between">
+          <div class="col-md-4">
+            <h2 _ngcontent-pei-c9="" class="admin-page-heading">
+              {{
+                "business-dashboard.question.questionconsent.requestconsent"
+                  | translate
+              }}
+            </h2>
+          </div>
+          <div class="col-md-8 inhouse">
+            <div class="row justify-content-flex-end">
+              <!-- <div class="col-md-2">
+                              <button nz-button nzType="default">...</button>
+                          </div> -->
+              <div class="col-md-8 txt-align-R inhouse">
+                <button nz-button nzType="primary" (click)="onBack()" class="mr-6">
+                  {{"business-dashboard.question.questionview.back" | translate}}
+                </button>
+                <button (click)="requestConsent()" nz-button nzType="primary" class="margnlft-15">
+                  {{
+                    "business-dashboard.question.questionconsent.requestconsent"
+                      | translate
+                  }}
+                </button>
+              </div>
+              <div class="col-md-4">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                  <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                      'business-dashboard.question.questionlist.inputsearch'
+                        | translate
+                    }}" (ngModelChange)="searchPipe()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                  <i nz-icon nzType="search"></i>
+                </ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <nz-divider></nz-divider>
+    <div class="row inhouse margnrtp-10 marginbtm-10">
+      <div class="col-md-6" *ngIf="!isPpo || (isPpo && toWhom == 'ppotomember')">
+        <nz-form-label [nzSpan]="5" nzFor="Party">{{
+          "business-dashboard.question.questionmlalisting.party" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="12">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{
+              'business-dashboard.question.questiongrantconsent.selparty'
+                | translate
+            }}" [(ngModel)]="selectedPartyId" (ngModelChange)="searchPipe()" name="parties">
+            <nz-option [nzLabel]="'All'" [nzValue]="0"> </nz-option>
+            <nz-option *ngFor="let data of parties" [nzLabel]="data.kerelaPoliticalPartyName"
+              [nzValue]="data.kerelaPoliticalPartyId"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </div>
+
+      <div class="col-md-6" *ngIf="!isPpo">
+        {{
+          "business-dashboard.question.questionrequestconsent.onlineconsent"
+            | translate
+        }}
+        <nz-radio-group [(ngModel)]="radioValue" name="radiogroup">
+          <label nz-radio nzValue="yes" (click)="bindRadioValue('yes')">{{
+            "business-dashboard.question.questionrequestconsent.yes" | translate
+          }}</label>
+          <label nz-radio nzValue="no" (click)="bindRadioValue('no')">{{
+            "business-dashboard.question.questionrequestconsent.no" | translate
+          }}</label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <div class="row" *ngIf="isVisible">
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="Party">{{
+            "business-dashboard.question.questiongrantconsent.clubbedfrom"
+              | translate
+          }}</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker [(ngModel)]="clubbedFrom" name="clubbedFrom" nzPlaceHolder="{{
+                'business-dashboard.question.questiongrantconsent.clubbedfrom'
+                  | translate
+              }}" nzFormat="dd-MM-yyyy" [nzDisabledDate]="disabledDateClubbedFrom"
+              (ngModelChange)="getMembersWithDates()">
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+      <div class="col-md-6">
+        <nz-form-item>
+          <nz-form-label [nzSpan]="5" nzFor="Party">{{
+            "business-dashboard.question.questiongrantconsent.clubbedto"
+              | translate
+          }}</nz-form-label>
+          <nz-form-control [nzSm]="16" [nzXs]="24">
+            <nz-date-picker [(ngModel)]="clubbedTo" name="clubbedTo" nzPlaceHolder="{{
+                'business-dashboard.question.questiongrantconsent.clubbedto'
+                  | translate
+              }}" nzFormat="dd-MM-yyyy" [nzDisabledDate]="disabledDateClubbedTo"
+              (ngModelChange)="getMembersWithDates()">
+            </nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+
+    <nz-divider></nz-divider>
+
+<div class="inhouse table_holder">
+    <nz-table *ngIf="!isPpo || (isPpo && toWhom == 'ppotomember')" #rowSelectionTable [nzLoading]="loading"
+      nzShowPagination [(nzPageIndex)]=changeIndex nzShowSizeChanger [nzData]="MLADetails"
+      (nzCurrentPageDataChange)="currentPageDataChange($event)">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)" class="chkbox width-50"></th>
+          <th class="width-50">#</th>
+          <th>
+            {{
+              "business-dashboard.question.questionrequestconsent.mlaname"
+                | translate
+            }}
+          </th>
+          <th>
+            {{
+              "business-dashboard.question.questionmlalisting.constituency"
+                | translate
+            }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data; index as i">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[item.id]" (nzCheckedChange)="refreshStatus()" class="chkbox">
+          </td>
+          <td>{{ item.slNo }}</td>
+          <td>{{ item.fullName }}</td>
+          <td>{{ item.keralaConstituencyName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+
+    <nz-table *ngIf="isPpo && toWhom == 'ppotoppo'" #rowSelectionTable [nzLoading]="loading" nzShowPagination
+      [(nzPageIndex)]=changeIndex nzShowSizeChanger [nzData]="partyDetails"
+      (nzCurrentPageDataChange)="currentPageDataChange($event)">
+      <thead>
+        <tr>
+          <th nzShowCheckbox [(nzChecked)]="isAllDisplayDataChecked" [nzIndeterminate]="isIndeterminate"
+            (nzCheckedChange)="checkAll($event)" class="chkbox width-50"></th>
+          <th class="width-50">#</th>
+          <th>
+            Party Name
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of rowSelectionTable.data; index as i">
+          <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[item.id]" (nzCheckedChange)="refreshStatus()" class="chkbox">
+          </td>
+          <td>{{ item.slNo }}</td>
+          <td>{{ item.kerelaPoliticalPartyName }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+  </ng-container>
+</form>

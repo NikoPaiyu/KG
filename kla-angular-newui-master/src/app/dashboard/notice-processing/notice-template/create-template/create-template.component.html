@@ -1,0 +1,55 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    <a>Dashboard</a>
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    Notice Templates
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-10">
+            <h3>Create Notice Template</h3>
+        </div>
+        <div class="col-md-2">
+            <button nz-button nzType="default">Save Template</button>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    <form nz-form [formGroup]="templateForm">
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4" nzFor="name">Template Name</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <input nz-input placeholder="Name of the notice template" formControlName="name" id="name" />
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4">Starting Point</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <nz-select>
+                    <nz-option nzValue="Option 1" nzLabel="Option 1"></nz-option>
+                    <nz-option nzValue="Option 2" nzLabel="Option 2"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4">sdfghjk</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <nz-select>
+                    <nz-option nzValue="Option 1" nzLabel="Option 1"></nz-option>
+                    <nz-option nzValue="Option 2" nzLabel="Option 2"></nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <nz-form-label [nzSpan]="4">Description</nz-form-label>
+            <nz-form-control [nzSpan]="8">
+                <textarea nz-input rows="2" placeholder="description"></textarea>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+</div>

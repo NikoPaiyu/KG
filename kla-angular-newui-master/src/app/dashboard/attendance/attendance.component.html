@@ -1,0 +1,42 @@
+<div class="model-content">
+    <div class="modal-header">
+      <h4 class="modal-title" id="myModalLabel">{{'dashboard.attendance.attendance-title'|translate}}</h4>
+    </div>
+    <div nz-row margntp-25>
+      <span margntp-25 class="vote-q">{{'dashboard.attendance.attendance-question'|translate}}</span>
+    </div>
+    <div *nzModalFooter>
+      <div nz-row nzType="flex" nzJustify="center">
+        <button
+          nz-button
+          [nzSize]="yesbuttonsize"
+          (click)="markAttendance()"
+          nzType="primary"
+          class="shadow-true"
+        >
+          <span nz-icon nzType="check" nzTheme="outline"></span>{{'dashboard.attendance.choice-yes'|translate}}
+        </button>
+        <button
+          nz-button
+          [nzSize]="nobuttonsize"
+          (click)="hideModel()"
+          nzType="danger"
+          class="shadow-false"
+        >
+          <span nz-icon nzType="close" nzTheme="outline"></span>{{'dashboard.attendance.choice-no'|translate}}
+        </button>
+        <!-- <button
+          nz-button
+          [nzSize]="neutralbuttonsize"
+          (click)="castVote('notnow')"
+          nzType="primary"
+          class="shadow-none"
+          nzGhost
+        >
+          <span nz-icon nzType="stop"></span>NOTNOW
+        </button> -->
+      </div>
+      <div></div>
+    </div>
+</div>
+  

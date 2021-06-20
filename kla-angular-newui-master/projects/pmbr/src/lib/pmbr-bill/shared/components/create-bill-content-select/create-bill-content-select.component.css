@@ -1,0 +1,44 @@
+.mrgB20 {
+  margin-bottom: 20px;
+}
+
+.checkbx {
+  max-width: 20px;
+  padding-right: 5px;
+  padding-left: 0px;
+}
+.nmber {
+  max-width: 50px;
+  padding-right: 0px;
+  padding-left: 0px;
+}
+
+.indent-10 {
+  padding-left: 15px !important;
+}
+.indent-20 {
+  padding-left: 30px !important;
+}
+.indent-30 {
+  padding-left: 45px !important;
+}
+.indent-40 {
+  padding-left: 55px !important;
+}
+.pd {
+  padding: 20px;
+  width: 100%;
+}
+.mr6 {
+  margin-right: 6px;
+}
+.text-align-center {
+  text-align: center;
+}
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+/* .indent-40{padding-left:60px !important;} */

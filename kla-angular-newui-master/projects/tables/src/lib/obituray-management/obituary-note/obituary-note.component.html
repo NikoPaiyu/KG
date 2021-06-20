@@ -1,0 +1,84 @@
+<div class="padding_25">
+  <div class="row d-flex justify-content-flex-end">
+    <div class="col-md-5 d-flex justify-content-end" *ngIf="isFileView">
+      <nz-select
+          *ngIf="obituaryDetails?.version"
+          (ngModelChange)="versionChange($event)"
+          [(ngModel)]="selectedVersion"
+        >
+          <ng-container *ngFor="let version of versionOptions">
+            <nz-option
+              nzCustomContent
+              [nzLabel]="'Version '+version.version"
+              [nzValue]="version.version"
+            >
+              <div class="width-100 dropdown-option">
+                <table style="width: -webkit-fill-available">
+                  <tr>
+                    <strong>{{ GetRoles(version.roles)  | titlecase}}</strong>
+                  </tr>
+                  <tr>
+                    {{
+                      version.ownerName
+                    }}
+                  </tr>
+                  <tr>
+                    {{
+                      version.cretationDate | date: "dd-MM-yyyy hh:mm a"
+                    }}
+                  </tr>
+                </table>
+              </div>
+            </nz-option>
+          </ng-container>
+        </nz-select>
+    </div>
+    <div class="col-md-2" *ngIf="isFileView"><button  
+      nz-popconfirm
+      nzPopconfirmTitle="Do you want to edit note?"
+      *ngIf="!editMode && currentAssignee" [disabled]="disableUpdateNote" (nzOnConfirm)="editNote()" nz-button nzType="primary" type="button">
+      {{"noticeprocessing.noticeprocess.edit" | translate}}
+    </button></div>
+    <div class="col-md-2" *ngIf="isFileView && editMode"><button
+      nz-popconfirm
+      nzPopconfirmTitle="Do you want to update note?"
+      [disabled]="disableUpdateNote" (nzOnConfirm)="updateNote()" nz-button nzType="primary" 
+      type="button">{{"cpl.docupload.update" | translate}}</button>
+    </div>
+    <div class="col-md-2" *ngIf="this.obituaryDetails?.id || this.obituaryDetails?.obituary?.id">
+      <button nz-button nzType="primary" type="button" (click)="getObituaryPreview()">
+        {{"business-dashboard.election-management.view-registered-document.preview" | translate}}
+      </button>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-12" class="fullHieght">
+      <quill-editor
+        [disabled]="fileStatus === 'SUBMITTED'"
+        [(ngModel)]="noteContent"
+        (onEditorChanged)="noteContentChange($event)"
+        *ngIf="editMode || !isFileView"
+      >
+      </quill-editor>
+      <div *ngIf="!editMode && isFileView" [innerHtml]="noteContent"></div>
+    </div>
+  </div>
+</div>
+<nz-modal
+  [(nzVisible)]="showPreview"
+  [nzFooter]="null"
+  [nzClosable]="false"
+  nzTitle=""
+  nzWidth="800">
+  <div class="row">
+    <div class="col-md-11"></div>
+    <div class="col-md-1">
+      <button (click)="closePreview()" nz-button nzType="default" nzShape="circle"><i nz-icon nzType="close"></i></button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <div [innerHtml]="notePreview"></div>
+    </div>
+  </div>
+</nz-modal>

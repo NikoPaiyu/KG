@@ -1,0 +1,93 @@
+<div class="lob-container">
+  <div class="row paddingB20 marginbtm-10 margnrtp-15">
+    <div class="col-md-2">
+      <span> {{ "lobview.view.lobdate" | translate }} :</span>
+    </div>
+    <div class="col-md-6">
+      <nz-date-picker
+        [(ngModel)]="date"
+        [nzDisabledDate]="disabledDate"
+        (ngModelChange)="getLobListOnlyByDate($event)"
+        nzFormat="dd-MM-yyyy"
+      ></nz-date-picker>
+    </div>
+  </div>
+  <div *ngFor="let item of currentDayList" nz-row>
+    <div nz-col nzSpan="24">
+      <nz-collapse nzAccordion="true">
+        <nz-collapse-panel
+          [nzHeader]="item.businessNameMalayalam || item.businessName"
+        >
+          <div class="business_list">
+            <nz-collapse
+              *ngFor="let subMenu of item.businessLines"
+              nzAccordion="true"
+            >
+              <nz-collapse-panel nzHeader="{{ subMenu.title }}">
+                <p>
+                  <span class="lobview-span mla-name-tab"
+                    >{{ "lobview.view.membername" | translate }} :
+                    {{
+                      subMenu.primaryMemberMalayalamFullName ||
+                        subMenu.primaryMemberName
+                    }}
+                    <span *ngIf="subMenu.primaryMemberDesignation">
+                      {{
+                        "( " +
+                          subMenu.primaryMemberDesignation
+                            .designationNameMalayalam +
+                          " )"
+                      }}
+                    </span>
+                  </span>
+                </p>
+                <p *ngIf="subMenu.description">
+                  <span class="lobview-span"
+                    >{{ "lobview.view.description" | translate }} :
+                    {{ subMenu.description }}
+                  </span>
+                </p>
+
+                 <p
+                  *ngIf="
+                    subMenu.primaryDocumentUrl &&
+                      (subMenu.read == true ||
+                      subMenu.primaryMemberId == currentUserId ||
+                      subMenu.secondaryMemberId == currentUserId)
+                  "
+                > 
+                  <span class="lobview-span"
+                    >{{ "lobview.view.document" | translate }} :
+                    <a
+                      href="javascript:;"
+                      (click)="openTheFile(subMenu.primaryDocumentUrl)"
+                      >{{ "lobview.view.view" | translate }}</a
+                    >
+                  </span>
+                </p>
+
+                <p
+                  *ngIf="
+                    subMenu.secondaryDocumentUrl &&
+                    (subMenu.read == true ||
+                      subMenu.primaryMemberId == currentUserId ||
+                      subMenu.secondaryMemberId == currentUserId)
+                  "
+                >
+                  <span class="lobview-span"
+                    >{{ "lobview.view.response" | translate }} :
+                    <a
+                      href="javascript:;"
+                      (click)="openTheFile(subMenu.secondaryDocumentUrl)"
+                      >{{ "lobview.view.view" | translate }}</a
+                    >
+                  </span>
+                </p>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </div>
+</div>

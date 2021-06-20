@@ -1,0 +1,52 @@
+<h6>Reply: AP Bill on Budget</h6>
+<div class="row">
+  <div class="col-md-10">
+    <nz-card style="width: 900px">
+      <form [formGroup]="correspondenceFormGrp">
+        <div formArrayName="businessData">
+          <div
+            *ngFor="let data of businessData.controls; let i = index"
+            formGroupName="{{ i }}"
+          >
+            <div class="row">
+              <div class="col-md-8">Select Bill:
+              <nz-form-item>
+                <nz-form-control nzErrorTip="Select Bill">
+                  <nz-select
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="Select Bill"
+                    formControlName="billId"
+                  >
+                    <nz-option
+                      *ngFor="let data of billList"
+                      [nzLabel]="data.value"
+                      [nzValue]="data.key"
+                    ></nz-option>
+                  </nz-select>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+            </div>
+          <div class="row mrgT20">
+            <div class="col-md-10">
+              Governor's Recommendation Letter:
+              <nz-form-item>
+                <nz-form-control
+                  nzErrorTip="Governor's Recommendation Letter is Missing!!"
+                >
+                  <quill-editor
+                    formControlName="grlContent"
+                    [modules]="modules"
+                    [styles]="{ height: '400px' }"
+                  ></quill-editor>
+                </nz-form-control>
+              </nz-form-item>
+            </div>
+          </div>
+        </div>
+       </div> 
+      </form>
+    </nz-card>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div>
+    <div class="row marginbtm-10 margnlft-10" *ngIf="ratificationStatus === 'PENDING' &&
+          this.userId !== latestNote?.user?.userId">
+        <nz-alert nzType="warning" nzMessage="Please Ratify this File by adding a Note!" nzShowIcon></nz-alert>
+    </div>
+    <div class="overflow-blt">
+        <div *ngFor="let note of notesInfo.notes; let i = index" class="input-group brdr_nt" [ngClass]="{ yellowColor: note.temporary == true }">
+            <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+                <div class="col-md-6 pl0">
+                    <b class="width-100 fl marginbtm-5">{{
+            note?.user?.details?.fullName
+          }}</b>
+                    <span class="width-100 fl">
+            <ng-container *ngFor="let role of setRole(note?.user?.roles)">
+            {{ role.roleName | titlecase }}
+          </ng-container>
+          </span>
+                </div>
+                <div class="col-md-6 d-flex justify-content-between">
+                    <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+                    <span>|</span>
+                    <span>{{ note.updatedDate | date: "dd/MM/yyyy" }}</span>
+                    <!-- <p>{{ note.updatedDate | date: "hh:mm a | dd/MM/yyyy" }}</p> -->
+                </div>
+            </div>
+            <div *ngIf="!note.isEdit; else editNotes" class="width-100 marginbtm-15">
+                {{ note.note }}
+            </div>
+            <ng-template #editNotes>
+                <input type="text" nzSize="large" nz-input [(ngModel)]="note.note" name="editedNote" nz-input placeholder='{{ "business-dashboard.question.typeyourcomments&notes" | translate }}' />
+
+                <div class="btn-notes">
+                    <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid">
+                        <label class="ylwbtn" nz-radio-button nzValue="true">{{ "cpl.filelistflow.yellow" | translate }}</label>
+                        <label class="nrlbtn" nz-radio-button nzValue="false">{{ "cpl.docamendments.normal" | translate }}</label>
+                    </nz-radio-group>
+                </div>
+            </ng-template>
+            <ng-container *ngIf="userId == note.user.userId &&
+              (fileResponse?.status !== 'APPROVED' ||
+              ratificationStatus === 'PENDING') &&
+              (userId === assignee ||
+              ratificationStatus === 'PENDING')">
+                <div class="fl width-100">
+                    <a *ngIf="note.isEdit; else addNote" class="mr-6" (click)="updateNote(note)">
+            {{ "cpl.docupload.update" | translate }}
+          </a>
+                    <ng-template #addNote><a class="mr-6" *ngIf="note.user.userId==this.userId && 
+                    latestNote.noteId == note.noteId && 
+                    assignee == this.userId" (click)="editNote(note)">
+              {{ "noticeprocessing.noticeprocess.edit" | translate }}
+            </a></ng-template>
+                    &nbsp;&nbsp; &nbsp;&nbsp;
+                    <a nz-popconfirm nzPopconfirmTitle='{{ "table.file-view.notes.douwantdeletethisnote" | translate }}' (nzOnConfirm)="deleteNote(note.noteId)" *ngIf="note.user.userId==this.userId &&
+                    latestNote.noteId == note.noteId &&
+                    assignee == this.userId" nzPopconfirmPlacement="bottomLeft">
+              {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}
+          </a>
+                    <span class="note_num">{{ note.noteNumber }}</span>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<div class="row grey-border" *ngIf="(fileResponse?.status !== 'APPROVED' ||ratificationStatus === 'PENDING') &&
+        (userId === assignee || ratificationStatus === 'PENDING')">
+    <div class="width-100 d-flex bg_txtarea">
+        <div class="col-md-8">
+            <textarea class="textarea_nt" placeholder='{{ "Enter Note Here" | translate }}' nz-input [(ngModel)]="newNote"></textarea>
+            <!-- <input class="textarea_nt" placeholder="" nz-input [(ngModel)]="newNote" /> -->
+        </div>
+        <div class="col-md-4">
+            <div class="btn-notes d-flex align-items-center justify-content-end flexwrap">
+                <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid" class="d-flex">
+                    <label class="ylwbtn" nz-radio-button nzValue="true">{{ "cpl.filelistflow.yellow" | translate }}</label>
+                    <label class="nrlbtn" nz-radio-button nzValue="false">{{ "cpl.docamendments.normal" | translate }}</label>
+                </nz-radio-group>
+            </div>
+            <button nz-button [nzType]="'default'" class="save_btn" (click)="saveNote()" [disabled]="!newNote">
+        {{ "cpl.docupload.save" | translate }}
+      </button>
+        </div>
+    </div>
+</div>

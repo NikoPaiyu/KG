@@ -1,0 +1,150 @@
+<div class="d-flex justify-content-between">
+    <button class="ml-6 m-r5" nz-button [nzType]="'default'" (click)="goBack()">
+        {{ "business-dashboard.question.questionview.back" | translate }}
+    </button>
+    <button class="ml-6" nz-button [nzType]="'primary'" nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to request Closure?" nzCancelText="Cancel" nzOkText="Request Closure"
+        (nzOnConfirm)="fileClosure()" (nzOnCancel)="cancel()"
+        *ngIf="permissions.fileClosure && fileResponse?.fileResponse?.status === 'APPROVED'">
+        {{"cpl.fileworkflow.fileclosure" | translate}}
+    </button>
+    <button class="ml-6" nz-button [nzType]="'primary'" nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to Send File to Law Department?" nzCancelText="Cancel" nzOkText="Send to Law Dept"
+        (nzOnConfirm)="sendToLawDept()" (nzOnCancel)="cancel()"
+        *ngIf="fileResponse?.fileResponse?.status === 'APPROVED' && 
+        fileResponse?.fileResponse?.subtype === 'PM_BILL' && 
+        fileResponse?.bill?.stage === 'PMBR_FIRST_APPROVAL' && send">
+    Send
+    </button>
+    <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle='{{ "business-dashboard.bullettin-details.areusureuwantpull" | translate }}'
+        (nzOnConfirm)="showPullpopup()" (nzOnCancel)="cancel()" 
+        *ngIf="pullButton && canPull &&
+        fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+        currentPool !== currentPoolUser">
+        {{ "cpl.fileworkflow.pull" | translate }}
+    </button>
+    <button class="m-r5" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwanttoapprove" | translate }}'
+        (nzOnConfirm)="approveFile()" (nzOnCancel)="cancel()" 
+        *ngIf="notesInfo.status == 'SUBMITTED' && 
+        (permissions.approve || (permissions.cbcapprove && 
+        fileResponse.fileResponse.activeSubTypes.includes('BIL_CLAUSE_LIST'))) &&
+        assignee == userId && 
+        !ratificationApprove">
+        {{ "noticeprocessing.noticeprocess.approve" | translate }}
+    </button>
+    <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle='{{ "business-dashboard.question.areusureuwanttoapprove" | translate }}'
+        nzOkText='{{ "noticeprocessing.noticeprocess.approve" | translate }}'
+        (nzOnConfirm)="approveFile()" (nzOnCancel)="cancel()" 
+        *ngIf="canApprove &&
+        assignee == userId &&
+        fileResponse?.fileResponse?.status === 'SUBMITTED' &&
+        ratificationApprove">
+        {{ "noticeprocessing.noticeprocess.approve" | translate }}
+    </button>
+    <!-- <button class="m-r5" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle="Are u sure u want to Approve the Bill"
+        (nzOnConfirm)="approveBill()" (nzOnCancel)="cancel()" 
+        *ngIf="notesInfo.status == 'SUBMITTED' && 
+        (permissions.approve || (permissions.cbcapprove && 
+        fileResponse.fileResponse.activeSubTypes.includes('BIL_CLAUSE_LIST')) && 
+        fileResponse.bill.stage =='SUBMITTED_FOR_FINAL_APPROVAL') &&
+        assignee == userId && !ratificationApprove">
+        Approve
+    </button> -->
+    <button class="m-r5" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to Reject"
+        (nzOnConfirm)="rejectBill()" (nzOnCancel)="cancel()" 
+        *ngIf="notesInfo.status == 'SUBMITTED' && 
+        fileResponse?.bill?.stage =='SUBMITTED_FOR_FINAL_APPROVAL' && reject">
+        Reject
+    </button>
+    &nbsp;
+    <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.correspondence.approveclosure" | translate }}' nzCancelText="Cancel"
+        nzOkText="Approve" (nzOnConfirm)="approveClosure()" (nzOnCancel)="cancel()" *ngIf="permissions.approve  && userId == assignee &&
+          fileResponse?.fileResponse?.status === 'CLOSURE_PENDING'">
+        Approve File Closure
+    </button>&nbsp;
+    <nz-select style="width: 280px" name="selectedRole" [(ngModel)]="selectedRole" nzAllowClear
+        (ngModelChange)="forwardOrReturn()"
+        *ngIf="workflowUsers.length > 0 && notesInfo.status === 'SUBMITTED' &&  assignee === userId && showForward">
+        <ng-container *ngFor="let role of workflowUsers">
+            <nz-option *ngIf="role.actionId !== currentPoolUser" nzValue="{{
+              role.userId + '-' + role.actionRow + '-' + role.actionGroup
+            }}" nzLabel="{{ role.fullName + ' - ' + role.actionName }}"></nz-option>
+        </ng-container>
+    </nz-select>
+    <!-- </div> -->
+    <button class="ml-6" nz-button nzType="primary" nz-popconfirm
+        nzPopconfirmTitle="Are you sure you want to  {{ forwardReturnButton }} ?" [disabled]="!selectedRole"
+        (nzOnCancel)="cancel()"
+        *ngIf="workflowUsers.length > 0 && notesInfo.status === 'SUBMITTED' && assignee == userId && showForward"
+        (nzOnConfirm)="forwardFile(notesInfo.fileId)">
+        {{ forwardReturnButton }}
+    </button>
+    <nz-alert nzType="warning" nzMessage='{{ "bill.bill-clause.list.attachcorrespondencetocontinue" | translate }}'
+        *ngIf="!showForward && permissions.createCorrespondence"></nz-alert>
+</div>
+<nz-modal [(nzVisible)]="showSkipModal" [nzFooter]="null" [nzClosable]="false">
+    <div class="pading-all">
+        <div class="row">
+            <div class="col-md-12 marginbtm-15">{{ "business-dashboard.notice-proc.reasontoskip" | translate }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 marginbtm-15">
+                <textarea nz-input placeholder='{{ "business-dashboard.notice-proc.reasontoskip" | translate }}'
+                    [nzAutosize]="{ minRows: 2, maxRows: 6 }" maxlength="256" [(ngModel)]="reason"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+          </textarea>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="default" (click)="handleCancel()"
+                    class="secondary-button button-admin-radius button-font dark-border dark-font">
+                    {{ "cpl.correspondencelist.cancel" | translate }}
+                </button>
+                <button type="button" [disabled]="reason === ''" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle='{{ "business-dashboard.correspondence.skiporforward" | translate }}'
+                    (nzOnConfirm)="skip = false; forwardFile(notesInfo.fileId)" (nzOnCancel)="cancel()"
+                    class="primary-button button-admin-radius button-font">
+                    {{ "noticeprocessing.noticeprocess.forward" | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+    <div class="pading-all">
+        <div class="row">
+            <div class="col-md-12 marginbtm-15">
+                {{ "cpl.fileworkflow.reasontopull" | translate }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 marginbtm-15">
+                <textarea nz-input placeholder='{{ "cpl.fileworkflow.reasontopull" | translate }}'
+                    [nzAutosize]="{ minRows: 2, maxRows: 6 }" maxlength="256" [(ngModel)]="pullRemark"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';">
+          </textarea>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="default" (click)="cancelPull()"
+                    class="secondary-button button-admin-radius button-font dark-border dark-font">
+                    {{ "cpl.correspondencelist.cancel" | translate }}
+                </button>
+                <button type="button" [disabled]="!pullRemark" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle='{{ "business-dashboard.bullettin-details.areusureuwantpull" | translate }}'
+                    (nzOnConfirm)="pullFile()" (nzOnCancel)="cancel()"
+                    class="primary-button button-admin-radius button-font">
+                    {{ "cpl.fileworkflow.pullfile" | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

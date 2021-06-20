@@ -1,0 +1,88 @@
+.report-holder {
+    width: 100%;
+}
+
+.report-holder .table {
+    width: 100%;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.report-holder .table td {
+    width: auto;
+    padding: 5px;
+    line-height: 22px;
+}
+
+.report-holder .tl {
+    text-align: left;
+}
+
+.report-holder .tc {
+    text-align: center !important;
+}
+
+.report-holder .tr {
+    text-align: right;
+}
+
+.report-holder .pt {
+    padding-top: 10px !important;
+}
+
+.report-holder .width100 {
+    width: 100%;
+    float: left;
+    margin-bottom: 5px;
+}
+
+.report-holder .border td {
+    border: #ccc solid 1px;
+}
+
+.report-holder .border th {
+    border: #ccc solid 1px;
+    padding: 5px;
+}
+
+.report-holder .table th {
+    text-align: left;
+}
+
+.report-holder .main-hd {
+    line-height: 40px;
+    font-size: 25px;
+}
+
+.report-holder .font17 {
+    font-size: 17px !important;
+    line-height: 30px;
+}
+
+.report-holder .tb-boder {
+    border: #ccc solid 1px;
+}
+
+.report-holder .tb-boder td {
+    border-top: #ccc solid 1px;
+}
+
+.report-holder .tb-boder th {
+    padding: 5px;
+}
+
+.report-holder .names {
+    width: 100%;
+    padding-left: 30px;
+    box-sizing: border-box;
+    margin-top: 5px;
+    float: left;
+}
+
+.report-holder .brdr_btm {
+    border-bottom: #ccc solid 1px;
+}
+
+.selRow {
+    background-color: #ece4e4;
+}

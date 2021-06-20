@@ -1,0 +1,61 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+            {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b> {{"noticeprocessing.notice.listconvenience.minconsent" | translate}} </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12">
+        <h2 class="admin-page-heading">{{"noticeprocessing.notice.listconvenience.minconsent" | translate}}</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mrgt10">
+        <div class="p-20 width-100">
+            <nz-tabset>
+                <nz-tab  nzTitle="{{'noticeprocessing.notice.listconvenience.pendingnotices'|translate}}">
+                    <nz-table #filterTable [nzData]="noticeList">
+                        <thead>
+                            <tr>
+                                <th>{{"noticeprocessing.notice.listconvenience.serialnumber" | translate}}</th>
+                                <th>{{"cpl.fileworkflow.noticenumber" | translate}}</th>
+                                <th>{{"noticeprocessing.notice.listconvenience.Notice" | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of noticeList; let i = index">
+                                <td>{{i+1}}</td>
+                                <td><a style="text-decoration:underline;color:blue;" (click)="OpenNotice(data.notice.id)">{{data.notice.noticeNumber}}</a></td>
+                                <td>{{data.notice.ntcTemplate.name}}</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </nz-tab>
+                <nz-tab  nzTitle="{{'noticeprocessing.notice.listconvenience.allnotices'|translate}}">
+                    <nz-table #filterTable [nzData]="allNoticeList">
+                        <thead>
+                            <tr>
+                                <th>{{"noticeprocessing.notice.listconvenience.serialnumber" | translate}}</th>
+                                <th>{{"cpl.fileworkflow.noticenumber" | translate}}</th>
+                                <th>{{"noticeprocessing.notice.listconvenience.Notice" | translate}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of allNoticeList; let i = index">
+                                <td>{{i+1}}</td>
+                                <td><a style="text-decoration:underline;color:blue;" (click)="OpenNotice(data.notice.id)">{{data.notice.noticeNumber}}</a></td>
+                                <td>{{data.notice.ntcTemplate.name}}</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </nz-tab>
+      </nz-tabset>
+    </div>
+</div>
+</div>

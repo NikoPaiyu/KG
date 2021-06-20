@@ -1,0 +1,250 @@
+<form nz-form [formGroup]="validateForm">
+  <div formArrayName="agendaTypeArray">
+    <div *ngFor="let agenda of formArr.controls; let i=index">
+      <nz-card class="margn-top-7">
+      <div [formGroupName]="i">
+        <div class="row">
+          <div class="col-md-8">
+            <nz-form-label [nzSm]="24" [nzXs]="24"> {{ "committee.meeting.agenda" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-4 d-flex justify-content-end">
+            <i nz-icon nzType="minus-circle" nzTheme="outline" 
+              *ngIf="i>0"
+              (click)="removeAgendaType(i)"></i>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <nz-form-item>
+              <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectagenda" | translate}}'>
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{ "committee.meetingdetails.selectagenda" | translate}}' formControlName="agendatype"
+                (ngModelChange)="filterAgendaType();getListOfBusiness(agenda.value?.agendatype, [], i)"
+                [nzDisabled]="formArr?.controls[i]?.value?.selectedBusiness?.length>0">
+                <ng-container *ngFor="let data of typesofAgenda">
+                  <nz-option *ngIf="!selectedAgendas.includes(data.id)||(data.id===agenda.value?.agendatype)" 
+                  [nzValue]="data.id" [nzLabel]="data.name"></nz-option>
+                </ng-container>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <div class="row" *ngIf="agenda.value.agendatype">
+          <div class="col-md-12">
+            <nz-form-label [nzSm]="24" [nzXs]="24"
+            >{{ "Choose Sub-Agenda" | translate}}</nz-form-label>
+          </div>
+        </div>
+        <div class="row" *ngIf="agenda.value.agendatype">
+          <div class="col-md-10">
+            <nz-form-item>
+              <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectsubagenda" | translate}}'>
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{ "committee.meetingdetails.selectsubagenda" | translate}}' formControlName="billtype">
+                  <nz-option *ngFor="let data of formArr.controls[i].value.businessListing" [nzValue]="data" 
+                  [nzLabel]="data.joinCommittes.length>0?data.refernceTitle+'(Joint Committees)':data.refernceTitle"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+          <div class="col-md-2 d-flex justify-content-end">
+            <nz-form-item>
+              <nz-form-control [nzXs]="24" [nzSm]="12">
+                <button nz-button nzType="dashed" class="add-button" (click)="addBill(i)" 
+                [disabled]="agenda.value.billtype === null">
+                  <i nz-icon nzType="plus"></i>
+                  {{ "committee.meetingdetails.add" | translate}}
+                </button>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+        <ng-container>
+          <div class="row margn-top-7" *ngFor="let bill of formArr.controls[i].value.selectedBusiness">
+            <div class="col-md-12">
+              {{ bill.refernceTitle?bill.refernceTitle:bill.refrenceId }} 
+              <i nz-icon nzType="delete" class="dynamic-delete-button float-right"
+                (click)="removeBill(bill.id, i)" *ngIf="!bill.followUp"></i>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      </nz-card>
+    </div>
+  </div>
+  <div class="row margn-top-7">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control [nzXs]="24" [nzSm]="12">
+          <button nz-button nzType="dashed" class="add-button" 
+          *ngIf="user?.correspondenceCode?.code !=='LEGISLATION_SECTION'" (click)="addAgendaType()">
+            <i nz-icon nzType="plus"></i>
+            {{ "committee.meetingdetails.addnewagendatype" | translate}}
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <!-- <label nz-checkbox formControlName="checked"
+      (ngModelChange)="committeCheck($event)"> {{ "committee.meeting.joinmeeting" | translate}}</label> -->
+      <nz-form-label >{{ "committee.meeting.joinmeeting" | translate}}</nz-form-label >
+    </div>
+    <div class="col-md-9">
+      <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="validateForm.value.checked"></i>
+        <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!validateForm.value.checked"></i>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+
+      <nz-form-label [nzSm]="24" [nzXs]="24">{{ "Committees" | translate}}</nz-form-label>
+    </div>
+  </div>
+  <!-- <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="Add a Committee">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Select a Committee" formControlName="addCommitte">
+            <nz-option *ngFor="let committee of committeeList" [nzValue]="committee" [nzLabel]="committee.subjectName">
+            </nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <button nz-button nzType="default" class="add-button" [disabled]="this.validateForm.value.addCommitte === null"
+        (click)="addCommittee()">
+        <i nz-icon nzType="plus"></i>
+        {{ "Add Committee" | translate}}
+      </button>
+    </div>
+  </div> -->
+  <div class="row" *ngFor="let committee of selectedCommittee;let i=index">
+    <div class="col-md-12">
+      {{ i===0?committee.subject.subjectName+'(Main Committee)':committee.subject.subjectName | titlecase }} 
+      <!-- <i nz-icon nzType="delete" class="dynamic-delete-button float-right"
+        (click)="removeCommittee(committee.id)"></i> -->
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <nz-form-label >{{ "Follow Up Meeting?" | translate}}</nz-form-label>
+    </div>
+    <div class="col-md-8">
+      <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="validateForm.value.followUpMeeting"></i>
+        <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!validateForm.value.followUpMeeting"></i>
+    </div>
+  </div>
+  <div class="row" *ngIf="validateForm.value.followUpMeeting">
+    <div class="col-md-12">
+      <label nz-checkbox formControlName="evidenceTaking" class="evidenceStyle">{{ "Evidence Taking Meeting" | translate}}</label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label [nzSm]="24" [nzXs]="24">{{ "committee.meeting.meetingtittle" | translate}}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.givemeetingtitle" | translate}}'>
+          <input nz-input placeholder='{{ "committee.meeting.meetingtittle" | translate}}' formControlName="meetingTittle" />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label [nzSm]="24" [nzXs]="24">{{"committee.meeting.meetingagenda"|translate}}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"committee.meetingdetails.pleasegivemeetingagenda"|translate}}'>
+          <textarea nz-input placeholder='{{"committee.meeting.meetingagenda"|translate}}' formControlName="meetingAgenda"
+            [nzAutosize]="{ minRows: 3, maxRows: 6 }"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-label>{{"business-dashboard.question.questionlist.session" | translate}}</nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-label>{{"committee.meetingdetails.suggesteddate" | translate}}</nz-form-label>
+    </div>
+    <div class="col-md-3">
+      <nz-form-label>{{"committee.meetingdetails.suggestedtime" | translate}}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"cpl.docupload.selsession" | translate}}'>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{"cpl.docupload.selsession" | translate}}' formControlName="sessionType">
+            <nz-option nzValue="COMMITTEE_MEETING_AFTER_SESSION" nzLabel="COMMITTEE MEETING AFTER SESSION"></nz-option>
+            <nz-option nzValue="COMMITTEE_MEETING_BEFORE_SESSION" nzLabel="COMMITTEE MEETING BEFORE SESSION"></nz-option>
+            <nz-option nzValue="COMMITTEE_MEETING_NON_SESSION" nzLabel="COMMITTEE MEETING NON SESSION"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-3">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"business-dashboard.question.questioncreate.placehldqdate" | translate}}'>
+          <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="sessionDate" [nzDisabledDate]="disabledDate">
+          </nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-3">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{"committee.meetingdetails.selecttime" | translate}}'>
+          <nz-time-picker formControlName="sessionTime" [nzUse12Hours]="true" nzFormat="h:mm a"></nz-time-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label [nzSm]="24" [nzXs]="24">{{ "committee.meeting.venue" | translate}}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectavenue" | translate}}'>
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder='{{ "committee.meetingdetails.selectavenue" | translate}}' formControlName="venueType">
+            <nz-option *ngFor="let data of typesofVenues" [nzValue]="data.id" [nzLabel]="data.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-label [nzSm]="24" [nzXs]="24">{{ "committee.meeting.reportre" | translate}}</nz-form-label>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <nz-form-item>
+        <nz-form-control [nzSm]="12" [nzXs]="24" nzErrorTip='{{ "committee.meetingdetails.selectreportdate" | translate}}'>
+          <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="reportDate" [nzDisabledDate]="disabledDate">
+          </nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button nz-button [nzType]="'default'" (click)="closePopup()" class="mr-6"><span>{{ "business-dashboard.question.cancel" | translate}}</span></button>
+      <button nz-button [nzType]="'primary'" (click)="createmeetings()"><span>{{ "committee.meetingdetails.createmeeting" | translate}}</span></button>
+    </div>
+  </div>
+</form>

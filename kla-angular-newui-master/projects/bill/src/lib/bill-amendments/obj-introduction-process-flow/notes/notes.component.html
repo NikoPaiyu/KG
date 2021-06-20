@@ -1,0 +1,71 @@
+<div>
+    <div class="overflow-blt">
+      <div *ngFor="let note of notesInfo.notes; let i = index" class="input-group brdr_nt"
+        [ngClass]="{ yellowColor: note.temporary == true }">
+        <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+          <div class="col-md-6 pl0">
+            <b class="width-100 fl marginbtm-5">{{
+              note?.owner?.details?.fullName
+            }}</b>
+            <span class="width-100 fl">{{ note?.owner?.roles[0]?.roleName }}</span>
+          </div>
+          <div class="col-md-6 d-flex justify-content-between">
+            <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+            <span>|</span>
+            <span>{{ note.updatedDate | date: "dd/MM/yyyy" }}</span>
+          </div>
+        </div>
+        <div *ngIf="!note.isEdit; else editNotes" class="width-100 marginbtm-15">
+          {{ note.note }}
+        </div>
+        <ng-template #editNotes>
+          <input type="text" nzSize="large" nz-input [(ngModel)]="note.note" name="editedNote" nz-input
+            placeholder='{{ "business-dashboard.question.typeyourcomments&notes" | translate }}' />
+  
+          <!-- <div class="btn-notes">
+            <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid">
+              <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+              <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+            </nz-radio-group>
+          </div> -->
+        </ng-template>
+        <ng-container>
+          <div class="fl width-100">
+            <a *ngIf="note.isEdit; else addNote" class="mr-6" (click)="updateNote(note)">{{ "cpl.docupload.update" | translate }}</a>
+            <ng-template #addNote><a class="mr-6"
+              *ngIf = "notesInfo.status === 'SUBMITTED' && note.owner.userId==this.userId && latestNote.id == note.id && assignee == this.userId"
+               (click)="editNote(note)">{{ "noticeprocessing.noticeprocess.edit" | translate }}</a></ng-template>
+            &nbsp;&nbsp; &nbsp;&nbsp;
+            <a nz-popconfirm nzPopconfirmTitle='{{ "bill.bill-clause.list.douwantdeletethisnote" | translate }}' (nzOnConfirm)="deleteNote(note.id)"
+            *ngIf =  "notesInfo.status === 'SUBMITTED' && note.owner.userId==this.userId && latestNote.id == note.id && assignee == this.userId"
+              nzPopconfirmPlacement="bottomLeft">{{ "bussiness-dashboard.user-managemnet.biometric-enrollment.delete" | translate }}</a>
+            <span class="note_num">{{ note.noteNumber }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <div class="row grey-border" *ngIf = "notesInfo.status === 'SUBMITTED' &&  assignee == userId">
+    <div class="width-100 d-flex bg_txtarea">
+      <div class="col-md-10">
+        <textarea
+          class="textarea_nt"
+          placeholder='{{ "business-dashboard.notice-proc.enternotehere" | translate }}'
+          nz-input
+          [(ngModel)]="newNote"
+          ></textarea>
+        <!-- <input class="textarea_nt" placeholder="" nz-input [(ngModel)]="newNote" /> -->
+      </div>
+      <div class="col-md-2">
+        <!-- <div class="btn-notes d-flex align-items-center justify-content-end flexwrap">
+          <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid" class="d-flex">
+            <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+            <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+          </nz-radio-group>
+        </div> -->
+        <button nz-button [nzType]="'default'" class="save_btn" (click)="saveNote()" [disabled]="!newNote">
+          {{ "business-dashboard.question.save" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>

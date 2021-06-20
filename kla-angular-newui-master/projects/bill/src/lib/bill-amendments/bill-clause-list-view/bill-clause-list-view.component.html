@@ -1,0 +1,154 @@
+<div class="list-holder bil_clause">
+  <ng-container>
+    <div class="row  d-flex justify-content-space-between">
+      <div class="col-md-12">
+        <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4"></div>
+          <div class="col-md-3"></div>
+          <div class="col-md-1">List:{{ isList3 }}{{ isList2 }}{{ list }}</div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-align-center">
+            <div class="header-content">
+              <p>
+                {{ assemblyValue }}-ാം കേരള നിയമസഭ
+              </p>
+              <p>
+              {{ sessionValue }}-ാം സമ്മേളനം
+              </p>
+              <p>
+                സബ്‌ജക്‌ട് കമ്മിറ്റി റിപ്പോർട്ട് ചെയ്‌ത പ്രകാരമുള്ള 2018 -
+                  ലെ
+              </p>
+              <p>
+              {{ billTitle }} (ഭേദഗതി)
+              </p>
+              <span *ngIf="list === 'List 3' || isList3 == true"
+                ><p>ബില്ലിനുള്ള ഔദ്യോഗിക ഭേദഗതി</p></span
+              >
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row mr-top marginbtm-25">
+                    <div class="col-md-12" style="padding-top: 20px;">
+                        {{billTitle}}
+                    </div>
+                </div> -->
+        <!-- <div class="row" style="padding: 20px;" *ngFor="let item of bilClauseAmendmentResponse"> -->
+        <ngx-nestable
+          [(list)]="bilClauseAmendmentResponse"
+          [template]="itemTemplate"
+        >
+        </ngx-nestable>
+        <ng-template #itemTemplate let-row>
+          <div class="row width-100">
+            <div class="col-md-12 marginbtm-10">
+              <strong
+                style="
+                  font-size: 19px;
+                  margin-top: 10px;
+                  float: left;
+                  width: 100%;
+                "
+                >{{ row.item.memberNameMl }} : </strong
+              >
+            </div>
+            <div class="col-md-12">
+              <div class="row">
+                <div
+                  class="col-md-2"
+                  *ngIf="list === 'List 2' || isList2 === true"
+                >
+                  <p>{{ row.item.list2level }}</p>
+                </div>
+                <div
+                  class="col-md-2"
+                  *ngIf="list === 'List 3' || isList3 === true"
+                >
+                  <p>{{ row.item.list3level }}</p>
+                </div>
+                <div class="col-md-8">
+                  <p style="padding-left: 25px;">{{ row.item.content }}</p>
+                </div>
+                <div
+                  class="col-md-2 d-flex justify-content-end"
+                  *ngIf="conformButton"
+                >
+                  <i
+                    nz-icon
+                    nzType="drag"
+                    class="baseline"
+                    nzTheme="outline"
+                    [ngxNestableDragHandle]="row"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+        <div class="row d-flex justify-content-space-between">
+          <div class="col-md-6">
+            <p>കേരള നിയമസഭാ സെക്രട്ടേറിയറ്റ് <br>
+              തിരുവനന്തപുരം
+            </p>
+           
+            <!-- <p>{{ formatDate("bilClauseAmendmentResponse.createdDate") }}</p> -->
+          </div>
+          <div class="col-md-6">
+            <p style="text-align: right;">എസ് വി ഉണ്ണികൃഷ്ണൻ നായർ<br>
+              സെക്രെട്ടറി </p>
+            <!-- <p>{{ details?.approvedByMal }}</p>
+                              <p>{{details?.approverRoleMl}}</p> -->
+          </div>
+        </div>
+        <!-- </div> -->
+        <div class="row mr-top" *ngIf="!isFileView">
+          <div
+            class="col-md-12 d-flex justify-content-end"
+            *ngIf="totalClauseResponse"
+          >
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              *ngIf="!totalClauseResponse?.list2Id"
+              nz-popconfirm
+              nzPopconfirmTitle="Do you want to confirm list 2 ?"
+              (nzOnConfirm)="createClauseList(2)"
+            >
+              {{ "bill.bill-clause.list.conformlist2" | translate }}</button
+            >&nbsp;
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              *ngIf="
+                !totalClauseResponse.list3Id &&
+                totalClauseResponse.list2status == 'PUBLISHED' &&
+                totalClauseResponse.list3CanbeGenerated &&
+                conformButton
+              "
+              nz-popconfirm
+              nzPopconfirmTitle="Do you want to confirm list 3 ?"
+              (nzOnConfirm)="createClauseList(3)"
+            >
+              {{ "bill.bill-clause.list.conformlist3" | translate }}</button
+            >&nbsp;
+            <button
+              type="button"
+              nz-button
+              nzType="primary"
+              (click)="closeList()"
+              *ngIf="
+                !totalClauseResponse?.list2Id || !totalClauseResponse?.list3Id
+              "
+            >
+              {{ "cpl.correspondencelist.cancel" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

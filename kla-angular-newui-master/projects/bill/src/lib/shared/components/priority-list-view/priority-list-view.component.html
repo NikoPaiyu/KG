@@ -1,0 +1,92 @@
+<form nz-form class="form" *ngIf="priorityListResponse">
+  <div class="row">
+    <ng-template #errorTpl let-control> </ng-template>
+    <div class="col-md-4 mrgB20">
+      <nz-form-item
+        >{{ "bill.prioritylist.listing.assembly" | translate }}:{{
+          priorityListResponse.assemblyValue
+        }}
+      </nz-form-item>
+    </div>
+    <div class="col-md-4 mrgB20">
+      <nz-form-item
+        >{{ "bill.prioritylist.listing.session" | translate }}:
+        {{ priorityListResponse.sessionValue }}
+      </nz-form-item>
+    </div>
+
+    <div
+      class="col-md-4 mrgB20"
+      *ngIf="currentAssignee && priorityListResponse.status != 'APPROVED'"
+    >
+      <nz-form-item>
+        <button nz-button nzType="default" (click)="ReOrderClick()">
+          Edit
+        </button>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12 mrgB20" *ngIf="priorityListResponse.header">
+      <nz-form-item class="border">
+        <nz-form-control>
+          <ckeditor
+            [editor]="Editor"
+            [disabled]="true"
+            [(ngModel)]="priorityListResponse.header"
+            name="myckeditor"
+            [config]="ckeConfig"
+            debounce="500"
+          >
+          </ckeditor>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <ng-container
+    *ngFor="let item of priorityListResponse.categorys; let i = index"
+  >
+  <!-- <ng-container *ngIf="item.priorityList && item.priorityList.length > 0"> -->
+    <div class="row mrgB20">
+      <div class="col-md-12">
+        <strong>{{ romanize(i + 1) }}{{ ". " }}{{ item.description }}</strong>
+      </div>
+    </div>
+    <div class="row mrgB20">
+      <ng-container *ngFor="let row of item.priorityList; let j = index">
+        <div class="col-md-12">
+          <div class="col-md-12" id="{{ row.billId }}">
+            <div class="row">
+              <div class="col-md-1 border">
+                <span>{{ j + 1 }}</span>
+              </div>
+              <div class="col-md-11 border">
+                <span>{{ row.billTitle ? row.billTitle : row.id }}</span>
+                <span class="mrgL6" *ngIf="row?.item?.bill?.ordinance && item?.code == 'BILLS_TO_REPLACE_ORDINANCES'">({{
+                  row?.item?.bill?.ordinanceNumber ? row?.item?.bill?.ordinanceNumber : null
+                }}  th number Ordinance Replacement Bill)</span>
+                <span class="mrgL6" *ngIf="row?.item?.bill?.billNumber && item?.code !== 'BILLS_TO_REPLACE_ORDINANCES'">
+                    (Bill No: {{
+                  row?.item?.bill?.billNumber ? row?.item?.bill?.billNumber : null
+                }})</span> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <div
+        class="col-md-12"
+        *ngIf="item.priorityList && item.priorityList.length <= 0"
+      >
+        <div class="col-md-12 border empty">
+          <div class="row padding5">
+            <div class="col-md-12">
+              <span>{{ "NIL" }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- </ng-container> -->
+  </ng-container>
+</form>

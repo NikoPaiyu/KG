@@ -1,0 +1,281 @@
+<div>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{
+            "noticeprocessing.noticetemplate.createnoticetemplate.noticetemplate"
+              | translate
+          }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{ "noticeprocessing.noticetemplate.createnoticetemplate" | translate }}
+      </h2>
+    </div>
+    <div class="col-md-6 text-align-right">
+      <button nz-button nzType="primary" class="mrgL6" (click)="backToList()">
+        {{ "noticeprocessing.notice.versions.back" | translate }}
+      </button>
+      <button nz-button nzType="default" class="mrgL6" (click)="submit.click()">
+        {{
+          "noticeprocessing.noticetemplate.createtemplate.savetemplate"
+            | translate
+        }}
+      </button>
+     
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <form
+    name="noticeTemplateForm"
+    [formGroup]="noticeTemplateForm"
+    (ngSubmit)="saveTemplate(1)"
+  >
+    <nz-form-item nzFlex class="margntp-25">
+      <nz-form-label [nzSpan]="4" nzFor="name">{{
+        "noticeprocessing.noticetemplate.createtemplate.templatename"
+          | translate
+      }}</nz-form-label>
+      <nz-form-control [nzSpan]="8" nzHasFeedback [nzErrorTip]="errorTpl">
+        <input
+          nz-input
+          placeholder="{{
+            'noticeprocessing.noticetemplate.createtemplate.nameoftemplate'
+              | translate
+          }}"
+          formControlName="name"
+          id="templateName"
+        />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">
+            {{
+              "noticeprocessing.noticetemplate.createtemplate.input" | translate
+            }}
+          </ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="margntp-25">
+      <nz-form-label [nzSpan]="4">{{
+        "noticeprocessing.noticetemplate.createtemplate.startingpoint"
+          | translate
+      }}</nz-form-label>
+      <nz-form-control [nzSpan]="8" nzHasFeedback [nzErrorTip]="errorTpl">
+        <nz-select nzAllowClear formControlName="workflowId">
+          <nz-option
+            *ngFor="let item of allworkflow"
+            [nzValue]="item.id"
+            [nzLabel]="item.name"
+          >
+            <ng-template #errorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">
+                {{
+                  "noticeprocessing.noticetemplate.createtemplate.input"
+                    | translate
+                }}
+              </ng-container>
+            </ng-template>
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="margntp-25">
+      <nz-form-label [nzSpan]="4">{{
+        "noticeprocessing.noticetemplate.createtemplate.category" | translate
+      }}</nz-form-label>
+      <nz-form-control [nzSpan]="8" nzHasFeedback [nzErrorTip]="errorTpl">
+        <nz-select nzAllowClear formControlName="categoryId">
+          <nz-option
+            *ngFor="let item of templateCategories"
+            [nzValue]="item.id"
+            [nzLabel]="item.categoryName"
+          >
+            <ng-template #errorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">
+                {{
+                  "noticeprocessing.noticetemplate.createtemplate.input"
+                    | translate
+                }}
+              </ng-container>
+            </ng-template>
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item class="margntp-25">
+      <nz-form-label [nzSpan]="4">{{
+        "noticeprocessing.noticetemplate.createtemplate.rule" | translate
+      }}</nz-form-label>
+      <nz-form-control [nzSpan]="8" nzHasFeedback [nzErrorTip]="errorTpl">
+        <nz-select nzAllowClear formControlName="ruleId">
+          <nz-option
+            *ngFor="let item of allrules"
+            [nzValue]="item.id"
+            [nzLabel]="item.code"
+          >
+            <ng-template #errorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">
+                {{
+                  "noticeprocessing.noticetemplate.createtemplate.input"
+                    | translate
+                }}
+              </ng-container>
+            </ng-template>
+          </nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <div
+      class="margntp-25"
+      [class.disablediv]="
+        noticeTemplateForm.get('name').value.length < 1 ||
+        noticeTemplateForm.get('categoryId').value < 1
+      "
+    >
+      <nz-tabset>
+        <nz-tab [nzTitle]="inputVar">
+          <ng-template #inputVar>{{
+            "noticeprocessing.noticeprocess.noticevariable" | translate
+          }}</ng-template>
+          <ng-container formArrayName="templateInputs">
+            <nz-form-item
+              *ngFor="let obj of getControls(); index as i; last as l"
+              [formGroupName]="i"
+              class="mrgT10"
+            >
+              <nz-form-label [nzSpan]="1">#{{ i + 1 }}</nz-form-label>
+              <nz-form-label [nzSpan]="4">{{
+                "noticeprocessing.noticetemplate.createtemplate.inputlabel"
+                  | translate
+              }}</nz-form-label>
+              <nz-form-control
+                [nzSpan]="6"
+                nzHasFeedback
+                [nzErrorTip]="errorTpl"
+              >
+                <input
+                  [attr.disabled]="!l ? '' : null"
+                  nz-input
+                  type="text"
+                  name=""
+                  formControlName="label"
+                />
+                <ng-template #errorTpl let-control>
+                  <ng-container *ngIf="control.hasError('required')">
+                    {{
+                      "noticeprocessing.noticetemplate.createtemplate.input"
+                        | translate
+                    }}
+                  </ng-container>
+                </ng-template>
+              </nz-form-control>
+              <nz-form-label [nzSpan]="4" class="padng-lft">{{
+                "noticeprocessing.noticetemplate.createtemplate.variablename"
+                  | translate
+              }}</nz-form-label>
+              <nz-form-control
+                [nzSpan]="6"
+                nzHasFeedback
+                [nzErrorTip]="errorTpl"
+              >
+                <nz-select
+                  nzAllowClear
+                  formControlName="inputTypeId"
+                  [nzDisabled]="!l ? true : false"
+                >
+                  <nz-option
+                    nzPlaceHolder="member dropdown"
+                    *ngFor="let item of templateInputTypes"
+                    [nzValue]="item.id"
+                    [nzLabel]="item.name"
+                  >
+                    <ng-template #errorTpl let-control>
+                      <ng-container *ngIf="control.hasError('required')">
+                        {{
+                          "noticeprocessing.noticetemplate.createtemplate.input"
+                            | translate
+                        }}
+                      </ng-container>
+                    </ng-template>
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+              <nz-form-control [nzSpan]="3" class="d-flex justify-content-end">
+                <button
+                  *ngIf="!l"
+                  nz-popconfirm
+                  nzPopconfirmTitle="Are you sure you want to remove?"
+                  (nzOnConfirm)="removeInputTypes(i)"
+                  type="button"
+                  class="mrgL10 btn-style"
+                >
+                  {{
+                    "noticeprocessing.noticetemplate.createtemplate.remove"
+                      | translate
+                  }}
+                </button>
+                <button
+                  class="mrgL10"
+                  *ngIf="l"
+                  nz-button
+                  nzType="default"
+                  type="button"
+                  (click)="AddData(noticeTemplateForm.controls.templateInputs)"
+                >
+                  +
+                </button>
+              </nz-form-control>
+            </nz-form-item>
+          </ng-container>
+        </nz-tab>
+        <nz-tab [nzTitle]="noticeDesign">
+          <ng-template #noticeDesign>{{
+            "noticeprocessing.noticeprocess.noticedesign" | translate
+          }}</ng-template>
+          <div class="row">
+            <div class="col-md-9">
+              <quill-editor
+                #editor
+                style="float: left;"
+                formControlName="templateData"
+                (onEditorCreated)="SaveEditorInstance($event)"
+                (onEditorChanged)="SetCurrentIndex()"
+                html="html"
+                (onContentChanged)="setContentHtml($event)"
+                [sanitize]="false"
+                [styles]="{ height: '250px', width: '800px' }"
+              ></quill-editor>
+            </div>
+            <div class="col-md-3">
+              <div class="options_template">
+                <!-- <h3>User defined</h3> -->
+                <ul>
+                  <li *ngFor="let item of filterInputTypes()">
+                    <button
+                      *ngIf="item.id"
+                      type="button"
+                      (click)="addContent(item.label)"
+                    >
+                      {{ item.label }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <input type="submit" [hidden]="true" #submit />
+  </form>
+</div>

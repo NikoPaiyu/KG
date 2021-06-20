@@ -1,0 +1,11 @@
+<!-- <button (click)="openPdf()">Open Pdf</button> -->
+<div class="frame-pdf">
+  <ng2-pdfjs-viewer
+    #pdfViewerOnDemand
+    scroll="H"
+    [downloadFileName]="'mytestfile.pdf'"
+    [openFile]="false"
+    [viewBookmark]="false"
+    [download]="false"
+  ></ng2-pdfjs-viewer>
+</div>

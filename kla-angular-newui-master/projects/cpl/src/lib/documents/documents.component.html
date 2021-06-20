@@ -1,0 +1,2782 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"cpl.documents.documents" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{"cpl.documents.documents" | translate}}</h2>
+  </div>
+  <div class="col-md-6 txt-align-R">
+    <button
+      nz-button
+      [nzType]="'primary'"
+      class="float-right"
+      (click)="regpage()"
+      *ngIf="cplTabs.documents && !actRegistration"
+    >
+      {{"cpl.documents.docregistration" | translate}}
+    </button>
+    <button
+      nz-button
+      [nzType]="'primary'"
+      class="float-right primary-button button-admin-radius button-font"
+      (click)="regpage()"
+      *ngIf="actRegistration"
+    >
+      {{"cpl.documents.actregistration" | translate}}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<nz-tabset [(nzSelectedIndex)]="tabIndex">
+  <nz-tab
+    nzTitle='{{ returnTabTitle() | translate}}'
+    (nzClick)="getAssemblyAndSession();getDoCList();clearFilter();clearSearch()"
+    *ngIf="tabShow && cplTabs.docsforaction"
+  >
+    <div class="row marginbtm-15">
+      <div class="col-md-2 d-flex align-items-center whitespace">
+        {{"cpl.docupload.assembly" | translate}}
+        <nz-select
+          nzAllowClear
+          nzPlaceHolder=""
+          name="assemblyId"
+          [(ngModel)]="assemblyId"
+          (ngModelChange)="getDoCList()"
+        >
+          <nz-option
+            *ngFor="let item of assemblyList"
+            [nzLabel]="item.assemblyId"
+            [nzValue]="item.id"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-2 d-flex align-items-center whitespace">
+        {{"cpl.docupload.session" | translate}}
+        <nz-select
+          nzAllowClear
+          nzPlaceHolder=""
+          name="sessionId"
+          [(ngModel)]="sessionId"
+          (ngModelChange)="getDoCList()"
+        >
+          <nz-option
+            *ngFor="let item of sessionList"
+            [nzLabel]="item.sessionId"
+            [nzValue]="item.id"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-3">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">{{"cpl.actregistration.doctype" | translate}}:</div>
+          <div class="col-md-7">
+            <nz-form-item>
+              <nz-form-control nzErrorTip='{{"cpl.templatecreate.selecttype" | translate}}'>
+                <nz-select
+                  nzRequired
+                  nzShowSearch
+                  nzAllowClear
+                  nzPlaceHolder=""
+                  [(ngModel)]="deptDocType"
+                  (ngModelChange)="subDoc=null;getDoCList()"
+                >
+                  <nz-option
+                    *ngFor="let doc of docType"
+                    [nzLabel]="doc"
+                    [nzValue]="doc"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <button
+          class="plus-arrange"
+          nz-button
+          [nzType]="'primary'"
+          (click)="showFilterModal()"
+        >
+          <i nz-icon nzType="plus"></i>
+        </button>
+      </div>
+      <nz-modal
+        [(nzVisible)]="showDocFilterModal"
+        nzTitle='{{"business-dashboard.cpl.documents.filtercoloums" | translate}}'
+        (nzOnCancel)="_hideFilter()"
+        (nzOnOk)="_showDocFilter()"
+      >
+        <div class="width-100 pading-all">
+          <div class="row">
+            <div class="col-md-12">
+              <p
+                *ngFor="let box of filterDocCheckboxes; let i = index"
+                class="checkbox-style"
+              >
+                <label
+                  *ngIf="i < 6"
+                  nz-checkbox
+                  name="checkbox{{ i }}"
+                  (ngModelChange)="_chooseFilter(box)"
+                  [(ngModel)]="box.checked"
+                  >{{ box.label }}</label
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+      <div class="col-md-1 d-flex justify-content-end">
+        <button
+          nz-button
+          nzType="default"
+          (click)="clearFilter();clearFilter();clearSearch()"
+          (keyup.enter)="doNothing()"
+        >
+          {{"cpl.documents.clearfilter" | translate}}
+        </button>
+      </div>
+      <div class="col-md-3 d-flex align-items-center">
+        <nz-input-group [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            name="search"
+            [(ngModel)]="searchDoc"
+            (ngModelChange)="filterDoc()"
+            nz-input
+            placeholder='{{"cpl.registration.searchhere" | translate }}'
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <div class="row fltr">
+      <div class="col-md-4">
+        <nz-form-item *ngIf="deptDocType === 'REPORT'">
+          <nz-form-control nzErrorTip='{{"cpl.cplview.enteDocType" | translate}}'>
+            <div class="row">
+              <div class="col-md-6">
+                <nz-form-label>{{"cpl.documents.docsubtype" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-6">
+                <nz-select
+                  nzShowSearch
+                  nzAllowClear
+                  [(ngModel)]="subDoc"
+                  (ngModelChange)="getDoCList()"
+                >
+                  <nz-option
+                    *ngFor="let type of docSubType"
+                    nzLabel="{{ type?.replace('_', ' ') }}"
+                    [nzValue]="type"
+                  ></nz-option>
+                </nz-select>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row fltr">
+      <div class="col-md-4" *ngIf="disableCurNum">
+        <div class="row align-items-center">
+          <div class="col-md-3 d-flex align-items-center whitespace">
+            {{"cpl.documents.currentfileno"| translate}}.
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.currentNumber"
+              name="filenum"
+              (ngModelChange)="searchDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let num of cNo"
+                [nzLabel]="num"
+                [nzValue]="num"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(1)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableDocTitle">
+        <div class="row align-items-center">
+          <div class="col-md-4 d-flex align-items-center whitespace">
+            {{"cpl.documents.documenttitle"| translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.typeName"
+              name="filesub"
+              (ngModelChange)="searchDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let title of docTitle"
+                [nzLabel]="title"
+                [nzValue]="title"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(2)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4" *ngIf="disableFileNum">
+        <div class="row align-items-center">
+          <div class="col-md-3 wordbreak">
+            {{"cpl.docamendments.fileno" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.regFileNumber"
+              name="status"
+              (ngModelChange)="searchDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let num of docfileNum"
+                [nzLabel]="num"
+                [nzValue]="num"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(3)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableDelay">
+        <div class="row align-items-center">
+          <div class="col-md-4 wordbreak">
+            {{"cpl.fileworkflow.delaystatement" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.delayStatus"
+              name="subtype"
+              (ngModelChange)="searchDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let stat of delayStat"
+                [nzLabel]="stat"
+                [nzValue]="stat"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(4)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableStatus">
+        <div class="row align-items-center">
+          <div class="col-md-1.5 wordbreak">
+            {{ "cpl.docamendments.status" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.status"
+              name="regdate"
+              (ngModelChange)="searchDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let stat of docstatus"
+                [nzLabel]="stat"
+                [nzValue]="stat"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(5)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+ <div class="row">
+   <div class="col-md-12 d-flex justify-content-end">
+    <a
+    class="d-flex align-items-center ant-btn"
+    nzType="default"
+    nz-dropdown
+    nzTrigger="click"
+    [nzDropdownMenu]="menu"
+  >
+    <i nz-icon nzType="layout" nzTheme="outline" class="margnrt-5"></i>
+    <span>{{"cpl.documents.cols" | translate}}</span>
+  </a>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <div>
+      <ul
+        nz-menu
+        fileTable
+        class="checkbox-style"
+      >
+      <!-- [nzDisabled] = "disableCheckbox" -->
+      <!-- class="checkbox-style" -->
+        <li class="chck_pd"  *ngFor="let box of checkboxes; let i = index">
+          <label nz-checkbox 
+          [nzDisabled]="box.disable" 
+          [(ngModel)]="box.check" name="i" 
+          (ngModelChange)="disableCheckBoxes()">{{
+            box.label
+          }}</label>
+        </li>
+      </ul>
+    </div>
+  </nz-dropdown-menu>
+   </div>
+ </div>
+
+    <nz-table
+      #docTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="listOfDoc"
+      (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+      class="table-all"
+      [nzTotal]="6"
+      nzServerRender="true"
+    >
+      <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+        <tr>
+          <th
+            nzShowCheckbox
+            [nzChecked]="checked"
+            [nzDisabled]="true"
+            [nzIndeterminate]="indeterminate"
+            (nzCheckedChange)="onAllChecked($event)"
+            *ngIf="!cplTabs.department && cplTabs.documents && !actRegistration"
+          ></th>
+          <th *ngIf="checkboxes[0].check">
+            {{"cpl.documents.currno" | translate}}
+          </th>
+          <th *ngIf="checkboxes[1].check" nzShowSort nzSortKey="typeName">
+            {{"cpl.documents.documenttitle" | translate}}
+          </th>
+          <th *ngIf="checkboxes[2].check" nzShowSort nzSortKey="docType">
+            {{"cpl.actregistration.doctype" | translate}}
+          </th>
+          <th *ngIf="checkboxes[3].check" nzShowSort nzSortKey="fileNumber">
+            {{"cpl.docamendments.fileno" | translate}}
+          </th>
+          <th *ngIf="checkboxes[4].check" nzShowSort nzSortKey="dateOfReg">
+            {{"cpl.documents.submissiondate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[5].check">
+            {{"cpl.cplview.laiddate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[6].check">
+            {{"cpl.documents.delaystatementorstatementbyminister" | translate}}
+          </th>
+          <!-- <th  *ngIf="checkboxes[5].check" nzShowFilter [nzFilters]="filterStatus" (nzFilterChange)="filter($event)"> -->
+          <th *ngIf="checkboxes[7].check">
+            {{"cpl.docamendments.status" | translate}}
+          </th>
+          <th *ngIf="checkboxes[8].check">
+            {{"cpl.documents.portfolio" | translate}}
+          </th>
+          <th *ngIf="checkboxes[9].check">
+            {{"cpl.documents.ministerdepartment" | translate}}
+          </th>
+          <th *ngIf="checkboxes[17].check">
+            {{"cpl.cplview.subject"| translate}}
+          </th>
+          <th *ngIf="checkboxes[10].check">
+            {{"cpl.documents.gazettepublishdate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[11].check">
+            {{"cpl.documents.godate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[12].check">
+            {{"cpl.documents.gonumber" | translate}}
+          </th>
+          <th *ngIf="checkboxes[13].check">
+            {{"cpl.documents.documentnumber" | translate}}
+          </th>
+          <th *ngIf="checkboxes[14].check">
+            {{ "cpl.documents.acttype" | translate}}
+          </th>
+          <th *ngIf="checkboxes[15].check">
+            {{"cpl.actregistration.actname" | translate}}
+          </th>
+          <th *ngIf="checkboxes[16].check">
+            {{"cpl.documents.departmentfilenumber" | translate}}
+          </th>
+         
+        </tr>
+      </thead>
+      <tr *ngIf="setOfCheckedId.size !== 0">
+        <th colspan="2">
+          <span>{{ setOfCheckedId.size }} {{"cpl.documents.selected" | translate}}</span>
+        </th>
+        <th colspan="7">
+          <button
+            (click)="showAttachModal(); getFileForPortfolio()"
+            nz-button
+            [nzType]="'default'"
+            class="mr-6 secondary-button button-admin-radius button-font dark-border dark-font"
+          >
+            {{"cpl.cplview.createattachtofile" | translate}}
+          </button>
+          <!-- <button nz-button [nzType]="'default'" class="mr-6" (click)="showAssignModal()">Assign to task</button> -->
+        </th>
+        <nz-modal
+          [(nzVisible)]="isAttachVisible"
+          [nzFooter]="null"
+          [nzClosable]="false"
+        >
+          <div class="width-100 pading-all">
+            <div class="row">
+              <div class="col-md-12">
+                <nz-tabset>
+                  <nz-tab nzTitle='{{"cpl.documents.createfile" | translate}}'>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-12">
+                        <nz-radio-group
+                          [(ngModel)]="fileNumType"
+                          (ngModelChange)="fileNum()"
+                        >
+                          <label nz-radio nzValue="true">{{"cpl.documents.currentfilenumber" | translate}}</label>
+                          <label nz-radio nzValue="false">{{"cpl.documents.arisingfile" | translate}}</label>
+                        </nz-radio-group>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-3">
+                        <nz-select
+                          [(ngModel)]="currentNum"
+                          *ngIf="fileNumType === 'true'"
+                        >
+                          <nz-option
+                            *ngFor="let num of currentNumOption"
+                            [nzValue]="num"
+                            [nzLabel]="num"
+                          ></nz-option>
+                        </nz-select>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15 align-items-center">
+                      <div class="col-md-4">
+                        {{"cpl.docamendments.filesubject" | translate}}
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          nz-input
+                          placeholder='{{"cpl.docupload.entersubject" | translate}}'
+                          [(ngModel)]="fileSub"
+                        />
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-2">
+                        {{"cpl.docamendments.filepriority" | translate}}
+                      </div>
+                      <div class="col-md-10">
+                        <nz-radio-group [(ngModel)]="filePriority">
+                          <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                          <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                          <label nz-radio nzValue="ACTION_TODAY"
+                            >{{"cpl.docamendments.actiontoday" | translate}}</label
+                          >
+                          <label nz-radio nzValue="ASSEMBLY_URGENT"
+                            >{{"cpl.docamendments.assemblyurgent" | translate}}</label
+                          >
+                        </nz-radio-group>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-4">
+                        {{"cpl.docamendments.description" | translate}}
+                      </div>
+                      <div class="col-md-8">
+                        <textarea
+                          nz-input
+                          rows="2"
+                          placeholder='{{"business-dashboard.cpl.view.filesdescription" | translate}}'
+                          [(ngModel)]="fileDesc"
+                        ></textarea>
+                      </div>
+                    </div>
+                    <div class="row mrt-50 margnrtp-15">
+                      <div class="col-md-12 d-flex justify-content-end">
+                        <button
+                          type="button"
+                          nz-button
+                          nzType="default"
+                          class="secondary-button button-admin-radius button-font dark-border dark-font"
+                          (click)="handleCancel()"
+                        >
+                          {{"cpl.correspondencelist.cancel" | translate}}
+                        </button>
+                        <button
+                          type="button"
+                          [disabled]="
+                            fileSub === '' ||
+                            filePriority === null ||
+                            fileNumType === null
+                          "
+                          nz-button
+                          nzType="primary"
+                          (click)="createFile()"
+                          class="margnlft-15 primary-button button-admin-radius button-font"
+                        >
+                          {{"cpl.docamendments.create" | translate}}
+                        </button>
+                      </div>
+                    </div>
+                  </nz-tab>
+                  <nz-tab nzTitle='{{"cpl.documents.attachtofile" | translate}}'>
+                    <div class="row margnrtp-15 align-items-center">
+                      <div class="col-md-4">{{"cpl.documents.searchexistingfile" | translate}}</div>
+                      <div class="col-md-8">
+                        <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                          <input
+                            type="text"
+                            nz-input
+                            placeholder='{{"business-dashboard.cpl.view.inputfilesearch" | translate}}'
+                            nzSearch
+                            [(ngModel)]="searchPending"
+                            (ngModelChange)="onSearchPending()"
+                          />
+                        </nz-input-group>
+                        <ng-template #suffixButton>
+                          <button nz-button nzType="primary">{{"cpl.documents.search" | translate}}</button>
+                        </ng-template>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15" *ngIf="!hide">
+                      <div class="col-md-12 d-flex justify-content-end">
+                        <button
+                          nz-button
+                          nzType="default"
+                          class="secondary-button button-admin-radius button-font dark-border dark-font"
+                          (click)="hide = !hide"
+                        >
+                          {{"cpl.documents.advancedfilter" | translate}}
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15" *ngIf="hide">
+                      <div class="col-md-6">
+                        {{"cpl.documents.fileno" | translate}}
+                        <input
+                          nz-input
+                          placeholder='{{"business-dashboard.cpl.view.filenumber" | translate}}'
+                          [(ngModel)]="searchFileNum"
+                          (ngModelChange)="advancedSearch()"
+                        />
+                      </div>
+                      <div class="col-md-6">
+                        {{"cpl.docupload.subject" | translate}}
+                        <input
+                          nz-input
+                          placeholder='{{"business-dashboard.question.questionlist.subject" | translate}}'
+                          [(ngModel)]="searchFileSub"
+                          (ngModelChange)="advancedSearch()"
+                        />
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-12">
+                        <nz-card [nzTitle]="null" class="checklist-all">
+                          <nz-table
+                            #pendingFileTable
+                            [nzData]="fileForPortfolio"
+                          >
+                            <tbody>
+                              <tr *ngFor="let file of pendingFileTable.data">
+                                <td>
+                                  <nz-radio-group [(ngModel)]="radioValue" (ngModelChange)="onFileChecked(file.fileId, file)">
+                                    <label nz-radio [nzValue]="file.fileId" 
+                                  ></label>
+                                   </nz-radio-group>
+                                </td>
+                                <td>{{ file.fileNumber }}&nbsp;&nbsp;</td>
+                                <td>{{ file.subject }}</td>
+                              </tr>
+                            </tbody>
+                          </nz-table>
+                        </nz-card>
+                      </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                      <div class="col-md-12 d-flex justify-content-end">
+                        <button
+                          type="button"
+                          nz-button
+                          nzType="default"
+                          class="secondary-button button-admin-radius button-font dark-border dark-font"
+                          (click)="handleCancel()"
+                        >
+                          {{"cpl.correspondencelist.cancel" | translate}}
+                        </button>
+                        <button
+                          type="button"
+                          [disabled]="radioValue === null"
+                          nz-button
+                          nzType="primary"
+                          class="float-right primary-button button-admin-radius button-font"
+                          (click)="attachToFile()"
+                        >
+                          {{"cpl.documents.attachtofile" | translate}}
+                        </button>
+                      </div>
+                    </div>
+                  </nz-tab>
+                </nz-tabset>
+              </div>
+            </div>
+          </div>
+        </nz-modal>
+      </tr>
+      <tbody>
+        <tr
+          *ngFor="let list of docTable.data"
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          [nzPopoverContent]="contentTemplateDoc"
+          (click)="viewDocument(list.id, tabIndex)"
+        >
+          <ng-template #contentTemplateDoc>
+            <div>
+              <span class="sortable" (click)="viewDocument(list.id, tabIndex)">{{"cpl.docpreparion.view" | translate}}</span>
+              <a
+                href="javascript:;"
+                class="sortable"
+                *ngIf="list.status === 'LIST_APPROVED' && layPermission"
+                (click)="markAsLaid(list.id)"
+              >
+                | {{"cpl.documents.markaslaid" | translate}}</a
+              >
+            </div>
+          </ng-template>
+          <td
+            nzShowCheckbox
+            [nzChecked]="setOfCheckedId.has(list.id)"
+            *ngIf="cplTabs.documents && !cplTabs.department && !actRegistration"
+            (nzCheckedChange)="
+              onItemChecked(
+                list.id,
+                $event,
+                list.type,
+                list.subType,
+                list.portfolioId,
+                list.ministerDepartmentId,
+                list.assemblyId,
+                list.sessionId
+              )
+            "
+            [nzDisabled]="list.fileId !== null || list.type === 'ACT' || list.withdrawalFileNumber !== null
+            || list.status === 'WITHDRAW' || list.status === 'SECTION_SAVED'"
+          ></td>
+          <td *ngIf="checkboxes[0].check">
+            <a>{{ list.currentNumber }}</a>
+          </td>
+          <td *ngIf="checkboxes[1].check" class="break-word">
+            {{ list.typeName }}
+          </td>
+          <td *ngIf="checkboxes[2].check" class="break-word">
+            {{ list.type }}
+          </td>
+          <td *ngIf="checkboxes[3].check" class="break-word">
+            {{ list.regFileNumber }}
+          </td>
+          <td *ngIf="checkboxes[4].check" class="break-word">
+            {{ list.createdDate | date: "dd-MM-yyyy" }}
+          </td>
+          <td *ngIf="checkboxes[5].check" class="break-word">
+            {{ list.laidStartDate | date: "dd-MM-yyyy" }}
+          </td>
+          <td *ngIf="checkboxes[6].check" class="break-word">
+            <nz-tag *ngIf="list.type !== 'ORDINANCE'">{{ list.delayStatus?.replace("_", " ").replace("_", " ") }}</nz-tag>
+            <nz-tag *ngIf="list.type === 'ORDINANCE'">{{ list.isStatementAsPerRule? 'Yes' : 'No' }}</nz-tag>
+          </td>
+          <td *ngIf="checkboxes[7].check" class="break-word">
+            <nz-tag [nzColor]="'green'">{{ list.status?.replace("_", " ") }}</nz-tag>
+          </td>
+          <td *ngIf="checkboxes[8].check" class="break-word">
+            <ng-container *ngIf="list.portfolioName.length > 18; else portName">
+              <span nz-tooltip [nzTooltipTitle]="list.portfolioName">
+                {{ list.portfolioName.substr(0, 18) }}..</span>
+            </ng-container>
+            <ng-template #portName>
+              {{ list.portfolioName }}
+            </ng-template>
+          </td>
+          <td *ngIf="checkboxes[9].check" class="break-word">
+            {{ list.ministerDepartmentName }}
+          </td>
+          <td *ngIf="checkboxes[17].check" class="break-word">
+            {{ list.ministerSubjectName }}
+          </td>
+          <td *ngIf="checkboxes[10].check" class="break-word">
+            {{ list.gazettePublishDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td *ngIf="checkboxes[11].check" class="break-word">
+            {{ list.goDate }}
+          </td>
+          <td *ngIf="checkboxes[12].check" class="break-word">
+            {{ list.goNumber }}
+          </td>
+          <td *ngIf="checkboxes[13].check" class="break-word">
+            {{ list.typeNumber }}
+          </td>
+          <td *ngIf="checkboxes[14].check" class="break-word">
+            {{ list.actType }}
+          </td>
+          <td *ngIf="checkboxes[15].check" class="break-word">
+            {{ list.actName }}
+          </td>
+          <td *ngIf="checkboxes[16].check" class="break-word">
+            {{ list.departmentFileNumber }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab
+  nzTitle='{{"cpl.documents.documents" | translate}}'
+  (nzClick)="getAssemblyAndSession();getAllDocs();clearFilter();clearSearch()"
+  *ngIf="tabShow && !cplTabs.docsforaction && !cplTabs.department">
+  <div class="row marginbtm-15">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.assembly" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="assemblyId"
+        [(ngModel)]="assemblyId"
+        (ngModelChange)="getAllDocs()"
+      >
+        <nz-option
+          *ngFor="let item of assemblyList"
+          [nzLabel]="item.assemblyId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.session" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="sessionId"
+        [(ngModel)]="sessionId"
+        (ngModelChange)="getAllDocs()"
+      >
+        <nz-option
+          *ngFor="let item of sessionList"
+          [nzLabel]="item.sessionId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-3">
+      <div class="row align-items-center">
+        <div class="col-md-5 wordbreak">{{"cpl.actregistration.doctype" | translate}}:</div>
+        <div class="col-md-7">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"cpl.templatecreate.selecttype" | translate}}'>
+              <nz-select
+                nzRequired
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder=""
+                [(ngModel)]="deptDocType"
+                (ngModelChange)="subDoc=null;getAllDocs()"
+              >
+                <nz-option
+                  *ngFor="let doc of docType"
+                  [nzLabel]="doc"
+                  [nzValue]="doc"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-1">
+      <button
+        class="plus-arrange"
+        nz-button
+        [nzType]="'primary'"
+        (click)="showFilterModal()"
+      >
+        <i nz-icon nzType="plus"></i>
+      </button>
+    </div>
+    <nz-modal
+      [(nzVisible)]="showDocFilterModal"
+      nzTitle='{{"business-dashboard.cpl.documents.filtercoloums" | translate}}'
+      (nzOnCancel)="_hideFilter()"
+      (nzOnOk)="_showDocFilter()"
+    >
+      <div class="width-100 pading-all">
+        <div class="row">
+          <div class="col-md-12">
+            <p
+              *ngFor="let box of filterDocCheckboxes; let i = index"
+              class="checkbox-style"
+            >
+              <label
+                *ngIf="i < 6"
+                nz-checkbox
+                name="checkbox{{ i }}"
+                (ngModelChange)="_chooseFilter(box)"
+                [(ngModel)]="box.checked"
+                >{{ box.label }}</label
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </nz-modal>
+    <div class="col-md-1 d-flex justify-content-end">
+      <button
+        nz-button
+        nzType="default"
+        (click)="clearFilter();clearFilter();clearSearch()"
+        (keyup.enter)="doNothing()"
+      >
+        {{"cpl.documents.clearfilter" | translate}}
+      </button>
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="searchDoc"
+          (ngModelChange)="filterDoc()"
+          nz-input
+          placeholder='{{"cpl.registration.searchhere" | translate }}'
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+  <div class="row fltr">
+    <div class="col-md-4">
+      <nz-form-item *ngIf="deptDocType === 'REPORT'">
+        <nz-form-control nzErrorTip='{{"cpl.cplview.enteDocType" | translate}}'>
+          <div class="row">
+            <div class="col-md-6">
+              <nz-form-label>{{"cpl.documents.docsubtype" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-6">
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                [(ngModel)]="subDoc"
+                (ngModelChange)="getAllDocs()"
+              >
+                <nz-option
+                  *ngFor="let type of docSubType"
+                  nzLabel="{{ type?.replace('_', ' ') }}"
+                  [nzValue]="type"
+                ></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row fltr">
+    <div class="col-md-4" *ngIf="disableCurNum">
+      <div class="row align-items-center">
+        <div class="col-md-5 wordbreak">
+          {{"cpl.documents.currentfileno" | translate}}.
+        </div>
+        <div class="col-md-6">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="docFilterSelected.currentNumber"
+            name="filenum"
+            (ngModelChange)="searchDocCol(docFilterSelected)"
+          >
+            <nz-option
+              *ngFor="let num of cNo"
+              [nzLabel]="num"
+              [nzValue]="num"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero icon-color">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableDocFilter(1)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="disableDocTitle">
+      <div class="row align-items-center">
+        <div class="col-md-5 wordbreak">
+          {{"cpl.documents.documenttitle" | translate}}
+        </div>
+        <div class="col-md-6">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="docFilterSelected.typeName"
+            name="filesub"
+            (ngModelChange)="searchDocCol(docFilterSelected)"
+          >
+            <nz-option
+              *ngFor="let title of docTitle"
+              [nzLabel]="title"
+              [nzValue]="title"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero icon-color">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableDocFilter(2)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="disableFileNum">
+      <div class="row align-items-center">
+        <div class="col-md-5 wordbreak">
+          {{"cpl.docamendments.fileno" | translate}}
+        </div>
+        <div class="col-md-6">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="docFilterSelected.regFileNumber"
+            name="status"
+            (ngModelChange)="searchDocCol(docFilterSelected)"
+          >
+            <nz-option
+              *ngFor="let num of docfileNum"
+              [nzLabel]="num"
+              [nzValue]="num"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero icon-color">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableDocFilter(3)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="disableDelay">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">
+          {{"cpl.fileworkflow.delaystatement" | translate}}
+        </div>
+        <div class="col-md-6 wordbreak">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="docFilterSelected.delayStatus"
+            name="subtype"
+            (ngModelChange)="searchDocCol(docFilterSelected)"
+          >
+            <nz-option
+              *ngFor="let stat of delayStat"
+              [nzLabel]="stat"
+              [nzValue]="stat"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero icon-color">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableDocFilter(4)"
+          ></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="disableStatus">
+      <div class="row align-items-center">
+        <div class="col-md-3 wordbreak">
+          {{"cpl.docamendments.status" | translate}}
+        </div>
+        <div class="col-md-6">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="docFilterSelected.status"
+            name="regdate"
+            (ngModelChange)="searchDocCol(docFilterSelected)"
+          >
+            <nz-option
+              *ngFor="let stat of docstatus"
+              [nzLabel]="stat"
+              [nzValue]="stat"
+            ></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero icon-color">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableDocFilter(5)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-end">
+    <a
+    nzType="default"
+    nz-dropdown
+    nzTrigger="click"
+    [nzDropdownMenu]="menu"
+    class="d-flex align-items-center ant-btn"
+  >
+    <i nz-icon nzType="layout" nzTheme="outline" class="margnrt-5"></i>
+    <span>{{"cpl.documents.cols" | translate}}</span>
+  </a>
+  <nz-dropdown-menu #menu="nzDropdownMenu">
+    <div>
+      <ul
+        nz-menu
+        fileTable
+        
+        class="checkbox-style"
+      >
+        <li class="chck_pd" *ngFor="let box of checkboxes; let i = index">
+          <label nz-checkbox 
+          [nzDisabled]="box.disable" 
+          [(ngModel)]="box.check" name="i" 
+          (ngModelChange)="disableCheckBoxes()">{{
+            box.label
+          }}</label>
+        </li>
+      </ul>
+    </div>
+  </nz-dropdown-menu>
+  </div>
+</div>
+
+  <nz-table
+    #allDocTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="listOfDoc"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    class="table-all"
+  >
+    <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+      <tr (click)="viewFile(list.fileId)">
+        <th *ngIf="checkboxes[0].check">
+          {{"cpl.documents.currno" | translate}}
+        </th>
+        <th *ngIf="checkboxes[1].check" nzShowSort nzSortKey="typeName">
+          {{"cpl.documents.documenttitle" | translate}}
+        </th>
+        <th *ngIf="checkboxes[2].check" nzShowSort nzSortKey="docType">
+          {{"cpl.actregistration.doctype" | translate}}
+        </th>
+        <th *ngIf="checkboxes[3].check" nzShowSort nzSortKey="fileNumber">
+          {{"cpl.docamendments.fileno" | translate}}
+        </th>
+        <th *ngIf="checkboxes[4].check" nzShowSort nzSortKey="dateOfReg">
+          {{"cpl.documents.submissiondate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[5].check">
+          {{"cpl.cplview.laiddate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[6].check">
+          {{"cpl.documents.delaystatementorstatementbyminister" | translate }}
+        </th>
+        <th *ngIf="checkboxes[7].check">
+          {{"cpl.docamendments.status" | translate}}
+        </th>
+        <th *ngIf="checkboxes[8].check">
+          {{"cpl.documents.portfolio" | translate}}
+        </th>
+        <th *ngIf="checkboxes[9].check">
+          {{"cpl.documents.ministerdepartment" | translate}}
+        </th>
+        <th *ngIf="checkboxes[17].check">
+          {{"cpl.cplview.subject"| translate}}
+        </th>
+        <th *ngIf="checkboxes[10].check">
+          {{"cpl.documents.gazettepublishdate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[11].check">
+          {{"cpl.documents.godate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[12].check">
+          {{"cpl.documents.gonumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[13].check">
+          {{"cpl.documents.documentnumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[14].check">
+          {{"cpl.documents.acttype" | translate}}
+        </th>
+        <th *ngIf="checkboxes[15].check">
+          {{"cpl.actregistration.actname" | translate}}
+        </th>
+        <th *ngIf="checkboxes[16].check">
+          {{"cpl.documents.departmentfilenumber" | translate}}
+        </th>
+       
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let list of allDocTable.data"
+        nz-popover
+        nzType="primary"
+        nzPopoverPlacement="left"
+        [nzPopoverContent]="contentTemplateDoc"
+        (click)="viewDocument(list.id, tabIndex)"
+      >
+        <ng-template #contentTemplateDoc>
+          <div>
+            <span class="sortable" (click)="viewDocument(list.id, tabIndex)">{{"cpl.correspondencelist.view" | translate}}</span>
+            <a
+                href="javascript:;"
+                class="sortable"
+                *ngIf="list.status === 'LIST_APPROVED' && layPermission"
+                (click)="markAsLaid(list.id)"
+              >
+                | {{"cpl.documents.markaslaid" | translate }}</a
+              >
+          </div>
+        </ng-template>
+        <td *ngIf="checkboxes[0].check">
+          <a>{{ list.currentNumber }}</a>
+        </td>
+        <td *ngIf="checkboxes[1].check" class="break-word">
+          {{ list.typeName }}
+        </td>
+        <td *ngIf="checkboxes[2].check">
+          {{ list.type }}
+        </td>
+        <td *ngIf="checkboxes[3].check">
+          {{ list.regFileNumber }}
+        </td>
+        <td *ngIf="checkboxes[4].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td  *ngIf="checkboxes[5].check">
+          {{ list.laidStartDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="checkboxes[6].check">
+          <nz-tag>{{ list.delayStatus?.replace("_", " ").replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[7].check">
+          <nz-tag [nzColor]="'green'">{{ list.status.replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[8].check" class="break-word">
+          <ng-container *ngIf="list.portfolioName.length > 18; else portName">
+            <span nz-tooltip [nzTooltipTitle]="list.portfolioName">
+              {{ list.portfolioName.substr(0, 18) }}..</span>
+          </ng-container>
+          <ng-template #portName>
+            {{ list.portfolioName }}
+          </ng-template>
+        </td>
+        <td *ngIf="checkboxes[9].check" class="break-word">
+          {{ list.ministerDepartmentName }}
+        </td>
+        <td *ngIf="checkboxes[17].check" class="break-word">
+          {{ list.ministerSubjectName }}
+        </td>
+        <td *ngIf="checkboxes[10].check" class="break-word">
+          {{ list.gazettePublishDate | date: "dd-MM-yyyy"}}
+        </td>
+        <td *ngIf="checkboxes[11].check" class="break-word">
+          {{ list.goDate }}
+        </td>
+        <td *ngIf="checkboxes[12].check" class="break-word">
+          {{ list.goNumber }}
+        </td>
+        <td *ngIf="checkboxes[13].check" class="break-word">
+          {{ list.typeNumber }}
+        </td>
+        <td *ngIf="checkboxes[14].check" class="break-word">
+          {{ list.actType }}
+        </td>
+        <td *ngIf="checkboxes[15].check" class="break-word">
+          {{ list.actName }}
+        </td>
+        <td *ngIf="checkboxes[16].check" class="break-word">
+          {{ list.departmentFileNumber }}
+        </td>
+      </tr>
+    </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab
+    nzTitle='{{"cpl.documents.departmentdocuments" | translate}}'
+    (nzClick)="getAssemblyAndSession();getDeptDocList();clearFilter();clearSearch()"
+    *ngIf="(tabShow && cplTabs.department) || cplTabs.assign"
+  >
+    <div class="row marginbtm-15">
+      <div class="col-md-3 d-flex align-items-center whitespace">
+        {{"cpl.docupload.assembly" | translate}}
+        <nz-select
+          nzAllowClear
+          nzPlaceHolder=""
+          name="assemblyId"
+          [(ngModel)]="assemblyId"
+          (ngModelChange)="getDeptDocList()"
+        >
+          <nz-option
+            *ngFor="let item of assemblyList"
+            [nzLabel]="item.assemblyId"
+            [nzValue]="item.id"
+          ></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-3 d-flex align-items-center whitespace">
+        {{"cpl.docupload.session" | translate}}
+        <nz-select
+          nzAllowClear
+          nzPlaceHolder=""
+          name="sessionId"
+          [(ngModel)]="sessionId"
+          (ngModelChange)="getDeptDocList()"
+        >
+          <nz-option
+            *ngFor="let item of sessionList"
+            [nzLabel]="item.sessionId"
+            [nzValue]="item.id"
+          ></nz-option>
+        </nz-select>
+      </div>
+
+
+
+      <div class="col-md-3">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">{{"cpl.actregistration.doctype" | translate}}:</div>
+          <div class="col-md-7">
+            <nz-form-item>
+              <nz-form-control nzErrorTip='{{"cpl.templatecreate.selecttype" | translate}}'>
+                <nz-select
+                  nzRequired
+                  nzShowSearch
+                  nzAllowClear
+                  nzPlaceHolder=""
+                  [(ngModel)]="deptDocType"
+                  (ngModelChange)="getDeptDocList()"
+                >
+                  <nz-option
+                    *ngFor="let doc of docType"
+                    [nzLabel]="doc"
+                    [nzValue]="doc"
+                  >
+                  </nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <button
+          class="plus-arrange"
+          nz-button
+          [nzType]="'primary'"
+          (click)="showFilterModal()"
+        >
+          <i nz-icon nzType="plus"></i>
+        </button>
+      </div>
+      <nz-modal
+        [(nzVisible)]="showDocFilterModal"
+        nzTitle='{{"business-dashboard.cpl.documents.filtercoloums" | translate}}'
+        (nzOnCancel)="_hideFilter()"
+        (nzOnOk)="_showDocFilter()"
+      >
+        <div class="width-100 pading-all">
+          <div class="row">
+            <div class="col-md-12">
+              <p
+                *ngFor="let box of filterDocCheckboxes; let i = index"
+                class="checkbox-style"
+              >
+                <label
+                  nz-checkbox
+                  name="checkbox{{ i }}"
+                  (ngModelChange)="_chooseFilter(box)"
+                  [(ngModel)]="box.checked"
+                  >{{ box.label }}</label
+                >
+              </p>
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+      <div class="col-md-1 d-flex justify-content-end">
+        <button
+          nz-button
+          nzType="default"
+          (click)="clearFilter();clearSearch()"
+          (keyup.enter)="doNothing()"
+        >
+          {{"cpl.documents.clearfilter" | translate}}
+        </button>
+      </div>
+    </div>
+    <div class="row fltr">
+      <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+          </div>
+          <div class="col-md-3 d-flex align-items-center">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+              <input
+                type="text"
+                name="search"
+                [(ngModel)]="searchDeptDoc"
+                (ngModelChange)="filterDeptDoc()"
+                nz-input
+                placeholder='{{"cpl.registration.searchhere" | translate }}'
+              />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+    </div>
+    <div class="row fltr">
+      <div class="col-md-4">
+        <nz-form-item *ngIf="deptDocType === 'REPORT'">
+          <nz-form-control nzErrorTip='{{"cpl.cplview.enteDocType" | translate}}'>
+            <div class="row">
+              <div class="col-md-6">
+                <nz-form-label>{{"cpl.documents.docsubtype" | translate}}</nz-form-label>
+              </div>
+              <div class="col-md-6">
+                <nz-select
+                  nzShowSearch
+                  nzAllowClear
+                  [(ngModel)]="deptSubDoc"
+                  (ngModelChange)="getDeptDocList()"
+                >
+                  <nz-option
+                    *ngFor="let type of docSubType"
+                    nzLabel="{{ type?.replace('_', ' ') }}"
+                    [nzValue]="type"
+                  ></nz-option>
+                </nz-select>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+    </div>
+    <div class="row fltr">
+      <div class="col-md-4" *ngIf="disableCurNum">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">
+            {{"cpl.documents.currentfileno" | translate}}.
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.currentNumber"
+              name="filenum"
+              (ngModelChange)="searchDeptDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let num of cNo"
+                [nzLabel]="num"
+                [nzValue]="num"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(1)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-4" *ngIf="disableDocTitle">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">
+            {{"cpl.documents.documenttitle" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.typeName"
+              name="filesub"
+              (ngModelChange)="searchDeptDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let title of docTitle"
+                [nzLabel]="title"
+                [nzValue]="title"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(2)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableFileNum">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">
+            {{"cpl.docamendments.fileno" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.regFileNumber"
+              name="status"
+              (ngModelChange)="searchDeptDocCol(docFilterSelected)"
+            >
+              <nz-option
+                *ngFor="let num of docfileNum"
+                [nzLabel]="num"
+                [nzValue]="num"
+              ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(3)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableDelay">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">
+            {{"cpl.fileworkflow.delaystatement" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.delayStatus"
+              name="subtype"
+              (ngModelChange)="searchDeptDocCol(docFilterSelected)"
+            >
+              <nz-option
+              *ngFor="let stat of delayStat"
+              nzLabel="{{ stat?.replace('_',' ').replace('_',' ') }}"
+              [nzValue]="stat"
+            ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(4)"
+            ></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="disableStatus">
+        <div class="row align-items-center">
+          <div class="col-md-5 wordbreak">
+            {{"cpl.docamendments.status" | translate}}
+          </div>
+          <div class="col-md-6">
+            <nz-select
+              nzShowSearch
+              nzAllowClear
+              nzPlaceHolder=""
+              [(ngModel)]="docFilterSelected.status"
+              name="regdate"
+              (ngModelChange)="searchDeptDocCol(docFilterSelected)"
+            >
+              <!-- <nz-option
+                *ngFor="let stat of docstatus"
+                [nzLabel]="stat"
+                [nzValue]="stat"
+              ></nz-option> -->
+              <nz-option
+              *ngFor="let stat of docstatus"
+              nzLabel="{{ stat?.replace('_',' ').replace('_',' ') }}"
+              [nzValue]="stat"
+            ></nz-option>
+            </nz-select>
+          </div>
+          <div class="col-md-1 pdzero icon-color">
+            <i
+              nz-icon
+              nzType="close-circle"
+              nzTheme="outline"
+              (click)="disableDocFilter(5)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <nz-table
+      #docTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="deptDocs"
+      (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+      class="table-all"
+    >
+      <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+        <tr (click)="viewFile(list.fileId)">
+          <th
+            nzShowCheckbox
+            (nzCheckedChange)="onAllDeptChecked($event)"
+            [nzIndeterminate]="indeterminate"
+            *ngIf="cplTabs.assign"
+          ></th>
+          <th *ngIf="!cplTabs.department">
+            {{"cpl.documents.currno" | translate}}
+          </th>
+          <th *ngIf="checkboxes[1].check" nzShowSort nzSortKey="typeName">
+            {{"cpl.documents.documenttitle" | translate}}
+          </th>
+          <th *ngIf="checkboxes[2].check" nzShowSort nzSortKey="docType">
+            {{"cpl.actregistration.doctype" | translate}}
+          </th>
+          <th *ngIf="checkboxes[3].check" nzShowSort nzSortKey="fileNumber">
+            {{"cpl.docamendments.fileno" | translate}}
+          </th>
+          <th *ngIf="checkboxes[4].check" nzShowSort nzSortKey="dateOfReg">
+            {{"cpl.documents.submissiondate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[6].check">
+            {{"cpl.documents.delaystatementorstatementbyminister" | translate}}
+          </th>
+          <th *ngIf="checkboxes[7].check">
+            {{"cpl.docamendments.status" | translate}}
+          </th>
+          <th *ngIf="checkboxes[8].check">
+            {{"cpl.documents.portfolio" | translate}}
+          </th>
+          <th *ngIf="checkboxes[9].check">
+            {{"cpl.documents.ministerdepartment" | translate}}
+          </th>
+          <th *ngIf="checkboxes[17].check">
+            {{"cpl.cplview.subject"| translate}}
+          </th>
+          <th *ngIf="checkboxes[10].check">
+            {{"cpl.documents.gazettepublishdate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[11].check">
+            {{"cpl.documents.godate" | translate}}
+          </th>
+          <th *ngIf="checkboxes[12].check">
+            {{"cpl.documents.gonumber" | translate}}
+          </th>
+          <th *ngIf="checkboxes[13].check">
+            {{"cpl.documents.documentnumber" | translate}}
+          </th>
+          <th *ngIf="checkboxes[14].check">
+            {{"cpl.documents.acttype" | translate}}
+          </th>
+          <th *ngIf="checkboxes[15].check">
+            {{"cpl.actregistration.actname" | translate}}
+          </th>
+          <th *ngIf="checkboxes[16].check">
+            {{"cpl.documents.departmentfilenumber" | translate}}
+          </th>
+          <!-- <th>
+          </th> -->
+          <a
+            nzType="default"
+            nz-dropdown
+            nzTrigger="click"
+            [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="layout" nzTheme="outline"></i>
+            <span>{{"cpl.documents.cols" | translate}}</span>
+          </a>
+          <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+              <ul
+                nz-menu
+                fileTable
+                *ngFor="let box of checkboxes; let i = index"
+                class="checkbox-style"
+              >
+                <li>
+                  <label nz-checkbox 
+                  [nzDisabled]="box.disable" 
+                  [(ngModel)]="box.check" name="i" 
+                  (ngModelChange)="disableCheckBoxes()">{{
+                    box.label
+                  }}</label>
+                </li>
+              </ul>
+            </div>
+          </nz-dropdown-menu>
+        </tr>
+      </thead>
+      <tr *ngIf="checkedDocIds.size !== 0">
+        <th colspan="2">
+          <span>{{ checkedDocIds.size }} {{"cpl.documents.selected" | translate}}</span>
+        </th>
+        <th colspan="7">
+          <button
+            nz-button
+            [nzType]="'default'"
+            class="mr-6"
+            (click)="showAssignModal()"
+          >
+            {{"cpl.documents.assigntoassisstant" | translate}}
+          </button>
+        </th>
+        <nz-modal
+          [(nzVisible)]="isAssignVisible"
+          [nzFooter]="null"
+          [nzClosable]="false"
+        >
+          <div class="width-100 pading-all">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row margnrtp-15 align-items-center">
+                  <div class="col-md-4">{{"cpl.documents.assigntoassisstant" | translate}}</div>
+                </div>
+                <div class="row margnrtp-15 align-items-center">
+                  <div class="col-md-4">{{"cpl.documents.Filter" | translate}}</div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <input
+                      nz-input
+                      placeholder='{{"business-dashboard.notice-proc.searchnamehere" | translate }}'
+                      [(ngModel)]="searchPerson"
+                      (ngModelChange)="personSearch()"
+                    />
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <nz-card [nzTitle]="null" class="checklist-all">
+                      <nz-table #assistantListTable [nzData]="assistantList">
+                        <tbody>
+                          <tr *ngFor="let person of assistantListTable.data">
+                            <td>
+                              <nz-radio-group [(ngModel)]="assigneeId">
+                                <label nz-radio [nzValue]="person.userId"></label>
+                              </nz-radio-group>
+                            </td>
+                            <td>{{ person.fullName }}</td>
+                            <td>{{ person.name }}</td>
+                          </tr>
+                        </tbody>
+                      </nz-table>
+                    </nz-card>
+                  </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button
+                      type="button"
+                      nz-button
+                      nzType="default"
+                      (click)="handleCancel()"
+                    >
+                      {{"cpl.correspondencelist.cancel" | translate}}
+                    </button>
+                    <button
+                      type="button"
+                      nz-button
+                      nzType="primary"
+                      (click)="assignTOAssistant(null)"
+                      class="margnlft-15"
+                      [disabled]="assigneeId===null"
+                    >
+                      {{"cpl.documents.assign" | translate}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nz-modal>
+      </tr>
+      <tbody>
+        <tr
+          *ngFor="let list of docTable.data"
+          nzType="primary"
+        >
+          <td
+            nzShowCheckbox
+            *ngIf="cplTabs.assign"
+            [nzChecked]="checkedDocIds.has(list.id)"
+            (nzCheckedChange)="onDocChecked(list.id, $event);onDepartmentDocChecked(list.ministerDepartmentId, list.type, list.subType)"
+          ></td>
+          <td *ngIf="!cplTabs.department"  (click)="viewDocument(list.id, tabIndex)">
+            <a>{{ list.currentNumber }}</a>
+          </td>
+          <td *ngIf="checkboxes[1].check"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.typeName }}
+          </td>
+          <td *ngIf="checkboxes[2].check"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.type }}
+          </td>
+          <td *ngIf="checkboxes[3].check"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.regFileNumber }}
+          </td>
+          <td *ngIf="checkboxes[4].check"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.createdDate | date: "dd-MM-yyyy" }}
+          </td>
+          <td *ngIf="checkboxes[6].check"  (click)="viewDocument(list.id, tabIndex)">
+            <nz-tag>{{ list.delayStatus?.replace("_", " ") }}</nz-tag>
+          </td>
+          <td *ngIf="checkboxes[7].check"  (click)="viewDocument(list.id, tabIndex)">
+            <nz-tag [nzColor]="'green'">{{ list.status?.replace("_", " ") }}</nz-tag>
+          </td>
+          <td *ngIf="checkboxes[8].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            <ng-container *ngIf="list.portfolioName.length > 18; else portName">
+              <span nz-tooltip [nzTooltipTitle]="list.portfolioName">
+                {{ list.portfolioName.substr(0, 18) }}..</span>
+            </ng-container>
+            <ng-template #portName>
+              {{ list.portfolioName }}
+            </ng-template>
+          </td>
+          <td *ngIf="checkboxes[9].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.ministerDepartmentName }}
+          </td>
+          <td *ngIf="checkboxes[17].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.ministerSubjectName }}
+          </td>
+          <td *ngIf="checkboxes[10].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.gazettePublishDate | date: "dd-MM-yyyy"}}
+          </td>
+          <td *ngIf="checkboxes[11].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.goDate }}
+          </td>
+          <td *ngIf="checkboxes[12].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.goNumber }}
+          </td>
+          <td *ngIf="checkboxes[13].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.typeNumber }}
+          </td>
+          <td *ngIf="checkboxes[14].check" class="break-word" (click)="viewDocument(list.id, tabIndex)">
+            {{ list.actType }}
+          </td>
+          <td *ngIf="checkboxes[15].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.actName }}
+          </td>
+          <td *ngIf="checkboxes[16].check" class="break-word"  (click)="viewDocument(list.id, tabIndex)">
+            {{ list.departmentFileNumber }}
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab
+  nzTitle='{{"cpl.documents.withdrawalRequests" | translate}}'
+  (nzClick)="getAssemblyAndSession();getPendingWithdrawals();clearFilter();clearSearch()"
+  *ngIf="tabShow && (assignWithdraw || withdrawFile)"
+>
+  <div class="row marginbtm-15">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.assembly" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="assemblyId"
+        [(ngModel)]="assemblyId"
+        (ngModelChange)="getPendingWithdrawals()"
+      >
+        <nz-option
+          *ngFor="let item of assemblyList"
+          [nzLabel]="item.assemblyId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.session" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="sessionId"
+        [(ngModel)]="sessionId"
+        (ngModelChange)="getPendingWithdrawals()"
+      >
+        <nz-option
+          *ngFor="let item of sessionList"
+          [nzLabel]="item.sessionId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+     <div class="col-md-3">
+    </div>
+    <div class="col-md-1">
+    </div>
+    <div class="col-md-1 d-flex justify-content-end">
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="searchWithdrawDoc"
+          (ngModelChange)="searchWithrawRequests()"
+          nz-input
+          placeholder='{{"cpl.registration.searchhere" | translate }}'
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+
+
+
+  <div class="row">
+    <div class="col-md-12 d-flex justify-content-end">
+      <a
+      nzType="default"
+      class="align-items-center d-flex ant-btn"
+      nz-dropdown
+      nzTrigger="click"
+      [nzDropdownMenu]="menu"
+    >
+      <i nz-icon nzType="layout" nzTheme="outline" class="margnrt-5"></i>
+      <span>{{"cpl.documents.cols" | translate}}</span>
+    </a>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <div>
+        <ul
+          nz-menu
+          fileTable
+          
+          class="checkbox-style"
+        >
+          <li class="chck_pd" *ngFor="let box of checkbox; let i = index">
+            <label nz-checkbox 
+            [nzDisabled]="box.disable" 
+            [(ngModel)]="box.check" name="i" 
+            (ngModelChange)="disableCheckBox()">{{
+              box.label
+            }}</label>
+          </li>
+        </ul>
+      </div>
+    </nz-dropdown-menu>
+    </div>
+  </div>
+
+  <nz-table
+    #withdrawTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="withrawDocs"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    class="table-all"
+  >
+    <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+      <tr (click)="viewFile(list.fileId)">
+        <th
+          nzShowCheckbox
+          [nzDisabled]="true"
+          [nzIndeterminate]="indeterminate"
+        ></th>
+        <th *ngIf="checkbox[0].check">
+          {{"cpl.documents.currno" | translate}}
+        </th>
+        <th *ngIf="checkbox[1].check" nzShowSort nzSortKey="typeName">
+          {{"cpl.documents.documenttitle" | translate}}
+        </th>
+        <th *ngIf="checkbox[2].check" nzShowSort nzSortKey="docType">
+          {{"cpl.actregistration.doctype" | translate}}
+        </th>
+        <th *ngIf="checkbox[3].check && withdrawFile" nzShowSort nzSortKey="fileNumber">
+          {{"cpl.documents.withdrawfilenumber" | translate}}
+        </th>
+        <th nzShowSort nzSortKey="withdrawalReason" *ngIf="checkbox[4].check">
+          {{"cpl.documents.withdrawalreason" | translate}}
+        </th>
+        <th *ngIf="checkbox[5].check" nzShowSort nzSortKey="dateOfReg">
+          {{"cpl.documents.submissiondate" | translate}}
+        </th>
+        <th *ngIf="checkbox[6].check">
+          {{"cpl.documents.delaystatementorstatementbyminister" | translate}}
+        </th>
+        <th *ngIf="checkbox[7].check">
+          {{"cpl.docamendments.status" | translate}}
+        </th>
+        <th *ngIf="checkbox[8].check">
+          {{"cpl.documents.portfolio" | translate}}
+        </th>
+        <th *ngIf="checkbox[9].check">
+          {{"cpl.documents.ministerdepartment" | translate}}
+        </th>
+        <th *ngIf="checkbox[10].check">
+          {{"cpl.cplview.subject"| translate}}
+        </th>
+        <th *ngIf="checkboxes[17].check">
+          {{"cpl.documents.gazettepublishdate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[11].check">
+          {{"cpl.documents.godate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[12].check">
+          {{"cpl.documents.gonumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[13].check">
+          {{"cpl.documents.documentnumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[14].check">
+          {{"cpl.documents.acttype" | translate}}
+        </th>
+        <th *ngIf="checkboxes[15].check">
+          {{"cpl.actregistration.actname" | translate}}
+        </th>
+        <th *ngIf="checkboxes[16].check">
+          {{"cpl.documents.departmentfilenumber" | translate}}
+        </th>
+       
+      </tr>
+    </thead>
+    <tr *ngIf="checkedDocIds.size !== 0 && withdrawFile">
+      <th colspan="2">
+        <span>{{ checkedDocIds.size }} selected</span>
+      </th>
+      <th colspan="7">
+        <button
+          nz-button
+          [nzType]="'default'"
+          class="mr-6"
+          (click)="showWithdrawFileModal('WITHDRAW')"
+        >
+          {{"cpl.documents.createfile" | translate}}
+        </button>
+      </th>
+    </tr>
+    <tr *ngIf="checkedDocIds.size !== 0 && assignWithdraw">
+      <th colspan="2">
+        <span>{{ checkedDocIds.size }} {{"cpl.documents.selected" | translate}}</span>
+      </th>
+      <th colspan="7">
+        <button
+          nz-button
+          [nzType]="'default'"
+          class="mr-6"
+          (click)="showWithdrawAssignModal()"
+        >
+          {{"cpl.documents.assigntoassisstant" | translate}}
+        </button>
+      </th>
+      <nz-modal
+        [(nzVisible)]="withdrawAssignModal"
+        [nzFooter]="null"
+        [nzClosable]="false"
+      >
+        <div class="width-100 pading-all">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="row margnrtp-15 align-items-center">
+                <div class="col-md-4">{{"cpl.documents.assigntoassisstant" | translate}}</div>
+              </div>
+              <div class="row margnrtp-15 align-items-center">
+                <div class="col-md-4">{{"cpl.documents.Filter" | translate}}</div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-12">
+                  <input
+                    nz-input
+                    placeholder='{{"business-dashboard.notice-proc.searchnamehere" | translate }}'
+                    [(ngModel)]="searchPerson"
+                    (ngModelChange)="personSearch()"
+                  />
+                </div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-12">
+                  <nz-card [nzTitle]="null" class="checklist-all">
+                    <nz-table #assistantListTable [nzData]="assistantList">
+                      <tbody>
+                        <tr *ngFor="let person of assistantListTable.data">
+                          <td>
+                            <nz-radio-group [(ngModel)]="assigneeId">
+                              <label nz-radio [nzValue]="person.userId"></label>
+                            </nz-radio-group>
+                          </td>
+                          <td>{{ person.fullName }}</td>
+                          <td>{{ person.name }}</td>
+                        </tr>
+                      </tbody>
+                    </nz-table>
+                  </nz-card>
+                </div>
+              </div>
+              <div class="row mrt-50 margnrtp-15">
+                <div class="col-md-12 d-flex justify-content-end">
+                  <button
+                    type="button"
+                    nz-button
+                    nzType="default"
+                    (click)="handleCancel()"
+                  >
+                    {{"cpl.correspondencelist.cancel" | translate}}
+                  </button>
+                  <button
+                    type="button"
+                    nz-button
+                    nzType="primary"
+                    (click)="assignTOAssistant('WITHDRAW')"
+                    class="margnlft-15"
+                    [disabled]="assigneeId===null"
+                  >
+                    {{"cpl.documents.assign" | translate}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-modal>
+    </tr>
+    <tbody>
+      <tr
+        *ngFor="let list of withdrawTable.data"
+        nz-popover
+        nzType="primary"
+        nzPopoverPlacement="left"
+        [nzPopoverContent]="Template"
+        (click)="viewDocument(list.id, tabIndex)"
+      >
+        <ng-template #Template>
+          <div>
+            <span class="sortable" (click)="viewDocument(list.id, tabIndex)">{{"cpl.correspondencelist.view" | translate}}</span>
+          </div>
+        </ng-template>
+        <td
+          nzShowCheckbox
+          [nzDisabled]="list.withdrawalFileNumber !== null"
+          (nzCheckedChange)="onDocChecked(list.id, $event);onWithdrawChecked(
+          list.type,
+          list.subType,
+          list.ministerDepartmentId)"
+        ></td>
+        <td *ngIf="checkboxes[0].check">
+          <a>{{ list.currentNumber }}</a>
+        </td>
+        <td *ngIf="checkboxes[1].check">
+          {{ list.typeName }}
+        </td>
+        <td *ngIf="checkboxes[2].check">
+          {{ list.type }}
+        </td>
+        <td *ngIf="checkboxes[3].check && withdrawFile">
+          {{ list.withdrawalFileNumber }}
+        </td>
+        <td *ngIf="checkboxes[4].check">
+          {{ list.withdrawalReason }}
+        </td>
+        <td *ngIf="checkboxes[5].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="checkboxes[6].check">
+          <nz-tag>{{ list.delayStatus?.replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[7].check">
+          <nz-tag [nzColor]="'green'">{{ list.status?.replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[8].check" class="break-word">
+          <ng-container *ngIf="list.portfolioName.length > 18; else portName">
+            <span nz-tooltip [nzTooltipTitle]="list.portfolioName">
+              {{ list.portfolioName.substr(0, 18) }}..</span>
+          </ng-container>
+          <ng-template #portName>
+            {{ list.portfolioName }}
+          </ng-template>
+        </td>
+        <td *ngIf="checkboxes[9].check" class="break-word">
+          {{ list.ministerDepartmentName }}
+        </td>
+        <td *ngIf="checkboxes[10].check" class="break-word">
+          {{ list.ministerSubjectName }}
+        </td>
+        <td *ngIf="checkboxes[17].check" class="break-word">
+          {{ list.gazettePublishDate | date: "dd-MM-yyyy"}}
+        </td>
+        <td *ngIf="checkboxes[11].check" class="break-word">
+          {{ list.goDate }}
+        </td>
+        <td *ngIf="checkboxes[12].check" class="break-word">
+          {{ list.goNumber }}
+        </td>
+        <td *ngIf="checkboxes[13].check" class="break-word">
+          {{ list.typeNumber }}
+        </td>
+        <td *ngIf="checkboxes[14].check" class="break-word">
+          {{ list.actType }}
+        </td>
+        <td *ngIf="checkboxes[15].check" class="break-word">
+          {{ list.actName }}
+        </td>
+        <td *ngIf="checkboxes[16].check" class="break-word">
+          {{ list.departmentFileNumber }}
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-tab>
+  <nz-tab
+  nzTitle='{{"cpl.documents.assignedDocuments" | translate}}'
+  (nzClick)="getAssemblyAndSession();getAssisstantDocs();clearFilter();clearSearch()"
+  *ngIf="tabShow && cplTabs.assisstantDocs">
+  <div class="row marginbtm-15">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.assembly" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="assemblyId"
+        [(ngModel)]="assemblyId"
+        (ngModelChange)="getAssisstantDocs()"
+      >
+        <nz-option
+          *ngFor="let item of assemblyList"
+          [nzLabel]="item.assemblyId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.session" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="sessionId"
+        [(ngModel)]="sessionId"
+        (ngModelChange)="getAssisstantDocs()"
+      >
+        <nz-option
+          *ngFor="let item of sessionList"
+          [nzLabel]="item.sessionId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-5">
+      <div class="row align-items-center">
+        <div class="col-md-4 wordbreak">{{"cpl.documents.assistantname" | translate}}:</div>
+        <div class="col-md-5">
+          <nz-form-item>
+            <nz-form-control nzErrorTip='{{"business-dashboard.cpl.documents.selectassistant" | translate}}'>
+              <nz-select
+                nzRequired
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder=""
+                [(ngModel)]="assisstantId"
+                (ngModelChange)="getAssisstantDocs()"
+              >
+                <nz-option
+                  *ngFor="let assisstant of assistantList"
+                  [nzLabel]="assisstant.fullName"
+                  [nzValue]="assisstant.userId"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="searchDoc"
+          (ngModelChange)="filterDoc()"
+          nz-input
+          placeholder='{{"cpl.registration.searchhere" | translate }}'
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+  <nz-table
+    #assisstdocTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="listOfDoc"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    class="table-all"
+    [nzTotal]="6"
+    nzServerRender="true"
+  >
+    <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+      <tr>
+        <th *ngIf="checkboxes[0].check">
+          {{"cpl.documents.currno" | translate}}
+        </th>
+        <th *ngIf="checkboxes[1].check" nzShowSort nzSortKey="typeName">
+          {{"cpl.documents.documenttitle" | translate}}
+        </th>
+        <th *ngIf="checkboxes[2].check" nzShowSort nzSortKey="docType">
+          {{"cpl.actregistration.doctype" | translate}}
+        </th>
+        <th *ngIf="checkboxes[3].check" nzShowSort nzSortKey="fileNumber">
+          {{"cpl.docamendments.fileno" | translate}}
+        </th>
+        <th *ngIf="checkboxes[4].check" nzShowSort nzSortKey="dateOfReg">
+          {{"cpl.documents.submissiondate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[6].check">
+          {{"cpl.documents.delaystatementorstatementbyminister" | translate}}
+        </th>
+        <th *ngIf="checkboxes[7].check">
+          {{"cpl.docamendments.status" | translate}}
+        </th>
+        <th *ngIf="checkboxes[8].check">
+          {{"cpl.documents.portfolio" | translate}}
+        </th>
+        <th *ngIf="checkboxes[9].check">
+          {{"cpl.documents.ministerdepartment" | translate}}
+        </th>
+        <th *ngIf="checkboxes[17].check">
+          {{"cpl.cplview.subject"| translate}}
+        </th>
+        <th *ngIf="checkboxes[10].check">
+          {{"cpl.documents.gazettepublishdate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[11].check">
+          {{"cpl.documents.godate" | translate}}
+        </th>
+        <th *ngIf="checkboxes[12].check">
+          {{"cpl.documents.gonumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[13].check">
+          {{"cpl.documents.documentnumber" | translate}}
+        </th>
+        <th *ngIf="checkboxes[14].check">
+          {{"cpl.documents.acttype" | translate}}
+        </th>
+        <th *ngIf="checkboxes[15].check">
+          {{"cpl.actregistration.actname" | translate}}
+        </th>
+        <th *ngIf="checkboxes[16].check">
+          {{"cpl.documents.departmentfilenumber" | translate}}
+        </th>
+        <a
+          nzType="default"
+          nz-dropdown
+          nzTrigger="click"
+          [nzDropdownMenu]="menu"
+        >
+          <i nz-icon nzType="layout" nzTheme="outline"></i>
+          <span>{{"cpl.documents.cols" | translate}}</span>
+        </a>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul
+              nz-menu
+              fileTable
+              *ngFor="let box of checkboxes; let i = index"
+              class="checkbox-style"
+            >
+              <li>
+                <label nz-checkbox 
+                [nzDisabled]="box.disable" 
+                [(ngModel)]="box.check" name="i" 
+                (ngModelChange)="disableCheckBoxes()">{{
+                  box.label
+                }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let list of assisstdocTable.data"
+        nz-popover
+        nzType="primary"
+      >
+        <td *ngIf="checkboxes[0].check">
+          <a>{{ list.currentNumber }}</a>
+        </td>
+        <td *ngIf="checkboxes[1].check">
+          {{ list.typeName }}
+        </td>
+        <td *ngIf="checkboxes[2].check">
+          {{ list.type }}
+        </td>
+        <td *ngIf="checkboxes[3].check">
+          {{ list.regFileNumber }}
+        </td>
+        <td *ngIf="checkboxes[4].check">
+          {{ list.createdDate | date: "dd-MM-yyyy" }}
+        </td>
+        <td *ngIf="checkboxes[6].check">
+          <nz-tag>{{ list.delayStatus?.replace("_", " ").replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[7].check">
+          <nz-tag [nzColor]="'green'">{{ list.status.replace("_", " ") }}</nz-tag>
+        </td>
+        <td *ngIf="checkboxes[8].check" class="break-word">
+          <ng-container *ngIf="list.portfolioName.length > 18; else portName">
+            <span nz-tooltip [nzTooltipTitle]="list.portfolioName">
+              {{ list.portfolioName.substr(0, 18) }}..</span>
+          </ng-container>
+          <ng-template #portName>
+            {{ list.portfolioName }}
+          </ng-template>
+        </td>
+        <td *ngIf="checkboxes[9].check" class="break-word">
+          {{ list.ministerDepartmentName }}
+        </td>
+        <td *ngIf="checkboxes[17].check" class="break-word">
+          {{ list.ministerSubjectName }}
+        </td>
+        <td *ngIf="checkboxes[10].check" class="break-word">
+          {{ list.gazettePublishDate | date: "dd-MM-yyyy"}}
+        </td>
+        <td *ngIf="checkboxes[11].check" class="break-word">
+          {{ list.goDate }}
+        </td>
+        <td *ngIf="checkboxes[12].check" class="break-word">
+          {{ list.goNumber }}
+        </td>
+        <td *ngIf="checkboxes[13].check" class="break-word">
+          {{ list.typeNumber }}
+        </td>
+        <td *ngIf="checkboxes[14].check" class="break-word">
+          {{ list.actType }}
+        </td>
+        <td *ngIf="checkboxes[15].check" class="break-word">
+          {{ list.actName }}
+        </td>
+        <td *ngIf="checkboxes[16].check" class="break-word">
+          {{ list.departmentFileNumber }}
+        </td>
+      </tr>
+    </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab
+  nzTitle='{{"cpl.cplview.correctionstatement" | translate}}'
+  (nzClick)="getAssemblyAndSession();getPendingCorrectionStatement();clearFilter();clearSearch()"
+  *ngIf="tabShow && cplTabs.correction">
+  <div class="row marginbtm-15">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      
+      {{"cpl.docupload.assembly" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="assemblyId"
+        [(ngModel)]="assemblyId"
+        (ngModelChange)="getPendingCorrectionStatement()"
+      >
+        <nz-option
+          *ngFor="let item of assemblyList"
+          [nzLabel]="item.assemblyId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+      {{"cpl.docupload.session" | translate}}
+      <nz-select
+        nzAllowClear
+        nzPlaceHolder=""
+        name="sessionId"
+        [(ngModel)]="sessionId"
+        (ngModelChange)="getPendingCorrectionStatement()"
+      >
+        <nz-option
+          *ngFor="let item of sessionList"
+          [nzLabel]="item.sessionId"
+          [nzValue]="item.id"
+        ></nz-option>
+      </nz-select>
+    </div>
+    <div class="col-md-5">
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+      <nz-input-group [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          name="search"
+          [(ngModel)]="correctionSearch"
+          (ngModelChange)="searchCorrection()"
+          nz-input
+          placeholder='{{"cpl.registration.searchhere" | translate }}'
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+    </div>
+  </div>
+  <nz-table
+    #correctionTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="pendingCorrectionStatement"
+    (nzCurrentPageDataChange)="onCurrentPageDataChange($event)"
+    class="table-all"
+    [nzTotal]="6"
+    nzServerRender="true"
+  >
+    <thead nzSingleSort (nzSortChange)="sortDoc($event)">
+      <tr>
+        <th
+          nzShowCheckbox
+          [nzChecked]="checked"
+          [nzDisabled]="true"
+          [nzIndeterminate]="indeterminate"
+          (nzCheckedChange)="onAllChecked($event)"
+        ></th>
+        <th>
+          {{"cpl.registration.title" | translate}}
+        </th>
+        <th>
+          {{"cpl.documents.institution" | translate}}
+        </th>
+        <th>
+           {{"cpl.fileworkflow.reportyear" | translate}}
+        </th>
+        <th>
+          {{"cpl.docamendments.status" | translate}}
+        </th>
+        <th>{{"cpl.documents.viewletter" | translate}}</th>
+        <th></th>
+      </tr>
+      <tr *ngIf="checkedCorrectionIds.size !== 0 && correctionFile">
+        <th colspan="1">
+          <span>{{ checkedCorrectionIds.size }} {{"cpl.documents.selected" | translate}}</span>
+        </th>
+        <th>
+          <button
+            nz-button
+            [nzType]="'default'"
+            class="mr-6"
+            (click)="showWithdrawFileModal('CORRECTED')"
+          >
+            {{"cpl.documents.createfile" | translate}}
+          </button>
+        </th>
+      </tr>
+      <tr *ngIf="checkedCorrectionIds.size !== 0 && assignCorrection">
+        <th colspan="1">
+          <span>{{ checkedCorrectionIds.size }} {{"cpl.documents.selected" | translate}}</span>
+        </th>
+        <th>
+          <button
+            nz-button
+            [nzType]="'default'"
+            class="mr-6"
+            (click)="showCorrectionAssignModal()"
+          >
+            {{"cpl.documents.assigntoassisstant" | translate}}
+          </button>
+        </th>
+        <nz-modal
+          [(nzVisible)]="correctionAssignModal"
+          [nzFooter]="null"
+          [nzClosable]="false"
+        >
+          <div class="width-100 pading-all">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="row margnrtp-15 align-items-center">
+                  <div class="col-md-4">{{"cpl.documents.assigntoassisstant" | translate}}</div>
+                </div>
+                <div class="row margnrtp-15 align-items-center">
+                  <div class="col-md-4">{{"cpl.documents.Filter" | translate}}</div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <input
+                      nz-input
+                      placeholder='{{"business-dashboard.notice-proc.searchnamehere" | translate }}'
+                      [(ngModel)]="searchPerson"
+                      (ngModelChange)="personSearch()"
+                    />
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <nz-card [nzTitle]="null" class="checklist-all">
+                      <nz-table #assistantListTable [nzData]="assistantList">
+                        <tbody>
+                          <tr *ngFor="let person of assistantListTable.data">
+                            <td>
+                              <nz-radio-group [(ngModel)]="assigneeId">
+                                <label nz-radio [nzValue]="person.userId"></label>
+                              </nz-radio-group>
+                            </td>
+                            <td>{{ person.fullName }}</td>
+                            <td>{{ person.name }}</td>
+                          </tr>
+                        </tbody>
+                      </nz-table>
+                    </nz-card>
+                  </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                  <div class="col-md-12 d-flex justify-content-end">
+                    <button
+                      type="button"
+                      nz-button
+                      nzType="default"
+                      (click)="handleCancel()"
+                    >
+                      {{"cpl.correspondencelist.cancel" | translate}}
+                    </button>
+                    <button
+                      type="button"
+                      nz-button
+                      nzType="primary"
+                      (click)="assignTOAssistant('CORRECTED')"
+                      class="margnlft-15"
+                      [disabled]="assigneeId===null"
+                    >
+                      {{"cpl.documents.assign" | translate}}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </nz-modal>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        *ngFor="let list of correctionTable.data"
+        nz-popover
+        nzType="primary"
+      >
+        <td
+        nzShowCheckbox
+        [nzDisabled]="list.correctionStatus !== 'PENDING'"
+        [nzChecked]="checkedCorrectionIds.has(list.id)"
+        (nzCheckedChange)="onCorrectionChecked(list.id, $event, list.ministerDepartmentId)"
+        ></td>
+        <td (click)="viewDocument(list.documentId, tabIndex)">
+          <a>{{ list.typeName }}</a>
+        </td>
+        <td (click)="viewDocument(list.documentId, tabIndex)">
+          {{ list.nameOfInstitution }}
+        </td>
+        <td (click)="viewDocument(list.documentId, tabIndex)">
+          {{ list.typeYear }}
+        </td>
+        <td (click)="viewDocument(list.documentId, tabIndex)">
+          <nz-tag [nzColor]="'red'">{{ list.correctionStatus.replace("_", " ") }}</nz-tag>
+        <td>
+          <a
+          href="javascript:;"
+          class="sortable"
+          (click)="viewCorrectionLetter(list.requestLetterId)"
+        >
+          {{"cpl.documents.viewletter" | translate}}</a>
+        </td>
+        <td> <button
+          *ngIf="list.correctionStatus === 'RESPONSE_PENDING'"
+          type="button"
+          nz-button
+          nzType="default"
+          (click)="correctionReply(list)"
+        >
+          {{"cpl.correspondence.reply" | translate}}
+        </button></td>
+      </tr>
+    </tbody>
+    </nz-table>
+  </nz-tab>
+</nz-tabset>
+
+<nz-modal
+[(nzVisible)]="isWithrawFileVisible"
+[nzFooter]="null"
+[nzClosable]="false"
+>
+<div class="width-100 pading-all">
+  <div class="row">
+    <div class="col-md-12">
+      <b>{{"cpl.docpreparion.createfile" | translate}}</b>
+    </div>
+  </div>
+  <div class="row margnrtp-15 align-items-center">
+    <div class="col-md-4">
+      {{"cpl.docamendments.filesubject" | translate}}
+    </div>
+    <div class="col-md-8">
+      <input
+        nz-input
+        placeholder='{{"business-dashboard.cpl.view.filesubject" | translate}}'
+        [(ngModel)]="fileSub"
+      />
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-2">
+      {{"cpl.docamendments.filepriority" | translate}}
+    </div>
+    <div class="col-md-10">
+      <nz-radio-group [(ngModel)]="filePriority">
+        <label nz-radio nzValue="URGENT">
+          {{"cpl.docamendments.urgent" | translate}}</label>
+        <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+        <label nz-radio nzValue="ACTION_TODAY"
+          >{{"cpl.docamendments.actiontoday" | translate}}</label
+        >
+        <label nz-radio nzValue="ASSEMBLY_URGENT"
+          >{{"cpl.docamendments.assemblyurgent" | translate}}</label
+        >
+      </nz-radio-group>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-4">
+      {{"cpl.docamendments.description" | translate}}
+    </div>
+    <div class="col-md-8">
+      <textarea
+        nz-input
+        rows="2"
+        placeholder='{{"cpl.docupload.entersubject" | translate}}'
+        [(ngModel)]="fileDesc"
+      ></textarea>
+    </div>
+  </div>
+  <div class="row mrt-50 margnrtp-15">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="default"
+        class="secondary-button button-admin-radius button-font dark-border dark-font"
+        (click)="handleCancel()"
+      >
+        {{"cpl.correspondencelist.cancel" | translate}}
+      </button>
+      <button
+        type="button"
+        [disabled]="
+          fileSub === '' ||
+          filePriority === null
+        "
+        nz-button
+        nzType="primary"
+        (click)="createWithdrawFile()"
+        class="margnlft-15 primary-button button-admin-radius button-font"
+      >
+        {{"cpl.docamendments.create" | translate}}
+      </button>
+    </div>
+  </div>
+</div>
+</nz-modal>

@@ -1,0 +1,118 @@
+@import "~src/sass/utilities/variables";
+
+
+.box-main {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+.box-d1 {
+  margin-bottom: 15px;
+  cursor: pointer;
+  background-color: $color-gray-light-4;
+  border: 1px solid $color-gray-light;
+  width: 100%;
+  border-radius: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+}
+
+.box-d1 p {
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.paddingR0 {
+  padding-right: 0px !important;
+
+}
+
+.mrtb-25 {
+  margin-bottom: 25px;
+  margin-top: 25px;
+}
+
+.bg-blue-Q1 {
+  background-color: $color-blue-light-4;
+  border: 1px solid $blue-fr;
+  padding: 15px 20px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  border-radius: 5px;
+}
+
+.bg-blue-Q1 h4 {
+  font-size: 28px;
+  width: 100%;
+}
+
+.bg-blue-Q1 p {
+  font-size: 18px;
+  font-family: "Rachana";
+  border-radius: 5px;
+  line-height: 22px;
+  width: 100%;
+  margin-bottom: 0px;
+}
+
+.ico-dash {
+  max-width: 50px;
+  max-height: 50px;
+  margin-bottom: 25px;
+}
+
+.box-d1 h6 {
+  width: 100%;
+}
+
+.twenty {
+  width: 100%;
+  max-width: 20%;
+  margin-bottom: 20px;
+}
+.mt-50{margin-top: 50px;}
+.button_grp {
+  float: left;
+  width: 100%;
+}
+.button_grp .green_btn {
+  background-color: #a6fdbb;
+  border-radius: 5px;
+  border: #6fe665 solid 1px;
+  color: #6fe665;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .red_btn {
+  background-color: #f6d1d0;
+  border-radius: 5px;
+  border: #e85555 solid 1px;
+  color: #e85555;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.button_grp .yellow_btn {
+  background-color: #fdf8b8;
+  border-radius: 5px;
+  border: #f9e83b solid 1px;
+  color: #f9e83b;
+  padding: 5px 10px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-right: 5px;
+  text-align: left;
+  margin-bottom: 5px;
+}

@@ -1,0 +1,236 @@
+<div class="row">
+  <div class="col-md-10">
+    <nz-collapse class="nominee-collapse">
+      <ng-container
+        class="mrgT20"
+        *ngFor="let panel of electedMember?.postions; let i = index;"
+      >
+        <nz-collapse-panel
+          [nzHeader]="header"
+          [nzExtra]="extraTpl"
+          [nzActive]="panel?.status == 'ACTIVE' || panel?.status == 'DRAFT' "
+        >
+          <div class="row mrgT20">
+          <div class="col-md-12 align-right">
+            <button
+            *ngIf="rbsPermission?.updatePosition && panel?.status == 'ACTIVE'"
+            nz-button
+            nzType="primary"
+            nz-popconfirm 
+            nzPopconfirmTitle="{{'tables.assembly-election.member-position-details.position-end-confirm'|translate}}" 
+            nzCancelText="{{'cpl.correspondencelist.cancel'|translate}}" 
+            nzOkText="{{'tables.assembly-election.member-position-details.end'|translate}}" (nzOnConfirm)="endPosition(panel)" 
+          >
+           {{"tables.assembly-election.member-position-details.end-position"|translate}}
+          </button>
+          <button class="mr-6"
+        *ngIf="rbsPermission?.updatePosition && editMode"
+        nz-button
+        nzType="defult"
+        (click)="this.editMode = false"
+      >
+      {{"cpl.correspondencelist.cancel"|translate}}
+      </button>
+          <button
+          *ngIf="(rbsPermission?.updatePosition && panel.status == 'DRAFT' && panel.id == null) || editMode"
+          nz-button
+          nzType="primary"
+          nz-popconfirm 
+          nzPopconfirmTitle="{{'business-dashboard.question.doyouwanttosave'|translate}}" 
+          nzCancelText="{{'cpl.correspondencelist.cancel'|translate}}" nzOkText="{{'business-dashboard.question.save'|translate}}" (nzOnConfirm)="savePosition(panel)" 
+        >
+        {{"business-dashboard.question.save"|translate}}
+        </button>
+        <button class="mr-6"
+        *ngIf="rbsPermission?.updatePosition && panel.status == 'DRAFT' && panel.id && !editMode"
+        nz-button
+        nzType="defult"
+        (click)="this.editMode = true"
+      >
+        {{"noticeprocessing.noticeprocess.edit"|translate}}
+      </button>
+        <button
+        *ngIf="rbsPermission?.updatePosition && panel.status == 'DRAFT' && panel.id && !editMode"
+        nz-button
+        nzType="primary"
+        nz-popconfirm 
+        nzPopconfirmTitle="{{'pmbr.resolution-ballot.areyousureyouwanttoConfirm'|translate}}"
+        nzCancelText="{{'cpl.correspondencelist.cancel'|translate}}" nzOkText="{{'tables.assembly-election.member-position-details.confirm'|translate}}" (nzOnConfirm)="confrmPosition(panel)" 
+      >
+      {{"tables.assembly-election.member-position-details.confirm"|translate}}
+      </button>
+          </div>
+          </div>
+          <div class="row mrgT20">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"tables.assembly-election.member-position-details.start-date"|translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <b *ngIf="canIView(panel)">{{panel?.startDate | date: 'dd/MM/yyyy'}}</b> 
+               <nz-date-picker *ngIf="canIEdit(panel)" [(ngModel)]="panel.startDate" nzFormat="dd/MM/yyy"
+              ></nz-date-picker>
+              </div>
+              </div>
+             </div> 
+             <div class="col-md-6" *ngIf="panel?.status == 'ACTIVE' && rbsPermission.updatePosition || panel.endDate">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"tables.assembly-election.member-position-details.end-date"|translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                 <b *ngIf="panel?.endDate && panel?.status == 'COMPLETED'">{{panel?.endDate | date: 'dd/MM/yyyy'}}</b>
+               <nz-date-picker  [nzDisabledDate]="disabledStartDate"
+               *ngIf="panel?.status == 'ACTIVE' && rbsPermission.updatePosition && activeStartDate" [(ngModel)]="panel.endDate" nzFormat="dd/MM/yyy"
+              ></nz-date-picker>
+              </div>
+              </div>
+             </div>
+          </div>    
+          <div class="row mrgT20">
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"tables.assembly-election.member-position-details.member-group"|translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <b *ngIf="canIView(panel)">{{panel?.memberGroupDisplay}}</b> 
+                  <nz-select *ngIf="canIEdit(panel)"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="{{'tables.assembly-election.member-position-details.member-group'|translate}}"
+                    [(ngModel)]="panel.memberGroup"
+                    (ngModelChange)="changeMemGroup($event,i)"
+                  >
+                    <nz-option
+                      *ngFor="let group of memberGroups"
+                      [nzValue]="group.value"
+                      [nzLabel]="group.label"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="row">
+                <div class="col-md-4">
+                  <nz-form-label>{{"tables.assembly-election.member-position-details.party-front"|translate}}</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                  <!-- <b *ngIf="!editModeEnabled">{{returnPartyFront(electedMember?.details?.keralaPartyFrontId)}}</b>  -->
+                  <b *ngIf="canIView(panel)">{{panel?.partyFront}}</b> 
+                  <nz-select *ngIf="canIEdit(panel)"
+                    nzShowSearch
+                    nzAllowClear
+                    nzPlaceHolder="{{'tables.assembly-election.member-position-details.party-front'|translate}}"
+                    [(ngModel)]="panel.partyFrontId"
+                  >
+                    <nz-option
+                      *ngFor="let partyFront of partyFronts"
+                      [nzValue]="partyFront.id"
+                      [nzLabel]="partyFront.frontName"
+                    >
+                    </nz-option>
+                  </nz-select>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mrgT20">
+            <div class="col-md-6">
+              <nz-form-item>
+                <div class="row">
+                  <div class="col-md-4">
+                    <nz-form-label>{{"tables.assembly-election.member-position-details.member-designation"|translate}}</nz-form-label>
+                  </div>
+                  <div class="col-md-8">
+                    <b *ngIf="canIView(panel)">{{panel?.designation}}</b> 
+                    <!-- <b *ngIf="!editModeEnabled">{{electedMember?.details?.memberDesignationName}}</b>  -->
+                    <nz-select *ngIf="canIEdit(panel)"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="{{'tables.assembly-election.member-position-details.member-designation'|translate}}"
+                      [(ngModel)]="panel.designationId"
+                    >
+                      <nz-option
+                        *ngFor="let designation of memberDesignations"
+                        [nzValue]="designation.memberDesignationId"
+                        [nzLabel]="designation.designationName"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+              </nz-form-item>
+            </div>
+            <div class="col-md-6" *ngIf="isMinister(panel)">
+              <nz-form-item>
+                <div class="row">
+                  <div class="col-md-4">
+                    <nz-form-label>{{"cpl.cplview.ministerfor"|translate}}</nz-form-label>
+                  </div>
+                  <div class="col-md-8">
+                    <b *ngIf="canIView(panel)">{{returnPortfolio(panel?.portfolioId)}}</b> 
+                    <nz-select *ngIf="canIEdit(panel)"
+                      nzShowSearch
+                      nzAllowClear
+                      nzPlaceHolder="{{'cpl.cplview.ministerfor'|translate}}"
+                      [(ngModel)]="panel.portfolioId"
+                    >
+                      <nz-option
+                        *ngFor="let portfolio of portFolioList"
+                        [nzValue]="portfolio.id"
+                        [nzLabel]="portfolio.name"
+                      >
+                      </nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+              </nz-form-item>
+            </div>
+          </div>
+        </nz-collapse-panel>
+        <ng-template #header>
+        
+          <span  class="mr-50">
+            {{ panel?.assemblyValue }} {{"tables.assembly-election.member-position-details.assembly"|translate}}
+          </span>
+              <span *ngIf="panel?.startDate">{{ panel?.startDate | date: "dd/MM/yyyy" }} - </span>
+              <span *ngIf="panel?.startDate">
+                {{
+                  panel?.endDate ? (panel?.endDate | date: "dd/MM/yyyy") : "Present"
+                }}
+              </span>
+             
+            
+           
+        </ng-template>
+        <ng-template #extraTpl>
+         
+          <nz-tag [nzColor]="panel?.status == 'ACTIVE' ? 'green' : ''">
+            {{ panel?.status }}
+          
+          </nz-tag>
+         
+          </ng-template
+        >
+      </ng-container>
+    </nz-collapse>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-10">
+    <button
+        *ngIf="rbsPermission?.updatePosition && !this.getActivePositions()"
+        nz-button
+        nzType="primary"
+        (click)="addNewPosition()"
+      >
+      {{"tables.assembly-election.member-position-details.add-new-position"|translate}}
+      </button>
+    </div>
+  </div>

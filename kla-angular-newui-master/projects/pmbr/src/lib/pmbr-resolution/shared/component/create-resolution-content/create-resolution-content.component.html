@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-md-12 maximise" [ngClass]="{
+        enlarge: fullScreenMode == true
+      }">
+        <div class="row mrgB20">
+            <div class="col-md-12 text-align-right">
+                <nz-select [nzDisabled]="true" class="col-md-3" [(ngModel)]="resolutionDetails.language">
+                    <nz-option *ngFor="let item of billLanguage" [nzLabel]="item.language" [nzValue]="item.code">
+                    </nz-option>
+                </nz-select>
+                <button (click)="addClass()" nz-button title="fullscreen" nzType="default" class="mrgL6">
+                    <i *ngIf="!fullScreenMode" nz-icon nzType="fullscreen" nzTheme="outline" class="baseline"></i>
+                    <i *ngIf="fullScreenMode" nz-icon nzType="fullscreen-exit" nzTheme="outline" class="baseline"></i>
+                </button>
+            </div>
+        </div>
+
+        <ng-container *ngFor="let block of resolutionDetails.blocks; let i = index">
+            <div class="row marginbtm-15">
+                <div class="col myDiv">
+                    <div class="row marginbtm-10">
+                        <div class="col-md-12">
+                            <textarea class="bill_textarea" placeholder='Add Paragraph' [(ngModel)]="block.content"
+                                (ngModelChange)="blockValueChange()" #row (focusout)="textAreaFocusOut(block)"
+                                [readOnly]='block.type.code=="TITLE"'></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-10 only-show-on-hover">
+                            <nz-tag *ngFor='let typeItem of typeList' (click)="addBlocks(i,typeItem.id)"
+                                [nzColor]="typeItem.color">{{typeItem.title}}</nz-tag>
+                        </div>
+                        <div class="col-md-2 d-flex justify-content-end only-show-on-hover">
+                            <nz-tag *ngIf='block.type.code!=="TITLE"' class='height-25' [nzColor]="'#f4364c'"
+                                nz-popconfirm nzPopconfirmTitle='{{ "business-dashboard.pmbr.schedule-list.aresuredeleteblock" | translate }}'
+                                (nzOnConfirm)="removeBlock(block, i)">{{ "noticeprocessing.noticetemplate.createtemplate.remove" | translate }}
+                            </nz-tag>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</div>

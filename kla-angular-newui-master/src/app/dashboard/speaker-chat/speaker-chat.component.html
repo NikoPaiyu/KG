@@ -1,0 +1,181 @@
+<div class="chat-list-area" *ngIf="!listFlag">
+  <div class="chat-list-wrapper">
+    <div class="chat-list-header">
+      <div class="chat-list-input-icon-group">
+        <input [(ngModel)]="searchText" type="text" class="chat-list-header-input" 
+        placeholder= "{{ 'dashboard.chat.search' | translate }}"/>
+        <i nz-icon nzType="search" nzTheme="outline"></i>
+      </div>
+      <button style="width: 200px;" *ngIf="IsSpeaker||IsnewactiveSpeaker" type="button" (click)="clearAllMessage()"
+        class="d-flex flex-nowrap align-items-center mla-button">
+        <i nz-icon nzType="delete" nzTheme="twotone"></i>
+        <span>{{ "dashboard.speakerchat.clearchat" | translate }}</span>
+      </button>
+    </div>
+
+    <div class="chat-list">
+      <div class="chat-list-body">
+        <div class="padding10" *ngIf="!members">
+          <nz-skeleton *ngFor="let i of [].constructor(20)" nzLoading="true" nzActive="true" nzAvatar="true">
+          </nz-skeleton>
+        </div>
+
+        <div>
+          <ng-container *ngFor="let category of members">
+            <div class="chat-list-category"
+              *ngIf="category.values && category.values.length > 0 && (IsSpeaker || IsSec || IsnewactiveSpeaker)">
+              {{
+                (category.memberType ? category.memberType : 'dashboard.handraise.officials') | translate
+              }}
+            </div>
+            <ng-container *ngFor="
+                let character of category.values | searchMember: searchText
+              ">
+              <div *ngIf="character" (click)="onClickchatList(character, character.memberType)">
+                <div class="chat-list-item">
+                  <div class="chat-list-avatar">
+                    <img src="{{
+                        character.profilePhoto != ''
+                          ? character.profilePhoto
+                          : '../../../../../assets/img/user.png'
+                      }}" />
+                  </div>
+                  <div class="chat-list-text">
+                    <div class="row paddingL10">
+                      <div class="col-md-8">
+                        <h3 class="heading-3">
+                          {{ character.malayalamFullName }}
+                        </h3>
+                      </div>
+                      <div *ngIf="character.pendingMessages > 0" class="col-md-4 d-flex justify-content-end">
+                        <h3 class="heading-3" *ngIf="character.importantMessages">
+                          <i nz-icon nzType="exclamation-circle" nzTheme="outline"
+                            style="color: crimson;font-size: 20px"></i>
+                        </h3>
+
+                        <h3 class="heading-3">
+                          <nz-badge [nzCount]="character.pendingMessages" [nzStyle]="{ backgroundColor: '#52c41a' }">
+                          </nz-badge>
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="scrollable-container chat-view-single">
+  <div class="chat-list">
+    <div *ngIf="listFlag" class="message-wrapper">
+      <div class="chat-profile d-flex">
+        <div class="img_cont">
+          <i nz-icon nzType="left" (click)="onClickNavigation()" nzTheme="outline"></i>
+          <img src="{{
+              activeUser.profilePhoto != ''
+                ? activeUser.profilePhoto
+                : '../../../../../assets/img/user.png'
+            }}" class="chat-person" />
+        </div>
+        <div class="user_info">
+          <span> {{ activeUser.malayalamFullName }}</span>
+          <!-- <p>{{chat.message}}</p> -->
+        </div>
+      </div>
+      <div #scrollMe [scrollTop]="scrollMe.scrollHeight" class="message-body">
+        <div *ngFor="let chat of currentUserChats" class="chat-single-holder">
+          <div [ngClass]="{
+              outgoing_msg: chat.sendBy == userId,
+              outgoing_msgimp: chat.important == true,
+              incoming_msg: chat.sendTo == userId
+            }">
+            <span *ngIf="!chat.isImg">
+              <p>
+                {{ chat.message }}
+              </p><span class="time_date">{{
+              chat.createDate | date: "hh:mm a"
+            }}</span>
+            </span>
+            <span *ngIf="chat.isImg">
+              <p (click)="imageModal(chat.image)">
+                <img style="width:100%; max-width:400px;" [src]="transform(chat.image)">
+              </p><span class="time_date">{{
+              chat.createDate | date: "hh:mm a"
+            }}</span>
+            </span>
+          </div>
+      
+        </div>
+      </div>
+      <form #userForm="ngForm">
+        <div class="type_msg">
+          <div class="input_msg_template">
+            <button nz-button nz-popover [(nzVisible)]="templateVisible" nzPopoverTrigger="click"
+              [nzPopoverContent]="contentTemplate" nzPopoverPlacement="topLeft" class="template_btn">
+              {{ "speakerchat.templates" | translate }}
+            </button>
+            <button nz-button class="msg_imp_btn" (click)="isImportant()" [ngClass]="isImp ? 'success' : 'msg_imp_btn'">
+              <i nz-icon nzType="exclamation-circle" nzTheme="outline" class="margnrgt-15"></i>
+              {{ "speakerchat.important" | translate }}
+            </button>
+          </div>
+          <!-- <div>
+            <label>
+              <span>Select Image</span>
+              <input #imageInput type="file" accept="image/*" (change)="getBase64(imageInput)">
+            </label>
+          </div> -->
+
+          <div class="input_msg_write">
+            <textarea name="message" [(ngModel)]="message" type="text" class="write_msg" required
+              placeholder= "{{ 'dashboard.chat.typeyourmsg' | translate }}"
+              >
+            </textarea>
+            <button class="msg_stylus_btn" (click)="showModal()
+              ">
+              <img src="../../assets/img/stylus.svg" alt="send" />
+            </button>
+            <button class="msg_send_btn" title="send" type="submit" (click)="
+                sendMessageUsingSocket(userForm, activeUser.userName, isImp)
+              ">
+              <img src="../../assets/img/send.svg" alt="send" />
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <nz-modal nzWidth="1000" [nzStyle]="{ top: '5px' }"  [(nzVisible)]="isVisible" nzTitle="{{'ഇവിടെ വരയ്ക്കുക' | translate}}" (nzOnCancel)="handleCancel()"
+        (nzOnOk)="handleOk()" nzFooter=&nbsp;>
+        <app-handwriting (valueChange)='sendImage($event)'></app-handwriting>
+      </nz-modal>
+
+      <nz-modal nzWidth="1000" [(nzVisible)]="isImageVisible" nzTitle="{{'അയച്ച ചിത്രം കാണിക്കുക' | translate}}" (nzOnCancel)="imageModalCancel()"
+        (nzOnOk)="imageModalOk()" nzClosable=true nzFooter=&nbsp;>
+        <div class="pdng_can">
+          <img style="width:100%; max-width:1000px;" [src]="transform(imageForPreview)">
+        </div>
+      </nz-modal>
+
+      <ng-template #contentTemplate>
+        <div class="chat-template">
+          <nz-list [nzDataSource]="chatTemplates" nzSize="small" [nzRenderItem]="template">
+            <ng-template #template let-item>
+              <nz-list-item [nzContent]="itemTemplate" (click)="onSelectTemplate(item.message)">
+                <ng-template #itemTemplate>
+                  <a href="javascript:;">{{ item.message }}</a>
+                </ng-template>
+              </nz-list-item>
+            </ng-template>
+          </nz-list>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

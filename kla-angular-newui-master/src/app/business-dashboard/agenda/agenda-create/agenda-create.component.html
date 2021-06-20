@@ -1,0 +1,453 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.question.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <a>{{"business-dashboard.agenda.agenda-create.detailedagenda" | translate}} </a>
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.agenda.agenda-create.create" | translate}}      
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-3">
+    <fieldset disabled="true">
+      <h4>{{"business-dashboard.agenda.agenda-create.detailedagenda" | translate}}</h4>
+    </fieldset>
+  </div>
+
+  <div class="col-md-3 text-align-right">
+    <button
+      *ngIf="isReordered"
+      nz-button
+      (click)="updateLOBAgendaOrder()"
+      nzType="primary"
+    >
+    {{"business-dashboard.agenda.agenda-create.saveorder" | translate}}</button>
+    &nbsp;
+    <button
+      type="button"
+      (click)="goToListDetailedAgendaPage()"
+      class="btn btn-primary"
+    >
+    {{"business-dashboard.agenda.agenda-create.goback" | translate}}
+    </button>
+  </div>
+  <!-- <div *ngIf="saveButtonHide" class="col-md-3 text-align-right">
+          <button
+            type="button"
+            (click)="OnUpdateClick(addtoBusinessList)"
+            class="btn btn-primary"
+          >
+            Save
+          </button>
+        </div> -->
+</div>
+<hr />
+<div class="row  d-flex align-items-center marginbtm-15">
+  <div class="col-md-4">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label nzRequired [nzSpan]="8">{{"business-dashboard.agenda.agenda-create.assembly" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip="Select Assembly" [nzSpan]="14">
+          <!-- <span>{{ lob.assembly }}</span> -->
+          <nz-select
+            class="select"
+            nzPlaceHolder="Assembly"
+            [(ngModel)]="lob.assembly"
+            [disabled]="true"
+          >
+            <ng-container *ngFor="let assembly of assemblies">
+              <nz-option
+                [nzLabel]="assembly.assemblyId"
+                [nzValue]="assembly.id"
+              ></nz-option
+            ></ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label nzRequired [nzSpan]="8">{{"business-dashboard.agenda.agenda-create.session" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip="Select AssemblySession" [nzSpan]="14">
+          <!-- <span>{{ lob.session }}</span> -->
+          <nz-select
+            nzPlaceHolder="Session"
+            class="select"
+            [(ngModel)]="lob.session"
+            [disabled]="true"
+          >
+            <ng-container *ngFor="let session of sessions">
+              <nz-option
+                [nzLabel]="session.sessionId"
+                [nzValue]="session.id"
+              ></nz-option
+            ></ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div>
+      <nz-form-item nzFlex>
+        <nz-form-label nzRequired [nzSpan]="8">{{"business-dashboard.agenda.agenda-create.date" | translate}}</nz-form-label>
+        <nz-form-control nzErrorTip="Select Date" [nzSpan]="14">
+          <input
+            type="date"
+            nz-input
+            [(ngModel)]="lob.date"
+            [disabled]="this.routeData && this.routeData.date"
+            (change)="onLobDateChange()"
+          />
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <div class="card card-height full-height">
+      <div class="card-body">
+        <!-- <i nz-icon nzType="left" nzTheme="outline" class="m-b-15"></i> -->
+        <div class="list-group" role="tablist">
+          <ng-container *ngFor="let item of businessList">
+            <a
+              [ngClass]="{ active: item.id == currentBusinessId }"
+              class="list-group-item list-group-item-action list-style-1 mb-2"
+              role="tab"
+              href="javascript:;"
+              (click)="getCurrentBusinessDetails(item)"
+              >{{ item.name }}</a
+            >
+          </ng-container>
+          <button
+            [disabled]="!currentBusinessId"
+            (click)="addNewBusinessType()"
+            nz-button
+            nzType="primary"
+            nzBlock
+            class="m-t-15 button-admin-radius primary-button mrzero center mrg-btm"
+          >
+            <i nz-icon nzType="plus" Class="white"></i>
+            {{"business-dashboard.agenda.agenda-create.addnewagenda" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card card-height full-height">
+      <div class="card-body">
+        <form nz-form>
+          <!-- <nz-form-item *ngFor="let control of listOfControl; let i = index">
+            <nz-form-control>
+              <input
+                class="passenger-input"
+                nz-input
+                disabled
+                [(ngModel)]="control.title"
+                name="title{{ i }}"
+              />
+            </nz-form-control>
+          </nz-form-item> -->
+          <nz-form-item>
+            <nz-form-control>
+              <button
+                [disabled]="!currentBusinessId"
+                (click)="addNewBusinessLineItem($event)"
+                nz-button
+                nzType="primary"
+                nzBlock
+                class="m-t-15"
+              >
+                <i nz-icon nzType="plus"></i>
+                {{"business-dashboard.agenda.agenda-create.addtoagenda" | translate}}
+              </button>
+              <!-- <button nz-button nzType="primary">Submit</button> -->
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="card card-height full-heights no-brdr">
+      <div *ngIf="currentBusinessId" #divTarget>
+        <div class="card-body lob-business">
+          <ngx-sortable
+            [items]="addtoBusinessList"
+            name="{{'business-dashboard.agenda.agenda-create.listofagenda' | translate}}"
+            (listSorted)="listSorted($event)"
+          >
+            <ng-template let-business>
+              <div class="card mb-2">
+                <!-- <div class="card-body d-flex justify-content-start row">
+                  <div class="col-md-8">
+                    <h5 class="card-title">{{ business.businessName }}</h5>
+                  </div>
+                  <div class="col-md-4">
+                    <button nz-button nzType="default">
+                      {{ calculateTotalTime(business.businessLines) }} m
+                    </button>
+                  </div>
+                </div> -->
+                <div class="card-body d-flex justify-content-end row">
+                  <button nz-button [disabled]="isReordered" nz-popconfirm 
+                  nzPopconfirmTitle="do you want to generate Speaker Note?"
+                  (nzOnConfirm)="generateSpeakerNote(business.businessId)">Generate Speaker Note</button>
+                </div>
+                <ngx-sortable
+                  [items]="business.businessLines"
+                  (listSorted)="listSorted($event)"
+                  name="{{
+                    business.businessName +
+                      (calculateTotalTime(business.businessLines)
+                        ? ' - ' +
+                          calculateTotalTime(business.businessLines) +
+                          'm'
+                        : '')
+                  }}"
+                >
+                  <ng-template let-item>
+                    <nz-collapse nzAccordion="true" class="collapse-width">
+                      <nz-collapse-panel [nzHeader]="panelbtn">
+                        <ng-template #panelbtn>
+                          <p>{{ item.title }}</p>
+                        </ng-template>
+                        <div *ngIf="item.title">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <button
+                                *ngIf="item.allotedTime"
+                                nz-button
+                                nzType="default"
+                              >
+                                {{
+                                  item.allotedTime ? item.allotedTime : "0 "
+                                }}m
+                              </button>
+                              <!-- <button nz-button nzType="default">-- --</button> -->
+                              <button
+                                nz-button
+                                nzType="default"
+                                (click)="onEditLOBItem(item)"
+                              >
+                                <i nz-icon nzType="edit" nzTheme="fill"></i>
+                                Edit
+                              </button>
+                              <button
+                                nz-button
+                                nzType="default"
+                                mwlConfirmationPopover
+                                (confirm)="deleteBusinessLineItem(item.id)"
+                                popoverTitle="Delete Confirmation"
+                                popoverMessage="Are you sure you want to delete?"
+                                appendToBody="true"
+                              >
+                                <i nz-icon nzType="delete" nzTheme="fill"></i
+                                >Delete
+                              </button>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12 paddingT15">
+                              {{
+                                currentBusinessName == "Address by The Governor"
+                                  ? "Governer"
+                                  : "Member"
+                              }}
+                              : {{ item.primaryMemberName }}
+                              <span *ngIf="item.primaryMemberDesignation">
+                                {{
+                                  "( " +
+                                    item.primaryMemberDesignation
+                                      .designationName +
+                                    " )"
+                                }}
+                              </span>
+                            </div>
+                            <div class="col-md-12 paddingT15">
+                              Description : <span [innerHtml]="item.description"></span>
+                            </div>
+                            <div
+                              *ngIf="item.primaryDocumentUrl"
+                              class="col-md-12 paddingT15"
+                            >
+                              Document:
+                              <a
+                                [href]="item.primaryDocumentUrl"
+                                target="_blank"
+                                >View</a
+                              >
+                            </div>
+                            <div
+                              *ngIf="item.secondaryDocumentUrl"
+                              class="col-md-12 paddingT15"
+                            >
+                              Response:
+                              <a
+                                [href]="item.secondaryDocumentUrl"
+                                target="_blank"
+                              >
+                                View</a
+                              >
+                            </div>
+
+                            <div
+                              *ngIf="item.secondaryMemberName"
+                              class="col-md-12 paddingT15"
+                            >
+                              Respondent:
+                              {{ item.secondaryMemberName }}
+                              <span *ngIf="item.secondaryMemberDesignation">
+                                {{
+                                  "( " +
+                                    item.secondaryMemberDesignation
+                                      .designationName +
+                                    " )"
+                                }}
+                              </span>
+                            </div>
+
+                            <div
+                              *ngIf="item.speakerNoteUrl"
+                              class="col-md-12 paddingT15"
+                            >
+                              Speaker Note:<a
+                                [href]="item.speakerNoteUrl"
+                                target="_blank"
+                              >
+                                View
+                              </a>
+                              <!-- href="javascript:;"
+                            (click)="onViewSpeakerNote(item.speakerNoteUrl)" -->
+                            </div>
+                            <div
+                            *ngIf="item.ministerReadingDocumentUrl"
+                            class="col-md-12 paddingT15"
+                          >
+                            {{"business-dashboard.lob.lob-create.ministerreading" | translate}}:<a
+                              [href]="item.ministerReadingDocumentUrl"
+                              target="_blank"
+                            >
+                            {{"cpl.correspondencelist.view" | translate}}
+                            </a>
+                            <!-- href="javascript:;"
+                        (click)="onViewSpeakerNote(item.speakerNoteUrl)" -->
+                          </div>
+                            <div
+                            *ngIf="item.lobBusinessAgendaResponse"
+                            class="col-md-12 paddingT15"
+                          >
+                          <nz-collapse *ngFor="
+                          let subbusiness of item.lobBusinessAgendaResponse
+                          let i = index">
+                          <nz-collapse-panel [nzHeader]="header" [nzExtra]="extra">
+                            <ng-template #header>
+                              <div class="row">
+                                <div class="col-md-9">{{ subbusiness.subBusinessName }}</div>
+                              </div>
+                            </ng-template>
+                            <ng-template #extra> </ng-template>
+                            <ng-container *ngIf="subbusiness.lobBusinessRespondentMember">
+                              <div *ngFor="let respondent of subbusiness.lobBusinessRespondentMember" nz-row class="marginbtm-15">
+                                {{respondent.memberName }}:<a
+                                [href]="respondent.documentUrl"
+                                target="_blank"
+                              >
+                              {{"cpl.correspondencelist.view" | translate}}
+                              </a>
+                              </div>
+                              </ng-container>
+                            </nz-collapse-panel>
+                          </nz-collapse>
+                          </div>
+                          </div>
+                        </div>
+                      </nz-collapse-panel>
+                    </nz-collapse>
+                  </ng-template>
+                </ngx-sortable>
+                <!-- </div> -->
+              </div>
+            </ng-template>
+          </ngx-sortable>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #icon>
+  <i nz-icon nzType="plus" nzTheme="outline"></i>
+</ng-template>
+<nz-modal
+  [(nzVisible)]="isVisibleAddBusinessType"
+  nzTitle="{{'business-dashboard.agenda.agenda-create.addagenda' | translate}}"
+  [nzFooter]="null"
+  (nzOnCancel)="handleCancel()"
+>
+  <div class="lob_form">
+    <form
+      nz-form
+      [formGroup]="validateForm"
+      (ngSubmit)="handleOk(validateForm.value)"
+    >
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10" nzRequired
+          >  {{"business-dashboard.agenda.agenda-create.agendaeng" | translate }}
+          </nz-form-label
+        >
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <input nz-input formControlName="name" />
+          <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              {{"business-dashboard.agenda.agenda-create.inisreq" | translate }}
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSpan]="10" nzRequired
+          >{{"business-dashboard.agenda.agenda-create.agendamal" | translate }}</nz-form-label
+        >
+        <nz-form-control [nzSpan]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+          <input nz-input formControlName="descriptionMalayalam" />
+          <ng-template #errorTpl let-control>
+            <ng-container *ngIf="control.hasError('required')">
+              {{"business-dashboard.agenda.agenda-create.inisreq" | translate }}
+            </ng-container>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-control [nzOffset]="7" [nzSpan]="12">
+          <button
+            nz-button
+            nzType="primary"
+            [disabled]="!validateForm.valid"
+            class="margnrtp-15"
+          >
+            {{"business-dashboard.agenda.agenda-create.submit" | translate}}
+          </button>
+          <button
+            nz-button
+            type="button"
+            (click)="handleCancel()"
+            class="margnrtp-15"
+          >
+          {{"business-dashboard.agenda.agenda-create.cancel" | translate}}
+        </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+</nz-modal>

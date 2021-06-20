@@ -1,0 +1,59 @@
+.dropdown {
+  margin-left: 5px;
+}
+.gm-popup {
+  margin-left: 10px;
+}
+.radio-popup {
+  margin-left: 15px;
+  margin-top: 10px;
+}
+.bill-details {
+  margin-top: 40px;
+}
+
+.mrgL6 {
+  margin-left: 6px;
+}
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+.mrgT10 {
+  margin-top: 10px;
+}
+
+.text-align-center {
+  text-align: center;
+}
+.mrgL6 {
+  margin-left: 6px;
+}
+
+.mrgB20 {
+  margin-bottom: 20px;
+}
+.baseline {
+  vertical-align: baseline;
+}
+.form {
+  width: 100%;
+}
+
+.left-border {
+  border-left: 1px solid #ccc;
+}
+
+.d-grid {
+  display: grid;
+}
+.br-word {
+  word-break: break-all;
+  width: 100%;
+}
+.disabled {
+  pointer-events: none; //This makes it not clickable
+  opacity: 0.6; //This grays it out to look disabled
+}

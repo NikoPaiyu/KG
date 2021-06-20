@@ -1,0 +1,145 @@
+<div class="modal-header" *ngIf="!hidePrint">
+  <div class="row fullwidth">
+    <div class="col-md-6">
+      <h4>Preview</h4>
+    </div>
+    <div class="col-md-6" style="text-align: right; padding-right: 50px;">
+      <button
+        nz-button
+        nzType="dashed"
+        [useExistingCss]="true"
+        printSectionId="preview-section"
+        ngxPrint
+        style="margin-left: 6px;"
+      >
+        Print
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="pading-all width-100 word-break brd-clr" id="preview-section">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{ assembly }}
+        {{ " -ാം കേരള നിയമസഭ" }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{ session }}
+        {{ "-ാം സമ്മേളനം" }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{ previewData.date | date: "dd-MMMM-yyyy,EEEE" }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 align-center">
+        {{
+          previewData.category == "UNSTARRED"
+            ? "നക്ഷത്രചിഹ്നമിടാത്ത ചോദ്യങ്ങൾ"
+            : "നക്ഷത്രചിഹ്നമിട്ട ചോദ്യങ്ങൾ"
+        }}
+      </div>
+    </div>
+    <div class="row mb10">
+      <div class="col-md-12 align-center">
+        {{ "[ " }}{{ "ആകെ ചോദ്യങ്ങൾ : "
+        }}<strong>{{ previewData.totalCount }}</strong
+        >{{ " ]" }}
+      </div>
+    </div>
+    <div class="row detail-table">
+      <div class="col-md-12">
+        <table class="table clause-style">
+          <tbody>
+            <tr>
+              <td>
+                <strong class="str">{{ "മറുപടി നൽകുന്ന മന്ത്രിമാർ" }}</strong>
+              </td>
+              <td
+                style="width: 40%;"
+                *ngIf="previewData.category == 'UNSTARRED'"
+              >
+                <strong>{{ "ചോദ്യം നമ്പർ" }}</strong>
+              </td>
+            </tr>
+            <tr *ngFor="let item of previewData.details">
+              <td>{{ item.porfolioNameInMalayalam }}</td>
+              <td
+                *ngIf="
+                  previewData.category == 'UNSTARRED' &&
+                  item.fromNumber != item.toNumber
+                "
+              >
+                : {{ item.fromNumber }} {{ "മുതൽ " }} {{ item.toNumber }}
+                {{ "വരെ " }}
+              </td>
+              <td
+                *ngIf="
+                  previewData.category == 'UNSTARRED' &&
+                  item.fromNumber == item.toNumber
+                "
+              >
+                : {{ item.fromNumber }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div
+      class="row paddingT20"
+      *ngFor="let item of previewData.questions; let i = index"
+    >
+      <div class="col-md-12 align-center mb15">
+        <span
+          ><U
+            ><strong>{{ item.heading }}</strong></U
+          ></span
+        >
+      </div>
+      <div class="col-md-12">
+        <div class="width-100 d-flex">
+          <div class="count-column mr15">
+            <span
+              ><strong
+                >{{ previewData.category == "STARRED" ? "*" : ""
+                }}{{ item.questionNumber ? item.questionNumber : i + 1
+                }}{{ ".   " }}</strong
+              ></span
+            >
+          </div>
+          <div class="data-column">
+            <div
+              class="width-100 mb10"
+              *ngFor="let member of item.clubbingDetails; let k = index"
+            >
+              <span
+                >{{ member }}
+                {{
+                  k == item.clubbingDetails.length - 1
+                    ? " : താഴെ കാണുന്ന ചോദ്യങ്ങൾക്കു " +
+                      item.portFolioNameInMalayalam +
+                      " സദയം മറുപടി പറയാമോ?"
+                    : ""
+                }}
+              </span>
+            </div>
+            <div class="width-100 d-flex" *ngFor="let clause of item.clauses; let j = index">
+              <div class="clouse_wid">
+                {{ "( " + clauseNo[j] + " )" }}
+              </div>
+              <div class="clouse_txt">{{ clause }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

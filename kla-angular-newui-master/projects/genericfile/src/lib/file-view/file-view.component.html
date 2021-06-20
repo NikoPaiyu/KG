@@ -1,0 +1,83 @@
+<div class="row justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "miscellaneous-business-file" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-3 d-flex align-items-center m-b8">
+        <h3 style="word-break: break-all; font-size: 20px">
+          {{ fileDetails?.fileNumber }}
+        </h3>
+      </div>
+      <div class="col-md-1">
+        <div class="row">
+          <nz-tag [nzColor]="'red'">
+            {{ fileDetails?.priority }}
+          </nz-tag>
+        </div>
+        <div class="row" *ngIf="fileDetails?.confidential">
+          <nz-tag [nzColor]="'green'" class="mrt-20">
+            {{ "CONFIDENTIAL" }}
+          </nz-tag>
+        </div>
+      </div>
+      <div class="col-md-8">
+        <!-- COMPONENT SHOULD BE HERE -->
+        <generic-file-workflow-actions
+          *ngIf="responseAvailable"
+          [fileDetails]="fileDetails"
+        ></generic-file-workflow-actions>
+      </div>
+    </div>
+    <div class="row"></div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-25 margntp-25">
+  <div class="col-md-7">
+    <generic-file-business-blocks
+      *ngIf="responseAvailable"
+      [fileDetails]="fileDetails"
+      (getGenericFileByFileId)="getGenericFileByFileId(fileId)"
+    ></generic-file-business-blocks>
+  </div>
+  <div class="col-md-5">
+    <nz-tabset>
+      <nz-tab nzTitle="{{ 'business-dashboard.question.notes' | translate }}">
+        <generic-file-tab-notes
+          *ngIf="responseAvailable"
+          [fileDetails]="fileDetails"
+        ></generic-file-tab-notes>
+      </nz-tab>
+      <nz-tab
+        nzTitle="{{ 'business-dashboard.aod.file-tracking.logs' | translate }}"
+      >
+        <generic-file-tab-logs
+          [logDetails]="fileDetails?.logs"
+        ></generic-file-tab-logs>
+      </nz-tab>
+      <nz-tab
+        nzTitle="{{
+          'business-dashboard.aod.file-tracking.fileinfo' | translate
+        }}"
+      >
+        <generic-file-Tab-info
+          *ngIf="responseAvailable"
+          [fileDetails]="fileDetails"
+          (getGenericFileByFileId)="getGenericFileByFileId(fileId)"
+        ></generic-file-Tab-info>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>

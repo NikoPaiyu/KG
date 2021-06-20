@@ -1,0 +1,323 @@
+<div class="col-md-12 d-flex justify-content-end" *ngIf="ballotResult?.stage === 'NOT_YET_ATTACHED'">
+  <!-- *ngIf="ballotResult?.stage === 'NOT_YET_ATTACHED'" -->
+  <!-- <button nz-button  nzType="secondary" nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to Attach to File?" nzCancelText="Cancel" nzOkText="Attach To File"
+    (nzOnConfirm)="attachToFile()" (nzOnCancel)="cancel()" *ngIf="ballotResult?.fileStatus !== 'APPROVED' && attachtofileButton">
+      Attach To File
+    </button>
+    <button nz-button  nzType="secondary" nz-popconfirm
+    nzPopconfirmTitle="Are you sure you want to Resubmit?" nzCancelText="Cancel" nzOkText="Resubmit"
+    (nzOnConfirm)="resubmitFile()" (nzOnCancel)="cancel()" *ngIf="ballotResult?.fileStatus == 'APPROVED' && attachtofileButton">
+       Resubmit
+     </button> -->
+  <button nz-button nzType="secondary" nz-popconfirm nzPopconfirmTitle='{{"pmbr.resolution.createfile" | translate}}'
+    nzCancelText="Cancel" nzOkText="Create File" (nzOnConfirm)="createFilePop()" (nzOnCancel)="cancel()"
+    *ngIf="ballotResult?.fileStatus !== 'APPROVED' && attachtofileButton">
+    {{ "cpl.docpreparion.createfile" | translate }}
+  </button>
+  <button nz-button nzType="secondary" nz-popconfirm nzPopconfirmTitle='{{"pmbr.resolution.wanttoattachtofile" | translate}}'
+    nzCancelText="Cancel" nzOkText="Attach To File" (nzOnConfirm)="resubmitFile()" (nzOnCancel)="cancel()"
+    *ngIf="ballotResult?.fileStatus === 'APPROVED' && attachtofileButton && ballotResult?.stage === 'NOT_YET_ATTACHED'">
+    {{ "cpl.documents.attachtofile" | translate }}
+  </button>
+</div>
+<div class="col-md-12 d-flex justify-content-end" *ngIf="ballotResult?.fileId && ballotResult?.stage === 'ATTACHED_TO_FILE'
+  && !ballotId">
+  <button nz-button nzType="secondary" nz-popconfirm class="ml-6" (click)="viewFile()">
+    {{ "bill.performballo.viewfile" | translate }}
+  </button>
+  <button nz-button nzType="secondary" class="ml-6"
+    *ngIf="!ballotResult.resolutionBulletinId && 
+            ballotResult?.status === 'APPROVED'  && 
+            permission.createBulletin"
+    nz-popconfirm nzPopconfirmTitle='{{"pmbr.resolution.wanttocreatebulletin" | translate}}' (nzOnConfirm)="createBulletin()">
+    {{ "business-dashboard.pmbr.resolution-ballot-list.createbulletin" | translate }}
+  </button>
+  <button nz-button nzType="secondary" class="ml-6"
+    *ngIf="ballotResult.resolutionBulletinId && ballotResult?.status === 'APPROVED'  && permission.createBulletin"
+    (click)="viewBulletin(ballotResult?.resolutionBulletinId)">
+    {{ "business-dashboard.pmbr.resolution-ballot-list.viewbulletin" | translate }}
+  </button>
+  <button nz-button nzType="secondary" class="ml-6" 
+    [disabled]="!ballotResult?.resolutionBulletinId"
+    *ngIf="ballotResult?.status === 'APPROVED'&& !ballotResult.speakerNoteId"
+    (click)="generateSpeakerNote()">
+    {{ "cpl.fileworkflow.speakernote" | translate }}
+  </button>
+  <button nz-button nzType="secondary" class="ml-6"
+      *ngIf="ballotResult.speakerNoteId"(click)="viewSpeakerNote(ballotResult?.speakerNoteId)">
+      {{ "pmbr.lists.viewspeakernote" | translate }}
+  </button>
+  <button nz-button nzType="secondary" class="ml-6"[disabled]="!canAddToLob || !ballotResult.speakerNoteId || this.ballotResult.lobBusinessId" 
+    *ngIf="ballotResult?.status === 'APPROVED'"
+    nz-popconfirm nzPopconfirmTitle='{{"bill.bill-clause.list.wanttoaddtolob" | translate}}' (nzOnConfirm)="addToLob()">
+    {{ "pmbr.resolutionBallotView.addToLob" | translate }}
+  </button>
+  <!-- <button nz-button  nzType="secondary"
+      class="ml-6"
+      *ngIf="ballotResult?.status === 'APPROVED'"
+      (click)="generateMemberReading()">
+        Member Reading
+      </button> -->
+</div>
+<div class="row" *ngIf="ballotId">
+  <div class="col-md-12 d-flex justify-content-end">
+    <button nz-button nzType="secondary" *ngIf="!ballotResult.correspondenceId && ballotResult.fileStatus==='APPROVED' 
+          && permission.createLetter" (click)="getMemberCodes()">
+          {{ "business-dashboard.pmbr.ballotview.createletter" | translate }}
+    </button>
+    <button nz-button nzType="secondary" *ngIf="ballotResult.correspondenceId" (click)="viewLetter(ballotResult.correspondenceId)">
+      {{ "cpl.documents.viewletter" | translate }}
+    </button>
+  </div>
+</div>
+<div class="row">
+<div class="col-md-12">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row margnrtp-15">
+        <div class="col-md-4">
+          <h5>
+            {{ "bill.performballo.ballotresult" | translate }}
+          </h5>
+        </div>
+      </div>
+      <div class="row margnrtp-15">
+        <div class="col-md-6">
+          <nz-table #basicTable nzShowPagination [nzData]="ballotResult?.pmbrResolutionLottingResultDto">
+            <thead>
+              <tr>
+                <th>{{ "business-dashboard.pmbr.resolution-ballot.ballotno" | translate }}</th>
+                <th>{{ "business-dashboard.question.member" | translate }}</th>
+                <th *ngIf="ballotResult?.status === 'APPROVED'">{{ "business-dashboard.pmbr.ballotview.memberreading" | translate }}</th>
+                <!-- <th *ngIf="ballotResult?.status === 'APPROVED'">{{ "Letter to Department" | translate }}</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of basicTable.data; let i = index">
+                <td>{{ i+1 }}</td>
+                <td>{{ data.memberName }}</td>
+                <td *ngIf="ballotResult.status === 'APPROVED'">
+                  <button nz-button nzType="secondary" 
+                    [disabled]="!ballotResult?.resolutionBulletinId || 
+                                !data.resolutionId || 
+                                data.resolutionStatus !=='APPROVED'"
+                    *ngIf="!data.memberReadingId &&  
+                    permission.createFile" 
+                    (click)="generateMemberReading(data.id)">
+                    {{ "business-dashboard.pmbr.ballotview.creatememberreading" | translate }}
+                  </button>
+                  <button nz-button nzType="secondary" *ngIf="data.memberReadingId"
+                    (click)="viewMemberReading(data.memberReadingId)">
+                    {{ "business-dashboard.pmbr.ballotview.viewmemberreading" | translate }}
+                  </button>
+                </td>
+                <!-- <td *ngIf="ballotResult.status === 'APPROVED'">
+                  <button nz-button  nzType="secondary"
+                    *ngIf="ballotResult.fileStatus==='APPROVED' &&
+                    data.resolutionId !== null && 
+                    !data.correspondenceId && 
+                    permission.createLetter &&
+                    data.resolutionStage ==='STAKE_HOLDER_LETTER_PENDING'" 
+                    (click)="getDepartmentCode(data.resolutionId)">
+                      Create Letter
+                  </button>
+                  <button nz-button  nzType="secondary" *ngIf="data.correspondenceId" 
+                    (click)="viewLetter(data.correspondenceId)">
+                    View Letter
+                  </button>
+                </td> -->
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+        <div class='col-md-6'*ngIf="false">
+          <div class="row margnrtp-15" *ngIf="ballotResult?.status === 'APPROVED' && !isFileView">
+            <div class="col-md-12" >
+              <div class="row margnrtp-15" *ngIf="!showResolutionList">
+                <div class="col-md-8" >
+                  <nz-card style="width:300px;" 
+                  [nzBordered]="false" 
+                  nzTitle="Additional Resolutions"
+                  *ngIf="additionalResolution && additionalResolution.length>0">
+                    <p *ngFor="let item of additionalResolution">
+                      {{item.title}}
+                    </p>
+                  </nz-card>
+                </div>
+                <div class="col-md-2">
+                  <button type="button" nz-button nzType="primary"
+                    (click)="showAdditionalResolutionList()">
+                      {{"pmbr.resolutions.addresolution" | translate}}
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12" *ngIf="showResolutionList">
+              <div class="row margnrtp-15">
+                <div class="col-md-6">
+                  {{"pmbr.resolutions.additionalresolution" | translate}}
+                </div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-8">
+                    <nz-select
+                    [(ngModel)]="additionalResolution" 
+                    name="additionalResolution"
+                    nzMode="multiple" 
+                    nzPlaceHolder="Please select">
+                      <nz-option *ngFor="let option of listOfResolution" 
+                        [nzLabel]="option.billMetaDataDto.title" 
+                        [nzValue]="option.billMetaDataDto">
+                      </nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="row margnrtp-15">
+                <div class="col-md-6">
+                  <button 
+                    type="button" 
+                    nz-button 
+                    nzType="primary"
+                    class="ml-10"
+                    (click)="saveResolutionList()">
+                      {{"pmbr.resolutions.save" | translate}}
+                  </button>
+                  <button 
+                    type="button" 
+                    nz-button 
+                    nzType="primary"
+                    class="ml-6"
+                    (click)="hideResolutionlist()">
+                      {{ "pmbr.resolutions.cancel" | translate}}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<nz-modal [(nzVisible)]="createFilePopUp" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <nz-tabset>
+          <nz-tab nzTitle='{{"cpl.documents.createfile" | translate}}'>
+            <form nz-form [formGroup]="validateForm" class="form">
+              <div class="row marginbtm-15">
+                <div class="col-md-6 d-flex align-items-center whitespace">
+                    {{ "business-dashboard.question.assembly" | translate }}
+                    <nz-select nzAllowClear name="assemblyId" formControlName="assemblyId"                     (ngModelChange)="getSessionForAssembly()">
+                        <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                <div class="col-md-6 d-flex align-items-center whitespace">
+                    {{ "business-dashboard.question.questionlist.session" | translate }}
+                    <nz-select nzAllowClear name="sessionId" formControlName="sessionId">
+                        <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                        </nz-option>
+                    </nz-select>
+                </div>
+                </div>
+            <div class="row margnrtp-15 align-items-center">
+              <div class="col-md-4">
+                {{"cpl.docamendments.filesubject" | translate}}
+              </div>
+              <div class="col-md-8">
+                <input nz-input placeholder="File subject" formControlName="subject" />
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-4">
+                {{"cpl.docamendments.filepriority" | translate}}
+              </div>
+              <div class="col-md-8">
+                <nz-radio-group formControlName="priority">
+                  <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                  <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                  <label nz-radio nzValue="ACTION_TODAY">{{"cpl.docamendments.actiontoday" | translate}}</label>
+                  <label nz-radio nzValue="ASSEMBLY_URGENT">{{"cpl.docamendments.assemblyurgent" | translate}}</label>
+                </nz-radio-group>
+              </div>
+            </div>
+            <div class="row margnrtp-15">
+              <div class="col-md-4">
+                {{"cpl.docamendments.description" | translate}}
+              </div>
+              <div class="col-md-8">
+                <textarea nz-input rows="2" placeholder="File description"formControlName="description"></textarea>
+              </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+              <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                  class="secondary-button button-font dark-border dark-font" (click)="onCancelCreateFilePopup()">
+                  {{"business-dashboard.question.cancel" | translate}}
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                  nzPopconfirmTitle='{{"bill.bill-clause.list.wanttocreatefile" | translate}}' (nzOnConfirm)="createFile()"
+                  class="btn btn-primary primary-button">
+                  {{"cpl.docpreparion.createfile" | translate}}
+                </button>
+              </div>
+            </div>
+            </form>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showBulletinPart2Popup" nzTitle=' {{ "Create Bulletin Part 2" | translate }}'
+  (nzOnCancel)="cancelBulletin()">
+  <pmbr-create-bullettin-form *ngIf="bulletinData" [bulletinData]="bulletinData"
+    (afterCreate)="afterCreateBulletin($event)">
+  </pmbr-create-bullettin-form>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="readingPreview" nzTitle='{{"cpl.fileworkflow.speakernote" | translate}}' [nzFooter]="null" nzWidth="1050"
+  (nzOnCancel)="hidePreview()">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end mrgB10">
+        <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+          *ngIf="permission.createFile && speakerNote?.status === 'SAVED'"
+          nzPopconfirmTitle='{{"Do you want to attach to file?" | translate}}' (nzOnConfirm)="attachSpeakerNoteToFile()"
+          nzPopconfirmPlacement="leftTop">
+          {{"Attach to File" | translate}}
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p [innerHtml]="speakerNote?.reportData | safeHtml"></p>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="memberReadingPreview" nzTitle='{{"business-dashboard.pmbr.ballotview.memberreading" | translate}}' [nzFooter]="null" nzWidth="1050"
+  (nzOnCancel)="hidePreview()">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end mrgB10">
+        <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+          *ngIf="permission.createFile && memberReading?.status === 'SAVED'"
+          nzPopconfirmTitle='{{"Do you want to attach to file?" | translate}}'
+          (nzOnConfirm)="attachMemberReadingToFile()" nzPopconfirmPlacement="leftTop">
+          {{"Attach to File" | translate}}
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <p [innerHtml]="memberReading?.reportData | safeHtml"></p>
+      </div>
+    </div>
+  </div>
+</nz-modal>

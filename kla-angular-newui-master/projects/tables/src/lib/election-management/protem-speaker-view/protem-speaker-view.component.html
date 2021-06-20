@@ -1,0 +1,214 @@
+<ng-container *ngIf="!protemFileDetails">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{ "business-dashboard.election-management.protem-speaker-view" | translate }}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="sticky_action_bar">
+    <div class="row">
+        <div class="col-md-6">
+<<<<<<< HEAD
+            <h2 class="admin-page-heading">Protem Speaker View</h2>
+=======
+            <h3>{{ "business-dashboard.election-management.protem-speaker-view" | translate }}</h3>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div class="d-flex justify-content-between">
+                <button nzType="default" nz-button (click)="onBackClick()">
+                    {{ "cpl.docupload.back" | translate }}
+                </button>
+                <button nzType="primary" nz-button class="ml-6" (click)="showFilePopup()"
+                    *ngIf="!protemDetails?.fileId && permission.createFile">
+                    {{ "cpl.documents.createfile" | translate }}
+                </button>
+                <button nzType="primary" nz-button class="ml-6" (click)="showAuthPopup()"
+                *ngIf="permission.createOath && protemDetails?.fileId && protemDetails?.proTemSpeakerAuths && protemDetails?.proTemSpeakerAuths?.length === 0"> 
+                {{ "business-dashboard.election-management.protem-speaker-oath-create" | translate }}
+            </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+</ng-container>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{ "business-dashboard.election-management.protem-speaker-name" | translate }}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        {{protemDetails?.proTemSpeakerName}}
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="protemDetails?.fileId">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"cpl.docamendments.fileno" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewFile()">{{ protemDetails?.fileNumber }}</a>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.election-management.protem-speaker.cabinet-notification" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewDocs(osDocuments.cabinateNote.id)"
+                            *ngIf="osDocuments.cabinateNote">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                        </a>
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+    <div class="col-md-6" *ngIf="osDocuments.electionNote">
+        <nz-form-item>
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.election-management.protem-speaker.election-notification" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewDocs(osDocuments.electionNote.id)"
+                            *ngIf="osDocuments.electionNote">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                        </a>
+                        <!-- <ng-container *ngIf="!osDocuments.electionNote && permission.attachDocs">
+                            <a class="viewlink" (click)="showAttachModal('ELECTION_NOTIFICATION')">Attach Election
+                                Notification</a>
+                        </ng-container> -->
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6" *ngIf="protemDetails?.cabinateNoteStatus === 'APPROVED' && letterToSec">
+        <nz-form-item *ngIf="osDocuments.governorOffice">
+            <div class="row">
+                <div class="col-md-4">
+                    <nz-form-label>
+                        {{"business-dashboard.election-management.protem-speaker.letter" | translate}}
+                    </nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <nz-form-control>
+                        <a class="viewlink" (click)="viewDocs(osDocuments.governorOffice.id)"
+                            *ngIf="osDocuments.governorOffice">
+                            {{"business-dashboard.swearing-in.view" | translate}}
+                        </a>
+                        <!-- <ng-container *ngIf="!osDocuments.governorOffice && permission.attachDocs">
+                            <a class="viewlink" (click)="showAttachModal('LETTER_FROM_GOVERNOR_OFFICE')">Attach Letter
+                                From Governor's Office</a>
+                        </ng-container> -->
+                    </nz-form-control>
+                </div>
+            </div>
+        </nz-form-item>
+    </div>
+</div>
+
+<nz-modal [(nzVisible)]="showModal" [nzFooter]="null" nzWidth="500" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <div class="row">
+                    <div class="col-md-12">
+                        {{"business-dashboard.election-management.protem-speaker.select-document" | translate}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <nz-select [(ngModel)]="docSelected" name="docSelected">
+                            <nz-option *ngFor="let type of pendingDocuments" [nzLabel]="type.title" [nzValue]="type.id">
+                            </nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div class="row mt-20">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button nzType="default" nz-button (click)="cancelModal()">
+                            {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                        </button>
+                        <button nzType="primary" class="ml-6" nz-button nz-popconfirm
+                            nzPopconfirmTitle="Do you want to attach to file?" (nzOnConfirm)="attachProtemSpeaker()"
+                            [disabled]="!docSelected">
+                            {{"business-dashboard.election-management.protem-speaker.attach-file" | translate}}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [(nzVisible)]="showFileModal" [nzFooter]="null" nzWidth="550" [nzClosable]="false">
+    <tables-attach-to-file *ngIf="protemDetails" [typeOfFile]="'PROTEM_SPEAKER'" [electionDetails]="protemDetails"
+        (closePopup)="hideFileModal()"></tables-attach-to-file>
+</nz-modal>
+<nz-modal [(nzVisible)]="showCreateModal" nzTitle="Create ProTem Speaker Oath" [nzFooter]="null" nzWidth="550"
+    (nzOnCancel)="hideAuthPopup()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <quill-editor class="quillstyle" [(ngModel)]="oathData" [modules]="modules"></quill-editor>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12">
+                <nz-radio-group [(ngModel)]="oathEnding" nzName="radiogroup" (ngModelChange)="generateAuth()">
+                    <label nz-radio nzValue="ദൈവത്തിന്റെ നാമത്തിൽ സത്യം">ദൈവത്തിന്റെ നാമത്തിൽ സത്യം</label>
+                    <label nz-radio nzValue="സഗൗരവം പ്രതിജ്ഞ">സഗൗരവം പ്രതിജ്ഞ</label>
+                </nz-radio-group>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="primary"
+                    class="secondary-button button-font dark-border dark-font" (click)="hideAuthPopup()">
+                    {{ "business-dashboard.forms.form-list.cancel" | translate }}
+                </button>
+                <button type="button" nz-button nzType="primary" nz-popconfirm
+                    nzPopconfirmTitle="Are you sure you want to create ProTem Speaker Oath?"
+                    (nzOnConfirm)="createProtemAuth()" class="btn btn-primary primary-button">
+                    {{"business-dashboard.election-management.protem-speaker-oath-create" | translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

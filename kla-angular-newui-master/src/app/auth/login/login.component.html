@@ -1,0 +1,205 @@
+<section class="login container-fluid">
+  <div class="row justify-content-center align-items-start d-flex">
+    <div
+      class="content-bg  align-self-md-center align-self-lg-center align-self-xl-center col-md-11 d-flex justify-content-center align-items-center"
+    >
+      <div
+        *ngIf="!isPasswordReset"
+        class="col-sm-12 col-md-9 col-lg-8 col-xl-8"
+      >
+        <div class="login-form login-user">
+          <form #loginForm="ngForm">
+            <!-- <h2 class="heading-2 text-left mrgB40">{{'Login' | translate}}</h2> -->
+            <div class="form-group">
+              <!-- <label for="userName" class="">{{'Username' | translate}}</label> -->
+              <input
+                name="userName"
+                type="text"
+                id="userName"
+                [placeholder]="'Your Username'| translate"
+                class="form-control form-control-lg"
+                [(ngModel)]="user.username"
+                required
+              />
+              <span *ngIf="formErrors.userName">
+                <p class="text-danger">{{ formErrors.userName }}</p>
+              </span>
+            </div>
+
+            <div class="form-group">
+              <!-- <label for="password">{{'Password' | translate}}</label> -->
+              <input
+                name="password"
+                type="password"
+                id="password"
+                placeholder="Your Password"
+                class="form-control form-control-lg "
+                [(ngModel)]="user.password"
+                autocomplete="false"
+                required
+              />
+              <span *ngIf="formErrors.password">
+                <p class="text-danger">{{ formErrors.password }}</p>
+              </span>
+            </div>
+
+            <div class="form-group">
+              <button
+                type="submit"
+                class="login_button"
+                (click)="login()"
+              >
+                
+                Login
+              </button>
+              <button
+                class="btn btn-link forgot-pwd"
+                (click)="onForgotPwdClick()"
+              >
+                {{'Forgot Password?' | translate}}
+              </button>
+            </div>
+          </form>
+        </div>
+        <!-- <div class="forgot text-center mrgT147">
+      
+      </div> -->
+      </div>
+
+
+
+<div
+      *ngIf="isPasswordReset && email"
+      class="col-sm-12 col-md-9 col-lg-8 col-xl-8 align-self-md-center align-self-lg-center align-self-xl-center"
+    >
+      <div class="login-form login-user">
+        <form #passwordResetForm="ngForm">
+          <h2 class="heading-2 text-center mrgB67">{{'Reset Password' | translate}}</h2>
+          <div class="form-group">
+            <label for="otp">{{'OTP' | translate}}</label>
+            <input
+              name="otp"
+              type="text"
+              id="otp"
+              placeholder="{{'Enter OTP Here'| translate}}"
+              class="form-control"
+              [(ngModel)]="otp"
+              required
+            />
+            <span *ngIf="formErrors.otp">
+              <p class="text-danger">{{ formErrors.otp }}</p>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">{{'New Pasword' | translate}}</label>
+            <input
+              name="newPassword"
+              type="password"
+              id="newPassword"
+              placeholder="{{'New Passsword'| translate}}"
+              class="form-control"
+              [(ngModel)]="newPassword"
+              autocomplete="false"
+              required
+            />
+            <span *ngIf="formErrors.newPassword">
+              <p class="text-danger">{{ formErrors.newPassword }}</p>
+            </span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">{{'Confirm Pasword' | translate}}</label>
+            <input
+              name="confirmPassword"
+              type="password"
+              id="confirmPassword"
+              placeholder="{{'Confirm Passsword'| translate}}"
+              class="form-control"
+              [(ngModel)]="confirmPassword"
+              autocomplete="false"
+              pattern="{{ newPassword }}"
+              required
+            />
+            <span *ngIf="formErrors.confirmPassword">
+              <p class="text-danger">{{ formErrors.confirmPassword }}</p>
+            </span>
+          </div>
+
+          <div class="form-group text-right mrgT40">
+            <button
+              type="submit"
+              class="btn active secondary-button dark-border dark-font"
+              (click)="onCancelResetPwd()"
+            >
+              {{'Cancel' | translate}}</button
+            >&nbsp;
+            <button
+              type="submit"
+              class="btn active primary-button"
+              (click)="onResetPwd()"
+            >
+              {{'Submit' | translate}}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    </div>
+
+     
+
+    <!-- <div
+      *ngIf="isPasswordReset && !userName"
+      class="col-sm-12 col-md-8 col-lg-8 col-xl-6 align-self-md-center align-self-lg-center align-self-xl-center"
+    >
+     <div class="login-form login-user">
+       <form #otpForm="ngForm">
+         <h2 class="heading-2 text-center marginbtm-15">Reset sPassword</h2>
+         <div class="form-group">
+           <label for="username">Email</label>
+           <input
+             name="email"
+             type="email"
+             id="email"
+             placeholder="Your Registered Email"
+             class="form-control"
+             [(ngModel)]="email"
+             required
+           />
+           <span *ngIf="formErrors.email">
+             <p class="text-danger">{{ formErrors.email }}</p>
+           </span>
+         </div>
+     
+         <div class="form-group text-right mrgT40">
+           <button
+             type="submit"
+             class="btn active secondary-button dark-border dark-font"
+             (click)="onCancelResetPwd()"
+           >
+             Cancel</button
+           >&nbsp;
+           <button
+             type="submit"
+             class="btn active primary-button"
+             (click)="onSendOTP()"
+           >
+             Send OTP
+           </button>
+         </div>
+       </form>
+     </div>
+    
+    </div> -->
+
+
+
+   
+  </div>
+</section>
+
+<ng-template #msg>
+  <reset-password></reset-password>
+</ng-template>

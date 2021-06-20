@@ -1,0 +1,189 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "business-dashboard.forms.form-list.dashboard" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-space-between">
+            <div class="col-md-6">
+                <h3>
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.pending-business" | translate }}
+                </h3>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row">
+    <div class="col-md-6">
+    </div>
+    <div class="col-md-6">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder='{{ "business-dashboard.forms.form-list.search-here" | translate }}' 
+                    (ngModelChange)="searchBusiness()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+            </div>
+        </div>
+    </div>
+</div>
+<nz-tabset>
+    <nz-tab nzTitle="Business for Action" (nzClick)="getBusinessForAction()">
+        <ng-template [ngTemplateOutlet]="businessForactionTable"></ng-template>
+    </nz-tab>
+</nz-tabset>
+<ng-template #businessForactionTable>
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="businessList" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <!-- <th nzShowCheckbox [(nzChecked)]="checkbxParams.allDtCheckd" 
+                (nzCheckedChange)="_checkAllRows($event)"></th> -->
+                <th *ngIf="permissions.assignToAssistant"></th>
+                <th>
+                    {{ "business-dashboard.forms.form-list.sl-no" | translate }}
+                </th>
+                <th>
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.refrence-title" | translate }}
+                </th>
+                <th >
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.refrence-type" | translate }}
+                </th>
+                <th>
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.forwarded-date" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.business-dates" | translate }}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{ "business-dashboard.tables.time-allocation.pending-time-allocation.ta-status" | translate }}
+                </th>
+                <th>
+                    {{ "business-dashboard.bill-management.billlist.status" | translate }}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngIf="tableParams.colSpan">
+                <th colspan="10" class="tb-data">
+                    {{ checkbxParams.numberOfChecked }} {{"business-dashboard.question.questionlist.selected" | translate}} :
+                    <button class="ant-btn mr-6" (click)="assignToAssistant()">
+     {{ "cpl.documents.assigntoassisstant" | translate }}
+          </button>
+                </th>
+            </tr>
+            <tr *ngFor="let list of filterTable.data; let i = index">
+                <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" 
+                (nzCheckedChange)="refreshStatus(list)" [nzDisabled]="list.status === 'ASSIGEND'"
+                *ngIf="permissions.assignToAssistant"></td>
+                <td>{{ i+1 }}</td>
+                <td (mouseover)="showLinks(list.id, list.status)"
+                (mouseleave)="hideLinks(list.id)">
+                    <tr>
+                        <td class="titlestyle">
+                            <a class="viewlink" (click)="view(list.referenceId, list.referenceType)">{{list.referenceTitle}}</a>
+                        </td>
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <div>
+                            <td *ngIf="permissions?.generateTA && (list?.stage == 'TA_NOT_GENERATED' || list?.stage == 'SAVED' || list?.stage == 'TA_GENERATED')">
+                                <a class="viewlink" (click)="generateTA(list)">
+                                    {{"business-dashboard.tables.time-allocation.pending-time-allocation.generate-time-allocation" | translate}}
+                                </a>
+                            </td>
+                            <td *ngIf="!(list?.stage == 'SAVED' || list?.stage == 'TA_NOT_GENERATED')">
+                                <a class="viewlink" (click)="viewTA(list)">
+                                   {{"business-dashboard.swearing-in.view" | translate}}
+                                </a>
+                            </td>
+                            <td *ngIf="permissions?.addToLOB && list?.stage == 'READY_FOR_MEMBER_TA_LOB'">
+                                <a class="viewlink" (click)="addToLOB(list)">
+                                   {{"business-dashboard.swearing-in.add-to-lob" | translate}}
+                                </a>
+                            </td>
+                        </div>
+                    </tr>
+                </td>
+                <td>{{ list.referenceType }}</td>
+                <td>{{ list.forwardedDate}}</td>
+                <td *ngIf="colCheckboxes[4].check">
+                    {{list?.businessDates?.join()}}
+                </td>
+                <td>
+                    <nz-tag> {{ list.taStatus }}</nz-tag>
+                </td>
+                <td>
+                    <nz-tag> {{ list.status }}</nz-tag>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<nz-modal [(nzVisible)]="filtrParams.rowFilter || filtrParams.colFilter" nzTitle="" (nzOnCancel)="showFilter(null)" (nzOnOk)="_confrmFilter()">
+    <div class="padding_15">
+        <p *ngFor="let box of filtrParams.tableDto; let i = index">
+            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+        </p>
+    </div>
+</nz-modal>
+<!-- Assign to Assistant -->
+<nz-modal nzTitle='{{ "cpl.documents.assigntoassisstant" | translate }}' [(nzVisible)]="assignAssistant.visible" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row margnrtp-15 align-items-center">
+                    <div class="col-md-4">
+                        {{ "cpl.documents.assigntoassisstant" | translate }}
+                    </div>
+                </div>
+                <div class="row margnrtp-15 align-items-center">
+                    <div class="col-md-4">{{ "cpl.documents.Filter" | translate }}</div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-12">
+                        <input nz-input placeholder='{{ "business-dashboard.notice-proc.searchnamehere" | translate }}' [(ngModel)]="assignAssistant.searchPerson" (ngModelChange)="personSearch()" />
+                    </div>
+                </div>
+                <div class="row margnrtp-15">
+                    <div class="col-md-12">
+                        <nz-card [nzTitle]="null" class="checklist-all">
+                            <nz-table #assistantListTable [nzData]="assignAssistant.assistantList">
+                                <tbody>
+                                    <tr *ngFor="let person of assistantListTable.data">
+                                        <td>
+                                            <nz-radio-group [(ngModel)]="assignAssistant.assigneeId">
+                                                <label nz-radio [nzValue]="person.userId"></label>
+                                            </nz-radio-group>
+                                        </td>
+                                        <td>{{ person.details.fullName }}</td>
+                                        <!-- <td>{{ person.name }}</td> -->
+                                    </tr>
+                                </tbody>
+                            </nz-table>
+                        </nz-card>
+                    </div>
+                </div>
+                <div class="row mrt-50 margnrtp-15">
+                    <div class="col-md-12 d-flex justify-content-end">
+                        <button type="button" nz-button nzType="default" (click)="onCancelAssistant()">
+                            {{ "committee.committe-files.cancel" | translate }}
+            </button>
+                        <button type="button" nz-button nzType="primary" (click)="onSubmitAssistant()" class="margnlft-15" [disabled]="assignAssistant.assigneeId === null">
+                            {{ "business-dashboard.question.questionlist.assign" | translate }}
+            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- assign to assitant -->

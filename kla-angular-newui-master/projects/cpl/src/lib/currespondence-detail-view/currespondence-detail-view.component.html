@@ -1,0 +1,261 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b>{{ "cpl.correspondence.correspondence" | translate }}</b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h6>
+      <b>{{
+        "cpl.correspondencedetailview.correspondencedetails" | translate
+      }}</b>
+    </h6>
+  </div>
+  <div class="col-md-6 d-flex justify-content-end">
+    <button
+      nz-button
+      class="btn btn-primary primary-button"
+      [nzType]="'primary'"
+      (click)="goBack()"
+    >
+      {{ "cpl.docupload.back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+<nz-empty *ngIf="currespondenceDetails.length == 0"></nz-empty>
+<ng-container *ngIf="currespondenceDetails.length > 0">
+  <div class="row">
+    <div class="col-md-3">
+      {{ "cpl.correspondencedetailview.totalrelcorres" | translate }}:
+      <b>{{ currespondenceDetails.length }}</b>
+    </div>
+  </div>
+
+  <nz-collapse [nzBordered]="false">
+    <nz-collapse-panel
+      *ngFor="let item of currespondenceDetails"
+      [nzHeader]="item.title"
+      [nzActive]="item.id == currespondenceId"
+      [nzExtra]="extraTpl"
+    >
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.docupload.subject" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b>
+                  {{ item.title }}
+                </b>
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <nz-form-item>
+            <div class="row">
+              <div class="col-md-4">
+                <nz-form-label>{{
+                  "cpl.filelistflow.createddate" | translate
+                }}</nz-form-label>
+              </div>
+              <div class="col-md-8">
+                <span
+                  ><b>
+                    {{ item.createdOn | date: "dd-MM-yyyy hh:mm a" }}</b
+                  ></span
+                >
+              </div>
+            </div>
+          </nz-form-item>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.correspondence.from" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.fromDisplayName }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.docamendments.status" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.status }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.correspondence.to" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b>
+                  <ng-container *ngFor="let to of item.toCode; let i = index">
+                    <span *ngIf="i == 0">{{ to.toCode }}</span>
+                    <span *ngIf="i > 0">{{ ", " + to.toCode }}</span>
+                  </ng-container></b
+                ></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.templatecreate.business" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.business }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="row"
+        *ngIf="item.businessReferSubType && item.businessReferType"
+      >
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.correspondencedetailview.refertype" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.businessReferType }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.correspondencedetailview.refersubtype" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.businessReferSubType }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.templatecreate.workflow" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.workflowMandatory ? "Yes" : "No" }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{
+                "cpl.correspondence.template" | translate
+              }}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <span
+                ><b> {{ item.template }}</b></span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="row">
+            <div class="col-md-4">
+              <nz-form-label>{{"cpl.correspondence.attachments" | translate}}</nz-form-label>
+            </div>
+            <div class="col-md-8">
+              <div class="row">
+                <div
+                  class="col-md-12"
+                  *ngFor="let attachments of item.attachmentDto"
+                >
+                  <a
+                    href="javascript:;"
+                    (click)="showAttachment(attachments.attachmentUrl)"
+                  >
+                    {{ attachments.name }}</a
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nz-divider></nz-divider>
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12">
+          <div class="preview-main">
+            <div class="mrgT20 preview-main-text">
+              <h3>{{ "cpl.templatecreate.preview" | translate }}</h3>
+              <div>
+                <quill-view-html [content]="item.data" *ngIf="item.data">
+                </quill-view-html>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #extraTpl>
+        <span
+          ><b> {{ item.createdOn | date: "dd-MM-yyyy hh:mm a" }}</b></span
+        >
+      </ng-template>
+    </nz-collapse-panel>
+  </nz-collapse>
+</ng-container>

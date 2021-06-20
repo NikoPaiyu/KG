@@ -1,0 +1,1810 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item> {{ 'business-dashboard.table.assembly-elected-member.dashboard' | translate }}  </nz-breadcrumb-item>
+        <nz-breadcrumb-item> {{ 'business-dashboard.table.assembly-elected-member.userProfile' | translate }} </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h3>{{ 'business-dashboard.table.assembly-elected-member.userProfile' | translate }} 
+          </h3> <nz-tag *ngIf="electedMember?.validated !== false" [nzColor]="'green'">Validated</nz-tag>
+          <nz-tag *ngIf="electedMember?.details?.deceased" [nzColor]="'red'">In Memory</nz-tag>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+           
+          <button *ngIf="electedMember?.validated == false"
+            nz-button nzType="primary"
+            nz-popconfirm 
+            nzPopconfirmTitle="{{ 'business-dashboard.table.assembly-elected-member.validateMsg' | translate }} " 
+            nzCancelText="{{ 'business-dashboard.table.assembly-elected-member.cancel' | translate }} " 
+            nzOkText="{{ 'business-dashboard.table.assembly-elected-member.yes' | translate }} " 
+            (nzOnConfirm)="markasValidated()" 
+          >{{ 'business-dashboard.table.assembly-elected-member.markasValidate' | translate }} </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <nz-tabset>
+    <nz-tab [nzTitle]="getTabTitle()">
+        <ng-template [ngTemplateOutlet]="myProfileTab"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "business-dashboard.table.assembly-elected-member.roles" | translate }}' *ngIf="permission.viewRoleTab">
+        <ng-template [ngTemplateOutlet]="addRoleTab"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "business-dashboard.table.assembly-elected-member.electionDetails" | translate }}'>
+        <ng-template [ngTemplateOutlet]="electionDetailsTab"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "business-dashboard.table.assembly-elected-member.klapositions" | translate }}'>
+        <ng-template [ngTemplateOutlet]="memberPositionTab"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "business-dashboard.table.assembly-elected-member.terms" | translate }}' >
+        <ng-template [ngTemplateOutlet]="termsTab"></ng-template>
+    </nz-tab>
+    <!-- <nz-tab nzTitle='Deceased' *ngIf="electedMember?.details?.deceased">
+        <ng-template [ngTemplateOutlet]="deceased"></ng-template>
+    </nz-tab> -->
+</nz-tabset>
+<ng-template #myProfileTab>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button nzType="primary" nz-button  (click)="showDeceasedPopup()" class="mrgL6" *ngIf="!editModeEnabled && 
+            !electedMember?.details?.deceased && permission.markDeceased">
+            {{ "business-dashboard.table.assembly-elected-member.markdesead" | translate }}
+            </button>
+            <button nzType="primary" nz-button  (click)="cancelEditMode()" class="mrgL6" *ngIf="editModeEnabled">
+                {{ "business-dashboard.table.assembly-elected-member.cancel" | translate }}
+            </button>
+            <button nzType="primary" nz-button  (click)="enableEditMode()" class="mrgL6" *ngIf="!editModeEnabled">
+                {{ "business-dashboard.table.assembly-elected-member.edit" | translate }}
+            </button>
+            <button nzType="primary" nz-button 
+            nz-popconfirm 
+            nzPopconfirmTitle="{{ 'business-dashboard.table.assembly-elected-member.updateMsg' | translate }}?" 
+            nzCancelText="{{ 'business-dashboard.table.assembly-elected-member.no' | translate }}"
+            nzOkText="{{ 'business-dashboard.table.assembly-elected-member.yes' | translate }}" (nzOnConfirm)="saveProfileData()" class="mrgL6" *ngIf="editModeEnabled">
+            {{ "business-dashboard.table.assembly-elected-member.update" | translate }}
+            </button>
+        </div>
+     </div>
+
+<div class="row mrgTP30">
+    <div class="col-md-12">  
+<form nz-form [formGroup]="createCandidateForm">
+
+    <div class="row mrgTP30">
+    <div class="col-md-12">  
+    <nz-collapse [nzBordered]="true">
+     <nz-collapse-panel [nzHeader]="basicHead" [nzActive]="true"> 
+     <ng-template #basicHead>
+        <h5>  {{ "business-dashboard.table.assembly-elected-member.basicInfo" | translate }}</h5>
+     </ng-template>
+
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.table.assembly-elected-member.firstName" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                       <b *ngIf="(!editModeEnabled && permission.updateMemberDetails) || !permission.updateMemberDetails">{{createCandidateForm?.value?.firstName}}</b> 
+                        <nz-form-control *ngIf="editModeEnabled && permission.updateMemberDetails" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.firstNameReq' | translate }}">
+                            <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.firstName' | translate }}" formControlName="firstName" name="firstName" />
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.table.assembly-elected-member.lastName" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                       <b *ngIf="(!editModeEnabled && permission.updateMemberDetails) || !permission.updateMemberDetails">{{createCandidateForm?.value?.lastName}}</b> 
+                        <nz-form-control *ngIf="editModeEnabled && permission.updateMemberDetails" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.lastNameReq' | translate }}">
+                            <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.lastName' | translate }}" formControlName="lastName" name="lastName" />
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.table.assembly-elected-member.fullNameEng" | translate }}
+                           </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.fullName}}</b> 
+                        <nz-form-control nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.fullNameEngReq' | translate }}" *ngIf="editModeEnabled">
+                            <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.fullNameEng' | translate }}" formControlName="fullName"
+                                name="fullName"/>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ "business-dashboard.table.assembly-elected-member.fullNameMal" | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.malayalamFullName}}</b> 
+                        <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.fullNameMal' | translate }}" formControlName="malayalamFullName"
+                            name="malayalamFullName" *ngIf="editModeEnabled" />
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ 'business-dashboard.table.assembly-elected-member.gender' | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.gender}}</b> 
+                        <nz-form-control nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.genderReq' | translate }}" *ngIf="editModeEnabled">
+                            <nz-radio-group formControlName="gender">
+                                <label nz-radio nzValue="MALE">{{ 'business-dashboard.table.assembly-elected-member.male' | translate }}</label>
+                                <label nz-radio nzValue="FEMALE">{{ 'business-dashboard.table.assembly-elected-member.female' | translate }}</label>
+                                <label nz-radio nzValue="Other">{{ 'business-dashboard.table.assembly-elected-member.others' | translate }}</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ 'business-dashboard.table.assembly-elected-member.maritalStatus' | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.married === true? 'Married':createCandidateForm?.value?.married === false? 'Single': null}}</b> 
+                        <nz-form-control nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.maritalStatusReq' | translate }}" *ngIf="editModeEnabled">
+                            <nz-radio-group formControlName="married">
+                                <label nz-radio [nzValue]="true">{{ 'business-dashboard.table.assembly-elected-member.married' | translate }}</label>
+                                <label nz-radio [nzValue]="false">{{ 'business-dashboard.table.assembly-elected-member.single' | translate }}</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item >
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ 'business-dashboard.table.assembly-elected-member.dob' | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.dateOfBirth | date: "dd/MM/yyyy"}}</b> 
+                        <nz-form-control  nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.dobReq' | translate }}" *ngIf="editModeEnabled">
+                            <nz-date-picker [nzFormat]="'dd-MM-yyyy'" formControlName="dateOfBirth" [nzDisabledDate]="disabledDate"
+                            [nzShowToday]="false"
+                            ></nz-date-picker>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.placeofbirth' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.placeOfBirth}}</b>
+                        <nz-form-control  nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.placeofbirthReq' | translate }}" *ngIf="editModeEnabled"> 
+                            <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.placeofbirth' | translate }}" formControlName="placeOfBirth"
+                                name="placeOfBirth"/>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.nationality' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- *ngIf="!editModeEnabled" -->
+                        <b >{{createCandidateForm?.value?.nationality}}</b> 
+                        <!-- <nz-form-control nzErrorTip='Nationality Required' *ngIf="editModeEnabled">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Nationality"
+                                formControlName="nationality">
+                                <nz-option *ngFor="let nation of  nationalityList" [nzValue]="nation"
+                                    [nzLabel]="nation">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control> -->
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ "business-dashboard.table.assembly-elected-member.party" | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="!editModeEnabled">{{electedMember?.details?.keralaPolicticalPartyName}}</b> 
+                            <nz-select  *ngIf="editModeEnabled" [nzDisabled]="true" nzShowSearch nzAllowClear nzPlaceHolder="Party" formControlName="keralaPolicticalPartyid">
+                                <nz-option *ngFor="let party of partyList" [nzValue]="party.kerelaPoliticalPartyId"
+                                    [nzLabel]="party.kerelaPoliticalPartyName">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <!-- <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>Member Group</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="(!editModeEnabled && permission.updatePosition) || !permission.updatePosition">{{electedMember?.details?.memberGroup?.split('_').join(' ') | titlecase}}</b> 
+                            <nz-select  *ngIf="editModeEnabled && permission.updatePosition" nzShowSearch nzAllowClear nzPlaceHolder="Member Group" formControlName="memberGroup">
+                                <nz-option *ngFor="let group of memberGroups" [nzValue]="group.value"
+                                    [nzLabel]="group.label">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>Kerala Party Front</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="(!editModeEnabled && permission.updatePosition) || !permission.updatePosition">{{returnPartyFront(electedMember?.details?.keralaPartyFrontId)}}</b> 
+                            <nz-select  *ngIf="editModeEnabled && permission.updatePosition" nzShowSearch nzAllowClear nzPlaceHolder="Party Front" formControlName="keralaPartyFrontId">
+                                <nz-option *ngFor="let partyFront of partyFronts" [nzValue]="partyFront.id"
+                                    [nzLabel]="partyFront.frontName">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div> -->
+    <!-- <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>Member Designation</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="(!editModeEnabled && permission.updatePosition) || !permission.updatePosition">{{electedMember?.details?.memberDesignationName}}</b> 
+                            <nz-select  *ngIf="editModeEnabled && permission.updatePosition" nzShowSearch nzAllowClear nzPlaceHolder="Member Designation" formControlName="memberDesignationId">
+                                <nz-option *ngFor="let designation of memberDesignations" [nzValue]="designation.memberDesignationId"
+                                    [nzLabel]="designation.designationName">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="isMinister()">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>Minister For</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="!editModeEnabled">{{returnPortfolio(electedMember?.details?.portfolioId)}}</b> 
+                            <nz-select  *ngIf="editModeEnabled" nzShowSearch nzAllowClear nzPlaceHolder="Minister For" formControlName="portfolioId">
+                                <nz-option *ngFor="let portfolio of portFolioList" [nzValue]="portfolio.id"
+                                    [nzLabel]="portfolio.name">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div> -->
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div>  
+    
+    <div class="row mrgTP30">
+        <div class="col-md-12">  
+    <nz-collapse [nzBordered]="true">
+     <nz-collapse-panel [nzHeader]="conatcthead" [nzActive]="true">
+        <ng-template #conatcthead>
+            <h5>{{ "business-dashboard.table.assembly-elected-member.contactDetials" | translate }} </h5>
+         </ng-template>   
+        <div class="row mrgTP30">
+        <div class="col-md-8">
+           
+                <!-- <h5>Contact Details :</h5> -->
+            
+        </div>
+        <div class="col-md-4">
+           <button *ngIf="editModeEnabled" nz-button nzType="default" (click)="setContactDetails(null)"><i nz-icon nzType="plus-circle" nzTheme="outline" ></i>
+            {{ "business-dashboard.table.assembly-elected-member.addcontact" | translate }}
+        </button> 
+        </div>
+    </div>
+    <ng-container formArrayName="contactInfo">
+        <div class="row" *ngFor="let contact of contactArray.controls; let i=index">
+            <ng-container [formGroupName]="i">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-1">{{i+1}}.</div>
+                        <div class="col-md-5">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.contactType" | translate }} :
+                                <b *ngIf="!editModeEnabled">{{contact?.value?.contactTypeCode?.split('_').join(' ')}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Contact Type Required' *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Contact Type"
+                                        formControlName="contactTypeCode" [nzDisabled]="i === 0 || i === 1">
+                                        <nz-option *ngFor="let type of returnContactList(contact?.value?.contactTypeCode)" [nzValue]="type.code"
+                                            [nzLabel]="type.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <!-- <div class="col-md-3">
+                            <nz-form-item>
+                                Contact Name:
+                                <b *ngIf="!editModeEnabled">{{contact?.value?.name}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Name Required' *ngIf="editModeEnabled">
+                                    <input [disabled]="i === 0" nz-input placeholder="Name" formControlName="name" name="name" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div> -->
+                        <div class="col-md-5">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.contact" | translate }} :
+                                <b *ngIf="!editModeEnabled">{{contact?.value?.code}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" [nzErrorTip]="getContactErrorTip(contact?.value?.contactTypeCode) | titlecase"  *ngIf="editModeEnabled">
+                                    <input [disabled]="i === 0 || i === 1" nz-input [placeholder]="getConactPlacehlder(contact?.value?.contactTypeCode)| titlecase" formControlName="code" name="code"
+                                    [pattern]='getContactPattern(contact?.value?.contactTypeCode)' />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="i > 1 && editModeEnabled"
+                                (click)="removeContactType(i)"></i>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div> 
+
+<div class="row mrgTP30">
+    <div class="col-md-12">  
+<nz-collapse [nzBordered]="true">
+ <nz-collapse-panel [nzHeader]="realtionhead" [nzActive]="true">
+    <ng-template #realtionhead>
+        <h5>{{ "business-dashboard.table.assembly-elected-member.relationDetails" | translate }}  </h5>
+     </ng-template>  
+    <div class="row margnrtp-15">
+        <div class="col-md-8">
+            <!-- <h5>Relations :</h5> -->
+        </div>
+        <div class="col-md-4">
+            <button *ngIf="editModeEnabled" nz-button nzType="default" (click)="setRelatedPerson(null)">
+                <i nz-icon nzType="plus-circle" nzTheme="outline" ></i>
+                {{ "business-dashboard.table.assembly-elected-member.addRelation" | translate }}
+            </button> 
+        </div>
+    </div>
+    <div class="row margnrtp-15">
+    <ng-container formArrayName="relatedPersons">
+        <div *ngFor="let relation of relationTypeArray.controls; let relIndex=index">
+            <ng-container [formGroupName]="relIndex">
+                <div class= row>
+                 <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-1">{{relIndex+1}}.</div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.relationType" | translate }} 
+                                <b *ngIf="!editModeEnabled">{{relation?.value?.relationCode}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Relation Type Required' *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.relationType' | translate }} "
+                                        formControlName="relationCode">
+                                        <nz-option *ngFor="let type of returnRelationList(relation.value.relationCode)" [nzValue]="type.code"
+                                            [nzLabel]="type.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.firstName" | translate }} :
+                                <b *ngIf="!editModeEnabled">{{relation?.value?.firstName}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.firstNameReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.firstName' | translate }} " formControlName="firstName"
+                                        name="firstName" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.lastName" | translate }} :
+                                <b *ngIf="!editModeEnabled">{{relation?.value?.lastName}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.lastNameReq' | translate }} " *ngIf="editModeEnabled">
+                                    <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.lastName' | translate }} " formControlName="lastName"
+                                        name="lastName" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="relIndex>0 && editModeEnabled"
+                                (click)="removeRelationType(relIndex)"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <!-- <div class="col-md-6">
+                            <nz-form-item>
+                                Display Name:
+                                <b *ngIf="!editModeEnabled">{{relation?.value?.displayName}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Display Name Required' *ngIf="editModeEnabled">            
+                                    <input nz-input placeholder="Display Name" formControlName="displayName"
+                                        name="displayName"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div> -->
+                        <div class="col-md-5">
+                            <nz-form-item>
+                                {{ "business-dashboard.table.assembly-elected-member.nominee" | translate }} :
+                                <b *ngIf="!editModeEnabled">{{relation?.value?.nominee === true ? 'Yes': relation?.value?.nominee === false ? 'No': null}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.nomineeReq' | translate }} " *ngIf="editModeEnabled">
+                                    <nz-radio-group formControlName="nominee">
+                                        <label nz-radio [nzValue]="true">{{ "business-dashboard.table.assembly-elected-member.yes" | translate }}</label>
+                                        <label nz-radio [nzValue]="false">{{ "business-dashboard.table.assembly-elected-member.no" | translate }}</label>
+                                    </nz-radio-group>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+               </div>
+                <div class="row mrgTP20">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <nz-form-item>
+                            <nz-form-label>{{ "business-dashboard.table.assembly-elected-member.contactDetials" | translate }} </nz-form-label>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-1">
+                        <i  *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="setContactDetailsOfRelated(null,relIndex)"></i>
+                    </div>
+                </div>
+                <ng-container formArrayName="contactInfo">
+                    <div class="row" *ngFor="let contact of relContact(relation).controls; let i=index">
+                        <ng-container [formGroupName]="i">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-11">
+                                <div class="row">
+                                    <div class="col-md-1">{{i+1}}.</div>
+                                    <div class="col-md-5">
+                                        <nz-form-item>
+                                            {{ "business-dashboard.table.assembly-elected-member.contactType" | translate }} :
+                                            <b *ngIf="!editModeEnabled">{{contact?.value?.contactTypeCode?.split('_').join(' ')}}</b> 
+                                            <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Contact Type Required' *ngIf="editModeEnabled">
+                                                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="Contact Type" (ngModelChange)="changeContactType($event,relIndex,relation)"
+                                                    formControlName="contactTypeCode" >
+                                                    <nz-option *ngFor="let type of returnRelationContactList(contact?.value?.contactTypeCode, relation)" [nzValue]="type.code"
+                                                        [nzLabel]="type.name">
+                                                    </nz-option>
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <!-- <div class="col-md-3">
+                                        <nz-form-item>
+                                            Contact Name:
+                                            <b *ngIf="!editModeEnabled">{{contact?.value?.name}}</b> 
+                                            <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip='Name Required' *ngIf="editModeEnabled">
+                                                <input nz-input placeholder="Name" formControlName="name" name="name" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div> -->
+                                    <div class="col-md-5">
+                                        <nz-form-item>
+                                            {{ "business-dashboard.table.assembly-elected-member.contact" | translate }}:
+                                            <b *ngIf="!editModeEnabled">{{contact?.value?.code}}</b> 
+                                            <nz-form-control [nzSm]="24" [nzXs]="24" [nzErrorTip]="getContactErrorTip(contact?.value?.contactTypeCode) | titlecase" *ngIf="editModeEnabled">
+                                                <input nz-input [placeholder]="getConactPlacehlder(contact?.value?.contactTypeCode)| titlecase" formControlName="code" name="code"
+                                                [pattern]='getContactPattern(contact?.value?.contactTypeCode)' />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                            (click)="removeContactFromRelation(relation,i)"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+                <div class="row mrgTP20">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-10">
+                        <nz-form-item>
+                            <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.address' | translate }} </nz-form-label>
+                        </nz-form-item>
+                    </div>
+                    <div class="col-md-1">
+                        <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline"(click)="setAddressArrayforRelated(null,relIndex)"></i>
+                    </div>
+                </div>
+                <ng-container formArrayName="address">
+                    <div class="row" *ngFor="let address of relAddress(relation).controls; let i=index">
+                        <ng-container [formGroupName]="i">
+                            <div class="col-md-1"></div>
+                            <div class="col-md-11">
+                                <div class="row">
+                                    <div class="col-md-1">{{i+1}}.</div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.addressType' | translate }}:
+                                            <b *ngIf="!editModeEnabled">{{address?.value?.addressTypeName}}</b> 
+                                            <nz-form-control [nzSm]="24" [nzXs]="24" *ngIf="editModeEnabled"  nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.addressTypeReq' | translate }}">
+                                                <nz-select nzShowSearch nzAllowClear nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.addressType' | translate }}"
+                                                formControlName="addressTypeCode" (ngModelChange)="setRelationAdressTypeName(relation,i,$event)">
+                                                <nz-option *ngFor="let type of returnRelationAddressList(address?.value?.addressTypeCode, relation)" [nzValue]="type.code"
+                                                    [nzLabel]="type.name">
+                                                </nz-option>
+                                            </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.addressLine1' | translate }}:
+                                            <b *ngIf="!editModeEnabled">{{address?.value?.line1}}</b> 
+                                            <nz-form-control [nzSm]="24" [nzXs]="24" *ngIf="editModeEnabled">
+                                                <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.addressLine1' | translate }}" 
+                                                formControlName="line1" name="line1" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.addressLine2' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.line2}}</b> 
+                                                <input *ngIf="editModeEnabled" nz-input 
+                                                placeholder="{{ 'business-dashboard.table.assembly-elected-member.addressLine2' | translate }}" 
+                                                formControlName="line2" name="line2" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.addressLine3' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.line3}}</b> 
+                                                <input *ngIf="editModeEnabled"
+                                                 nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.addressLine3' | translate }}" 
+                                                 formControlName="line3" name="line3" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                            (click)="removeAddressFromRelation(relation,i)"></i>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.country' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.country}}</b> 
+                                                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.country' | translate }}"
+                                                    formControlName="countryId" *ngIf="editModeEnabled" (ngModelChange)="relationCountryChanged(relation, i)">
+                                                    <nz-option *ngFor="let country of nationList" [nzValue]="country.id"
+                                                        [nzLabel]="country.name">
+                                                    </nz-option>
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.state' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.state}}</b> 
+                                                <nz-select *ngIf="editModeEnabled"  nzShowSearch nzAllowClear nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.state' | translate }}"
+                                                    formControlName="stateId" (ngModelChange)="relationStateChanged(relation, i)">
+                                                    <nz-option *ngFor="let state of getStateList(address.value.countryId, i)" [nzValue]="state.id"
+                                                        [nzLabel]="state.name">
+                                                    </nz-option>
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.district' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.district}}</b> 
+                                                <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear
+                                                 nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.district' | translate }}"
+                                                    formControlName="districtId" (ngModelChange)="relationDistrictChanged(relation, i)">
+                                                    <nz-option *ngFor="let disctrict of getDistrictList(address.value.stateId, i)" [nzValue]="disctrict.id"
+                                                        [nzLabel]="disctrict.name">
+                                                    </nz-option>
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-1"></div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.taluk}}</b> 
+                                                <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}"
+                                                    formControlName="talukId">
+                                                    <nz-option *ngFor="let taluk of getTalukList(address.value.districtId, i)" [nzValue]="taluk.id"
+                                                        [nzLabel]="taluk.name">
+                                                    </nz-option>
+                                                </nz-select>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.village' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.village}}</b> 
+                                                <input *ngIf="editModeEnabled" nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.village' | translate }}" 
+                                                formControlName="village" name="village" />
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <nz-form-item>
+                                            {{ 'business-dashboard.table.assembly-elected-member.pincode' | translate }}:
+                                            <nz-form-control [nzSm]="24" [nzXs]="24">
+                                                <b *ngIf="!editModeEnabled">{{address?.value?.pinCode}}</b>
+                                                <input *ngIf="editModeEnabled" nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.pincode' | translate }}" 
+                                                formControlName="pinCode" name="pinCode" type="number"/>
+                                            </nz-form-control>
+                                        </nz-form-item>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </ng-container>
+    </div>
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div> 
+<div class="row mrgTP30">
+    <div class="col-md-12">  
+<nz-collapse [nzBordered]="true">
+ <nz-collapse-panel [nzHeader]="otherDetails" [nzActive]="true">
+    <ng-template #otherDetails>
+        <h5>{{ 'business-dashboard.table.assembly-elected-member.otherDetails' | translate }} </h5>
+     </ng-template>   
+    <div class="row margnrtp-15">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.personalIncome' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.presetincome}}</b>
+                            <input *ngIf="editModeEnabled" nz-input 
+                            placeholder="{{ 'business-dashboard.table.assembly-elected-member.personalIncome' | translate }}" formControlName="presetincome"
+                                name="presetincome" type="number"/>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.travelAbroad' | translate }}?</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.traveledAbroad === true? 'Yes': createCandidateForm?.value?.traveledAbroad === true?'No': null}}</b>
+                            <nz-radio-group *ngIf="editModeEnabled" formControlName="traveledAbroad">
+                                <label nz-radio [nzValue]="true">{{ "business-dashboard.table.assembly-elected-member.yes" | translate }}</label>
+                                <label nz-radio [nzValue]="false">{{ "business-dashboard.table.assembly-elected-member.no" | translate }}</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row mrgTP30">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-2">
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.history' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-10">
+                        <nz-form-control>
+                            <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.briefHistory}}</b>
+                            <textarea *ngIf="editModeEnabled" rows="2" nz-input formControlName="briefHistory"
+                                placeholder="{{ 'business-dashboard.table.assembly-elected-member.history' | translate }}"></textarea>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row mrgTP30">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-5">
+                    <nz-form-item>
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.languageKnown' | translate }}</nz-form-label>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-7">
+                    <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="addLanguageArray()"></i>
+                </div>
+            </div>
+            <ng-container formArrayName="languageKnown">
+                <div class="row" *ngFor="let language of languageArray.controls; let i=index">
+                    <ng-container [formGroupName]="i">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">{{i+1}}.</div>
+                                <div class="col-md-9">
+                                    <nz-form-item>
+                                        <b *ngIf="!editModeEnabled">{{language?.value?.stringValue}}</b>
+                                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                                            <input *ngIf="editModeEnabled" nz-input
+                                             placeholder="{{ 'business-dashboard.table.assembly-elected-member.language' | translate }} {{i+1}}" 
+                                             formControlName="stringValue"
+                                                name="stringValue" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                        (click)="removeLanguageArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-3">
+                    <nz-form-item>
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.hobbies' | translate }}</nz-form-label>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-9">
+                    <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="addHobbyArray()"></i>
+                </div>
+            </div>
+            <ng-container formArrayName="hobbies">
+                <div class="row" *ngFor="let hobby of hobbyArray.controls; let i=index">
+                    <ng-container [formGroupName]="i">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">{{i+1}}.</div>
+                                <div class="col-md-9">
+                                    <nz-form-item>
+                                        <b *ngIf="!editModeEnabled">{{hobby?.value?.stringValue}}</b>
+                                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                                            <input *ngIf="editModeEnabled" nz-input 
+                                            placeholder="{{ 'business-dashboard.table.assembly-elected-member.hobby' | translate }} {{i+1}}" 
+                                            formControlName="stringValue"
+                                                name="stringValue" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                        (click)="removeHobbyArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="row mrgTP20">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-5">
+                    <nz-form-item>
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.profession' | translate }}</nz-form-label>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-7">
+                    <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="addProfessionArray()"></i>
+                </div>
+            </div>
+            <ng-container formArrayName="profession">
+                <div class="row" *ngFor="let profession of professionArray.controls; let i=index">
+                    <ng-container [formGroupName]="i">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">{{i+1}}.</div>
+                                <div class="col-md-9">
+                                    <nz-form-item>
+                                        <b *ngIf="!editModeEnabled">{{profession?.value?.stringValue}}</b>
+                                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                                            <input *ngIf="editModeEnabled" nz-input 
+                                            placeholder="{{ 'business-dashboard.table.assembly-elected-member.profession' | translate }} {{i+1}}"
+                                                formControlName="stringValue" name="stringValue" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                        (click)="removeProfessionArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-3">
+                    <nz-form-item>
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.recreation' | translate }}</nz-form-label>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-9">
+                    <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="addRecreationArray()"></i>
+                </div>
+            </div>
+            <ng-container formArrayName="recreation">
+                <div class="row" *ngFor="let recreation of recreationArray.controls; let i=index">
+                    <ng-container [formGroupName]="i">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">{{i+1}}.</div>
+                                <div class="col-md-9">
+                                    <nz-form-item>
+                                        <b *ngIf="!editModeEnabled">{{recreation?.value?.stringValue}}</b>
+                                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                                            <input *ngIf="editModeEnabled" nz-input 
+                                            placeholder="{{ 'business-dashboard.table.assembly-elected-member.recreation' | translate }} {{i+1}}"
+                                                formControlName="stringValue" name="stringValue" />
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                        (click)="removeRecreationArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+    <div class="row mrgTP20">
+        <div class="col-md-6">
+            <div class="row">
+                <div class="col-md-5">
+                    <nz-form-item>
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.literaryWorks' | translate }}</nz-form-label>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-7">
+                    <i *ngIf="editModeEnabled" nz-icon nzType="plus-circle" nzTheme="outline" (click)="addLiteraryArray()"></i>
+                </div>
+            </div>
+            <ng-container formArrayName="literary">
+                <div class="row" *ngFor="let literary of literaryArray.controls; let i=index">
+                    <ng-container [formGroupName]="i">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-2">{{i+1}}.</div>
+                                <div class="col-md-9">
+                                    <nz-form-item>
+                                        <nz-form-control [nzSm]="24" [nzXs]="24">
+                                            <b *ngIf="!editModeEnabled">{{literary?.value?.stringValue}}</b>
+                                            <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.literary' | translate }} {{i+1}}"
+                                             formControlName="stringValue"
+                                                name="stringValue"  *ngIf="editModeEnabled"/>
+                                        </nz-form-control>
+                                    </nz-form-item>
+                                </div>
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                        (click)="removeLiteraryArray(i)"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+        </div>
+        <div class="col-md-6">
+            <!-- <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>KLA User</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <b *ngIf="!editModeEnabled">{{createCandidateForm?.value?.klaUser === true? 'Yes': createCandidateForm?.value?.klaUser === false?'No': null}}</b> 
+                        <nz-form-control  *ngIf="editModeEnabled">
+                            <nz-radio-group formControlName="klaUser">
+                                <label nz-radio [nzValue]="true">Yes</label>
+                                <label nz-radio [nzValue]="false">No</label>
+                            </nz-radio-group>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item> -->
+        </div>
+    </div>
+    <div class="row margnrtp-15" *ngIf="electedMember?.details?.deceased">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.deathDate' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            {{electedMember?.details?.deceasedDate | date: "dd/MM/yyyy"}}
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+            <div class="col-md-6">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>{{ 'business-dashboard.table.assembly-elected-member.deathReason' | translate }}</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control>
+                                {{electedMember?.details?.deceasedReason}}
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+        </div>
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div>   
+<div class="row mrgTP30">
+<div class="col-md-12">  
+<nz-collapse [nzBordered]="true">
+ <nz-collapse-panel [nzHeader]="addressDetails" [nzActive]="true">
+    <ng-template #addressDetails>
+        <h5>{{ 'business-dashboard.table.assembly-elected-member.addressDeatils' | translate }}:</h5>
+    </ng-template>
+
+    <div class="row mrgTP30">
+        <div class="col-md-8">
+            <!-- <h5>Address Details :</h5> -->
+        </div>
+        <div class="col-md-4">
+            <button *ngIf="editModeEnabled" nz-button nzType="default" (click)="setAddressArray(null)">
+                <i nz-icon nzType="plus-circle" nzTheme="outline" ></i>
+                {{ 'business-dashboard.table.assembly-elected-member.addAddress' | translate }}
+            </button> 
+        </div>
+    </div>
+    <ng-container formArrayName="address">
+        <div  *ngFor="let address of addressArray.controls; let i=index">
+            <ng-container [formGroupName]="i">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"><b>{{i+1}}.</b></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.addressType' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.addressTypeName}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" *ngIf="editModeEnabled"  nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.addressTypeReq' | translate }}" >
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.addressType' | translate }}"
+                                    formControlName="addressTypeCode" (ngModelChange)="setAdressTypeName(i,$event)">
+                                    <nz-option *ngFor="let type of returnAddressList(address?.value?.addressTypeCode)" [nzValue]="type.code"
+                                        [nzLabel]="type.name">
+                                    </nz-option>
+                                </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.addressLine1' | translate }}
+                                <b *ngIf="!editModeEnabled">{{address?.value?.line1}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" 
+                                nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.addressLine1Req' | translate }}" 
+                                 *ngIf="editModeEnabled">
+                                <input nz-input 
+                                placeholder=" {{ 'business-dashboard.table.assembly-elected-member.addressLine1' | translate }}" 
+                                formControlName="line1" name="line1" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.addressLine2' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.line2}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" 
+                                nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.addressLine2Req' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input
+                                     placeholder="{{ 'business-dashboard.table.assembly-elected-member.addressLine2' | translate }}" 
+                                     formControlName="line2" name="line2" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.addressLine3' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.line3}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24"
+                                 nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.addressLine3Req' | translate }}"
+                                  *ngIf="editModeEnabled">
+                                    <input nz-input 
+                                    placeholder=" {{ 'business-dashboard.table.assembly-elected-member.addressLine3' | translate }}" 
+                                    formControlName="line3" name="line3" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                (click)="removeAddressArray(i)"></i>
+                        </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.country' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{electedMember?.details?.address[i]?.country}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" 
+                                nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.countryReq' | translate }}" *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear 
+                                    nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.country' | translate }}"
+                                        formControlName="countryId" (ngModelChange)="countryChanged(i)">
+                                        <nz-option *ngFor="let country of nationList" [nzValue]="country.id"
+                                            [nzLabel]="country.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.state' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{electedMember?.details?.address[i]?.state}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24"
+                                 nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.stateReq' | translate }}"  *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear 
+                                    nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.state' | translate }}"
+                                        formControlName="stateId" (ngModelChange)="stateChanged(i)">
+                                        <nz-option *ngFor="let state of getStateList(address.value.countryId, i)" [nzValue]="state.id"
+                                            [nzLabel]="state.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.district' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{electedMember?.details?.address[i]?.district}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip=" {{ 'business-dashboard.table.assembly-elected-member.districtReq' | translate }}" *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.district' | translate }}"
+                                        formControlName="districtId" (ngModelChange)="districtChanged(i)">
+                                        <nz-option *ngFor="let disctrict of getDistrictList(address.value.stateId, i)" [nzValue]="disctrict.id"
+                                            [nzLabel]="disctrict.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{electedMember?.details?.address[i]?.taluk}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.talukReq' | translate }}" *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}"
+                                        formControlName="talukId">
+                                        <nz-option *ngFor="let taluk of getTalukList(address.value.districtId, i)" [nzValue]="taluk.id"
+                                            [nzLabel]="taluk.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.village' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.village}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24"  nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.villageReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.village' | translate }}" 
+                                    formControlName="village" name="village" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.pincode' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.pinCode}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.pincodeReq' | translate }}">
+                                    <input *ngIf="editModeEnabled" nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.pincode' | translate }}" formControlName="pinCode" name="pinCode" type="number" 
+                                    maxlength="6"/>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3">
+                            <nz-form-item >
+                                {{ 'business-dashboard.table.assembly-elected-member.nearRailway' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.nearestRailWay}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.nearRailwayReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input 
+                                    placeholder="{{ 'business-dashboard.table.assembly-elected-member.nearRailway' | translate }}" 
+                                    formControlName="nearestRailWay" name="nearestRailWay" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.distancetoRailway' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.distanceRail}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.distanceReq' | translate }}"*ngIf="editModeEnabled">
+                                    <input nz-input placeholder="" formControlName="distanceRail" type="number" name="distanceRail" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item >
+                                {{ 'business-dashboard.table.assembly-elected-member.tvmkladistance' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.shortdistResToTvm}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.distanceReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input placeholder=""  type="number" formControlName="shortdistResToTvm" name="shortdistResToTvm" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.treasuryName' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.treasuryForTA}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.treasuryNameReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input nz-input placeholder="" formControlName="treasuryForTA" name="treasuryForTA" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item >
+                                {{ 'business-dashboard.table.assembly-elected-member.class1hillytract' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.classITractD}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.distanceReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input type="number" nz-input placeholder="" formControlName="classITractD" name="classITractD" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3" >
+                            <nz-form-item >
+                                {{ 'business-dashboard.table.assembly-elected-member.class2hillytract' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{address?.value?.classIItractD}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24"  nzErrorTip="{{ 'business-dashboard.table.assembly-elected-member.distanceReq' | translate }}" *ngIf="editModeEnabled">
+                                    <input type="number" nz-input placeholder="" formControlName="classIItractD" name="classIItractD" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                       
+                    </div>
+                    <div class="row margnrtp-15">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-6">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.travelAllowance' | translate }}:
+                                 <b *ngIf="!editModeEnabled">{{address?.value?.taLocation === true? 'Yes': address?.value?.taLocation === false?'No': null}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <label *ngIf="editModeEnabled" [nzDisabled]="addressArray?.length == 1"  formControlName="taLocation" nz-checkbox (ngModelChange)="addressForTAChange($event,i)"></label>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+             </div> 
+            </ng-container>
+        </div>
+    </ng-container>
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div>
+
+<div class="row mrgTP30">
+    <div class="col-md-12">  
+    <nz-collapse [nzBordered]="true">
+     <nz-collapse-panel [nzHeader]="assetDetails" [nzActive]="true">
+        <ng-template #assetDetails>
+            <h5>{{ 'business-dashboard.table.assembly-elected-member.assetDetails' | translate }}:</h5> 
+        </ng-template>
+
+    <div class="row mrgTP30">
+        <div class="col-md-8">
+            <!-- <h5>Assest Details :</h5> -->
+        </div>
+        <div class="col-md-4">
+            <button *ngIf="editModeEnabled" nz-button nzType="default" (click)="setAssestsArray(null)"><i nz-icon nzType="plus-circle" nzTheme="outline" ></i>
+                {{ 'business-dashboard.table.assembly-elected-member.addAsset' | translate }}</button> 
+        </div>
+    </div>
+    <ng-container formArrayName="assests">
+        <div class="row" *ngFor="let asset of assetArray.controls; let i=index">
+            <ng-container [formGroupName]="i">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-1">{{i+1}}.</div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.ownedBy' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.ownedBy}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24" *ngIf="editModeEnabled">
+                                    <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.ownedBy' | translate }}" formControlName="ownedBy" name="ownedBy" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.acquisitionType' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.ownedBy}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24"  *ngIf="editModeEnabled">
+                                    <nz-select nzShowSearch nzAllowClear 
+                                    nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.acquisitionType' | translate }}"
+                                        formControlName="acquisitionType">
+                                        <nz-option *ngFor="let type of assetAcquisitionType" [nzValue]="type"
+                                            [nzLabel]="type">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.acquisitionDate' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.acquisitionDate| date:'dd/MM/yyyy'}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <nz-date-picker *ngIf="editModeEnabled" [nzFormat]="'dd-MM-yyyy'" formControlName="acquisitionDate"
+                                    [nzDisabledDate]="disableFutureDate">
+                                    </nz-date-picker>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-1">
+                            <i nz-icon nzType="minus-circle" nzTheme="outline" *ngIf="editModeEnabled"
+                                (click)="removeAssetArray(i)"></i>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-11">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.acquisitionDetails' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.acquisitionDetails}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <textarea *ngIf="editModeEnabled" rows="2" nz-input formControlName="acquisitionDetails"
+                                        placeholder="{{ 'business-dashboard.table.assembly-elected-member.acquisitionDetails' | translate }}"></textarea>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.assetType' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.type}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear
+                                     nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.assetType' | translate }}"
+                                        formControlName="type">
+                                        <nz-option *ngFor="let type of assetType" [nzValue]="type" [nzLabel]="type">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.presentValue' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.presentValue}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <input *ngIf="editModeEnabled" type="number" 
+                                    nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.presentValue' | translate }}"
+                                     formControlName="presentValue"
+                                        name="presentValue" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.annualIncome' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.annualIncomeFromProperty}}</b> 
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <input *ngIf="editModeEnabled" type="number" nz-input 
+                                    placeholder="{{ 'business-dashboard.table.assembly-elected-member.annualIncome' | translate }}"
+                                        formControlName="annualIncomeFromProperty" name="annualIncomeFromProperty" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.state' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{returnState(asset?.value?.stateId)}}</b>
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear 
+                                    nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.state' | translate }}"
+                                        formControlName="stateId">
+                                        <nz-option *ngFor="let state of stateList" [nzValue]="state.id"
+                                            [nzLabel]="state.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-3">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.district' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{returnDistrict(asset?.value?.districtId)}}</b>
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear 
+                                    nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.district' | translate }}"
+                                        formControlName="districtId">
+                                        <nz-option *ngFor="let disctrict of disctrictList" [nzValue]="disctrict.id"
+                                            [nzLabel]="disctrict.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{returnTaluk(asset?.value?.talukId)}}</b>
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <nz-select *ngIf="editModeEnabled" nzShowSearch nzAllowClear
+                                     nzPlaceHolder="{{ 'business-dashboard.table.assembly-elected-member.taluk' | translate }}"
+                                        formControlName="talukId">
+                                        <nz-option *ngFor="let taluk of talukList" [nzValue]="taluk.id"
+                                            [nzLabel]="taluk.name">
+                                        </nz-option>
+                                    </nz-select>
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-4">
+                            <nz-form-item>
+                                {{ 'business-dashboard.table.assembly-elected-member.village' | translate }}:
+                                <b *ngIf="!editModeEnabled">{{asset?.value?.village}}</b>
+                                <nz-form-control [nzSm]="24" [nzXs]="24">
+                                    <input *ngIf="editModeEnabled" nz-input
+                                     placeholder="{{ 'business-dashboard.table.assembly-elected-member.village' | translate }}" formControlName="village" name="village" />
+                                </nz-form-control>
+                            </nz-form-item>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </ng-container>
+
+</nz-collapse-panel>
+</nz-collapse>
+</div>
+</div>
+    <div class="row margnrtp-15">
+        <div class="col-md-2">
+            <h5>{{ 'business-dashboard.table.assembly-elected-member.profilePhoto' | translate }}</h5>
+        </div>
+        <div class="col-md-4">
+            <nz-form-item>
+             <nz-form-control>
+                <nz-upload  nzAccept="image/png,image/jpeg" nzListType="picture-card"  [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 1 && editModeEnabled"
+                [nzShowUploadList]="showUploadList" [nzBeforeUpload]="beforeUpload" [nzPreview]="handlePreview"
+                [nzRemove]="handleRemove" 
+                (nzChange)="handleChange($event)">
+                <i nz-icon nzType="plus"></i>
+                <div class="ant-upload-text">
+                    {{ 'business-dashboard.table.assembly-elected-member.uploadPhoto' | translate }}
+                </div>
+            </nz-upload>
+             </nz-form-control>
+            </nz-form-item>
+        </div>
+    </div>
+ </form> 
+</div>
+</div>  
+ 
+</ng-template>
+<nz-modal [nzVisible]="previewVisible" [nzContent]="modalContent" [nzFooter]="null"
+(nzOnCancel)="previewVisible = false">
+<ng-template #modalContent>
+    <img [src]="previewImage" [ngStyle]="{ width: '100%' }" />
+</ng-template>
+</nz-modal>
+<ng-template #electionDetailsTab>
+<tables-member-election-details (onClose)="reloadForm($event)"
+ [electedMember]="electedMember" *ngIf="electedMember"></tables-member-election-details>
+</ng-template>
+<ng-template #termsTab>
+<tables-member-terms (onClose)="reloadForm($event)"
+[electedMember]="electedMember" *ngIf="electedMember"></tables-member-terms>
+</ng-template>
+<ng-template #addRoleTab>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-end">
+            <button nzType="primary" nz-button  (click)="cancelEditRole()" class="mrgL6" *ngIf="editRole">
+                {{ 'business-dashboard.table.assembly-elected-member.cancel' | translate }}
+            </button>
+            <button nzType="primary" nz-button  (click)="editRole=true" class="mrgL6" *ngIf="!editRole && permission.updateRole">
+                {{ 'business-dashboard.table.assembly-elected-member.edit' | translate }}
+            </button>
+            <button nzType="primary" nz-button 
+            nz-popconfirm 
+            nzPopconfirmTitle=" {{ 'business-dashboard.table.assembly-elected-member.updateMsg' | translate }}?" 
+            nzCancelText="{{ 'business-dashboard.table.assembly-elected-member.no' | translate }}"
+             nzOkText="{{ 'business-dashboard.table.assembly-elected-member.yes' | translate }}"
+              (nzOnConfirm)="updateRole()" class="mrgL6" *ngIf="editRole">
+            {{ 'business-dashboard.table.assembly-elected-member.update' | translate }}
+            </button>
+        </div>
+     </div>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.roles' | translate }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <ng-container *ngIf="!editRole">
+                                <b  *ngFor="let role of electedMember?.roles"><nz-tag>{{role.roleName }}</nz-tag></b>
+                            </ng-container> 
+                            <nz-select  nzMode="multiple" *ngIf="editRole" nzShowSearch nzAllowClear nzPlaceHolder="Role" [(ngModel)]="roles"
+                            [ngModelOptions]="{ standalone: true }">
+                                <nz-option *ngFor="let role of roleList" [nzValue]="role.roleId"
+                                    [nzLabel]="role.roleName">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        </div>
+        <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>
+                            {{ 'business-dashboard.table.assembly-elected-member.rbsRoles' | translate }}
+                        </nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            <button
+                            *ngIf="editRole"
+                      nz-button
+                      [nzType]="'default'"
+                      (click)="showRoleModal()"
+                      class="margnrgt-15 marginbtm-10"
+                      >
+                      <span>  {{ 'business-dashboard.table.assembly-elected-member.addRole' | translate }}</span>
+                       </button>
+                            <ng-container *ngIf="!editRole">
+                                <b  *ngFor="let role of memberRbsRoles"><nz-tag>{{role.roleName }}</nz-tag></b>
+                            </ng-container>
+                            <ng-container *ngIf="editRole">
+                            <nz-tag
+                      *ngFor="let tag of memberRbsRoles"
+                      nzMode="closeable"
+                      (nzAfterClose)="handleClose(tag)"
+                    >
+                      {{ sliceTagName(tag.roleName) }}
+                    </nz-tag>
+                    </ng-container>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+</ng-template>
+
+<nz-modal
+[(nzVisible)]="isRoleVisible"
+[nzFooter]="null"
+[nzClosable]="false"
+>
+<div class="width-100 pading-all">
+  <div class="row">
+    <div class="col-md-12">
+      <h6 class="rolehd"> {{ 'business-dashboard.table.assembly-elected-member.addNewRole' | translate }}</h6>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-3">
+      <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.role' | translate }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <nz-select
+        [(ngModel)]="rbsRoles.role"
+        name="rbsRole"
+        nzAllowClear
+        nzShowSearch
+        nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.selectRole' | translate }}"
+      >
+        <nz-option
+          *ngFor="let role of listOfRbsRoles"
+          [nzValue]="role"
+          nzLabel="{{ role.name }}"
+        ></nz-option>
+      </nz-select>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-3">
+      <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.startDate' | translate }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <nz-date-picker
+        [(ngModel)]="rbsRoles.startDate"
+        name="startDate"
+        nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.startDate' | translate }}"
+      ></nz-date-picker>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-3">
+      <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.endDate' | translate }}</nz-form-label>
+    </div>
+    <div class="col-md-9">
+      <nz-date-picker
+        [(ngModel)]="rbsRoles.endDate"
+        name="endDate"
+        nzPlaceHolder=" {{ 'business-dashboard.table.assembly-elected-member.endDate' | translate }}"
+      ></nz-date-picker>
+    </div>
+  </div>
+  <div class="row mrt-50">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="default"
+        (click)="handleCancel()"
+        class="margnrt-5"
+      >
+      {{ 'business-dashboard.table.assembly-elected-member.cancel' | translate }}
+      </button>
+      <button
+        type="button"
+        (click)="addRole()"
+        nz-button
+        nzType="primary"
+      >
+      {{ 'business-dashboard.table.assembly-elected-member.assignRole' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+</nz-modal>
+
+
+<nz-modal
+[(nzVisible)]="deceasedPopup"
+[nzFooter]="null"
+[nzClosable]="false"
+nzTitle="Mark Deceased"
+>
+<div class="width-100 pading-all">
+  <div class="row margnrtp-15">
+    <div class="col-md-4">
+      <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.deathDate' | translate }}</nz-form-label>
+    </div>
+    <div class="col-md-8">
+        <nz-date-picker
+        [(ngModel)]="markDeceased.deceasedDate"
+        name="deceasedDate"
+        nzPlaceHolder="Deceased Date"
+      ></nz-date-picker>
+    </div>
+  </div>
+  <div class="row margnrtp-15">
+    <div class="col-md-4">
+      <nz-form-label> {{ 'business-dashboard.table.assembly-elected-member.reason' | translate }}
+      </nz-form-label>
+    </div>
+    <div class="col-md-8">
+        <input nz-input placeholder="{{ 'business-dashboard.table.assembly-elected-member.reason' | translate }}" [(ngModel)]="markDeceased.reason" name="reason" />
+    </div>
+  </div>
+  <div class="row mrgTP20">
+    <div class="col-md-12 d-flex justify-content-end">
+      <button
+        type="button"
+        nz-button
+        nzType="default"
+        (click)="cancelDeceasedPopup()"
+        class="margnrt-5"
+      >
+        {{ "Cancel" | translate }}
+      </button>
+      <button
+        type="button"
+        (nzOnConfirm)="markAsDeceased()"
+        nz-button
+        nzType="primary"
+        nz-popconfirm 
+        nzPopconfirmTitle="Are you sure you want to Mark as Deceased?" 
+        [disabled]="!markDeceased.deceasedDate || !markDeceased.reason"
+      >
+        {{ "Mark as Deceased" | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+</nz-modal>
+
+<!-- <ng-template #deceased>
+    <div class="row margnrtp-15">
+        <div class="col-md-12">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>Deceased Date</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control>
+                            {{electedMember?.details?.deceasedDate | date: "dd/MM/yyyy"}}
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <nz-form-item>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <nz-form-label>Reason</nz-form-label>
+                        </div>
+                        <div class="col-md-8">
+                            <nz-form-control>
+                                {{electedMember?.details?.deceasedReason}}
+                            </nz-form-control>
+                        </div>
+                    </div>
+                </nz-form-item>
+            </div>
+            </div>
+</ng-template> -->
+
+<ng-template #memberPositionTab>
+<tables-member-position-details (onClose)="reloadForm($event)"
+[electedMember]="electedMember" *ngIf="electedMember"
+[memberDesignations]="memberDesignations"
+[portFolioList]="portFolioList"
+[allPortFolioList]="allPortFolioList"
+[partyFronts]="partyFronts"
+[memberGroups]="memberGroups"
+>
+
+</tables-member-position-details>
+</ng-template>

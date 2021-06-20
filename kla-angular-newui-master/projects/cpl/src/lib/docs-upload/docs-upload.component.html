@@ -1,0 +1,373 @@
+<form nz-form [formGroup]="documentUploadForm" class="cpl-register">
+  <div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.dash" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "cpl.actregistration.cpl" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+      <h2 class="admin-page-heading">
+        {{"cpl.docupload.docupload" | translate }}
+      </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+      <div></div>
+      <div class="d-flex justify-content-between">
+        <button
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+          nzType="default"
+          (click)="onBackClick()"
+        >
+          {{"cpl.docupload.back" | translate}}
+        </button>
+        <button
+          *ngIf="currentNumber == 0"
+          class="secondary-button button-admin-radius button-font dark-border dark-font"
+          nzType="default"
+          (click)="submitForm(true)"
+        >
+          {{"cpl.docupload.save" | translate}}
+        </button>
+        <button
+          *ngIf="currentNumber == 0"
+          nz-button
+          class="primary-button button-admin-radius button-font"
+          [nzType]="'primary'"
+          type="submit"
+          nz-popconfirm
+          nzPopconfirmTitle='{{"business-dashboard.cpl.registrationconform.wanttosend" | translate}}'
+          (nzOnConfirm)="submitForm(false)"
+        >
+          {{"cpl.docupload.submit" | translate}}
+        </button>
+        <button
+          *ngIf="updateRes.status === 'SAVED' || updateRes.status === 'RETURN'"
+          nz-button
+          class="primary-button button-admin-radius button-font"
+          [nzType]="'primary'"
+          type="submit"
+          nz-popconfirm
+          nzPopconfirmTitle='{{"business-dashboard.cpl.documents.wanttoupdate" | translate}}'
+          (nzOnConfirm)="updateForm()"
+        >
+          {{"cpl.docupload.update" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.assembly" | translate }}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.docupload.selassembly" | translate}}'
+                formControlName="assemblyId"
+                (ngModelChange)="getSessionForAssembly()"
+              >
+                <nz-option
+                  *ngFor="let item of assemblyList"
+                  [nzLabel]="item.assemblyId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.session" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control>
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.docupload.selsession" | translate}}'
+                formControlName="sessionId"
+              >
+                <nz-option
+                  *ngFor="let item of sessionList"
+                  [nzLabel]="item.sessionId"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.selectdoctype" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selectdoctype" | translate}}'>
+              <nz-select
+                nzAllowClear
+                (ngModelChange)="onDocTypeChange($event)"
+                nzPlaceHolder='{{"cpl.docupload.selectdoctype" | translate}}'
+                formControlName="type"
+              >
+                <nz-option
+                  *ngFor="let type of docType"
+                  [nzLabel]="type"
+                  [nzValue]="type"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.klasection" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.docupload.selectklasection" | translate}}'>
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.docupload.selectklasection" | translate}}'
+                formControlName="sectionId"
+              >
+                <nz-option
+                  *ngFor="let item of klasessionList"
+                  [nzLabel]="item.klaSectionName"
+                  [nzValue]="item.klaSectionId"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.receivedfrom" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"business-dashboard.cpl.documents.selectreceivedfrom" | translate}}'>
+              <nz-select
+              nzPlaceHolder='{{"business-dashboard.cpl.documents.selectreceivedfrom" | translate}}'
+              nzShowSearch
+              nzAllowClear
+              formControlName="fromWhom"
+            >
+              <nz-option
+                *ngFor="let type of receviedFrom"
+                [nzLabel]="type"
+                [nzValue]="type"
+              ></nz-option>
+            </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <!-- <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>Minister Department</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip="Select Department">
+              <nz-select
+                nzAllowClear
+                nzPlaceHolder="Select Minister Department"
+                formControlName="departmentId"
+              >
+                <nz-option
+                  *ngFor="let item of ministerDeptList"
+                  [nzLabel]="item.title"
+                  [nzValue]="item.id"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div> -->
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.fileworkflowdocs.departMent" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.registration.selectdepartment" | translate}}'>
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder='{{"cpl.registration.selectdepartment" | translate}}'
+                formControlName="departmentId"
+                (ngModelChange)="getAllSubjects($event, null)"
+              >
+                <nz-option
+                  *ngFor="let depart of departmentIdList"
+                  [nzLabel]="
+                  depart.departmentName
+                  "
+                  [nzValue]="depart"
+                >
+                </nz-option>
+                <!-- nzLabel="
+                {{translate.getDefaultLang()=='mal'?depart.departmentNameMalayalam:depart.departmentName}}
+                " -->
+              </nz-select>
+            </nz-form-control>
+          </div>          
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.cplview.subject"| translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.registration.selectsubject" | translate}}'>
+              <nz-select
+                nzShowSearch
+                nzAllowClear
+                nzPlaceHolder='{{"business-dashboard.question.questioncreate.placehldministersubject" | translate}}'
+                formControlName="subjectId"
+              >
+                <nz-option
+                  *ngFor="let sub of subjectList"
+                  nzLabel="
+                  {{translate.getDefaultLang()=='mal'?sub.titleInMalayalam:sub.title}}
+                  "
+                  [nzValue]="sub"
+                >
+                </nz-option>
+              </nz-select>
+            </nz-form-control>
+          </div>          
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.subject" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.docupload.entersubject" | translate}}'>
+              <input nz-input formControlName="title" placeholder='{{"cpl.docupload.entersubject" | translate}}'/>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    <div class="col-md-6">
+      <nz-form-item>
+        <div class="row">
+          <div class="col-md-4">
+            <nz-form-label>{{"cpl.docupload.receiveddate" | translate}}</nz-form-label>
+          </div>
+          <div class="col-md-8">
+            <nz-form-control nzErrorTip='{{"cpl.docupload.receiveddate" | translate}}'>
+              <nz-date-picker
+              [nzDisabledDate]="disabledDate"
+              formControlName="receivedDate"
+              [nzFormat]="'dd-MM-yyyy'"
+            >
+            </nz-date-picker>
+            </nz-form-control>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+    
+  </div>
+
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-4">
+          <nz-form-label>{{"cpl.docupload.coveringletter" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+          <nz-form-control>
+            <nz-upload
+              nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+              [nzAction]="uploadURL"
+              [(nzFileList)]="coveringDocFileList"
+              [nzShowButton]="coveringDocFileList.length < 1"
+              (nzChange)="uploadCoverLetter($event)"
+            >
+              <button nz-button>
+                <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+              </button>
+            </nz-upload>
+          </nz-form-control>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-md-4">
+          <nz-form-label>{{"cpl.docupload.otherdocuments" | translate}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+          <nz-form-control>
+            <nz-upload
+              nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+              [nzAction]="uploadURL"
+              [(nzFileList)]="additionalDocumentFileList"
+              (nzChange)="uploadAdditionalDocument($event)"
+              [nzMultiple]="true"
+            >
+              <button nz-button>
+                <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+              </button>
+            </nz-upload>
+          </nz-form-control>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

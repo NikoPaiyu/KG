@@ -1,0 +1,88 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"budget.budgetspeech.dashboard"| translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                Cut Motion
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-8">
+        <h2 class="admin-page-heading">{{(urlParams && urlParams.type) ? urlParams.type + " & Cut Motions" : "Cut Motions"}}</h2>
+    </div>
+    <div class="col-md-4 justify-content-end d-flex" *ngIf="canShowCutmotions()">
+        <button [disabled]="canProceedCutmtoion()" class="ml-6" nz-button [nzType]="'primary'" nz-popconfirm nzPopconfirmTitle='Are you sure you want to submit?' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="submitCutMotion()">Submit</button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<<<<<<< HEAD
+</div>
+<nz-tabset [nzSelectedIndex]="cutMotions.selIndex">
+=======
+<nz-tabset  [nzSelectedIndex]="cutMotions.selIndex">
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    <nz-tab nzTitle="{{(urlParams && urlParams.type) ? urlParams.type + ' & Cut Motions ' : ' Cut Motions '}}">
+        <div class="row marginbtm-25 margntp-25">
+            <div class="col-md-6 tb_issue">
+                <budget-sdfg-preview [sdfgId]="sdfgId" [from]="'CUT_MOTION'" (showCutMotion)="showCutMotion($event)">
+                </budget-sdfg-preview>
+            </div>
+            <div class="col-md-6" *ngIf="canShowCutmotions()">
+                <nz-tabset>
+                    <nz-tab nzTitle="Policy Cut" (nzClick)="getCutMotionByType('POLICY_CUT')">
+                        <div id="policy_cut ">
+                            <quill-view-html [content]="cutMotions.policy"></quill-view-html>
+                            <div class="border_style ">Add Remarks</div>
+                            <quill-editor #editor [(ngModel)]="cutMotions.remarks" style="float: right; " html="html " [styles]="{ height: '100px', width: '200px' } "></quill-editor>    
+                            <button *ngIf="!cutMotions.showEdit" class="ml-6 " [disabled]="canProceedCutmtoion()" nz-button [nzType]=" 'primary' " (click)="actionCutMotion() ">{{cutMotions.showEdit ? 'Edit' :
+                                'Save'}}</button>
+                            <button [disabled]="canProceedCutmtoion()" *ngIf="cutMotions?.savedcutMotionId" class="ml-6 " nz-button [nzType]=" 'primary' " nz-popconfirm nzPopconfirmTitle='are you sure you want to delete?' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="deleteCutMotion()">{{'Delete'}}</button>
+                        </div>
+                    </nz-tab>
+                    <nz-tab nzTitle='Economy Cut' (nzClick)="getCutMotionByType('ECONOMY_CUT')">
+                        <!-- <div>
+                            <div id="economy_1">{{selRow?.demandNameEng}}എന്ന {{selRow?.demandNumber}}-ാം നമ്പർ ധനാഭ്യർത്ഥയുടെ പേരിൽ വകകൊള്ളിച്ചിട്ടുള്ള {{selRow?.total}} കയിൽ <input class="input" (keyup)="onKey($event, 0)" [(ngModel)]="cutMotions.economyObj[0].Amount" type="number"
+                                    nz-input placeholder="please enter" /> ഉറുപ്പിക കുറവ് ചെയ്യേണ്ടതാണു .</div>
+                            <div class="border_style "><span class="orstyle ">Or</span> </div>
+
+                            <div id="economy_2">{{selRow?.demandNameEng}} എന്ന {{selRow?.demandNumber}}-ാം നമ്പർ ബജറ്റ് ഹെഡിനുകീഴെ <input class="input" (keyup)="onKey($event, 1)" [(ngModel)]="cutMotions.economyObj[1].Item" type="text" nz-input placeholder="please enter"
+                                />എന്ന ഇനത്തിന് വകകൊള്ളിച്ചിട്ടുള്ള <input class="input" (keyup)="onKey($event, 1)" [(ngModel)]="cutMotions.economyObj[1].Amount" type="number" nz-input placeholder="please enter" /> ഉറുപ്പിക ചെയ്യേണ്ടതാണ്.</div>
+                            <div class="border_style "><span class="orstyle ">Or</span> </div>
+
+                            <div id="economy_3">{{selRow?.demandNameEng}} എന്ന {{selRow?.demandNumber}}-ാം നമ്പർ ബജറ്റ് ഹെഡിനുകീഴെ <input class="input" (keyup)="onKey($event, 2)" [(ngModel)]="cutMotions.economyObj[2].Item" type="text" nz-input placeholder="please enter"
+                                />എന്ന ഇനത്തിന് വകകൊള്ളിച്ചിട്ടുള്ള <input class="input" (keyup)="onKey($event, 2)" [(ngModel)]="cutMotions.economyObj[2].Amount" type="number" nz-input placeholder="please enter" /> ക ഉറുപ്പികയായി കുറവുചെയ്യേണ്ടതാണ്.</div>
+                        </div> -->
+                        <div *ngIf="cutMotions.savedcutMotionId && cutMotions.economyCut else ElseBlk" id="economy_{{cutMotions.economyObj.selIndex}}">
+                            <quill-view-html [content]="cutMotions.economyCut"></quill-view-html>
+                        </div>
+                        <ng-template #ElseBlk>
+                            <div *ngFor="let e of cutMotions.economy; let i=index; " id="economy_{{i}}">
+                                <quill-view-html (keyup)="onKey(i, e, $event)" [content]="e"></quill-view-html>
+                                <div *ngIf="i < cutMotions.economy.length -1" class="border_style "><span class="orstyle ">Or</span> </div>
+                            </div>
+                        </ng-template>
+                        <div class="border_style ">Add Remarks</div>
+                        <quill-editor #editor [(ngModel)]="cutMotions.remarks" style="float: right; " html="html " [styles]="{ height: '100px', width: '200px' } "></quill-editor>
+                        <button *ngIf="!cutMotions.showEdit" [disabled]="canProceedCutmtoion()" class="ml-6" nz-button [nzType]=" 'primary' " (click)="actionCutMotion() ">{{cutMotions.showEdit ? 'Edit' :
+                            'Save'}}</button>
+                        <button [disabled]="canProceedCutmtoion()" *ngIf="cutMotions?.savedcutMotionId" class="ml-6 " nz-button [nzType]=" 'primary' " nz-popconfirm nzPopconfirmTitle='are you sure you want to delete?' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="deleteCutMotion()">{{'Delete'}}</button>
+                    </nz-tab>
+                    <nz-tab nzTitle='Token Cut' (nzClick)="getCutMotionByType('TOKEN_CUT')">
+                        <div id="toekn_cut ">
+                            <quill-view-html [content]="cutMotions.token"></quill-view-html>
+                            <button *ngIf="!cutMotions.showEdit" class="ml-6 " [disabled]="canProceedCutmtoion()" nz-button [nzType]=" 'primary' " (click)="actionCutMotion() ">{{cutMotions.showEdit ? 'Edit' :
+                                'Save'}}</button>
+                            <button [disabled]="canProceedCutmtoion()" *ngIf="cutMotions?.savedcutMotionId" class="ml-6 " nz-button [nzType]=" 'primary' " nz-popconfirm nzPopconfirmTitle='are you sure you want to delete?' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="deleteCutMotion()">{{'Delete'}}</button>
+                        </div>
+                    </nz-tab>
+                </nz-tabset>
+            </div>
+        </div>
+    </nz-tab>
+</nz-tabset>

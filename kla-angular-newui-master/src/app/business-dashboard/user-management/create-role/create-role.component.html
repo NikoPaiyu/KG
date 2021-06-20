@@ -1,0 +1,392 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    <a>{{'Dashboard'| translate}}</a>
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    <a>{{'Users'|translate}}</a>
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <form nz-form [formGroup]="roleForm" (ngSubmit)="saveRole(roleForm.value)">
+        <div class="sticky_action_bar">    
+        <div class="row">
+            <div class="col-md-9">
+                <h2 class="admin-page-heading" *ngIf="!editMode">
+                    {{ 'usermanagement.createrole.createrole' | translate }}
+                </h2>
+                <h2 class="admin-page-heading" *ngIf="editMode">
+                    {{ 'Edit Role' | translate }}
+                </h2>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+                <button class="margnrt-5" type="button" nz-button nzType="default" (click)="clearRole()">
+                    <span *ngIf="!editMode">
+                        {{ 'dashboard.clearall' | translate }}
+                    </span>
+                    <span *ngIf="editMode">
+                        {{ 'Cancel' | translate }}
+                    </span>
+                </button>
+                <button type="submit" nz-button nzType="primary" class="float-right">
+                    <span *ngIf="!editMode">
+                        {{ 'usermanagement.createrole.saverole' | translate }}
+                    </span>
+                    <span *ngIf="editMode">
+                        {{ 'Update Role' | translate }}
+                    </span>
+                </button>
+            </div>
+        </div>
+        <nz-divider></nz-divider> 
+</div>
+
+
+        <nz-form-item class="margnrtp-15">
+            <nz-form-label nzRequired [nzSm]="3" [nzXs]="24" nzFor="name">
+                {{ 'usermanagement.listrole.rolename' |translate}}
+            </nz-form-label>
+            <nz-form-control [nzSm]="8" [nzXs]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+                <input nz-input formControlName="name" id="name"
+                    placeholder="{{ 'usermanagement.listrole.rolename' |translate}}" 
+                    />
+                    <ng-template #errorTpl let-control>
+                      <ng-container *ngIf="control.hasError('required')">
+                        {{"usermanagement.createrole.input"| translate}}
+                       </ng-container>
+                    </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="margnrtp-15">
+            <nz-form-label nzRequired [nzSm]="3" [nzXs]="24" nzFor="description">
+                {{ 'usermanagement.createrole.description' | translate }}</nz-form-label>
+            <nz-form-control [nzSm]="8" [nzXs]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+                <textarea rows="3" nz-input formControlName="description" id="description"
+                    placeholder="{{ 'usermanagement.createrole.description' | translate }}"></textarea>
+                    <ng-template #errorTpl let-control>
+                        <ng-container *ngIf="control.hasError('required')">
+                          {{"usermanagement.createrole.input"| translate}}
+                        </ng-container>
+                      </ng-template>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="margnrtp-15">
+            <nz-form-label nzRequired [nzSm]="3" [nzXs]="24" nzFor="sectionname">
+                {{ 'usermanagement.createrole.sectionname' | translate }}</nz-form-label>
+            <nz-form-control [nzSm]="8" [nzXs]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+                <nz-select  (ngModelChange)="onSelectedSection($event)" formControlName="sectionname" id="sectionname" nzAllowClear nzShowSearch nzPlaceHolder="Select Section Name"
+                    style="margin-top: 10px;">
+                    <nz-option *ngFor="let section of sectionArray" [nzValue]="section"
+                        [nzLabel]="section.klaSectionName">
+                        <ng-template #errorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                              {{"usermanagement.createrole.input"| translate}}
+                            </ng-container>
+                          </ng-template>
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="margnrtp-15">
+            <nz-form-label nzRequired [nzSm]="3" [nzXs]="24" nzFor="sectionrole">
+                {{ 'usermanagement.createrole.sectionrole' | translate }}</nz-form-label>
+            <nz-form-control [nzSm]="8" [nzXs]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+                <nz-select formControlName="sectionrole" id="sectionrole" nzAllowClear nzPlaceHolder="Select Section Role"
+                    style="margin-top: 10px;">
+                    <nz-option *ngFor="let role of sectionRoles" [nzValue]="role.id"
+                        [nzLabel]="role.name">
+                        <ng-template #errorTpl let-control>
+                            <ng-container *ngIf="control.hasError('required')">
+                              {{"usermanagement.createrole.input"| translate}}
+                            </ng-container>
+                          </ng-template>
+                    </nz-option>
+                </nz-select>
+            </nz-form-control>
+        </nz-form-item>
+    </form>
+    <div class="row margntp-25">
+        <div class="col-md-6">
+            <div class="row marginbtm-15 align-items-center ">
+                <div class="col-md-6">
+                    <b>{{ 'usermanagement.createrole.menu' | translate }}</b>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                <button class="d-flex align-items-center" nz-button [nzType]="'default'" (click)="showMenu()">
+                    {{ 'usermanagement.createrole.addmenu' | translate }}
+                    <i nz-icon nzType="plus" class="white" nzTheme="outline"></i>
+                </button>
+            </div>
+                <nz-modal [(nzVisible)]="menuVisible" (nzOnCancel)="handleCancel()" [nzFooter]="null"
+                    [nzClosable]="false">
+                    <div class="width-100 pading-all">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Add new menu to role</h6>
+                            </div>
+                        </div>
+                        <div class="row margnrtp-15 marginbtm-25 d-flex align-items-center">
+                            <div class="col-md-3">
+                                <nz-form-label>Menu</nz-form-label>
+                            </div>
+                            <div class="col-md-9">
+                                <nz-select (ngModelChange)="onSelectedMenu($event)" nzAllowClear nzShowSearch
+                                    nzPlaceHolder="Select Menu" style="margin-top: 10px;" [(ngModel)]="menuSelected">
+                                    <nz-option *ngFor="let menu of menuArray" [nzValue]="menu" nzLabel="{{menu.name}} : {{ menu.menuUri }}">
+                                    </nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+
+                        <div class="row margntp-25">
+                            <div class="col-md-12 d-flex justify-content-end">
+                               
+                                <button type="button" nz-button nzType="default" (click)="handleCancel()"
+                                    class="margnrt-5">
+                                    {{ 'Cancel' | translate }}
+                                </button>
+                                <button type="button" nz-button nzType="primary"  (click)="addMenu()"
+                                [disabled]="!addMenuBtn">
+                                {{ 'Add Menu' | translate }}
+                            </button>
+                            </div>
+                        </div>
+                    </div>
+                </nz-modal>
+            </div>
+            <nz-card>
+                <!-- <nz-tree [nzData]="nodes" nzDraggable nzBlockNode (nzOnDrop)="nzEvent($event)"> </nz-tree> -->
+                <!-- <ngx-nestable [(list)]="list" [template]="itemTemplate" [options]="options">
+                </ngx-nestable>
+                <ng-template #itemTemplate let-row>
+                    <div>
+                        <div>
+                            <i nz-icon nzType="dash" nzTheme="outline" [ngxNestableDragHandle]="row"></i>
+                            <span>{{row.item.id}}</span> -->
+                <!-- <i nz-icon nzType="right-square" nzTheme="outline" 
+                                *ngIf="row.item.children && row.item.children.length; else empty_item" 
+                                [ngxNestableExpandCollapse]="row">
+                            </i> -->
+                <!-- <button (click)="TogglePanel(row.item.id)">down</button>
+                        </div>
+                        <div [ngClass]="check && id === row.item.id ?'classname':'classname2'">
+                            <p>description</p>
+                        </div>
+                    </div>
+                </ng-template>
+
+                <ng-template #empty_item>
+                    <span style="width: 40px"></span>
+                </ng-template> -->
+                <!-- <ng-container *ngIf="iterateMenu">
+                    <ng-container *ngFor="let menu of roleMenuArray">
+                        <nz-collapse *ngIf="!menu.deleteFlag" class="marginbtm-5">
+                            <nz-collapse-panel #p [nzHeader]="menu.name" [nzActive]="menu.active" [nzExtra]="extraIcon"
+                                [nzShowArrow]="false">
+                                <div class="width-100">
+                                <div class="row">
+                                  <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                    <nz-form-label>Menu Name</nz-form-label>
+                                    </div>
+                                    <div class="col-md-8">
+                                    <p>{{ menu.name }}</p>
+                                </div>
+                                   </div>
+                                </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                    <nz-form-label>URL</nz-form-label>
+                                    </div>
+                                    <div class="col-md-8">
+                                    <p>{{ menu.menuUri}}</p>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                                <ng-template #extraIcon>
+                                    <i nz-icon nzType="caret-down" nzTheme="outline"
+                                        [nzRotate]="p.nzActive ? 180 : 0"></i>&nbsp;
+                                    <i nz-icon nzType="delete" nzTheme="outline"
+                                        (click)="$event.stopPropagation();menu.deleteFlag=!menu.deleteFlag"></i>
+                                </ng-template>
+                            </nz-collapse-panel>
+                        </nz-collapse>
+                    </ng-container>
+                    </ng-container> -->
+
+                    <!-- ************************************************************************************************** -->
+
+                <!-- <nz-card>
+                    <ng-container *ngIf="iterateMenu">
+                        <ng-container *ngFor="let i of roleMenuArray">
+                            <p><b> {{ i.path ? i.path.toUpperCase() : i.path }}</b></p>
+                            <ng-container *ngFor="let menu of i.menus">
+                                <nz-collapse *ngIf="!menu.deleteFlag">
+                                    <nz-collapse-panel #p [nzHeader]="menu.name" [nzActive]="menu.active" [nzExtra]="extraIcon"
+                                        [nzShowArrow]="false">
+                                        <div class="row">
+                                            <nz-form-label>Menu Name</nz-form-label>
+                                            <p>{{ menu.name }}</p>
+                                        </div>
+                                        <div class="row">
+                                            <nz-form-label>URL</nz-form-label>
+                                            <p>{{ menu.menuUri }}</p>
+                                        </div>
+                                        <ng-template #extraIcon>
+                                            <i nz-icon nzType="caret-down" nzTheme="outline"
+                                                [nzRotate]="p.nzActive ? 180 : 0"></i>&nbsp;
+                                            <i nz-icon nzType="delete" nzTheme="outline"
+                                                (click)="$event.stopPropagation();menu.deleteFlag=!menu.deleteFlag"></i>
+                                        </ng-template>
+                                    </nz-collapse-panel>
+                                </nz-collapse>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                    </nz-card>  -->
+            
+                    <!-- ************************************************************************************** -->
+                <div>
+                    <ul nz-menu nzMode="inline" >
+                        <ng-template #recursiveList let-List>
+                            <li *ngFor="let item of List">
+                                <ul>
+                                    <li nz-submenu *ngIf=" item.children.length >0" nzTitle="{{ item.name }}" >
+                                        <ng-container *ngTemplateOutlet="recursiveList; 
+                                            context:{ $implicit: item.children }">
+                                        </ng-container>
+                                    </li>
+                                    <li nz-menu-item *ngIf=" item.children.length == 0" >
+                                        {{ item.name }} :{{item.menuUri}}
+                                        <i nz-icon nzType="delete" nzTheme="outline" style="float: right; padding-top: 5%;"
+                                            (click)="deleteMenu(item)" ></i>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ng-template>
+                        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: roleMenuArray }"></ng-container>
+                    </ul>
+                </div>
+                </nz-card>
+            </div>
+            <div class="col-md-6">
+            <div class="row marginbtm-15">
+                <div class="col-md-6">
+                <b>{{ 'usermanagement.createrole.policy' | translate }}</b>
+                </div>
+                <div class="col-md-6 d-flex justify-content-end">
+                <button nz-button [nzType]="'default'"
+                    (click)="showPolicies()"><span class="d-flex align-items-center">{{ 'usermanagement.createrole.addpolicy' | translate }}
+                        <i nz-icon nzType="plus" class="margnlt-5 white" nzTheme="outline"></i></span></button>
+                <nz-modal [(nzVisible)]="policyVisible" [nzFooter]="null" [nzClosable]="false">
+                    <div class="width-100 pading-all">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h6>Add new policy to role</h6>
+                            </div>
+                        </div>
+                        <div class="row margnrtp-15 marginbtm-25">
+                            <div class="col-md-3">
+                                <nz-form-label>Category</nz-form-label>
+                            </div>
+                            <div class="col-md-9">
+                                <nz-select (ngModelChange)="onSelectedCategory($event)" nzAllowClear nzShowSearch
+                                    nzPlaceHolder="Select Category" style="margin-top: 10px;"
+                                    [(ngModel)]="categoryselected">
+                                    <nz-option *ngFor="let category of policyCategory" [nzValue]="category"
+                                        [nzLabel]="category.name + '/' + category.module.name">
+                                    </nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+                        <div class="row margnrtp-15 marginbtm-25">
+                            <div class="col-md-3">
+                                <nz-form-label>Policy</nz-form-label>
+                            </div>
+                            <div class="col-md-9">
+                                <nz-select (ngModelChange)='onPolicySelection($event)' nzAllowClear nzShowSearch
+                                    nzPlaceHolder="Select Policy" style="margin-top: 10px;"
+                                    [(ngModel)]="policyselected">
+                                    <nz-option *ngFor="let policy of policyArray" [nzValue]="policy"
+                                        [nzLabel]="policy.name">
+                                    </nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+                        <div class="row margntp-25">
+                            <div class="col-md-12 d-flex justify-content-end">
+                                
+                                <button type="button" nz-button nzType="default" (click)="handleCancel()"
+                                class="margnrt-5">
+                                    {{ 'Cancel' | translate }}
+                                </button>
+                                <button type="button" nz-button nzType="primary" 
+                                    (click)="addPolicy()" [disabled]="!addPolbtn">
+                                    {{ 'usermanagement.createrole.addpolicy' | translate }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nz-modal>
+                </div>
+            </div>
+            <nz-card>
+                <ng-container *ngIf="iteratePolicy">
+                    <ng-container *ngFor="let category of rolePolicyArray.categoryList">
+                        <p><b *ngIf="!this.rolePolicyArray.categories[category].catCheck">
+                                {{ rolePolicyArray.categories[category].name }}/
+                                {{ rolePolicyArray.categories[category].moduleName }}
+                            </b></p>
+                        <ng-container *ngFor="let policy of rolePolicyArray.categories[category].policyList">
+                            <nz-collapse *ngIf="!policy.deleteFlag" class="marginbtm-5">
+                                <nz-collapse-panel #p [nzHeader]="rolePolicyArray.policies[policy.id].name"
+                                    [nzActive]="policy.active" [nzExtra]="extraIcon" [nzShowArrow]="false">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                        <nz-form-label style="margin-top: 5px;">Permissions</nz-form-label>
+                                    </div>
+                                    <div class="col-md-8 d-flex justify-content-end">
+                                        <ng-container *ngIf="!editMode">
+                                            <ng-container
+                                                *ngFor="let permission of rolePolicyArray.policies[policy.id].permissions[0]">
+                                                <button type="button" nz-button nzType="default">
+                                                    {{ permission.permission.name }}
+                                                </button>&nbsp;
+                                            </ng-container>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="editMode">
+                                            <ng-container
+                                                *ngFor="let permission of rolePolicyArray.policies[policy.id].permissions">
+                                                <button type="button" nz-button nzType="default">
+                                                    {{ permission.permissionName }}
+                                                </button>&nbsp;
+                                            </ng-container>
+                                        </ng-container>
+                                        </div>
+                                    </div>
+                                    <ng-template #extraIcon>
+                                        <i nz-icon nzType="caret-down" nzTheme="outline"
+                                            [nzRotate]="p.nzActive ? 180 : 0"></i>&nbsp;
+                                        <i nz-icon nzType="delete" nzTheme="outline"
+                                            (click)="$event.stopPropagation();policy.deleteFlag=!policy.deleteFlag;categoryCheck()"></i>
+                                    </ng-template>
+                                </nz-collapse-panel>
+                            </nz-collapse>
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+            </nz-card>
+        </div>
+    </div>
+</div>

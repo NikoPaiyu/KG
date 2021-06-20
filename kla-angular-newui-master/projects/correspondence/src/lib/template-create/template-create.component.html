@@ -1,0 +1,246 @@
+<form nz-form [formGroup]="templateForm" class="cpl-register">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "cpl.actregistration.dash" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    {{ "cpl.templatecreate.correspondencetemplates" | translate }}
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+
+    <div class="sticky_action_bar">
+    <div class="row d-flex justify-content-between">
+        <div class="col-md-6">
+            <h2 class="admin-page-heading">
+                {{ "cpl.templatecreate.createcorrespondencetemplate" | translate }}
+            </h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-between">
+            <div></div>
+            <div class="d-flex justify-content-between margnrt-5">
+                <button nz-button  nzType="default"
+                    (click)="onBack()">
+                    {{ "cpl.docupload.back" | translate }}
+                </button>
+                <button nz-button class="margnlt-5" nzType="primary"
+                    (click)="submitForm(1)">
+                    {{ submitButtonText }} 
+                </button>
+            </div>
+        </div>
+    </div>
+    <nz-divider></nz-divider>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                "cpl.templatecreate.templatename" | translate
+              }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Template name required">
+                            <textarea rows="1" nz-input maxlength="254" formControlName="name"
+                                placeholder="Template Name"></textarea>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                "cpl.templatecreate.business" | translate
+              }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Business required">
+                            <nz-select nzAllowClear nzPlaceHolder="Select Business" formControlName="business">
+                                <nz-option *ngFor="let businessItem of BusinessList" [nzValue]="businessItem.code"
+                                    [nzLabel]="businessItem.name">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label *ngIf="
+                  this.currentUserDetails.authorities.includes('admin');
+                  else lableType
+                ">{{ "cpl.templatecreate.selecttype" | translate }}</nz-form-label>
+                        <ng-template #lableType>
+                            <nz-form-label>{{
+                  "cpl.templatecreate.type" | translate
+                }}</nz-form-label>
+                        </ng-template>
+                    </div>
+
+                    <div class="col-md-8">
+                        <nz-radio-group *ngIf="
+                  this.currentUserDetails.authorities.includes('admin');
+                  else viewType
+                " [ngModelOptions]="{ standalone: true }" [(ngModel)]="radioValue" (ngModelChange)="getAllType()">
+                            <label nz-radio nzValue="DEPARTMENT">{{"cpl.cplview.dep" | translate }}</label>
+                            <label nz-radio nzValue="SECTION">{{"cpl.cplview.section" | translate}}</label>
+                            <label nz-radio nzValue="PPO">PPO</label>
+                        </nz-radio-group>
+                        <ng-template #viewType>
+                            <label><span>{{
+                    this.currentUserDetails?.correspondenceCode.type
+                  }}</span></label>
+                        </ng-template>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                radioValue === "DEPARTMENT" ? "Department" : "Section"
+              }}</nz-form-label>
+                    </div>
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Type required">
+                            <nz-select *ngIf="radioValue!='PPO'"[nzDisabled]="typeDdlDisable" nzAllowClear nzPlaceHolder="Select Type Name"
+                                nzShowSearch formControlName="type" (ngModelChange)="getAllWorkflow($event)">
+                                <nz-option *ngFor="let typeItem of TypesList" [nzLabel]="typeItem.displayName"
+                                    [nzValue]="typeItem.code">
+                                </nz-option>
+                            </nz-select>
+                            <span *ngIf="radioValue =='PPO'">PPO</span>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6" *ngIf="radioValue == 'SECTION'">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                "cpl.templatecreate.workflow" | translate
+              }}</nz-form-label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <nz-radio-group [(ngModel)]="isWorkflow" [ngModelOptions]="{ standalone: true }"
+                            (ngModelChange)="isWorkflowRadioClick($event)">
+                            <label nz-radio [nzValue]="false">{{
+                  "cpl.templatecreate.no" | translate
+                }}</label>
+                            <label nz-radio [nzValue]="true">{{
+                  "cpl.templatecreate.yes" | translate
+                }}</label>
+                        </nz-radio-group>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+        <div class="col-md-6" *ngIf="radioValue == 'SECTION' && isWorkflow">
+            <nz-form-item>
+                <div class="row">
+                    <div class="col-md-4">
+                        <nz-form-label>{{
+                "cpl.templatecreate.workflow" | translate
+              }}</nz-form-label>
+                    </div>
+
+                    <div class="col-md-8">
+                        <nz-form-control nzErrorTip="Workflow required">
+                            <nz-select nzAllowClear nzPlaceHolder="Select Workflow" formControlName="workflowId">
+                                <nz-option *ngFor="let workflowItem of WorkFlowList" [nzValue]="workflowItem.id"
+                                    [nzLabel]="workflowItem.name">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </div>
+                </div>
+            </nz-form-item>
+        </div>
+    </div>
+    <div [class.disablediv]="
+        templateForm.get('name').value == '' || templateForm.get('type').value < 1
+      ">
+        <nz-tabset>
+            <nz-tab nzTitle="Correspondence Input Variables">
+                <ng-container formArrayName="templateInputs">
+                    <nz-form-item *ngFor="let obj of getControls(); index as i; last as l" [formGroupName]="i"
+                        class="mrgT10">
+                        <nz-form-label [nzSpan]="1">#{{ i + 1 }}</nz-form-label>
+                        <nz-form-label [nzSpan]="4">{{
+                "cpl.templatecreate.inputlabel" | translate
+              }}</nz-form-label>
+                        <nz-form-control [nzSpan]="6" nzHasFeedback nzErrorTip="Label required">
+                            <textarea [attr.disabled]="!l ? '' : null" rows="1" nz-input type="text" name=""
+                                formControlName="label"></textarea>
+                            <ng-template #errorTpl let-control> </ng-template>
+                        </nz-form-control>
+                        <nz-form-label [nzSpan]="4" class="padng-lft">{{
+                "cpl.templatecreate.variablename" | translate
+              }}</nz-form-label>
+                        <nz-form-control [nzSpan]="6" nzHasFeedback nzErrorTip="Variable name required">
+                            <nz-select nzAllowClear formControlName="inputTypeId" [nzDisabled]="!l ? true : false">
+                                <nz-option nzPlaceHolder="member dropdown" *ngFor="let item of templateInputTypes"
+                                    [nzValue]="item.id" [nzLabel]="item.name">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                        <nz-form-control [nzSpan]="3" class="d-flex justify-content-end">
+                            <button *ngIf="!l" nz-popconfirm nzPopconfirmTitle="Are you sure you want to Remove?"
+                                type="button" class="mrgL10 btn-style" (nzOnConfirm)="removeInputVariable(i)">
+                                {{ "cpl.templatecreate.remove" | translate }}
+                            </button>
+                            <button class="mrgL10" *ngIf="l" nz-button nzType="default" type="button" (click)="
+                    addInputVariables(templateForm.controls.templateInputs)
+                  ">
+                                +
+                            </button>
+                        </nz-form-control>
+                    </nz-form-item>
+                </ng-container>
+            </nz-tab>
+            <nz-tab nzTitle="Correspondence Design">
+                <div class="row">
+                    <div class="col-md-9">
+                        <quill-editor #editor style="float: left;" formControlName="templateData"
+                            (onEditorCreated)="SaveEditorInstance($event)" (onEditorChanged)="SetCurrentIndex()"
+                            html="html" (onContentChanged)="setContentHtml($event)" [sanitize]="false"
+                            [styles]="{ height: '250px', width: '800px' }"></quill-editor>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="options_template">
+                            <!-- <h3>User defined</h3> -->
+                            <ul>
+                                <li *ngFor="let item of filterInputTypes()">
+                                    <button type="button" (click)="addContent(item.label)">
+                                        {{ item.label }}
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nz-tab>
+        </nz-tabset>
+    </div>
+</form>

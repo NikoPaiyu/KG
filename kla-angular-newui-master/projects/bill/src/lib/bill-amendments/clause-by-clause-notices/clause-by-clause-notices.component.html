@@ -1,0 +1,430 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item> {{ "cpl.actregistration.dash" | translate }} </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "bill-amendments.general-amendment.amendments" | translate }} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+  <div class="col-md-12">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6">
+        <h2 class="admin-page-heading">{{ "Clause by Clause Amendment Notices" }}</h2>
+      </div>
+      <!-- <div class="col-md-6 d-flex justify-content-end">
+        <button nz-button nzType="default" class="btn-style-flex" (click)="generateList()"
+         *ngIf="this.generateList2Flag">
+          Generate List 2
+        </button>
+        <button nz-button nzType="default" class="btn-style-flex" (click)="getByBillIdList(2)"
+         *ngIf="!totalClauseResponse.list2CanbeGenerated && totalClauseResponse.list2Id">
+          View List 2
+        </button>&nbsp;
+        <button nz-button nzType="default" class="btn-style-flex" (click)="generateList()"
+         *ngIf="this.generateList3Flag">
+          Generate List 3
+        </button>
+        <button nz-button nzType="default" class="btn-style-flex" (click)="getByBillIdList(3)"
+         *ngIf="!totalClauseResponse.list3CanbeGenerated && totalClauseResponse.list3Id">
+          View List 3
+        </button>&nbsp;
+      </div> -->
+    </div>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row d-flex justify-content-space-between marginbtm-25">
+  <div class="col-md-12">
+    <div class="row">
+      <div class="col-md-12 d-flex align-items-center">
+        {{ "bill.bill-clause.list.bill" | translate }} :
+          {{totalClauseResponse.billTitle}}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between marginbtm-25">
+    <div class="col-md-12">
+      <div class="row marginbtm-25">
+        <div class="col-md-3">
+          {{ "business-dashboard.bill-management.billlist.billno" | translate }} :
+          {{totalClauseResponse.billNumber}}
+        </div>
+      </div>
+      <!-- <div class="row">
+        {{ "business-dashboard.question.clause" | translate }}:
+        <div class="col-md-3">
+          <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.clauseNumber"
+            name="filenum" (ngModelChange)="searchClauseList(filterSelected)">
+            <nz-option *ngFor="let clause of clauseList" [nzLabel]="clause" [nzValue]="clause"></nz-option>
+          </nz-select>
+        </div>
+        {{ "bill.bill-clause.list.subclause" | translate }}:
+        <div class="col-md-3">
+          <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.subClause"
+            name="filenum" (ngModelChange)="searchClauseList(filterSelected)">
+            <nz-option *ngFor="let sub of subClauseList" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1">
+          <button nz-button [nzType]="'primary'" class="btn-style-flex" (click)="showModel()">
+            <i nz-icon nzType="plus"></i>
+          </button>
+        </div>
+        <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle="Filter columns" (nzOnCancel)="hideModel()"
+            (nzOnOk)="showFilter()">
+              <div class="width-100 pading-all">
+                <div class="row">
+                  <div class="col-md-12">
+                      <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                        <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="chooseFilter(box)"
+                          [(ngModel)]="box.checked">{{ box.label }}</label>
+                      </p>
+                  </div>
+                </div>
+              </div>
+          </nz-modal>
+      </div> -->
+
+      <div class="row">
+        <div class= "col-md-8">
+          <div class="row">
+            <div class="col-md-1">{{ "cpl.fileworkflow.type" | translate }}:</div>
+            <div class="col-md-4">
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.blockTypeCode"
+                name="blockType" (ngModelChange)="searchClauseList(filterSelected)">
+                <nz-option *ngFor="let type of blockTypeList" [nzLabel]="type" [nzValue]="type"></nz-option>
+              </nz-select>
+            </div>
+            <div *ngIf="isClause">{{ "business-dashboard.question.clause" | translate }}:</div>
+            <div class="col-md-2" *ngIf="isClause">
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.clauseNumber"
+                name="filenum" (ngModelChange)="searchClauseList(filterSelected)">
+                <nz-option *ngFor="let clause of clauseList" [nzLabel]="clause" [nzValue]="clause"></nz-option>
+              </nz-select>
+            </div>
+            <div *ngIf="isSubclause">{{ "bill.bill-clause.list.subclause" | translate }}:</div>
+            <div class="col-md-2" *ngIf="isSubclause">
+              <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.subClause"
+                name="filenum" (ngModelChange)="searchClauseList(filterSelected)">
+                <nz-option *ngFor="let sub of subClauseList" [nzLabel]="sub" [nzValue]="sub"></nz-option>
+              </nz-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3 text-align-right">
+          <div class="row">
+            <div class="col-md-2">
+              <button nz-button [nzType]="'primary'" class="btn-style-flex" (click)="showModel()">
+                <i nz-icon nzType="plus"></i>
+              </button>
+            </div>
+            <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle='{{"business-dashboard.question.questionlist.filtercolumns" | translate}}' (nzOnCancel)="hideModel()"
+                (nzOnOk)="showFilter()">
+                  <div class="width-100 pading-all">
+                    <div class="row">
+                      <div class="col-md-12">
+                          <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="chooseFilter(box)"
+                              [(ngModel)]="box.checked">{{ box.label }}</label>
+                          </p>
+                      </div>
+                    </div>
+                  </div>
+              </nz-modal>
+            <div class="col-md-8 d-flex">
+              <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                <input type="text" name="search" nz-input [(ngModel)]="searchWord" 
+                  (ngModelChange)="filtering()" placeholder='{{"business-dashboard.question.questionmlalisting.searchhere" | translate}}'/>
+              </nz-input-group>
+              <ng-template #suffixIconSearch>
+                <i nz-icon nzType="search"></i>
+              </ng-template>
+            </div>
+            <div class="col-md-2">
+              <button nz-button nzType="default" class="btn-style-flex" (click)="clearSearch()">
+                {{ "bill.bill-clause.list.clearsearch" | translate }}
+              </button>
+            </div>
+            <!-- <div class="col-md-2 d-flex align-items-center justify-content-end">
+              <button type="button" class="ant-btn">
+                <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+              </button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- <div class="col-md-3 text-align-right">
+      <div class="row">
+        <div class="col-md-6 d-flex">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input type="text" name="search" nz-input [(ngModel)]="searchWord" 
+              (ngModelChange)="filtering()" placeholder="search here!"/>
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+        <div class="col-md-6">
+          <button nz-button nzType="default" class="btn-style-flex" (click)="clearSearch()">
+            {{ "bill.bill-clause.list.clearsearch" | translate }}
+          </button>
+        </div>
+      </div>
+    </div> -->
+
+</div>
+<div class = "row fltr">
+  <div class = "col-md-4" *ngIf="amdnodisable">
+    <div class ="row align-items-center">
+      <div class="col-md-3 wordbreak">
+        {{ "bill.bill-clause.list.amdno" | translate }}
+      </div>
+      <div class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.noticeNumber"
+          name="noticeNumber" (ngModelChange)="searchClauseList(filterSelected)">
+          <nz-option *ngFor="let no of amdnoList" [nzLabel]="no" [nzValue]="no"></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+      </div>
+    </div>
+  </div>
+  <div class = "col-md-4" *ngIf="amendmentdisable">
+    <div class ="row align-items-center">
+      <div class="col-md-3 wordbreak">
+        {{ "bill-amendments.general-amendment.amendments" | translate }}.
+      </div>
+      <div class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.content"
+          name="content" (ngModelChange)="searchClauseList(filterSelected)">
+          <nz-option *ngFor="let content of amendmentList" [nzLabel]="content" [nzValue]="content"></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+      </div>
+    </div>
+  </div>
+  <div class = "col-md-4" *ngIf="memberdisable">
+    <div class ="row align-items-center">
+      <div class="col-md-3 wordbreak">
+        {{ "bussiness-dashboard.user-managemnet.biometric-enrollment.membername" | translate }}.
+      </div>
+      <div class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.memberName"
+          name="memberName" (ngModelChange)="searchClauseList(filterSelected)">
+          <nz-option *ngFor="let name of memeberList" [nzLabel]="name" [nzValue]="name"></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+      </div>
+    </div>
+  </div>
+  <div class = "col-md-4" *ngIf="assignedtodisable">
+    <div class ="row align-items-center">
+      <div class="col-md-3 wordbreak">
+        {{ "bill.bill-clause.list.assignedto" | translate }}.
+      </div>
+      <div class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.assignedTo"
+          name="assignedTo" (ngModelChange)="searchClauseList(filterSelected)">
+          <nz-option *ngFor="let assigned of assignedList" [nzLabel]="assigned" [nzValue]="assigned"></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+      </div>
+    </div>
+  </div>
+  <div class = "col-md-4" *ngIf="typedisable">
+    <div class ="row align-items-center">
+      <div class="col-md-3 wordbreak">
+        {{ "business-dashboard.question.type" | translate }}.
+      </div>
+      <div class="col-md-8">
+        <nz-select nzShowSearch nzAllowClear [(ngModel)]="filterSelected.operationType"
+          name="operationType" (ngModelChange)="searchClauseList(filterSelected)">
+          <nz-option *ngFor="let type of typeList" [nzLabel]="type" [nzValue]="type"></nz-option>
+        </nz-select>
+      </div>
+      <div class="col-md-1 pdzero icon-color">
+        <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(5)"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="clauseNoticesList" class="table-all">
+  <thead (nzSortChange)="sort($event)" nzSingleSort>
+    <tr>
+      <th></th>
+      <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey>
+        {{ "bill.bill-clause.list.amdno" | translate }}
+      </th>
+      <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="amendment">
+        {{ "cpl.amendmentview.amendment" | translate }}
+      </th>
+      <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey>
+        {{ "bill.bill-clause.list.membername" | translate }}
+      </th>
+      <th *ngIf="colCheckboxes[3].check && !isAssistant()" nzShowSort nzSortKey>
+        {{ "bill.bill-clause.list.assignedto" | translate }}
+      </th>
+      <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey>
+        {{ "business-dashboard.question.clause" | translate }}
+      </th>
+      <th *ngIf="colCheckboxes[5].check">{{ "business-dashboard.question.type" | translate }}</th>
+      <th *ngIf="colCheckboxes[6].check">{{ "business-dashboard.question.questionlist.status" | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th colspan="10" class="tb-data" *ngIf="tableParams.colSpan && isSectionOfficer()">
+        {{ checkbxParams.numberOfChecked }} {{ "business-dashboard.question.questionlist.selected" | translate }} :
+        <button class="ant-btn mr-6" (click)="assignToAssistant()">
+          {{ "cpl.documents.assigntoassisstant" | translate }}
+        </button>&nbsp;
+        <ng-container *ngIf="tableParams.colSpan">
+          <!-- <button class="ant-btn mr-6" (click)="markAcceptReject(true)">Mark as Accepted</button>&nbsp;
+          <button class="ant-btn mr-6" (click)="markAcceptReject(false)">Mark as Rejected</button>&nbsp;
+          <button class="ant-btn mr-6" (click)="convertToOfficialAmendment()">Convert to Official Amendment</button> -->
+        </ng-container>
+      </th>
+    </tr>
+    <tr *ngFor="let list of filterTable.data">
+      <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.id]" (nzCheckedChange)="refreshStatus(list)"></td>
+      <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.blockId)" (mouseleave)="hideLinks(list.blockId)">
+        <tr><div style="white-space: nowrap">{{list?.noticeNumber}}</div></tr>
+      </td>
+      <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list)" (mouseleave)="hideLinks(list.id)">
+        <tr>{{list?.content}}</tr>
+        <tr *ngIf="list.viewLinks && !isSectionOfficer()">
+          <div>
+            <td><a class="viewlink" (click)="markAcceptReject(true, list.id)">Mark as Accepted</a></td>
+            <td><a class="viewlink" (click)="markAcceptReject(false, list.id)">Mark as Rejected</a></td>
+         </div>
+        </tr>
+      </td>
+      <td *ngIf="colCheckboxes[2].check">{{ list?.memberName}}</td>
+      <td *ngIf="colCheckboxes[3].check && !isAssistant()">{{ list?.assignedToMemberName }}</td>
+      <td *ngIf="colCheckboxes[4].check"><span *ngIf=" list.clauseNumber!= '0'">{{ list?.clauseNumber}}</span></td>
+      <td *ngIf="colCheckboxes[5].check">{{ list?.operationType }}</td>
+      <td *ngIf="colCheckboxes[6].check"><nz-tag> {{ list?.status }}</nz-tag>
+        <label *ngIf="list.amendmentType === 'ORAL_AMENDMENT'">OralAmendment</label>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<nz-modal nzTitle='{{ "cpl.documents.assigntoassisstant" | translate }}' [(nzVisible)]="assignAssistant.visible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4">
+            {{ "cpl.documents.assigntoassisstant" | translate }}
+          </div>
+        </div>
+        <div class="row margnrtp-15 align-items-center">
+          <div class="col-md-4">{{ "cpl.documents.Filter" | translate }}</div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <input nz-input placeholder='{{ "business-dashboard.notice-proc.searchnamehere" | translate }}' [(ngModel)]="assignAssistant.searchPerson"
+              (ngModelChange)="personSearch()" />
+          </div>
+        </div>
+        <div class="row margnrtp-15">
+          <div class="col-md-12">
+            <nz-card [nzTitle]="null" class="checklist-all">
+              <nz-table #assistantListTable [nzData]="assignAssistant.assistantList">
+                <tbody>
+                  <tr *ngFor="let person of assistantListTable.data">
+                    <td>
+                      <nz-radio-group [(ngModel)]="assignAssistant.assigneeId">
+                        <label nz-radio [nzValue]="person.userId"></label>
+                      </nz-radio-group>
+                    </td>
+                    <td>{{ person.fullName }}</td>
+                    <td>{{ person.name }}</td>
+                  </tr>
+                </tbody>
+              </nz-table>
+            </nz-card>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button type="button" nz-button nzType="default" (click)="onCancelAssistant()">
+              {{ "business-dashboard.question.cancel" | translate }}
+            </button>
+            <button type="button" nz-button nzType="primary" (click)="onSubmitAssistant()" class="margnlft-15"
+              [disabled]="assignAssistant.assigneeId === null">
+              {{ "business-dashboard.question.questionview.assign" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- <assign to assistant modal ends> -->
+<!-- list modal starts-->
+  <!-- <nz-modal nzTitle="List" [(nzVisible)]="visibleModel" [nzFooter]="null" 
+    (nzOnCancel)="closeList()" nzWidth="1000">
+    <form nz-form [formGroup]="validateForm">
+    <div class="row mr-top">
+      <div class="col-md-11 d-flex justify-content-end">
+        <button type="button" nz-button nzType="primary" (click)="resubmitFile('BIL_CLAUSE_LIST')" 
+        *ngIf="!listData.listFileId && totalClauseResponse.list2Id && totalClauseResponse.list2status !=='PUBLISHED'">
+              Attach To File List 2
+        </button>&nbsp;
+        <button type="button" nz-button nzType="primary" (click)="resubmitFile('BIL_CLAUSE_LIST')" 
+        *ngIf="!listData.listFileId && totalClauseResponse.list3Id && totalClauseResponse.list2status ==='PUBLISHED'">
+              Attach To File List 3
+        </button>&nbsp;
+        <button type="button" nz-button nzType="primary" (click)="viewFile()"  
+        *ngIf="listData.listFileId">
+              View in File
+        </button>&nbsp;
+        <button nz-button nzType="default" class="btn-style-flex" (click)="publishList()"
+         *ngIf="listData?.listStatus === 'APPROVED'">
+          Publish List
+        </button>
+        <nz-tag [nzColor]="'red'" *ngIf= "listData.listStatus === 'PUBLISHED'">
+          {{ listData?.listStatus.split('_').join(' ') }}
+        </nz-tag>&nbsp;
+      </div>
+    </div>
+    <div class="row" style="padding: 20px;">
+      <div class="col-md-12" *ngIf="listData">
+        <lib-bill-clause-list-view 
+        [billTitle]="listData?.billTitle"
+        [bilClauseAmendmentResponse]="listData?.bilClauseAmendmentResponse">
+        </lib-bill-clause-list-view>
+      </div>
+    </div>
+    <div class="row mr-top">
+      <div class="col-md-11 d-flex justify-content-end">
+        <button type="button" nz-button nzType="primary" (click)="createClauseList(2)"
+          *ngIf="!totalClauseResponse.list2Id">
+              Confirm List 2
+          </button>&nbsp;
+          <button type="button" nz-button nzType="primary" (click)="createClauseList(3)"
+          *ngIf="!totalClauseResponse.list3Id && totalClauseResponse.list2status == 'PUBLISHED' && listData.list3CanbeGenerated">
+              Confirm List 3
+          </button>&nbsp;
+        <button type="button" nz-button nzType="primary" (click)="closeList()"
+        *ngIf="!totalClauseResponse.list2Id || !totalClauseResponse.list3Id">
+            Cancel
+        </button>
+      </div>
+    </div>
+  </form>
+  </nz-modal> -->
+  <!-- list modal ends--> 

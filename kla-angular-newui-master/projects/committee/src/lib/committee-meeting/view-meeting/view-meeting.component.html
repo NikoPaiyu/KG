@@ -1,0 +1,125 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "cpl.actregistration.dash" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item>
+                    Meeting
+                </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+</ng-container>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-8">
+        <!-- <h4 *ngIf="!isFileView">{{ meetingDetails?.title }} {{meetingDetails?.followUpMeeting?'(Follow Up Meeting)':'(New Meeting)'}}</h4> -->
+    </div>
+    <div class="col-md-4 d-flex justify-content-end">
+        <button class="ml-6 m-r5" nz-button nzType="default" (click)="goback()" *ngIf="!editMode && !isFileView">
+            Back
+        </button>
+        <button class="ml-6 m-r5" nz-button nzType="primary"
+        *ngIf="meetingDetails?.noticeStatus ==='PENDING_FROM_CHAIRMAN' && permissions.pendingNotice"
+        nz-popconfirm nzPopconfirmTitle="Are you sure you want to approve?" 
+        (nzOnConfirm)="approveMeetingNotice()">
+            Approve
+        </button>
+    </div>
+</div> 
+<nz-divider></nz-divider>
+<!-- ---------------------------------NEW UI OF MEETING VIEW--------------------------------- -->
+<div class="row">
+    <div class="col-md-10">
+     <nz-card>
+        <div class="row margn-top-7">
+            <div class="col-md-12 align-center">
+                <h4 *ngIf="!isFileView">{{ meetingDetails?.title }} {{meetingDetails?.followUpMeeting?'(Follow Up Meeting)':'(New Meeting)'}}</h4> 
+            </div>
+        </div>
+        <div class="row margn-top-7" *ngFor="let agenda of meetingDetails?.subAgenda">
+            <div class="col-md-6 align-right">
+               
+                    {{agenda?.agendaType?.name}} - 
+               
+            </div>
+            <div class="col-md-6 align-left">
+                <div class="row margn-btm-7" *ngFor="let subAgenBusiness of agenda?.subAgendaBusiness">
+                    <a class="viewlink" (click)="createSuggestions(subAgenBusiness.businessId,subAgenBusiness)"> 
+                        <b>{{ subAgenBusiness?.businessTitle }}</b>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row margn-top-7">
+            <div class="col-md-12 align-center">
+                <div class="preview-main">
+                    <div class="mrgT20 preview-main-text">
+                        <div class="row margn-top-7">
+                        <span class="m-r5">Date & Time: </span>
+                        <span class="m-r5"><b>{{meetingDetails?.date | date: 'dd/MM/yyy'}}</b></span>
+                        <span class="m-r5"> <b>{{ meetingDetails?.time | date: "hh:mm a" }}</b></span> 
+                        <span *ngIf="meetingDetails?.endTime" class="m-r5">to</span>
+                        <span *ngIf="meetingDetails?.endTime" class="m-r5"> <b>{{ meetingDetails?.endTime | date: 'dd/MM/yyy' }}</b></span>
+                        <span  *ngIf="meetingDetails?.endTime" class="mr-6"> <b>{{  meetingDetails?.endTime | date: "hh:mm a" }}</b></span>
+                        <span > <b>({{ meetingDetails?.occasion?.split('_').join(' ') | titlecase}})</b>
+                        </span>
+                        </div>
+                        <div class="row margn-top-7">
+                            <span class="m-r5">Venue : </span>
+                            <span class="m-r5"><b>{{meetingDetails?.venue?.name}}</b></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row margn-top-7">
+            <div class="col-md-4">
+               Committee : 
+              </div>
+            <div class="col-md-8">
+                <div class="row" *ngFor="let comm of meetingDetails?.committee">
+                    <b *ngIf="comm.parentCommittee">{{ comm?.name}}
+                    </b>
+                 </div>  
+            </div>
+        </div>
+        <div class="row margn-top-7" *ngIf="meetingDetails?.isJointMeeting">
+            <div class="col-md-4 ">
+               Joint Meeting With : 
+            </div>
+            <div class="col-md-8">
+                <div class="row margn-btm-7" *ngFor="let comm of meetingDetails?.committee">
+                    <b *ngIf="!comm.parentCommittee">{{ comm?.name}}
+                    </b>
+                 </div>  
+            </div>
+        </div>
+        <div class="row margn-top-10">
+            <div class="col-md-4 ">
+             Meeting Agenda :
+            </div>
+            <div class="col-md-8">
+                <div class="row margn-top-7">
+                    <b>{{ meetingDetails?.agendaDescription}}</b>
+                 </div>  
+            </div>
+        </div>
+        <div class="row margn-top-10" *ngIf="meetingDetails?.reportdate">
+            <div class="col-md-4 ">
+             Report Presentation :
+            </div>
+            <div class="col-md-8">
+                <div class="row margn-top-7">
+                    <b>{{ meetingDetails?.reportdate | date: 'dd/MM/yyy'}}</b>
+                 </div>  
+            </div>
+        </div>
+     </nz-card>
+    </div>
+
+</div>
+<!-- ---------------------------------NEW UI OF MEETING VIEW--------------------------------- -->

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>{{'KLA' | translate}}</title>
+  </head>
+
+  <body>
+    <div class="container-fluid login">
+      <div class="row">
+        <div class="col-md-5 padding0 font-roboto">
+          <!-- <div class="row">
+          <div class="col-md-12 justify-content-center d-flex mrgT15">
+            <div class="d-flex flex-wrap align-items-center mla-font-ml">
+              <div class="mla-color margnrgt-15">
+                <strong>{{ time | date: "hh:mm a" }}</strong>
+              </div>
+              <div class="mla-color">{{ time | date: "dd MMMM yyyy" }}</div>
+            </div>
+          </div>
+          </div> -->
+
+          <div class="row width-100">
+            <div class="col-md-12 align-center logo_h marginbtm-25">
+              <img src="../../assets/img/logo-login.svg" alt="" width="150px"/>
+            </div>
+            <!-- <div class="col-md-12 d-flex flex-wrap justify-content-center">
+              <div class="font-style mrg5 mla-font-ml">
+                {{assemblyandsession?.assemblyValue}} -ാം കേരള നിയമസഭ
+              </div>
+              <div class="font-style mrg5 mla-font-ml">{{assemblyandsession?.sessionValue}} -ാം സമ്മേളനം</div>
+            </div> -->
+            <div
+              class="col-md-12 align-center white login-content justify-content-center d-flex  flex-wrap"
+            >
+              <h1 class="login_h1">{{'ഇ - നിയമസഭയിലേക്ക് സ്വാഗതം' | translate}}</h1>
+              <p class="login_p marginbtm-25">
+                <!-- {{'1888 - ലെ തിരുവിതാംകൂർ ലെജിസ്ലേറ്റീവ് കൗൺസിൽ രൂപീകരണത്തോടെയാണ് സംസ്ഥാനത്തെ നിയമനിർമ്മാണ സഭകളുടെ ചരിത്രം ആരംഭിക്കുന്നത്.'|translate}} -->
+             
+                നിയമസഭാംഗളുടെ ജാലകത്തിലേക്ക് സ്വാഗതം. ലോഗിൻ ചെയ്യുന്നതിനായി യൂസർനെയിം, പാസ്സ്‌വേർഡ് നൽകുക </p>
+            </div>
+          </div>
+          
+          <router-outlet></router-outlet>
+        </div>
+
+        <div class="col-md-7 padding0 font-rachana">
+          <div class="login-intro">
+            <!-- <div class="row d-flex flex-wrap justify-content-sm-between white">
+              <div
+                class="col-md-auto d-flex flex-wrap align-items-center max-width-180 adjust-height"
+              >
+                <div class="custom-width font-14">14 -ാം നിയമസഭ</div>
+                <div class="custom-width font-14">16 -ാം സമ്മേളനം</div>
+              </div>
+              <div
+                class="col-md-auto d-flex flex-wrap align-items-center max-width-180 adjust-height align-right"
+              >
+                <div class="custom-width font-14">
+                  <strong>{{ time | date: "hh:mm a" }}</strong>
+                </div>
+                <div class="custom-width font-14">
+                  {{ time | date: "dd MMMM yyyy" }}
+                </div>
+              </div>
+            </div> -->
+            <!-- <div class="col-md-12 justify-content-center d-flex mrgT15">
+              <div class="d-flex flex-wrap align-items-center mla-font-ml">
+                <div class="mla-color margnrgt-15">
+                  <strong>{{ time | date: "hh:mm a" }}</strong>
+                </div>
+                <div class="mla-color">{{ time | date: "dd MMMM yyyy" }}</div>
+              </div>
+            </div> -->
+            <!-- <div
+              class="d-flex flex-wrap height-100 align-items-center  justify-content-center"
+            >
+              <div class="row width-100">
+                <div class="col-md-12 align-center">
+                  <img src="../../assets/img/logo-login.svg" alt="" />
+                </div>
+                <div class="col-md-12 d-flex flex-wrap justify-content-center" 
+                *ngIf="!assemblyandsession?.assemblyValue && !assemblyandsession?.sessionValue">
+                  <div class="font-style mrg5 mla-font-ml">
+                    കേരള നിയമസഭ
+                  </div>
+                </div>
+                <div class="col-md-12 d-flex flex-wrap justify-content-center"*ngIf="assemblyandsession?.assemblyValue">
+                  <div class="font-style mrg5 mla-font-ml" >
+                    {{assemblyandsession?.assemblyValue}} -ാം കേരള നിയമസഭ
+                  </div>
+                  <div class="font-style mrg5 mla-font-ml" *ngIf="assemblyandsession?.sessionValue">
+                    {{assemblyandsession?.sessionValue}} -ാം സമ്മേളനം
+                  </div>
+                </div>
+                <div
+                  class="col-md-12 align-center white login-content justify-content-center d-flex  flex-wrap"
+                >
+                  <h1 class="white">{{'സ്വാഗതം' | translate}}</h1>
+                  <p class="mla-font-ml">
+                    {{'1888 - ലെ തിരുവിതാംകൂർ ലെജിസ്ലേറ്റീവ് കൗൺസിൽ രൂപീകരണത്തോടെയാണ് സംസ്ഥാനത്തെ നിയമനിർമ്മാണ സഭകളുടെ ചരിത്രം ആരംഭിക്കുന്നത്.'|translate}}
+                  </p>
+                </div>
+              </div>
+
+            
+              <div class="row width-100">
+               <div
+                 class="col-md-12 d-flex  flex-nowrap justify-content-center"
+               >
+                 <button
+                   type="button"
+                   class="d-flex flex-nowrap align-items-center secondary-button button-padng"
+                 >
+                   English
+                 </button>
+                 <button
+                   type="button"
+                   class="d-flex flex-nowrap align-items-center secondary-button button-padng"
+                 >
+                   தமிழ்
+                 </button>
+               </div>
+             </div> 
+            </div> -->
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,147 @@
+<div class="row">
+    <div class="col-md-6">
+        <h6 class="admin-page-heading">
+            Member Time Allocation
+        </h6>
+    </div>
+</div>
+<form [formGroup]="timeAllcForm">
+    <div class="row margnrtp-5">
+        <div class="col-md-6">
+            <div class="row margnrtp-5">
+                <div class="col-md-4">
+                    <nz-form-label>Session</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    {{assemblySessionObj.currentsessionVal}}
+                </div>
+            </div>
+            <div class="row margnrtp-5">
+                <div class="col-md-4">
+                    <nz-form-label>Day</nz-form-label>
+                </div>
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <!-- <nz-form-control [nzSpan]="24" nzErrorTip="Select Day"> -->
+                            <nz-select type="text" formControlName="timeAllocatedDay" name="dateTime" nz-input
+                                placeholder="Select Date" (ngModelChange)="getByFileIdAndDay($event)" nzAllowClear>
+                                <nz-option *ngFor="let item of getDateList|keyvalue"
+                                    nzLabel="Day {{item.key}} - {{item.value|date:'dd/MM/yyyy'}}" [nzValue]="item">
+                                </nz-option>
+                            </nz-select>
+                            <!-- </nz-form-control> -->
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    Allocation For :
+                </div>
+                <div class="col-md-6">
+                    <nz-form-control [nzSpan]="15" nzErrorTip="Enter Allocation">
+                        <input nz-input placeholder="Enter Allocation" formControlName="allocation" />
+                    </nz-form-control>
+                </div>
+            </div> -->
+        </div>
+        <div class="col-md-6 d-flex justify-content-flex-end">
+
+            <nz-card class="width-100 bg_block" nzTitle="For the Day">
+                <div class="d-flex width-100">
+                    <p class="width-100 mrzero">Total time available: <br>
+                        <strong>{{timeAllocation['totalTime']}} Minutes</strong>
+                    </p>
+                    <p class="width-100 mrzero">Allocated time: <br>
+                        <strong> {{timeAllocation['allocateTime']}} Minutes </strong>
+                    </p>
+                    <p class="width-100 mrzero">UnAllocated time: <br>
+                        <strong> {{timeAllocation['unallocateTime']}} Minutes </strong>
+                    </p>
+                </div>
+            </nz-card>
+
+        </div>
+    </div>
+    <div class="row margnrtp-10">
+        <div class="col-md-6">
+            <div class="row margnrtp-5">
+                <div class="col-md-12">
+                    <div formArrayName="members" class="width-100">
+                        <div *ngFor="let member of getMemberData.controls; let timeIndex = index">
+                            <div [formGroupName]="timeIndex">
+                                <nz-form-item>
+                                    <nz-form-control>
+                                        <nz-card class="committee_blk marginbtm-15">
+                                            <span class="mr-6">{{ member.value.memberName }}</span>
+                                            <span class="mr-6">({{ member.value.time }})</span>
+                                            <span class="flr">
+                                                <i nz-icon nzType="delete" nzTheme="outline" nz-popconfirm
+                                                    nzPopconfirmTitle="Are you sure you want to delete member?" nzCancelText="No" nzOkText="Yes"
+                                                    (nzOnConfirm)="deleteMember(member, timeIndex)"
+                                                    nzPopconfirmPlacement="bottomLeft"></i>
+                                            </span>
+                                        </nz-card>
+                                    </nz-form-control>
+                                </nz-form-item>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button nz-button nzType="dashed"
+                        class="add-button margnrtp-15  d-flex align-items-center justify-content-center"
+                        (click)="shownewMemberPopup()">
+                        <i nz-icon nzType="plus"></i>
+                        Add Member
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<nz-modal [(nzVisible)]="showAddMmemModal" nzTitle="Create Governor's Address" [nzClosable]="false" [nzFooter]="null">
+    <div class="width-100  pading-all">
+        <form [formGroup]="addMemForm">
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">Select Member:</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Member">
+                            <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" formControlName="memberDto">
+                                <nz-option *ngFor="let mla of mlaList" [nzLabel]="mla.details?.fullName"
+                                    [nzValue]="mla">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+                <div class="col-md-6">
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="9">Allocated Time</nz-form-label>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Enter time">
+                            <nz-form-control nzErrorTip="Please Enter time">
+                                <input nz-input type='number' min="1" max="500" placeholder="" formControlName="time" />
+                                Minutes
+                            </nz-form-control>
+                        </nz-form-control>
+                    </nz-form-item>
+                </div>
+            </div>
+            <div class="row mrt-50 margnrtp-15">
+                <div class="col-md-12 d-flex justify-content-end">
+                    <button type="button" nz-button nzType="default" class="margnlt-5" (click)="showAddMmemModal=false">
+                        Cancel
+                    </button>
+                    <button type="button" nz-button nzType="primary" (click)="addMembers()" class="margnlt-5"
+                        [disabled]="!addMemForm.valid">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</nz-modal>

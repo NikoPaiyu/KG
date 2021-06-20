@@ -1,0 +1,13 @@
+.mr-6 {
+  margin-right: 6px;
+}
+
+.myDiv .only-show-on-hover {
+  visibility: hidden;
+}
+.myDiv:hover .only-show-on-hover {
+  visibility: visible;
+}
+ .mrg_R10 {
+   margin-right: 10px;
+ }

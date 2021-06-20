@@ -1,0 +1,420 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.bill-management.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "bill.ballotresult.list" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+  <div class="col-md-6"> <h2 class="admin-page-heading">{{ "bill.ballotresult.list" | translate }}</h2></div>
+  <div class="col-md-6 justify-content-end d-flex">
+    <button nz-button nzType="default">...</button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<nz-tabset>
+  <nz-tab nzTitle="List">
+    <div class="row d-flex">
+      <div class="col-md-6"></div>
+      <div class="col-md-6 justify-content-end d-flex">
+        <div class="row">
+          <div class="col-md-10">
+            <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchAmendment" (ngModelChange)="searchAmendmentList()" nz-input
+                placeholder='{{ "business-dashboard.question.questionlist.inputsearch" | translate }}' />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-2">
+            <!-- <button
+              type="button"
+              class="ant-btn"
+              nz-dropdown
+              nzTrigger="click"
+              [nzDropdownMenu]="menu"
+            >
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{
+                "business-dashboard.billregister.billregisterlist.cols" | translate
+              }}
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul
+                  nz-menu
+                  dileTable
+                  *ngFor="let col of colCheckboxes; let i = index"
+                  class="checkbox-style"
+                >
+                  <li>
+                    <label
+                      nz-checkbox
+                      [nzDisabled]="col.disable"
+                      [(ngModel)]="col.check"
+                      name="j"
+                      (ngModelChange)="disableCheckBox()"
+                      >{{ col.label }}</label
+                    >
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- general amendment table -->
+    <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="amendmentList" class="table-all">
+      <thead (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+          <th>{{ "noticeprocessing.staff.personalregister.slno" | translate }}</th>
+          <th *ngIf="colCheckboxes[0].check">{{ "business-dashboard.responses.ordapprove.billno" | translate }} </th>
+          <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="title">
+            {{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="type">
+            {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}
+          </th>
+          <!-- <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="Minister">
+            Hon'ble minister
+          </th>
+          <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="publicopinion">
+            Public opinion
+          </th>
+          <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="committee">
+          Committee -->
+          <!-- </th> -->
+          <th *ngIf="colCheckboxes[3].check && commonService.doIHaveAnAccess('FILE', 'READ')" 
+            nzShowSort nzSortKey="fileNo">
+            {{ "business-dashboard.responses.ordapprove.fileNo" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="status">{{ "business-dashboard.question.questionlist.status" | translate }}</th>
+          <th>{{ "cpl.correspondencelist.view" | translate }}</th>
+          <!-- <th>Preview</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of filterTable.data; let i = index">
+          <td>{{i+1}}</td>
+          <td *ngIf="colCheckboxes[0].check">{{list.billNumber}}</td>
+          <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+        <tr>
+          {{
+          list.title
+        }}
+        </tr>
+        <!-- <tr *ngIf="list.viewLinks">
+        <div>
+            <td>
+                <a class="viewlink" (click)="viewList(list.ballotId)">View </a>
+            </td>
+        </div>
+    </tr> -->
+        </td>
+        <td *ngIf="colCheckboxes[2].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+          <!-- <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.publicOpinion"></i>
+        <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.publicOpinion"></i> -->
+          {{list?.type?.split('_').join(' ')}}
+        </td>
+        <!-- <td *ngIf="colCheckboxes[2].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{ list.minister }}</td>
+    <td *ngIf="colCheckboxes[3].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+       <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.publicOpinion"></i>
+        <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.publicOpinion"></i> 
+    </td>
+    <td *ngIf="colCheckboxes[4].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">{{ list.motionCommitteeType}}</td> -->
+        <td *ngIf="commonService.doIHaveAnAccess('FILE', 'READ') && colCheckboxes[3].check"><a
+            style="text-decoration: underline; color: blue;" (click)="openFile(list.fileId)">{{ list.fileNumber }}</a>
+        </td>
+        <td *ngIf="colCheckboxes[4].check">
+          <nz-tag> {{ list?.ballotStatus?.split('_').join(' ')}}</nz-tag>
+        </td>
+        <td (click)="viewList(list.ballotId, 0)">
+          <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+        </td>
+        <!-- <td  (click)="getContent(list.motionContent)">
+      <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+    </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <!-- general amendment two tab starts -->
+  <nz-tab nzTitle="List1">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6"></div>
+      <div class="col-md-6d-flex justify-content-flex-end">
+        <div class="row">
+          <div class="col-md-10">
+            <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchSecondAmendment" (ngModelChange)="searchSecondList()" nz-input
+                placeholder='{{ "cpl.correspondencelist.inputsearchtext" | translate }}' />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-2">
+            <!-- <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{"business-dashboard.billregister.billregisterlist.cols" | translate}}
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div> 
+                <ul nz-menu fileTable *ngFor="let box of colCheckboxes2; 
+                  let i = index"class="checkbox-style">
+                  <li>
+                    <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" 
+                      name="i"(ngModelChange)="disableCheckBox()">
+                      {{ box.label }}
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ordinance disapproval table -->
+    <nz-table #ordDisapprovalTable nzShowPagination [nzData]="secondList" class="table-all">
+      <thead (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+          <th>{{ "cpl.correspondencelist.sno" | translate }}</th>
+          <th *ngIf="colCheckboxes2[0].check" nzShowSort nzSortKey="billNo">
+            {{ "business-dashboard.responses.ordapprove.billno" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes2[1].check" nzShowSort nzSortKey="billTitle">
+            {{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes2[2].check" nzShowSort nzSortKey="billType">
+            {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes2[3].check && commonService.doIHaveAnAccess('FILE', 'READ') " nzShowSort
+            nzSortKey="fileNo">
+            {{ "cpl.documents.fileno" | translate }}
+          </th>
+          <!-- <th  *ngIf="colCheckboxes2[4].check"nzShowSort nzSortKey="subDate">
+                {{ "business-dashboard.responses.ordapprove.submitteddate" | translate }} 
+              </th> -->
+          <th *ngIf="colCheckboxes2[4].check">
+            {{ "business-dashboard.question.questionlist.status" | translate }}
+          </th>
+          <th>{{ "cpl.correspondencelist.view" | translate }}</th>
+          <!-- <th> Preview </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of ordDisapprovalTable.data;let i=index" (click)="showLinks(list.id)">
+          <td>{{i+1}}</td>
+          <td *ngIf="colCheckboxes2[0].check">
+            <tr>{{ list.billNumber }}</tr>
+            <!-- <tr *ngIf="list.viewLinks" class="va">
+                  <td><a nz-button nzType="link">View</a></td>
+                </tr> -->
+          </td>
+          <td *ngIf="colCheckboxes2[1].check" (mouseover)="showSecondLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+            <tr>{{list.title}}</tr>
+            <!-- <tr *ngIf="list.viewLinks"  class="viewlink">
+                  <td><a nz-button nzType="link" (click)="viewList(list.ballotId)">view</a></td>
+                </tr> -->
+        </td>
+        <td *ngIf="colCheckboxes2[2].check">{{ list?.type?.split('_').join(' ')}}</td>
+        <td *ngIf="commonService.doIHaveAnAccess('FILE', 'READ') && colCheckboxes2[3].check"><a class="filecolor"
+            (click)="openFile(list.fileId)">{{ list.fileNumber }}</a></td>
+        <!-- <td *ngIf="colCheckboxes2[4].check">{{ list.createdDate|date:'dd-MM-yyyy'}}</td> -->
+        <td *ngIf="colCheckboxes2[4].check">
+          <nz-tag> {{ list?.ballotStatus?.split('_').join(' ') }}</nz-tag>
+        </td>
+        <!-- <td  (click)="getContent(list.content)">
+                <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+              </td> -->
+          <!-- <td *ngIf="colCheckboxes[5].check">{{ list.subDate }}</td> -->
+          <!-- <td *ngIf="colCheckboxes[6].check">
+                <nz-tag> {{ list.status }}</nz-tag>
+              </td> -->
+          <td (click)="viewList(list.ballotId, 1)">
+            <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+    <!-- ordinance disapproval table ends -->
+  </nz-tab>
+  <nz-tab nzTitle="List2">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6"></div>
+      <div class="col-md-6d-flex justify-content-flex-end">
+        <div class="row">
+          <div class="col-md-10">
+            <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchThirdAmendment" (ngModelChange)="searchThirdList()" nz-input
+                placeholder='{{ "cpl.correspondencelist.inputsearchtext" | translate }}'/>
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-2">
+            <!-- <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{ "business-dashboard.billregister.billregisterlist.cols" | translate}}
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul nz-menu fileTable *ngFor="let box of colCheckboxes3; let i = index" class="checkbox-style">
+                  <li>
+                    <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                      (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <nz-table #objIntroTable nzShowPagination nzShowSizeChanger class="table-all">
+      <thead (nzSortChange)="newSort($event)" nzSingleSort>
+        <tr>
+          <th>{{ "cpl.correspondencelist.sno" | translate }}</th>
+          <th>{{ "business-dashboard.bill-amendments.obj-introduction-list.billno" | translate}}</th>
+          <th>{{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}</th>
+          <th> {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}</th>
+          <th>{{ "noticeprocessing.staff.personalregister.fileno" | translate }}</th>
+          <th>{{ "business-dashboard.bill-amendments.obj-introduction-list.status" | translate }}</th>
+          <th>{{ "cpl.correspondencelist.view" | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of thirdList; let i = index">
+          <td>{{i+1}}</td>
+          <td (click)="showLinks(list.id)"><tr>{{ list.billNumber }}</tr></td>
+          <td>{{ list.title}}</td>
+          <td>{{ list?.type?.split('_').join(' ')}}</td>
+          <td>{{ list.fileNumber}}</td>
+          <td><nz-tag> {{ list?.status?.split('_').join(' ') }}</nz-tag></td>
+          <td (click)="view(list.listId)">
+            <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle="List3">
+    <div class="row d-flex justify-content-space-between">
+      <div class="col-md-6"></div>
+      <div class="col-md-6 d-flex justify-content-flex-end">
+        <div class="row">
+          <div class="col-md-10">
+            <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+              <input type="text" [(ngModel)]="searchThirdAmendment" (ngModelChange)="searchList3()" nz-input
+                placeholder='{{ "cpl.correspondencelist.inputsearchtext" | translate }}' />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <i nz-icon nzType="search"></i>
+            </ng-template>
+          </div>
+          <div class="col-md-2">
+            <!-- <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+              <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+              {{
+                "business-dashboard.billregister.billregisterlist.cols" | translate
+              }}
+            </button>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul nz-menu fileTable *ngFor="let box of colCheckboxes3; let i = index" class="checkbox-style">
+                  <li>
+                    <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                      (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <nz-table #objIntroTable nzShowPagination nzShowSizeChanger class="table-all">
+      <thead (nzSortChange)="newSort($event)" nzSingleSort>
+        <tr>
+          <th>{{ "cpl.correspondencelist.sno" | translate }}</th>
+          <th nzSortKey="billNo">
+            {{  "business-dashboard.bill-amendments.obj-introduction-list.billno" | translate}}
+          </th>
+          <th nzShowSort nzSortKey="billTitle">
+            {{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}
+          </th>
+          <th nzShowSort nzSortKey="billType">
+            {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}
+          </th>
+          <th nzShowSort nzSortKey="fileNo">
+            {{ "noticeprocessing.staff.personalregister.fileno" | translate }}
+          </th>
+          <th nzSortKey="status">
+            {{ "business-dashboard.bill-amendments.obj-introduction-list.status" | translate }}
+          </th>
+          <th>{{ "cpl.correspondencelist.view" | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let list of list3Data; let i = index">
+          <td>{{i+1}}</td>
+          <td (click)="showLinks(list.id)">
+              <tr> {{ list.billNumber}}</tr>
+          </td>
+          <td>{{ list.title}}</td>
+          <td>{{ list?.type?.split('_').join(' ')}}</td>
+          <td>{{ list.fileNumber}}</td>
+          <td>
+            <nz-tag> {{ list?.status?.split('_').join(' ') }}</nz-tag>
+          </td>
+          <td (click)="view(list.listId)">
+            <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+</nz-tabset>
+<nz-modal [(nzVisible)]="showBallotList" nzWidth="1000" nzTitle='{{ "cpl.docamendments.amendmentlist" | translate }}' (nzOnCancel)="closeBallotList()"
+  [nzFooter]="null">
+  <div class="row padding_25">
+    <div class="col-md-12">
+      <lib-ballot-list-view [assembly]="mainList.assemblyValue" [session]="mainList.sessionValue"
+        [billTitle]="mainList.title" [showHeader]="true" [ballotList]="ballotList"
+        [listNumber]="listNumber" [details]="mainList">
+      </lib-ballot-list-view>
+    </div>
+  </div>
+  <!-- <div class="row padding_25">
+  <div class="col-md-12 d-flex justify-content-end">
+      <button nz-button class="mr-6" (click)="createBulletinPart2()" nzType="primary"
+          *ngIf="billFileNumber && ballotStatus=='APPROVED' && rbsPermission.createBulletin
+          && !listOfData.bulletinId">
+          Publish
+      </button>
+    </div>
+</div> -->
+</nz-modal>
+<nz-modal [(nzVisible)]="showClauseList" nzWidth="1000" nzTitle='{{ "business-dashboard.agenda.agenda-create.list" | translate }}' (nzOnCancel)="closeClauseList()"
+  [nzFooter]="null">
+  <div class="row padding_25">
+    <div class="col-md-12" *ngIf="list">
+      <lib-bill-clause-list-view
+      *ngIf="list?.bilClauseAmendmentResponse"
+       [billTitle]="list?.title"
+        [bilClauseAmendmentResponse]="list?.bilClauseAmendmentResponse">
+      </lib-bill-clause-list-view>
+    </div>
+  </div>
+</nz-modal>

@@ -1,0 +1,384 @@
+<div class="row d-flex justify-content-space-between" *ngIf="!fileElectionId">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.forms.form-list.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"business-dashboard.election-management.nomination-list" | translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="sticky_action_bar">
+
+<div class="row" *ngIf="!fileElectionId">
+    <div class="col-md-4">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading">Election</h2>
+=======
+        <h3>
+            {{"business-dashboard.election-management.nomination-list.election" | translate}}
+        </h3>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+    <div class="col-md-8 d-flex justify-content-end">
+        <button nz-button nzType="primary" *ngIf="fileDetails && fileDetails?.speakerElectionNomination && showVoteList() && permission.viewVoteList"
+            (click)="electionDetails?.voteList && electionDetails?.voteList.length > 0 ? getVoteListPreview() : generateVoteList()" class="mrgL6">
+            {{"business-dashboard.election-management.nomination-list.vote-list" | translate}}
+        </button>
+        <button nz-button nzType="primary" class="mrgL6"
+        (click)="createNominationPopup()" 
+        [disabled]="isNominationTimeEnded()"
+        *ngIf=" permission.createNomination && electionDetails?.bulletinId && !createdNomination && electionDetails?.bulletinStatus === 'PUBLISHED'">
+            {{"business-dashboard.election-management.speaker-election-list.create-nomination" | translate}}
+        </button>
+        <button nz-button nzType="primary" class="mrgL6" *ngIf="electionDetails?.electionType==='SPEAKER' &&
+        fileDetails && fileDetails?.voteList?.status === 'APPROVED' && showProtemSpeakerReading() && permission.viewVoteList"
+        (click)="reports.protemSpeakerReading?getReading(reports.protemSpeakerReading):generateReading('PRO_TEM_SPEAKER_READING')">
+        {{"business-dashboard.election-management.nomination-list.protem-speaker-reading" | translate}}
+        </button>
+        <button nz-button nzType="primary" class="mrgL6" *ngIf="electionDetails?.electionType==='SPEAKER' &&
+        fileDetails && fileDetails?.voteList?.status === 'APPROVED' && showSecretaryReading() && permission.viewVoteList"
+        (click)="reports.secretaryReading?getReading(reports.secretaryReading):generateReading('SECRETARY_READING')">
+        {{"business-dashboard.election-management.nomination-list.secretary-reading" | translate}}
+        </button>
+        <button nz-button nzType="primary" class="mrgL6" *ngIf="electionDetails?.electionType==='DEPUTY_SPEAKER' &&
+        fileDetails && fileDetails?.voteList?.status === 'APPROVED' && showSpkNote() && permission.viewVoteList"
+        (click)="reports.speakerNoteDeputySpk?getReading(reports.speakerNoteDeputySpk):generateReading('SPEAKER_NOTE')">
+        {{"cpl.fileworkflow.speakernote" | translate}}
+        </button>
+        <button nz-button nzType="primary" nz-popconfirm
+        class="mrgL6"
+            *ngIf="permission.createFile && fileDetails && !fileDetails?.speakerElectionNomination && 
+            isNominationTimeEnded()"
+            nzPopconfirmTitle='{{"Do you want to attach nomination to file?" | translate}}'
+            (nzOnConfirm)="attachToFile('NOMINATIONS')" nzPopconfirmPlacement="leftTop">
+            {{"cpl.documents.attachtofile" | translate}}
+        </button>
+        <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+            nzPopconfirmTitle='{{"Do you want to want to add to LOB?" | translate}}'
+            (nzOnConfirm)="addToLOB()" nzPopconfirmPlacement="leftTop"
+            *ngIf="permission.addToLOB && ((electionDetails?.electionType==='SPEAKER' 
+            && reportDatas?.protemSpeakerReading?.status === 'APPROVED' 
+            && reportDatas?.secretaryReading?.status === 'APPROVED') 
+            || (electionDetails?.electionType==='DEPUTY_SPEAKER' 
+            && reportDatas?.speakerNoteDeputySpk?.status === 'APPROVED')) && !electionDetails?.addedToLob">
+            {{"business-dashboard.swearing-in.add-to-lob" | translate}}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {{"business-dashboard.election-management.speaker-election-list.nomination-end-date" | translate}}: 
+        <strong>{{electionDetails?.nominationEndDate|date:"dd/MM/yyyy"}}</strong>
+    </div>
+    <div class="col-md-6">
+        {{"business-dashboard.election-management.speaker-election-list.nomination-end-time" | translate}}: 
+        <strong>{{electionDetails?.nominationEndTime}}</strong>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        {{"business-dashboard.election-management.speaker-election-list.election-date" | translate}}: 
+        <strong>{{electionDetails?.electionDate|date:"dd/MM/yyyy"}}</strong>
+    </div>
+    <div class="col-md-6">
+        {{"business-dashboard.election-management.speaker-election-list.election-time" | translate}}: 
+        <strong>{{electionDetails?.electionTime}}</strong>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="row d-flex justify-content-end">
+            <div class="col-md-6">
+                <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="search" name="search" nz-input 
+                    placeholder= '{{ "business-dashboard.forms.form-list.search-here" | translate }}'
+                        (ngModelChange)="permission.acceptReject?searchNominationList():searchList()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+            <div class="col-md-3 d-flex align-items-center justify-content-end">
+                <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+                    <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+                    {{"business-dashboard.election-management.protem-speaker-auth-list.cols" | translate}}
+                </button>
+            </div>
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+                <div>
+                    <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+                        <li>
+                            <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i">
+                                {{ box.label }}
+                            </label>
+                        </li>
+                    </ul>
+                </div>
+            </nz-dropdown-menu>
+        </div>
+    </div>
+</div>
+<div class="row marginbtm-15" *ngIf="!permission.acceptReject">
+    <div class="col-md-12">
+        <nz-table #speakerTable nzShowPagination nzShowSizeChanger [nzData]="electionDetails?.nominations"
+        class="table-all">
+        <thead>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check">
+                    {{"business-dashboard.forms.form-list.sl-no" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[1].check">
+                    {{"business-dashboard.election-management.nomination-list.nominee-name" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[2].check">
+                    {{"business-dashboard.election-management.nomination-list.nominated-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[3].check">
+                    {{"business-dashboard.election-management.nomination-list.supported-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[5].check">
+                    {{"business-dashboard.forms.form-list.signed-form"|translate}}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{"business-dashboard.forms.form-list.status" | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of speakerTable.data; let i=index">
+                <ng-container *ngIf="list.isAccepted">
+                    <td *ngIf="colCheckboxes[0].check">{{i+1}}</td>
+                    <td *ngIf="colCheckboxes[1].check">{{list.nomineeName}}</td>
+                    <td *ngIf="colCheckboxes[2].check">{{returnName(list, 'NOMINATED_BY')}}</td>
+                    <td *ngIf="colCheckboxes[3].check">{{returnName(list, 'SUPPORTED_BY')}}</td>
+                    <td *ngIf="colCheckboxes[5].check"><a href="javascript:;" (click)="showSubmitModal(list.signedForm,'view')">{{"cpl.correspondencelist.view"|translate}}</a></td>
+                    <td *ngIf="colCheckboxes[4].check">
+                        <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+                        <ng-container *ngIf="list.status === 'SUBMITTED'">
+                            <button nz-button nzType="primary" nz-popconfirm
+                                nzPopconfirmTitle='{{"Do you want to validate this nomination?" | translate}}'
+                                (nzOnConfirm)="updateNominationStatus(list, 'VALID')" nzPopconfirmPlacement="leftTop">
+                                {{"business-dashboard.election-management.nomination-list.valid" | translate}}
+                            </button>
+                            <button nz-button nzType="default" class="mrgL6" nz-popconfirm
+                                nzPopconfirmTitle='{{"Do you want to invalidate this nomination?" | translate}}'
+                                (nzOnConfirm)="updateNominationStatus(list, 'INVALID')" nzPopconfirmPlacement="leftTop">
+                                {{"business-dashboard.election-management.nomination-list.invalid" | translate}}
+                            </button>
+                        </ng-container>
+                    </td>
+                </ng-container>
+            </tr>
+        </tbody>
+    </nz-table>
+    </div>
+</div>
+<nz-tabset *ngIf="permission.acceptReject">
+    <nz-tab nzTitle='{{ "business-dashboard.election-management.nomination-list.my-nominations" | translate }}' (nzClick)="getCreatedNominationList()">
+        <ng-template [ngTemplateOutlet]="myNominations"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle='{{ "business-dashboard.election-management.nomination-list.consents" | translate }}' (nzClick)="getPendingForConsent()">
+        <ng-template [ngTemplateOutlet]="consent"></ng-template>
+    </nz-tab>
+</nz-tabset>
+<!-- ----------------- My Nominations Table starts here .------------------------ ----------->
+<ng-template #myNominations>
+    <nz-table #myNominationsTable nzShowPagination nzShowSizeChanger [nzData]="nominationList" class="table-all">
+        <thead>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check">
+                    {{"business-dashboard.forms.form-list.sl-no" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[1].check">
+                    {{"business-dashboard.election-management.nomination-list.nominee-name" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[2].check">
+                    {{"business-dashboard.election-management.nomination-list.nominated-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[3].check">
+                    {{"business-dashboard.election-management.nomination-list.supported-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[5].check">
+                    {{"business-dashboard.forms.form-list.signed-form"|translate}}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{"business-dashboard.forms.form-list.status" | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of myNominationsTable.data; let i=index">
+                <td *ngIf="colCheckboxes[0].check">{{i+1}}</td>
+                <td *ngIf="colCheckboxes[1].check">{{list.nomineeName}}</td>
+                <td *ngIf="colCheckboxes[2].check">{{returnName(list, 'NOMINATED_BY')}}</td>
+                <td *ngIf="colCheckboxes[3].check">{{returnName(list, 'SUPPORTED_BY')}}</td>
+                <td *ngIf="colCheckboxes[5].check"><a href="javascript:;" (click)="showSubmitModal(list.signedForm,'view')" *ngIf="list.signedForm">{{"cpl.correspondencelist.view"|translate}}</a></td>
+                <td *ngIf="colCheckboxes[4].check">
+                    <nz-tag [nzColor]="'green'"> {{ list.status }}</nz-tag>
+                    <button nz-button nzType="primary" 
+                    *ngIf="list.status === 'SAVED' && permission.acceptReject"
+                    nz-popconfirm
+                    nzPopconfirmTitle='{{"Do you want to request for consent?" | translate}}'
+                    nzPopconfirmPlacement="leftTop"
+                    (nzOnConfirm)="requestForConsent(list.id)" class="mrgL6">
+                    {{"business-dashboard.election-management.nomination-list.request-consent" | translate}}
+                    </button>
+                    <button nz-button nzType="primary" *ngIf="list.isAccepted && list.createdBy == user.userId && list.status === 'CONSENT_REQUESTED'"
+                    (click)="showSubmitModal(list.id, 'submit')" class="mrgL6">
+                    {{"business-dashboard.election-management.nomination-list.submit-nomination" | translate}}
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<!-- ----------------- My Nominations Table ends here .------------------------ ----------->
+<!-- ----------------- Consent Table Starts here .------------------------ -->
+<ng-template #consent>
+    <nz-table #consentTable nzShowPagination nzShowSizeChanger [nzData]="consentList" class="table-all">
+        <thead>
+            <tr>
+                <th *ngIf="colCheckboxes[0].check">
+                    {{"business-dashboard.forms.form-list.sl-no" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[1].check">
+                    {{"business-dashboard.election-management.nomination-list.nominee-name" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[2].check">
+                    {{"business-dashboard.election-management.nomination-list.nominated-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[3].check">
+                    {{"business-dashboard.election-management.nomination-list.supported-by" | translate}}
+                </th>
+                <th *ngIf="colCheckboxes[5].check">
+                    {{"business-dashboard.forms.form-list.signed-form"|translate}}
+                </th>
+                <th *ngIf="colCheckboxes[4].check">
+                    {{"business-dashboard.forms.form-list.status" | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of consentTable.data; let i=index">
+                <td *ngIf="colCheckboxes[0].check">{{i+1}}</td>
+                <td *ngIf="colCheckboxes[1].check">{{list.nomineeName}}</td>
+                <td *ngIf="colCheckboxes[2].check">{{returnName(list, 'NOMINATED_BY')}}</td>
+                <td *ngIf="colCheckboxes[3].check">{{returnName(list, 'SUPPORTED_BY')}}</td>
+                <td *ngIf="colCheckboxes[5].check"><a href="javascript:;" (click)="showSubmitModal(list.signedForm, 'view')" *ngIf="list.signedForm">{{"cpl.correspondencelist.view"|translate}}</a></td>
+                <td *ngIf="colCheckboxes[4].check">
+                    <nz-tag [nzColor]="'green'"> {{ list.consentStatus }}</nz-tag>
+                    <ng-container *ngIf="list.consentStatus === 'PENDING'">
+                    <button nz-button class="btn-color accept-color" nz-popconfirm
+                        nzPopconfirmTitle='{{"Do you want to accept consent?" | translate}}'
+                        (nzOnConfirm)="updateStatus(list, 'ACCEPT')" nzPopconfirmPlacement="leftTop">
+                        {{"cpl.docamendments.accept" | translate}}
+                    </button>
+                    <button nz-button nzType="danger" class="mrgL6" nz-popconfirm
+                        nzPopconfirmTitle='{{"Do you want to reject consent?" | translate}}'
+                        (nzOnConfirm)="updateStatus(list, 'REJECT')" nzPopconfirmPlacement="leftTop">
+                        {{"cpl.docamendments.reject" | translate}}
+                    </button>
+                </ng-container>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+<nz-modal [(nzVisible)]="voteListPreview" nzTitle="Ballot Paper Preview" [nzFooter]="null" nzWidth="1050"
+    (nzOnCancel)="hidePreview()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button (click)="showPrint(voteList?.reportData)" nz-button title="fullscreen" nzType="default" class="mrgL6">
+                    {{"business-dashboard.election-management.panel-of-chairman-print" | translate}}
+                    <i nz-icon nzType="printer" nzTheme="outline"></i>
+                </button> 
+                <button nz-button nzType="primary" nz-popconfirm
+                class="mrgL6"
+                    *ngIf="permission.createFile && fileDetails && fileDetails?.speakerElectionNomination 
+                    && !fileDetails?.voteList"
+                    nzPopconfirmTitle='{{"Do you want to attach ballot paper to file?" | translate}}'
+                    (nzOnConfirm)="attachToFile('VOTELIST')" nzPopconfirmPlacement="leftTop">
+                    {{"cpl.documents.attachtofile" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p [innerHtml]="voteList?.reportData | safeHtml"></p>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<nz-modal [nzFooter]="null" [(nzVisible)]="speakerNomination.showPopup" nzTitle=' {{ "business-dashboard.election-management.speaker-election-list.create-nomination" | translate }}' 
+(nzOnCancel)="cancelNomination()" nzWidth="850">
+  <tables-create-election-nomination *ngIf="electionDetails" (afterCreate)="cancelNomination()" 
+  [nominationData]="electionDetails"></tables-create-election-nomination>
+</nz-modal>
+<nz-modal [(nzVisible)]="readingPreview" nzTitle="Preview" [nzFooter]="null" nzWidth="1050"
+    (nzOnCancel)="hidePreview()">
+    <div class="width-100 pading-all">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button nz-button nzType="primary" nz-popconfirm
+                class="mrgL6"
+                    *ngIf="permission.createFile && fileDetails && showAttachReport()"
+                    nzPopconfirmTitle='{{"Do you want to attach to file?" | translate}}'
+                    (nzOnConfirm)="attachToFile('READING')" nzPopconfirmPlacement="leftTop">
+                    {{"cpl.documents.attachtofile" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <p [innerHtml]="reading?.reportData | safeHtml"></p>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="submitVisible" 
+nzTitle= '{{ "business-dashboard.forms.form-list.form-preview" | translate }}' 
+[nzFooter]="null" nzWidth="1000"
+    (nzOnCancel)="cancelSubmitModal()">
+    <div class="width-100 pading-all">
+        <div class="row margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end mrgB10">
+                <button nz-button nzType="default" (click)="cancelSubmitModal()" class="mrgL6">
+                    {{"business-dashboard.forms.form-list.cancel" | translate}}
+                </button>
+                <button nz-button nzType="primary" nz-popconfirm class="mrgL6"
+                    nzPopconfirmTitle='{{"Do you want to submit nomination form?" | translate}}'
+                    (nzOnConfirm)="submitNomination()" nzPopconfirmPlacement="leftTop"
+                    [disabled]="!uploadedAttachmentUrl" *ngIf="previewPurpose === 'submit'">
+                    {{"business-dashboard.forms.form-list.upload-signed-form" | translate}}
+                </button>
+            </div>
+        </div>
+        <div class="row margnrtp-15" *ngIf="previewPurpose === 'submit'">
+            <div class="col-md-2">
+                {{"business-dashboard.forms.form-list.upload-signed-form" | translate }}
+            </div>
+            <div class="col-md-10">
+                <nz-upload
+                    nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                    [nzAction]="uploadURL" [(nzFileList)]="fileList" [nzShowButton]="fileList.length < 1"
+                    [nzShowUploadList]="showUploadList" (nzChange)="handleChange($event)" [nzPreview]="handlePreview">
+                    <button nz-button>
+                        <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                    </button>
+                </nz-upload>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <ngx-doc-viewer [url]="pdfData" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+            </div>
+        </div>
+    </div>
+</nz-modal>

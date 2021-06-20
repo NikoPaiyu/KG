@@ -1,0 +1,275 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        "
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.question" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<form nz-form [formGroup]="validateForm">
+  <div class="sticky_action_bar">
+  <div class="row">
+    <div class="col-md-6">
+      
+  <h2 class="admin-page-heading"
+  >{{ "business-dashboard.question.settings" | translate }}</h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end">
+      <div>
+        <button
+          *ngIf="!editField"
+          nz-button
+          nzType="primary"
+          class="mr-15"
+          (click)="edit()"
+        >
+        {{ "business-dashboard.question.edit" | translate }}
+        </button>
+        <button
+          *ngIf="editField"
+          nz-button
+          nzType="default"
+          class="mr-15"
+          (click)="submit()"
+        >
+        {{ "business-dashboard.question.save" | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  </div>
+  <div class="row custom_tabstyle">
+    <div class="col-md-12">
+      <nz-tabset>
+        <nz-tab nzTitle="Question" (nzClick)="tabselected('question')">
+          <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">{{ "business-dashboard.question.maximumlengthofclause" | translate }}</span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    pattern="[0-9]*"
+                    formControlName="wordcount"
+                  />
+                  {{ "business-dashboard.question.words" | translate }}
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('wordcount').hasError('required')"
+                      >
+                      {{"business-dashboard.question.maximumlengthofclauseinwords" | translate}}
+                      </span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('wordcount').invalid &&
+                        !validateForm.get('wordcount').hasError('required')
+                      "
+                      >
+                      {{"business-dashboard.question.invalidnumberofwordcount" | translate}}
+                      </span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[2].count }} words</div>
+            </div>
+          </div>
+          <!-- <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">Minimum Length of Clause</span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    pattern="[0-9]*"
+                    formControlName="minwordcount"
+                  />
+                  words
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('minwordcount').hasError('required')"
+                      >Enter Minimum Length of Clause in Words!</span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('minwordcount').invalid &&
+                        !validateForm.get('minwordcount').hasError('required')
+                      "
+                      >Inavlid Number of Word count!</span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[2].count }} words</div>
+            </div>
+          </div>
+          <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">Maximum Length of Heading</span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    pattern="[0-9]*"
+                    formControlName="maxNoticeCount"
+                  />
+                  Characters
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('maxNoticeCount').hasError('required')"
+                      >Enter Maximum Length of Heading in Characters!</span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('maxNoticeCount').invalid &&
+                        !validateForm.get('maxNoticeCount').hasError('required')
+                      "
+                      >Inavlid Number of Character count!</span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[2].count }} Characters</div>
+            </div>
+          </div>
+          <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">Minimum Length of Heading</span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    pattern="[0-9]*"
+                    formControlName="minNoticeCount"
+                  />
+                  Characters
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('minNoticeCount').hasError('required')"
+                      >Enter Minimum Length of Heading in Characters!</span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('minNoticeCount').invalid &&
+                        !validateForm.get('minNoticeCount').hasError('required')
+                      "
+                      >Inavlid Number of Character count!</span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[2].count }} Characters</div>
+            </div>
+          </div> -->
+          <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">
+                {{"business-dashboard.question.maximumnumberofclauses" | translate}}
+              </span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    formControlName="clauseno"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    pattern="[0-9]*"
+                  />
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('clauseno').hasError('required')"
+                      >
+                      {{"business-dashboard.question.entermaxnumofclauses" | translate}}</span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('clauseno').invalid &&
+                        !validateForm.get('clauseno').hasError('required')
+                      "
+                      >{{"business-dashboard.question.invalidnumberofclauses" | translate}}</span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[1].count }}</div>
+            </div>
+          </div>
+          <div class="row marginbtm-15">
+            <div class="col-auto">
+              <span class="mrgntp">
+                {{"business-dashboard.question.maximumnumberofclubbedmlas" | translate}}
+              </span>
+            </div>
+            <div class="col-md-9">
+              <nz-form-item *ngIf="editField">
+                <nz-form-control>
+                  <input
+                    class="inp_form"
+                    oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                    formControlName="mlacount"
+                    pattern="[0-9]*"
+                  />
+                  <div *ngIf="!validateForm.valid">
+                    <span
+                      class="text-danger"
+                      *ngIf="validateForm.get('mlacount').hasError('required')"
+                      >
+                      {{"business-dashboard.question.entermaxnumofclubbedmlas" | translate }}</span
+                    >
+                    <span
+                      class="text-danger"
+                      *ngIf="
+                        validateForm.get('mlacount').invalid &&
+                        !validateForm.get('mlacount').hasError('required')
+                      "
+                      >
+                      {{"business-dashboard.question.invalidclubbedmlacount" | translate }}</span
+                    >
+                  </div>
+                </nz-form-control>
+              </nz-form-item>
+              <div *ngIf="!editField">{{ clauseData[0].count }}</div>
+            </div>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="Notice" (nzClick)="tabselected('notice')"> </nz-tab>
+        <nz-tab nzTitle="General" (nzClick)="tabselected('general')"> </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</form>

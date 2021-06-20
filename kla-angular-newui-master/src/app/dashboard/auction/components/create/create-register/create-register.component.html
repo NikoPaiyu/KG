@@ -1,0 +1,94 @@
+<app-create [createTitle]="'Create Register Request'" [createBreadCums]="['Register','Request']">
+    <div class="header-action" *ngIf="uiState === 'CREATE'">
+        <button nz-button nzType="primary" (click)="onSubmit()" [disabled]="registerformGroup?.invalid" class="mr-2">Submit</button>
+        <button nz-button nzType="default" (click)="navigateToDashboard()" nzDanger>Discard</button>
+</div>
+
+<div class="create-form">
+    <form [formGroup]="registerformGroup">
+        <div class="row">
+            <div class="col-6">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Article Name</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="articleName" type="text"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Quantity</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="quantity" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Book Rate Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="bookRateRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Book Amount Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="bookAmountRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Storage Charges Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="storageChangeRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Commision Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="commissionRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Amount Realised Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="amountRealisedRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Loss Rs</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="lossRs" type="number"  />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+            <div class="col-6">
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Sold To and When</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="soldToAndWhen" type="text"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Receipt Class</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="receiptClass" type="text"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Remittance Challan</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="remittanceChallan" type="text"  />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label [nzSm]="10" [nzXs]="24" nzFor="request" nzRequired>Entry Status</nz-form-label>
+                    <nz-form-control [nzSm]="14" [nzXs]="24">
+                        <input nz-input  id="value" formControlName="entryStatus" type="text"  />
+                    </nz-form-control>
+                </nz-form-item>
+            </div>
+
+        </div>
+
+
+    </form>
+
+</div>
+</app-create>

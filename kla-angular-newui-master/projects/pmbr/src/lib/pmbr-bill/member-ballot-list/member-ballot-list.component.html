@@ -1,0 +1,80 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{"pmbr.dashboard"|translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "pmbr.resolution.ballotlist"|translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+
+<div class="row d-flex justify-content-between">
+    <div class="col-md-6">
+<<<<<<< HEAD
+        <h2 class="admin-page-heading">Ballot Listing</h2>
+=======
+        <h4>{{ "pmbr.resolution.ballotlist"|translate}}</h4>
+>>>>>>> b6344269675c6cffd9381ffd4dabf908f6889fb4
+    </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row marginbtm-15">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+        {{ "business-dashboard.question.assembly" | translate }}
+        <nz-select nzAllowClear name="assemblyId" [(ngModel)]="assemblyId" (ngModelChange)="getSessionForAssembly()">
+            <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+        {{ "business-dashboard.question.questionlist.session" | translate }}
+        <nz-select nzAllowClear name="sessionId" [(ngModel)]="sessionId" (ngModelChange)="ballotlistforMembers()">
+            <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id">
+            </nz-option>
+        </nz-select>
+    </div>
+</div>
+<nz-table #ballotTable nzShowPagination [nzData]="ballotListing" class="table-all">
+    <thead nzSingleSort>
+        <tr>
+            <th>
+                {{"business-dashboard.pmbr.resolution-ballot-list.lottingtype"|translate}}
+            </th>
+            <th>
+                {{"business-dashboard.pmbr.resolution-ballot-list.lottingdate"|translate}}
+            </th>
+            <th>
+                {{"pmbr.resolution.presentationdate"|translate}}
+            </th>
+            <th>
+                {{"pmbr.resolution.result"|translate}}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <ng-container *ngFor="let list of ballotTable.data; let i = index">
+            <tr>
+                <td>
+                    {{ list.lottingType }}
+                </td>
+                <td>
+                    {{ list.lottingDate | date: "dd-MM-yyyy"}}
+                </td>
+                <td>
+                    {{ list.presentationDate | date: "dd-MM-yyyy"}}
+                </td>
+                <td>
+                    <a class="viewlink" (click)="viewResult(list)">View</a>
+                </td>
+            </tr>
+        </ng-container>
+    </tbody>
+</nz-table>
+<nz-modal [nzFooter]="null" [(nzVisible)]="showResultPopup" nzTitle=' {{ "Ballot Result" | translate }}' 
+(nzOnCancel)="hidePopup()" nzWidth="850">
+  <pmbr-ballot-result-view *ngIf="selectedBallot" [ballotId]="selectedBallot.id"
+  [assemblyList]="assemblyList" [sessionList]="sessionList"></pmbr-ballot-result-view>
+</nz-modal>

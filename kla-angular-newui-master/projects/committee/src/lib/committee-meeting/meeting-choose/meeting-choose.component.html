@@ -1,0 +1,13 @@
+<!-- <p>meeting-choose works!</p> -->
+<nz-modal
+[(nzVisible)]="!isVisible"
+nzTitle="Meeting"
+(nzOnCancel)="handleCancel()"
+(nzOnOk)="handleOk()"
+>
+<p> {{ "committee.minute.chosemeeting" | translate}}</p>
+<nz-select [(ngModel)]="singleValue">
+    <nz-option   nzLabel="Meeting Tittle-12/10/20" nzValue="Meeting Tittle-12/10/20"></nz-option>
+    <nz-option   nzLabel="Meeting Tittle-13/10/20" nzValue="Meeting Tittle-13/10/20"></nz-option>
+  </nz-select>
+</nz-modal>

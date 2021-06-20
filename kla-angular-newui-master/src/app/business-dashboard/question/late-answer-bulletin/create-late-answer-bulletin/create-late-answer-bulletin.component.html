@@ -1,0 +1,306 @@
+<form nz-form>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item
+          [routerLink]="[
+            '/business-dashboard/question/question-dept-dashboard'
+          ]"
+        >
+          {{ "business-dashboard.question.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.question.question" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="sticky_action_bar">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h3>
+            {{ pageTitle }}
+          </h3>
+        </div>
+        <div class="col-md-6 d-flex justify-content-flex-end">
+          <button
+            nz-button
+            nzType="default"
+            (click)="showPreviewModal()"
+            style="margin-left: 6px;"
+            *ngIf="list"
+          >
+          {{ "business-dashboard.question.printpreview" | translate }}
+          </button>
+          <!-- <button
+              nz-button
+              (click)="saveBulletin()"
+              nzType="primary"
+              style="margin-left: 6px;"
+            >
+              Save
+            </button> -->
+          <button
+           *ngIf="list"
+            nz-button
+            nzType="primary"
+            nz-popconfirm
+            nzCancelText = "No"
+            nzOkText = "Yes"
+            nzPopconfirmTitle='{{submitCnfrmmessge | translate}}'
+            (nzOnConfirm)="submitBulletin()"
+            nzPopconfirmPlacement="bottomLeft"
+            style="margin-left: 6px;"
+          >
+          {{ "business-dashboard.question.submit" | translate }}
+          </button>
+
+          <button
+            nz-button
+            nzType="default"
+            (click)="goBack()"
+            style="margin-left: 6px;"
+          >
+          {{ "business-dashboard.question.questionview.back" | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nz-divider></nz-divider>
+  </div>
+
+
+  <div class="row" *ngIf="!listId">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-flex-start">
+        <div
+          class="col-md-4 d-flex align-items-center icon-color whitespace"
+          *ngIf="assemblySession['assembly']"
+        >
+          {{ "business-dashboard.question.assembly" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="assemblySession['assembly'].currentassembly"
+            (ngModelChange)="findSessionListByAssembly(assemblySession['assembly'].currentassembly)"
+            name="selectedassembly"
+          >
+            <nz-option
+              *ngFor="let assembly of assemblySession['assembly']"
+              [nzLabel]="assembly.assemblyId"
+              [nzValue]="assembly.id"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div
+          class="col-md-4 d-flex align-items-center icon-color whitespace"
+          *ngIf="assemblySession['session']"
+        >
+          {{ "business-dashboard.question.session" | translate }}
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="assemblySession['session'].currentsession"
+            (ngModelChange)="redirectToList()"
+            name="selectedsession"
+          >
+            <nz-option
+              *ngFor="let session of assemblySession['session']"
+              [nzLabel]="session.sessionId"
+              [nzValue]="session.id"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-4">
+          <div class="row d-flex">
+            <div class="col-md-4 d-flex align-items-center">
+              <button type="button" class="ant-btn" (click)="generateList()">
+                {{ "Generate" | translate }}
+              </button>
+            </div>
+            <div *ngIf="list"  class="col-md-4 d-flex align-items-center">
+              <button type="button" class="ant-btn" (click)="bulletinFtr.isVisible = true">
+                {{ "Add Footer" | translate }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="listId">
+    <div class="col-md-4">{{ "Assembly : " + this.list.assemblyValue }}</div>
+
+    <div class="col-md-4">{{ "Session : " + this.list.sessionValue }}</div>
+    <div class="col-md-4">
+      {{ "Generated On: " + (this.list.date | date: "dd-MM-yyyy") }}
+    </div>
+  </div>
+  <div *ngIf="list" id="print-section" style="padding-top: 20px;">
+    <!-- <div class="row" style="text-align: center;">
+      <div class="col-md-12" id="header" [contentEditable]="isContentEditable">
+        <h5>
+          <strong
+            ><u>{{ list.heading }}</u></strong
+          >
+        </h5>
+      </div>
+    </div> -->
+    <div class="row" style="text-align: center;">
+      <div class="col-md-12" id="header" [contentEditable]="isContentEditable">
+        <h6>
+          <strong>{{ list.heading }}</strong>
+        </h6>
+      </div>
+    </div>
+    <div class="row" style="text-align: center;">
+      <div class="col-md-12">
+        <table border="1" style="width: 100%;">
+          <thead>
+            <tr>
+              <th>തീയതി</th>
+              <th>ആകെ ചോദ്യങ്ങൾ</th>
+              <th>നക്ഷത്രചിഹ്നമിട്ട ചോദ്യങ്ങൾ</th>
+              <th>നക്ഷത്രചിഹ്നമിടാത്ത ചോദ്യങ്ങൾ</th>
+              <th>ഇനിയും ഉത്തരം ലഭിക്കാനുള്ള ചോദ്യങ്ങൾ</th>
+            </tr>
+
+            <tr>
+              <th>(1)</th>
+              <th>(2)</th>
+              <th>(3)</th>
+              <th>(4)</th>
+              <th>(5)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of list.rows; let i = index">
+              <td>{{ item.date | date: "dd-MM-yyyy" }}</td>
+              <td>
+                {{ item.totalQuestionCount ? item.totalQuestionCount : "ഇല്ല" }}
+              </td>
+              <td>
+                {{
+                  item.starredQuestions && item.starredQuestions.length > 0
+                    ? item.starredQuestions.toString()
+                    : "ഇല്ല"
+                }}
+                <ng-container
+                  *ngIf="
+                    item.starredQuestions && item.starredQuestions.length > 0
+                  "
+                  ><br />
+                  {{ "(ആകെ " + item.starredQuestions.length + " എണ്ണം)" }}
+                </ng-container>
+              </td>
+              <td>
+                {{
+                  item.unstarredQuestions && item.unstarredQuestions.length > 0
+                    ? item.unstarredQuestions.toString()
+                    : "ഇല്ല"
+                }}
+                <ng-container
+                  *ngIf="
+                    item.unstarredQuestions &&
+                    item.unstarredQuestions.length > 0
+                  "
+                  ><br />
+                  {{ "(ആകെ " + item.unstarredQuestions.length + " എണ്ണം)" }}
+                </ng-container>
+              </td>
+              <td>{{ item.unAnsweredCont ? item.unAnsweredCont : "ഇല്ല" }}</td>
+            </tr>
+            <tr>
+              <td>
+                <b>{{ "ആകെ" }}</b>
+              </td>
+              <td>
+                {{ totalColumn("totalQuestionCount", false) }}
+              </td>
+              <td>
+                {{ totalColumn("starredQuestions", true) }}
+              </td>
+              <td>
+                {{ totalColumn("unstarredQuestions", true) }}
+              </td>
+              <td>{{ totalColumn("unAnsweredCont", false) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row" style="text-align: center;">
+      <div class="col-md-3" id="footer">
+        <h6>
+          <strong>{{ list.footer ?  list.footer : ''}}</strong>
+        </h6>
+      </div>
+    </div>
+  </div>
+</form>
+
+<nz-modal
+  [nzTitle]="versionModalTitle"
+  [(nzVisible)]="showPreview"
+  (nzOnCancel)="cancelVersion()"
+  nzClassName="pdngs"
+  [nzFooter]="null"
+  [nzWidth]="'900'"
+>
+  <div class="lob_form" id="preview-section">
+    <div [innerHTML]="previewData | safeHtml"></div>
+  </div>
+  <ng-template #versionModalTitle>
+    <div class="row">
+      <div class="col-md-6">
+        {{ "business-dashboard.question.preview" | translate }}
+      </div>
+      <div class="col-md-6" style="text-align: right; padding-right: 50px;">
+        <button
+          nz-button
+          nzType="dashed"
+          [useExistingCss]="true"
+          printSectionId="preview-section"
+          ngxPrint
+          style="margin-left: 6px;"
+        >
+        {{ "business-dashboard.question.print" | translate }}
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</nz-modal>
+<nz-modal [(nzVisible)]="bulletinFtr.isVisible" [nzFooter]="null" [nzClosable]="false">
+  <div class="width-100 pading-all">
+      <div class="row">
+          <div class="col-md-12">
+              <b>{{ "Add Footer" |translate}}</b>
+              <div class="row margnrtp-15">
+                  <div class="col-md-4">{{"Footer" | translate}}</div>
+                  <div class="col-md-8">
+                      <input nz-input placeholder="{{'please enter footer' | translate}}" [(ngModel)]="bulletinFtr.footer" />
+                  </div>
+              </div>
+              <div class="row mrt-50 margnrtp-15">
+                  <div class="col-md-12 d-flex justify-content-end">
+                      <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font" (click)="cancelFooter();">
+                          {{"Cancel" | translate}}
+                      </button>
+                      <button type="button" nz-button nzType="primary" (click)="addFooter()" class="btn btn-primary primary-button">
+                      {{ "Add" |translate}}
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</nz-modal>

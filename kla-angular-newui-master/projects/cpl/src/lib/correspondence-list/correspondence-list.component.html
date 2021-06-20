@@ -1,0 +1,479 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "cpl.actregistration.dash" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{"cpl.correspondence.correspondence" | translate}}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+  <h2 class="admin-page-heading">{{"cpl.correspondencelist.correspondencelist" | translate}}</h2>
+  </div>
+</div>
+<nz-divider></nz-divider>
+<!-- <div class="row">
+  <div class="col-md-4">
+    <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+      <input type="text" [(ngModel)]="searchParam" (ngModelChange)="search()" nz-input
+        placeholder="input search text" />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+  <div class="col-md-8 text-align-right"> -->
+<!-- <button (click)="getCurrespondence()" nz-button nzType="primary" class="mrgL6">
+      <i class="refresh-icon" nz-icon nzType="reload" nzTheme="outline"></i>
+    </button> -->
+<!-- </div>
+</div> -->
+
+<nz-tabset [(nzSelectedIndex)]="tabIndex">
+  <!-- <nz-tab nzTitle="Pending">
+    <nz-table
+    #rowSelectionTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="currespondenceList"
+  >
+    <thead>
+      <tr>
+        <th>SNO</th>
+        <th>Document Name</th>
+        <th>Document Type</th>
+        <th>From</th>
+        <th>Created Date</th>
+        <th>Preview</th>
+        <th>Upload</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        nz-popover
+        nzType="primary"
+        nzPopoverPlacement="left"
+        [nzPopoverContent]="contentTemplate"
+        *ngFor="let data of rowSelectionTable.data; let i = index"
+      >
+        <ng-template #contentTemplate>
+          <div>
+            <span class="sortable" (click)="viewDocumentDetails(data.referId)"
+              >View</span
+            >
+          </div>
+        </ng-template>
+        <td>{{ i + 1 }}</td>
+        <td>{{ data.subject }}</td>
+        <td>{{ data.referSubType }}</td>
+        <td>{{ data.fromType }}</td>
+        <td>{{ data.createdDate | date: "dd-MM-yyyy" }}</td>
+        <td (click)="showLetterView(data.htmlContent)">
+          <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+        </td>
+        <td>
+          <button
+            *ngIf="data.status == 'TO_BE_DONE'"
+            nz-button
+            nzType="default"
+            (click)="showUpoadModel(data)"
+          >
+            Upload Document
+          </button>
+          <label *ngIf="data.status != 'TO_BE_DONE'">Document Uploaded</label>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  </nz-tab> -->
+  <nz-tab nzTitle='{{"cpl.registration.pending" | translate}}' *ngIf="showTabs && pendingTab" (nzClick)="getPendingCorrespondence()">
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-4">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchPendingParam"
+            (ngModelChange)="searchPending()"
+            nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}'
+            
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #pendingTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="pendingCorrespondence"
+    >
+      <thead>
+        <tr>
+          <th>{{"cpl.correspondencelist.sno" | translate}}.</th>
+          <th>{{"cpl.correspondence.from" | translate}}</th>
+          <th>{{"cpl.docupload.subject" | translate}}</th>
+          <th>{{"cpl.templatecreate.business" | translate}}</th>
+          <th>{{"cpl.templatecreate.workflow" | translate}}</th>
+          <th>{{"cpl.correspondencelist.reference" | translate}}</th>
+          <th>{{"cpl.correspondencelist.createdby" | translate}}</th>
+          <th>{{"cpl.correspondencelist.dateTime" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          [nzPopoverContent]="contentTemplate"
+          *ngFor="let data of pendingTable.data; let i = index"
+        >
+          <ng-template #contentTemplate>
+            <div>
+              <span class="sortable">{{"cpl.correspondencelist.view" | translate}}</span>
+            </div>
+          </ng-template>
+        </tr>
+
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          *ngFor="let data of pendingTable.data; let i = index"
+          class="cursor-pointer"
+        >
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ i + 1 }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.fromDisplayName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.title }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.business }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.workflowMandatory ? "Yes" : "No" }}</td>
+          <!-- <td *ngIf="data.businessReferSubType === 'AMENDMENT_LIST'"><a
+            href="javascript:;"
+            (click)="showAmendList(data.fileId)"
+            >{{ data.businessReferSubType }}</a></td> -->
+            <td><a
+              href="javascript:;"
+              (click)="showReference(data.businessReferId, data.businessCode)"
+              >{{ data.businessCode ==='AMENDMENT'? data.businessReferSubType:data?.businessReferType }}</a></td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.createdBy.details.fullName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">
+            {{ data.updatedOn ? (data.updatedOn| date: "dd-MM-yyyy hh:mm a"): (data.createdOn | date: "dd-MM-yyyy hh:mm a") }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{"cpl.correspondence-list.inbox" | translate}}' *ngIf="showTabs" (nzClick)="getInbox()">
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-4">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchInboxParam"
+            (ngModelChange)="searchInbox()"
+            nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}'
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #inboxTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="inboxCorrespondence"
+    >
+      <thead>
+        <tr>
+          <th class="ant-table-header-column">{{"cpl.correspondencelist.sno" | translate}}.</th>
+          <th>{{"cpl.correspondence.from" | translate}}</th>
+          <th>{{"cpl.docupload.subject" | translate}}</th>
+          <th *ngIf="user.correspondenceCode.type === 'DEPARTMENT'">{{"cpl.templatecreate.business" | translate}}</th>
+          <th>{{"cpl.correspondencelist.reference" | translate}}</th>
+          <th>{{"cpl.correspondencelist.dateTime" | translate}}</th>
+          <th *ngIf="user.correspondenceCode.type == 'DEPARTMENT'">{{"cpl.correspondencelist.upload" | translate}}</th>
+          <th>{{"cpl.correspondence.reply" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          *ngFor="let data of inboxTable.data; let i = index"
+          class="cursor-pointer"
+        >
+          <td (click)="viewCorrespondence(false, data.id)">{{ i + 1 }}</td>
+          <td (click)="viewCorrespondence(false, data.id)">{{ data.fromDisplayName }}</td>
+          <td (click)="viewCorrespondence(false, data.id)">{{ data.title }}</td>
+          <td (click)="viewCorrespondence(false, data.id)" *ngIf="user.correspondenceCode.type === 'DEPARTMENT'">{{ data.business }}</td>
+          <!-- <td *ngIf="data.businessReferSubType === 'AMENDMENT_LIST'"><a
+            href="javascript:;"
+            (click)="showAmendList(data.fileId)"
+            >{{ data.businessReferSubType }}</a></td> -->
+            <td><a
+            href="javascript:;"
+            (click)="showReference(data.businessReferId, data.businessCode)"
+            >{{ data.businessCode ==='AMENDMENT'? data.businessReferSubType:data?.businessReferType }}</a></td>
+          <td>{{ data.sentOn ? (data.sentOn | date: "dd-MM-yyyy hh:mm a"): (data.createdOn | date: "dd-MM-yyyy hh:mm a")}}</td>
+          <td *ngIf="user.correspondenceCode.type == 'DEPARTMENT'">
+            <ng-container
+              *ngIf="
+                (data.businessCode == 'DELAY_STATEMENT' || data.businessCode == 'CORRECTION_STATEMENT_RESPONSE') &&
+                data.businessReferId != null
+              "
+            >
+              <button
+                *ngIf="data.businessStatus == 'TO_BE_DONE'"
+                nz-button
+                nzType="default"
+                (click)="showUpoadModel(data)"
+              >
+                {{"cpl.correspondencelist.uploadDocument" | translate}}
+              </button>
+              <label *ngIf="data.businessStatus != 'TO_BE_DONE'"
+                >{{"cpl.correspondencelist.docuploaded" | translate}}</label
+              >
+            </ng-container>
+          </td>
+          <td><button
+            *ngIf=" data.businessCode !== 'CORRECTION_STATEMENT_REQUEST'"
+            (click)="replyLetter(data)"
+            nz-button
+            nzType="default">
+          {{"cpl.correspondence.reply" | translate}}
+          </button></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{"cpl.correspondence-list.sent" | translate}}' *ngIf="showTabs" (nzClick)="getSent()">
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-4">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchSentParam"
+            (ngModelChange)="searchSent()"
+            nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}'
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #sentTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="sentCorrespondence"
+    >
+      <thead>
+        <tr>
+          <th>{{"cpl.correspondencelist.sno" | translate}}.</th>
+          <th>{{"cpl.correspondence.from" | translate}}</th>
+          <th>{{"cpl.docupload.subject" | translate}}</th>
+          <th>{{"cpl.templatecreate.business" | translate}}</th>
+          <th>{{"cpl.templatecreate.workflow" | translate}}</th>
+          <th>{{"cpl.correspondencelist.reference" | translate}}</th>
+          <th>{{"cpl.correspondencelist.createdby" | translate}}</th>
+          <th>{{"cpl.correspondencelist.dateTime" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          [nzPopoverContent]="contentTemplate"
+          *ngFor="let data of sentTable.data; let i = index"
+        >
+          <ng-template #contentTemplate>
+            <div>
+              <span class="sortable">{{"cpl.correspondencelist.view" | translate}}</span>
+            </div>
+          </ng-template>
+        </tr>
+
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          *ngFor="let data of sentTable.data; let i = index"
+          class="cursor-pointer"
+        >
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ i + 1 }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.fromDisplayName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.title }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.business }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.workflowMandatory ? "Yes" : "No" }}</td>
+          <!-- <td *ngIf="data.businessReferSubType === 'AMENDMENT_LIST'"><a
+            href="javascript:;"
+            (click)="showAmendList(data.fileId)"
+            >{{ data.businessReferSubType }}</a></td> -->
+            <td><a
+            href="javascript:;"
+            (click)="showReference(data.businessReferId, data.businessCode)"
+            >{{ data.businessCode ==='AMENDMENT'? data.businessReferSubType:data?.businessReferType }}</a></td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.createdBy.details.fullName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.sentOn ? (data.sentOn | date: "dd-MM-yyyy hh:mm a"): (data.createdOn | date: "dd-MM-yyyy hh:mm a")}}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+  <nz-tab nzTitle='{{"cpl.correspondence-list.outbox" | translate}}' *ngIf="showTabs" (nzClick)="getOutbox()">
+    <div class="row">
+      <div class="col-md-8"></div>
+      <div class="col-md-4">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+          <input
+            type="text"
+            [(ngModel)]="searchOutboxParam"
+            (ngModelChange)="searchOutbox()"
+            nz-input
+            placeholder='{{"business-dashboard.question.questionlist.inputsearch" | translate}}'
+          />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+          <i nz-icon nzType="search"></i>
+        </ng-template>
+      </div>
+    </div>
+    <nz-table
+      #draftTable
+      nzShowPagination
+      nzShowSizeChanger
+      [nzData]="outboxCorrespondence"
+    >
+      <thead>
+        <tr>
+          <th>{{"cpl.correspondencelist.sno" | translate}}.</th>
+          <th>{{"cpl.correspondence.from" | translate}}</th>
+          <th>{{"cpl.docupload.subject" | translate}}</th>
+          <th>{{"cpl.templatecreate.business" | translate}}</th>
+          <th>{{"cpl.templatecreate.workflow" | translate}}</th>
+          <th>{{"cpl.correspondencelist.reference" | translate}}</th>
+          <th>{{"cpl.correspondencelist.createdby" | translate}}</th>
+          <th>{{"cpl.correspondencelist.dateTime" | translate}}</th>
+          <th>{{"cpl.docamendments.status" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          [nzPopoverContent]="contentTemplate"
+          *ngFor="let data of draftTable.data; let i = index"
+          (click)="viewCorrespondence(data.workflowMandatory, data.id)"
+        >
+          <ng-template #contentTemplate>
+            <div>
+              <span
+                class="sortable"
+                (click)="viewCorrespondence(data.workflowMandatory, data.id)"
+                >{{"cpl.docpreparion.view" | translate}}</span
+              >
+            </div>
+          </ng-template>
+        </tr>
+
+        <tr
+          nz-popover
+          nzType="primary"
+          nzPopoverPlacement="left"
+          *ngFor="let data of draftTable.data; let i = index"
+          class="cursor-pointer"
+        >
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ i + 1 }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.fromDisplayName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.title }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.business }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.workflowMandatory ? "Yes" : "No" }}</td>
+          <!-- <td *ngIf="data.businessReferSubType === 'AMENDMENT_LIST'"><a
+            href="javascript:;"
+            (click)="showAmendList(data.fileId)"
+            >{{ data.businessReferSubType }}</a></td> -->
+            <td><a
+            href="javascript:;"
+            (click)="showReference(data.businessReferId, data.businessCode)"
+            >{{ data.businessCode ==='AMENDMENT'? data.businessReferSubType:data?.businessReferType }}</a></td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">{{ data.createdBy.details.fullName }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)">
+            {{ data.updatedOn ? (data.updatedOn| date: "dd-MM-yyyy hh:mm a"): (data.createdOn | date: "dd-MM-yyyy hh:mm a") }}</td>
+          <td (click)="viewCorrespondence(data.workflowMandatory, data.id)"><nz-tag>{{ data.status.replace("_", " ") }}</nz-tag></td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-tab>
+</nz-tabset>
+
+<!-- model preview for show letter -->
+<nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="model_LetterView"
+  nzTitle="Preview"
+  nzWidth="1000"
+>
+  <div class="d-flex justify-content-center">
+    <quill-view-html [content]="viewContent"></quill-view-html>
+  </div>
+</nz-modal>
+<!-- end model preview for show letter -->
+
+<!-- model preview for upload delay statement -->
+<nz-modal
+  (nzOnCancel)="handleCancel()"
+  [nzFooter]="null"
+  [(nzVisible)]="model_Uplaod"
+  nzTitle='{{"cpl.correspondencelist.uploadDocument" | translate}}'
+  nzWidth="500"
+>
+  <div class="pd">
+    <div class="row marginbtm-15">
+      <div class="col-md-12">
+        <nz-upload
+          nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+          [nzAction]="uploadURL"
+          [(nzFileList)]="delayDoc"
+          (nzChange)="handleDelayChange($event)"
+          [nzShowButton]="delayDoc.length < 1"
+        >
+          <button nz-button>
+            <i nz-icon nzType="upload"></i>{{"cpl.correspondencelist.clicktoupload" | translate}}
+          </button>
+        </nz-upload>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 d-flex justify-content-end">
+        <button
+          class="mr6"
+          (click)="uploadDocument()"
+          nz-button
+          nzType="primary"
+        >
+        {{"cpl.correspondencelist.upload" | translate}}
+        </button>
+        <button (click)="handleCancel()" nz-button nzType="default">
+          {{"cpl.correspondencelist.cancel" | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</nz-modal>
+<!-- end model preview for upload delay statement -->

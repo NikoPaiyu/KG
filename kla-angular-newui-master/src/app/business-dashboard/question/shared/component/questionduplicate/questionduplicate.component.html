@@ -1,0 +1,166 @@
+<nz-page-header>
+  <nz-page-header-title>
+    Check Duplicate for #{{
+      questionDuplicateDetails.currentQuestionNoticeNumber
+    }}</nz-page-header-title
+  >
+  <nz-page-header-content>
+    <div class="content margntp-25">
+      <div class="main">
+        <div class="row marginbtm-25  ">
+          <div class="col-md-8">
+            <div class="row align-items-center marginbtm-15">
+              <div class="col-md-3">
+                <span> Current Question</span>
+              </div>
+              <div class="col-md-9">
+                <div class="border_cqs">
+                  {{ questionDuplicateDetails.currentQuestionHeading }}
+                </div>
+              </div>
+            </div>
+
+            <div class="row align-items-center marginbtm-15">
+              <div class="col-md-3">
+                <span> Tags</span>
+              </div>
+              <div class="col-md-9">
+                <div class="border_cqs">
+                  {{ multipleValue }}
+                  <!-- <nz-select
+                    [(ngModel)]="multipleValue"
+                    [nzSize]="size"
+                    nzMode="multiple"
+                    nzPlaceHolder="{{
+                      'business-dashboard.question.selecttags' | translate
+                    }}"
+                  >
+                    <nz-option
+                      *ngFor="
+                        let option of questionDuplicateDetails.currentQuestionTags
+                      "
+                      [nzLabel]="option"
+                      [nzValue]="option"
+                    ></nz-option>
+                  </nz-select> -->
+                </div>
+              </div>
+            </div>
+
+            <div class="row align-items-center marginbtm-15">
+              <div class="col-md-3">
+                <span> Minister</span>
+              </div>
+              <div class="col-md-9">
+                <div class="d-flex width-100 align-items-center">
+                  <nz-select
+                    nzShowSearch
+                    [(ngModel)]="memberId"
+                    nzPlaceHolder="{{
+                      'business-dashboard.question.selectminister' | translate
+                    }}"
+                  >
+                    <nz-option nzLabel="All" nzValue="All"></nz-option>
+                    <nz-option
+                      *ngFor="
+                        let item of questionDuplicateDetails.ministerSubjectMapping
+                      "
+                      nzLabel="{{ item.ministerSubjectName }}"
+                      nzValue="{{ item.ministerSubjectId }}"
+                    ></nz-option>
+                  </nz-select>
+                  <button
+                    class="margnlft-10"
+                    (click)="search()"
+                    nz-button
+                    nzType="default"
+                  >
+                    {{ "search" | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2">
+            <div class="card-height">
+              <ng-container>
+                <a
+                  *ngFor="let item of existingQuestiontemp"
+                  [ngClass]="{
+                    active: item.noticeNumber == currentNoticeNumber
+                  }"
+                  (click)="getexistingQuestionByNoticeNumber(item.noticeNumber)"
+                  class="sblk"
+                  role="tab"
+                  href="javascript:;"
+                  >{{ item.noticeNumber + "    " + item.heading }}</a
+                >
+              </ng-container>
+            </div>
+          </div>
+          <div class="col-md-10">
+            <div class="card card-height full-heights bc-color active">
+              <div class="card-body">
+                <div class="row marginbtm-15">
+                  <div class="col-md-6">
+                    <div
+                      *ngFor="
+                        let memberDetails of existingQuestion.clubbingDetails
+                      "
+                    >
+                      {{ memberDetails.memberName }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="row">
+                      <span class="col-md-12 air">{{
+                        existingQuestion.ministerName
+                      }}</span>
+                      <span class="col-md-12 air"
+                        >QuestionDate:
+                        {{
+                          existingQuestion.questionDate | date: "dd-MM-yyyy"
+                        }}</span
+                      >
+                      <span class="col-md-12 air"
+                      >Question Number:
+                      <label *ngIf="existingQuestion.questionNumber; else viewquestionNo">
+                      {{
+                        existingQuestion.questionNumber
+                      }}
+                    </label>
+                      <ng-template #viewquestionNo>
+                      NA
+                      </ng-template>
+
+                    </span
+                    >
+                      <span class="col-md-12 air"
+                        >Notice Type:
+                        {{
+                          existingQuestion.type
+                        }}</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <ng-container>
+                  <a
+                    *ngFor="let clauses of existingQuestion.clauses"
+                    class="qblk"
+                    role="tab"
+                    href="javascript:;"
+                    >{{ clauses.clause }}</a
+                  >
+                </ng-container>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-page-header-content>
+</nz-page-header>

@@ -1,0 +1,164 @@
+textarea {
+  height: 100%;
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  border: 0;
+}
+textarea:disabled {
+  height: 100%;
+  font-size: 13px;
+  text-align: justify;
+  resize: none;
+  overflow: hidden;
+  border: 0;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+.underline-text {
+  text-decoration: underline;
+}
+.italic-text {
+  font-style: italic;
+}
+.paddingL0 {
+  padding-left: 0;
+}
+
+.paddingL20 {
+  padding-left: 20px;
+}
+.hide {
+  display: none;
+}
+
+.myDiv .only-show-on-hover {
+  visibility: hidden;
+}
+.myDiv:hover .only-show-on-hover {
+  visibility: visible;
+}
+.maximise {
+  width: 100vw;
+  z-index: 99;
+  overflow-y: auto;
+  background-color: #fff !important;
+  max-width: 100vw;
+  padding: 20px;
+}
+.text-align-right {
+  text-align: right;
+}
+.mrgB20 {
+  margin-bottom: 20px;
+}
+
+.number {
+  max-width: 30px;
+  scroll-padding-right: 0;
+  word-break: break-all;
+}
+.labels {
+  max-width: 100px;
+  font-size: 12px;
+  color: #40a9ff;
+  padding-left: 0px;
+}
+.bill_textarea {
+  width: 100%;
+  border-radius: 5px;
+  border: #ccc solid 1px;
+  padding: 5px;
+  margin-bottom: 10px;
+  overflow: auto;
+}
+.indent-10 {
+  padding-left: 15px !important;
+}
+.indent-20 {
+  padding-left: 30px !important;
+}
+.indent-30 {
+  padding-left: 45px !important;
+}
+.indent-40 {
+  padding-left: 55px !important;
+}
+.pd {
+  padding: 20px;
+  width: 100%;
+}
+.mr6 {
+  margin-right: 6px;
+}
+.text-align-center {
+  text-align: center;
+}
+.color-white {
+  color: white;
+}
+.padding-50 {
+  padding: 50px;
+}
+.txtwidget {
+  width: 100%;
+  border: #ccc solid 1px;
+}
+.widget_btns {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: #ccc solid 1px;
+  background: #ededed;
+  padding: 10px;
+}
+.btn_mrg {
+  padding: 5px;
+}
+
+/* .indent-40{padding-left:60px !important;} */
+
+.txtwidget {
+  width: 100%;
+  border: #d2d2d2 solid 1px;
+}
+.widget_btns {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: #d2d2d2 solid 1px;
+  background: #ededed;
+  padding: 10px;
+}
+.btn_mrg {
+  padding: 5px;
+  margin-right: 5px;
+  display: flex;
+}
+.btn_mrg i {
+  margin-right: 10px;
+}
+.bodr_cls {
+  border: #ccc dashed 1px;
+  height: 100%;
+  min-height: 120px;
+  overflow: auto;
+  resize: vertical;
+}
+.pdn {
+  padding: 5px;
+}
+.tbl td {
+  border: #ccc solid 1px;
+}
+textarea {
+  resize: vertical;
+}
+.height-25 {
+  height: 25px;
+}
+.font-wbold {
+  font-weight: bold;
+}

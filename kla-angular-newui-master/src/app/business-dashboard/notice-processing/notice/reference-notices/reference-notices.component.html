@@ -1,0 +1,90 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ 'noticeprocessing.notice.noticeforreference' | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+  </div>
+  <div class="row d-flex justify-content-space-between">
+    <div class="col-md-12">
+      <h2 class="admin-page-heading">{{ 'noticeprocessing.notice.noticeforreference' | translate }}</h2>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <div class="row">
+    <div class="col-md-8">
+     
+    </div>
+    <div class="col-md-4 d-flex justify-content-end">
+      <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+        <input
+          type="text"
+          [(ngModel)]="searchParam"
+          (ngModelChange)="search()"
+          nz-input
+          placeholder="{{'business-dashboard.question.questionlist.inputsearch' | translate}}"
+        />
+      </nz-input-group>
+      <ng-template #suffixIconSearch>
+        <i nz-icon nzType="search"></i>
+      </ng-template>
+
+      <button
+      (click)="getNoticeList()"
+      nz-button
+      nzType="primary"
+      class="margnlft-10"
+    >
+      <i class="refresh-icon" nz-icon nzType="reload" nzTheme="outline"></i>
+    </button>
+    </div>
+    
+  </div>
+  <nz-table
+    #rowSelectionTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="consentsList"
+  >
+    <thead>
+      <tr>
+        <th>{{"cpl.fileworkflow.noticenumber" | translate}}</th>
+        <th>{{"noticeprocessing.noticetemplate.listtemplate.noticename" | translate}}</th>
+        <th>{{"cpl.registration.title" | translate}}</th>
+        <th>{{"cpl.filelistflow.createddate" | translate}}</th>
+        <th>{{"cpl.docamendments.preview" | translate}}</th>
+        <th>{{"cpl.docamendments.status" | translate}}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of rowSelectionTable.data">
+        <td>{{ data.noticeNumber }}</td>
+        <td>{{ data.title }}</td>
+        <td>{{ data.templateName }}</td>
+        <td>{{ data.createdDate | date: "dd/MM/yyyy" }}</td>
+        <td (click)="showPreviewModal(data.noticeData)">
+          <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+        </td>
+        <td>{{data.status}}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <!-- model preview -->
+  <nz-modal
+    (nzOnCancel)="handleCancel()"
+    [nzFooter]="null"
+    [(nzVisible)]="isVisible"
+    nzTitle="Preview"
+    nzWidth="1000"
+  >
+    <div class="d-flex justify-content-center">
+      <quill-view-html [content]="viewContent"></quill-view-html>
+    </div>
+  </nz-modal>
+  <!-- end model preview -->
+  

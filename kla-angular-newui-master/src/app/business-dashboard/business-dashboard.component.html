@@ -1,0 +1,318 @@
+<body class="overflow-visible admin-template shrink">
+  <header class="header">
+    <div class="container-fluid">
+      <div class="row align-items-center">
+        <div class="width-100">
+          <div class="d-flex">
+            <div class="header_options d-flex flex-nowrap justify-content-end">
+              <a nz-dropdown [nzDropdownMenu]="menu"  class="d-flex flex-nowrap align-items-center top_btn">
+                <span class="color_bkl clr3"
+                ><img src="../../assets/img/Language_Icon_admin.svg" alt="Help"
+              /></span>
+                <span>  {{ langSelectName }}</span>
+                <i nz-icon nzType="down" class="margnlt-5"></i>
+              </a>
+              <nz-dropdown-menu #menu="nzDropdownMenu">
+                <ul nz-menu nzSelectable>
+                  <li *ngFor="let key of objectKeys(localizeLangList)" nz-menu-item
+                    (click)="useLanguage(key, localizeLangList[key])">
+                    {{ localizeLangList[key] }}
+                  </li>
+                </ul>
+              </nz-dropdown-menu>
+              <a
+                class="d-flex flex-nowrap align-items-center top_btn "
+                target="_blank"
+                href="https://email.gov.in/">
+
+                <span class="color_bkl clr2"
+                  ><img src="../../assets/img/mail-white.svg" alt="Email"
+                /></span>
+                <span>   {{"business-dashboard.email" | translate}}</span>
+              </a>
+              <!-- <button
+                (click)="notificationButtonClick()"
+                type="button"
+                class="d-flex flex-nowrap align-items-center secondary-button button-admin-padng button-admin-radius"
+                nz-popover
+                nzPopoverTitle="Notification"
+                [nzPopoverContent]="contentTemplate"
+                nzPopoverPlacement="bottomLeft"
+                nzPopoverTrigger="click"
+                nzOverlayClassName="main-notification"
+                [nzVisible]="notificationVisible"
+              >
+                <span
+                  ><img src="../../assets/img/logout.svg" alt="Logout" /><span
+                    class="notification-icon"
+                  ></span
+                ></span>
+                Notification
+              </button> -->
+              <!-- <ng-template #contentTemplate>
+                <div class="notification_container">
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">02:34 PM</div>
+                  </div>
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">Yesterday</div>
+                  </div>
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">3 Days ago</div>
+                  </div>
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">02:34 PM</div>
+                  </div>
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">Yesterday</div>
+                  </div>
+                  <div class="row d-flex align-items-center brdrb">
+                    <div class="col-md-1">
+                      <span class="note_icon"></span>
+                    </div>
+                    <div class="col-md-8 notification_cont">
+                      <H3>Notification title</H3>
+                      <p>
+                        Notification content will be shown here for now we are
+                        placing dummy text
+                      </p>
+                    </div>
+                    <div class="col-md-3">3 Days ago</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div (click)="seeAllNotification()" class="col-md-12">
+                    <a class="see_all">See All</a>
+                  </div>
+                </div>
+              </ng-template> -->
+              <button
+                [routerLink]="['help']"
+                type="button"
+                class="d-flex flex-nowrap align-items-center top_btn"
+              >
+                <span class="color_bkl clr1"
+                  ><img src="../../assets/img/help-white.svg" alt="Help"
+                /></span>
+              <span>  {{"business-dashboard.help" | translate}}</span>
+              </button>
+              <button
+                type="button"
+                (click)="onLogOut()"
+                class="d-flex flex-nowrap align-items-center top_btn"
+              >
+                <span class="color_bkl"
+                  ><img src="../../assets/img/logout-white.svg" alt="Logout" style="width:13px;"  
+                /></span>
+                <span>  {{"business-dashboard.logout" | translate}}</span>
+              </button>
+              <div class="userview d-flex flex-wrap margnlft-15 align-items-center">
+                <div class="d-flex flex-wrap">
+                  <div class="custom-width color_admin adjust-height align-right">
+                    {{ retunUserName(currentUser) }}
+                  </div>
+                  <!-- <div class="custom-width white adjust-height align-right">
+                    Table Section
+                  </div> -->
+                </div>
+                <div class="user-image margnlft-15">
+                  <img src="{{
+                      currentUser.photoUrl
+                        ? currentUser.photoUrl
+                        : '../../assets/img/user.png'
+                    }}" alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div class="container-fluid admin-content">
+      <div class="sidebar-admin">
+          <div class="menu_icon"><i nz-icon nzType="menu" nzTheme="outline" class="white fl"></i></div>
+        <div class="d-flex align-items-center bgsetup logo_area">
+          <a class="logo-member-unit admin-logo"
+            ><img src="../../assets/img/logo-white.svg" alt=""
+          /></a>
+          <span class="name_kla">{{"business-dashboard.keralalegislativeassembly" | translate}}</span>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <div class="Frequentlyhd blue-fr">
+                Frequently accessed
+                <span
+                  ><img src="../../assets/img/logout.svg" alt="Logout"
+                /></span>
+              </div>
+              <div class="menu-admin blue-fr">
+                <ul class="admin-menu-items">
+                  <li><a href="javascript:;"> Dashboard</a></li>
+                  <li><a href="javascript:;">Bill</a></li>
+                  <li><a [routerLink]="['seat-management']">seat layout</a></li>
+                  <li>
+                    <a [routerLink]="['attendance-management']"
+                      >Attendance management</a
+                    >
+                  </li>
+                  <li><a href="javascript:;">Assembly</a></li>
+                  <li><a href="javascript:;">Location</a></li>
+                  <li>
+                    <a [routerLink]="['user-management']">User Management</a>
+                  </li>
+                  <li>
+                    <a [routerLink]="['sitting']">Calender of sittings</a>
+                  </li>
+                  <li>
+                    <a [routerLink]="['lob/listing']">List of business</a>
+                  </li>
+                  <li>
+                    <a [routerLink]="['question']">Questions</a>
+                  </li>
+                </ul>
+              </div> -->
+            <div class="menu-admin">
+              <ul nz-menu nzMode="inline">
+                <!-- <ng-container *ngFor="let menu of this.currentUser.menu"> -->
+                <ng-container *ngFor="let menu of this.currentUser.menu">
+                  <li nz-menu-item [nzSelected]="true" (click)="navigate(menu.menuUri);openHandler(menu.id, null, null, 'level1')" *ngIf="!menu.children || menu.children.length == 0">
+                    <span class="margnrt-5">  
+                      <img src="../../assets/img/dash.svg" alt=""
+              />
+                    </span> 
+                  <span class="hidden_mnu">  {{ returnMenuName(menu) }}</span>
+                  </li>
+
+                  <li nz-submenu *ngIf="menu.children && menu.children.length > 0" [nzTitle]="menuTitle"
+                    [(nzOpen)]="menu.level1" (nzOpenChange)="openHandler(menu.id, null, null, 'level1')">
+                    <ng-template #menuTitle>
+                      <span class="margnrt-5"><img src="../../assets/img/dash.svg"/></span>
+                      <span class="hidden_mnu">    {{ returnMenuName(menu) }}</span>
+                    </ng-template>
+
+
+                    <ul *ngFor="let submenu of menu.children">
+                      <li (click)="navigate(submenu.menuUri);openHandler(menu.id, submenu.id, null, 'level2')" nz-menu-item *ngIf="
+                          !submenu.children || submenu.children.length == 0
+                        ">
+                        <span class="hidden_mnu">   {{ returnMenuName(submenu) }}</span>
+                      </li>
+
+                      <li nz-submenu *ngIf="submenu.children && submenu.children.length > 0"
+                        nzTitle="{{ returnMenuName(submenu) }}"
+                        [(nzOpen)]="submenu.level2" (nzOpenChange)="openHandler(menu.id, submenu.id, null, 'level2')">
+                        <ul *ngFor="let subsubmenu of submenu.children">
+                          <li (click)="navigate(subsubmenu.menuUri);openHandler(menu.id, submenu.id, subsubmenu.id, 'level3')" nz-menu-item *ngIf="
+                              !subsubmenu.children ||
+                              subsubmenu.children.length == 0
+                            ">
+                            <span class="hidden_mnu">   {{ returnMenuName(subsubmenu) }}</span>
+                          </li>
+                          <!--- added new line-->
+                          <li nz-submenu *ngIf="subsubmenu.children && subsubmenu.children.length > 0"
+                            nzTitle="{{ returnMenuName(subsubmenu) }}" 
+                            [(nzOpen)]="subsubmenu.level3" (nzOpenChange)="openHandler(menu.id, submenu.id, subsubmenu.id, 'level3')">
+                            <ul *ngFor="let subsubsubmenu of subsubmenu.children">
+                              <li [routerLink]="subsubsubmenu.menuUri" nz-menu-item *ngIf="
+                                !subsubsubmenu.children ||
+                                subsubsubmenu.children.length == 0
+                              ">
+                              <span class="hidden_mnu"> {{ returnMenuName(subsubsubmenu) }}</span>
+                              </li>
+                            </ul>
+                          </li>
+                          <!--- added new line-->
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ng-container>
+                <!-- </ng-container> -->
+              </ul>
+
+              <!-- <ul class="admin-menu-items">
+                  <li><a href="#"> Dashboard</a></li>
+                  <li><a href="#">Bill</a></li>
+                  <li><a href="#">Assembly</a></li>
+                  <li><a href="#">Location</a></li>
+                  <li>
+                    <a href="#">User Management</a> <span></span>
+                    <ul class="submenu-admin">
+                      <li><a href="#"> Dashboard</a></li>
+                      <li><a href="#">Bill</a></li>
+                      <li><a href="#">Assembly</a></li>
+                      <li><a href="#"> Dashboard</a></li>
+                      <li><a href="#">Bill</a></li>
+                      <li><a href="#">Assembly</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="#"> Dashboard</a></li>
+                  <li><a href="#">Bill</a></li>
+                  <li><a href="#">Assembly</a></li>
+                  <li><a href="#">Location</a></li>
+                  <li><a href="#">User Management</a></li>
+                </ul> -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="contentarea_admin padding-20">
+       <div class="holder_bgs">
+        <router-outlet></router-outlet>
+      </div>
+      </div>
+    </div>
+  </main>
+</body>

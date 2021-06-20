@@ -1,0 +1,1209 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item
+        [routerLink]="
+          isMLA()
+            ? ['/business-dashboard/question/question-dashboard']
+            : ['/business-dashboard/question/question-dept-dashboard']
+        "
+      >
+        {{ "business-dashboard.question.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        {{ "business-dashboard.question.notice" | translate }}
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-between" *ngIf="qDetail">
+  <div class="col-md-4">
+    <h2 class="admin-page-heading">
+      {{ "Check Duplicates" | translate }}
+    </h2>
+  </div>
+  <div class="col-md-8 text-end">
+    <button
+      nz-button
+      nzType="primary"
+      (click)="goBack()"
+      style="margin-left: 6px;"
+    >
+    {{ "business-dashboard.question.questionview.back" | translate }}
+    </button>
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row" *ngIf="qDetail">
+  <div class="col-md-6 border-right">
+    <form class="question-create">
+      <div>
+        <div class="row paddingT15 marginbtm-15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.assembly" | translate }} :
+          </div>
+          <div class="col-md-2" *ngIf="assemblySession['assembly']">
+            {{ assemblySession["assembly"].currentassemblyLabel }}
+          </div>
+          <div class="col-md-4">
+            {{ "business-dashboard.question.session" | translate }} :
+          </div>
+          <div class="col-md-2" *ngIf="assemblySession['session']">
+            <span class="margnlft-10">
+              {{ assemblySession["session"].currentsessionLabel }}</span
+            >
+          </div>
+        </div>
+        <div class="row paddingT15 marginbtm-15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.mlaName" | translate }} :
+          </div>
+          <div class="col-md-8 mla-tg">
+            <nz-tag
+              *ngFor="
+                let mla of qDetail.question.clubbingDetails;
+                let i = index
+              "
+            >
+              {{ mla.memberName }}
+            </nz-tag>
+          </div>
+        </div>
+        <div class="row paddingT15 marginbtm-15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.noticeno" | translate }} :
+          </div>
+          <div class="col-md-8">
+            <div *ngFor="let noticeNo of qDetail.question.clubbingDetails">
+              {{ noticeNo.noticeNumber }}
+            </div>
+          </div>
+        </div>
+        <div class="row paddingT15 marginbtm-15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.dateofreg" | translate }} :
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.question.registrationDate | date: "dd-MM-yyyy" }}
+          </div>
+        </div>
+        <div class="row paddingT15 marginbtm-15">
+          <div class="col-md-4">
+            {{ "business-dashboard.question.questiondate" | translate }} :
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.question.questionDate | date: "dd-MM-yyyy" }}
+          </div>
+        </div>
+        <!-- <div
+          class="row paddingT15 marginbtm-15"
+          *ngIf="qDetail.question.type !== 'SHORT_NOTICE'"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.transferabledate" | translate }}
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.question.questionDate | date: "dd-MM-yyyy" }}
+          </div>
+        </div> -->
+        <div
+          class="row paddingT15 marginbtm-15"
+          *ngIf="qDetail.question.type !== 'SHORT_NOTICE'"
+        >
+          <div class="col-md-4">
+            {{ "business-dashboard.question.ncategory" | translate }}
+          </div>
+          <div class="col-md-8">
+            {{ qDetail.question.category }}
+          </div>
+        </div>
+      </div>
+      <div
+        class="row paddingT15 arginbtm-15"
+        *ngIf="
+          qDetail.question &&
+          qDetail.question.priority &&
+          qDetail.question.type !== 'SHORT_NOTICE'
+        "
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticepriority" | translate }}
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.question.priority }}
+        </div>
+      </div>
+      <div class="row paddingT15 marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.portfolio" | translate }} :
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.portfolio ? qDetail.portfolio.name : "" }}
+        </div>
+      </div>
+      <div class="row paddingT15 marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubject" | translate }} :
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.ministerSubjects ? qDetail.ministerSubjects.title : "" }}
+        </div>
+      </div>
+
+      <div
+        class="row paddingT15 marginbtm-15"
+        *ngIf="qDetail?.question?.ministerSubSubjectName"
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubsubject" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{
+            qDetail?.question?.ministerSubSubjectName
+              ? qDetail?.question?.ministerSubSubjectName
+              : ""
+          }}
+        </div>
+      </div>
+
+      <div class="row paddingT15 marginbtm-15">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticeheading" | translate }}:
+        </div>
+        <div class="col-md-8">
+          {{ qDetail.question.heading }}
+        </div>
+      </div>
+      <div
+        class="row paddingT15 marginbtm-15"
+        *ngIf="qDetail.question.type === 'SHORT_NOTICE'"
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.reason" | translate }}
+        </div>
+        <div class="col-md-8">
+          {{
+            qDetail.question.directions &&
+            qDetail.question.directions.length > 0
+              ? qDetail.question.directions[0].reason
+              : ""
+          }}
+        </div>
+      </div>
+      <div
+        class="row paddingT15 marginbtm-15"
+        *ngIf="qDetail.question.tags.length > 0"
+      >
+        <div class="col-md-4">
+          {{"business-dashboard.question.tags" | translate}}
+        </div>
+        <div class="col-md-8">
+          <nz-tag *ngFor="let tgs of qDetail.question.tags; let i = index">
+            {{ tgs.tag }}
+          </nz-tag>
+        </div>
+      </div>
+
+      <div
+        class="row marginbtm-15"
+        *ngFor="let clause of qDetail.question.clauses; let i = index"
+      >
+        <div class="col-md-12">
+          <nz-card>
+            <div>
+              <div>{{ "Clause " + upper[i] }} :</div>
+              <div>
+                <span class="word-break">{{ clause.clause }}</span>
+              </div>
+            </div>
+          </nz-card>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-md-6">
+    <nz-tabset [nzType]="'card'">
+      <nz-tab nzTitle="Heading Matches">
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Keywords to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of headingkeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeHeadingKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container
+                *ngFor="let keys of headingKeyCombos; let z = index"
+              >
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'hcombs' + z }}"
+                        name="{{ 'hcombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentHeadingKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentHeadingKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div> </nz-list-item
+              ></ng-container>
+
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixIconButton">
+                      <input
+                        type="text"
+                        [(ngModel)]="newHeadingKeyWord"
+                        nz-input
+                        placeholder='{{"business-dashboard.question.inputkeywordhere" | translate}}'
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixIconButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addHeadingKeyWord(newHeadingKeyWord)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchHeadingKeyWord()"
+                        nzSearch
+                      >
+                        {{"business-dashboard.question.search" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle='{{"business-dashboard.question.douwantresetheading" | translate}}'
+                        (nzOnConfirm)="resetHeading()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container
+          *ngFor="let item of headingMatchData.matches; let j = index"
+        >
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span
+                  innerHTML="{{
+                    highlight(item.heading, headingMatchData.keywords)
+                  }}"
+                ></span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title='{{"business-dashboard.question.viewAllDetails" | translate}}'
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+
+                  <i
+                    *ngIf="check && headingid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleHeadingPanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleHeadingPanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && headingid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.questiondate" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.mlaName" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    {{"business-dashboard.question.tags" | translate}} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      {{ tgs.tag }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.ministersubsubject"
+                        | translate
+                    }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span class="word-break">{{ clause.clause }}</span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !headingMatchData ||
+            !headingMatchData.matches ||
+            !(headingMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="Clause Matches">
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Keywords to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of clausekeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeClauseKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container *ngFor="let keys of clauseKeyCombos; let z = index">
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'ccombs' + z }}"
+                        name="{{ 'ccombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentClauseKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentClauseKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div>
+                </nz-list-item>
+              </ng-container>
+
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group nzSearch [nzAddOnAfter]="suffixButton">
+                      <input
+                        type="text"
+                        [(ngModel)]="newClauseKeyWord"
+                        nz-input
+                        placeholder='{{"business-dashboard.question.inputkeywordhere" | translate}}'
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addClauseKeyWord(newClauseKeyWord)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchClauseKeyWord()"
+                        nzSearch
+                      >
+                      {{"business-dashboard.question.search" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle='{{"business-dashboard.question.douwanttoresetclauses" | translate}}'
+                        (nzOnConfirm)="resetClause()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container
+          *ngFor="let item of clauseMatchData.matches; let j = index"
+        >
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span>{{ item.heading }}</span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title='{{"business-dashboard.question.viewAllDetails" | translate}}'
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && clauseid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleClausePanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleClausePanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && clauseid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.questiondate" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.mlaName" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    {{"business-dashboard.question.tags" | translate}} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      {{ tgs.tag }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.ministersubsubject"
+                        | translate
+                    }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span
+                        class="word-break"
+                        innerHTML="{{
+                          highlight(clause.clause, clauseMatchData.keywords)
+                        }}"
+                      ></span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !clauseMatchData ||
+            !clauseMatchData.matches ||
+            !(clauseMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+      <nz-tab nzTitle="SubSubject Matches">
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container
+          *ngFor="let item of subsubjectMatchData.matches; let j = index"
+        >
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span>{{ item.heading }}</span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title='{{"business-dashboard.question.viewAllDetails" | translate}}'
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && subsubjectid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleSubsubjectPanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleSubsubjectPanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && subsubjectid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.questiondate" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.mlaName" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    {{"business-dashboard.question.tags" | translate}} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      {{ tgs.tag }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.ministersubsubject"
+                        | translate
+                    }}:
+                  </div>
+                  <div class="col-md-8">
+                    <span
+                      innerHTML="{{
+                        highlight(
+                          item?.subSubjectName,
+                          subsubjectMatchData.keywords
+                        )
+                      }}"
+                    ></span>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span class="word-break">{{ clause.clause }}</span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !subsubjectMatchData ||
+            !subsubjectMatchData.matches ||
+            !(subsubjectMatchData.matches.length > 0)
+          "
+          ><nz-empty
+            [nzNotFoundContent]="
+              this.qDetail.question.ministerSubSubjectId
+                ? 'No Data'
+                : 'No Subsubject to Search'
+            "
+          ></nz-empty
+        ></ng-container>
+      </nz-tab>
+      <nz-tab nzTitle='{{"business-dashboard.question.tagMatches" | translate}}'>
+        <div class="row paddingT20">
+          <div class="col-md-12">
+            <span
+              ><b>{{ "Tags to Search :" }}</b></span
+            >
+            <nz-list nzBordered nzSize="small">
+              <nz-list-item *ngFor="let item of tagkeywords; let i = index">
+                <div class="row">
+                  <div class="col-md-8 word-break">
+                    <span>{{ item.word }}</span>
+                  </div>
+                  <div class="col-md-4">
+                    <button
+                      (click)="removeTagKeyWord(i)"
+                      nz-button
+                      nzType="default"
+                      style="background: #e2e2e2;"
+                    >
+                      <i
+                        class="baseline"
+                        nz-icon
+                        nzType="close-circle"
+                        nzTheme="outline"
+                      ></i>
+                    </button>
+                  </div></div
+              ></nz-list-item>
+              <ng-container *ngFor="let keys of tagKeyCombos; let z = index">
+                <nz-list-item *ngIf="keys.show">
+                  <div class="row">
+                    <div class="col-md-8">
+                      <textarea
+                        class="text-area"
+                        id="{{ 'tcombs' + z }}"
+                        name="{{ 'tcombs' + z }}"
+                        [(ngModel)]="keys.key"
+                      ></textarea>
+                    </div>
+                    <div class="col-md-4">
+                      <nz-input-group nzSearch>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentTagKeyWord(keys, z, true)"
+                          nzSearch
+                        >
+                          <i class="baseline" nz-icon nzType="plus"></i>
+                        </button>
+                        <button
+                          nz-button
+                          nzType="primary"
+                          (click)="addCurrentTagKeyWord(keys, z, false)"
+                          nzSearch
+                          style="margin-left: 6px;"
+                        >
+                          <i class="baseline" nz-icon nzType="minus"></i>
+                        </button>
+                      </nz-input-group>
+                    </div>
+                  </div> </nz-list-item
+              ></ng-container>
+              <nz-list-item>
+                <div class="row">
+                  <div class="col-md-8">
+                    <nz-input-group
+                      nzSearch
+                      [nzAddOnAfter]="suffixIconTagButton"
+                    >
+                      <input
+                        type="text"
+                        [(ngModel)]="selectedTags"
+                        nz-input
+                        placeholder='{{"business-dashboard.question.InputTagHere" | translate}}'
+                      />
+                    </nz-input-group>
+                    <ng-template #suffixIconTagButton>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="addTagKeyWord(selectedTags)"
+                        nzSearch
+                      >
+                        <i class="baseline" nz-icon nzType="plus"></i>
+                      </button>
+                    </ng-template>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        (click)="searchTagKeyWord()"
+                        nzSearch
+                      >
+                      {{"business-dashboard.question.search" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                  <div class="col-md-2">
+                    <nz-input-group nzSearch>
+                      <button
+                        nz-button
+                        nzType="primary"
+                        nz-popconfirm
+                        nzPopconfirmTitle='{{"business-dashboard.question.douwanttoresettags" | translate}}'
+                        (nzOnConfirm)="resetTags()"
+                        nzSearch
+                      >
+                      {{"Reset" | translate}}
+                      </button>
+                    </nz-input-group>
+                  </div>
+                </div>
+              </nz-list-item>
+            </nz-list>
+          </div>
+        </div>
+        <br />
+        <span
+          ><b>{{ "Matches :" }}</b></span
+        >
+        <ng-container *ngFor="let item of tagMatchData.matches; let j = index">
+          <div
+            *ngIf="item.exactMatchCount >= 0"
+            style="text-align: end; color: gray;"
+          >
+            {{ item.exactMatchCount + " Exact Matches." }}
+          </div>
+          <div class="match-container">
+            <div class="row">
+              <div class="col-md-10">
+                <span>{{ j + 1 + ". " }}</span>
+                <span>{{ item.heading }}</span>
+              </div>
+              <div class="col-md-2 text-end">
+                <span>
+                  <button
+                    nz-button
+                    nzSize="small"
+                    (click)="viewQuestion(item)"
+                    nzType="default"
+                    class="mr-15"
+                    title="View All Details"
+                  >
+                    <i
+                      nz-icon
+                      nzType="eye"
+                      class="baseline"
+                      nzTheme="outline"
+                    ></i>
+                  </button>
+                  <i
+                    *ngIf="check && tagid === item.id; else downArrow"
+                    nz-icon
+                    nzType="caret-up"
+                    nzTheme="fill"
+                    (click)="ToggleTagPanel(item.id, false)"
+                  ></i>
+                  <ng-template #downArrow>
+                    <i
+                      nz-icon
+                      nzType="caret-down"
+                      nzTheme="fill"
+                      (click)="ToggleTagPanel(item.id, true)"
+                    ></i>
+                  </ng-template>
+                </span>
+              </div>
+            </div>
+            <div
+              class="row"
+              [ngClass]="
+                check && tagid === item.id ? 'classname' : 'classname2'
+              "
+            >
+              <div class="col-md-12 mt-15" *ngIf="item.questionNumber">
+                <div class="row">
+                  <div class="col-md-4">{{ "Question No " | translate }}:</div>
+                  <div class="col-md-8">
+                    {{ item?.questionNumber ? item?.questionNumber : "" }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.questionDate">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.questiondate" | translate }}
+                    :
+                  </div>
+                  <div class="col-md-8">
+                    {{
+                      item?.questionDate
+                        ? (item?.questionDate | date: "dd-MM-yyyy")
+                        : ""
+                    }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.clubbingDetails">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{ "business-dashboard.question.mlaName" | translate }} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag
+                      *ngFor="let mla of item.clubbingDetails; let i = index"
+                    >
+                      {{ mla.memberName }}
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngIf="item.tags && item.tags.length > 0"
+              >
+                <div class="row">
+                  <div class="col-md-4">
+                    {{"business-dashboard.question.tags" | translate}} :
+                  </div>
+                  <div class="col-md-8">
+                    <nz-tag *ngFor="let tgs of item.tags; let i = index">
+                      <span
+                        innerHTML="{{
+                          highlight(tgs.tag, tagMatchData.keywords)
+                        }}"
+                      ></span>
+                    </nz-tag>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-15" *ngIf="item.subSubjectName">
+                <div class="row">
+                  <div class="col-md-4">
+                    {{
+                      "business-dashboard.question.ministersubsubject"
+                        | translate
+                    }}:
+                  </div>
+                  <div class="col-md-8">
+                    {{ item?.subSubjectName ? item?.subSubjectName : "" }}
+                  </div>
+                </div>
+              </div>
+              <div
+                class="col-md-12 mt-15"
+                *ngFor="let clause of item.clauses; let i = index"
+              >
+                <nz-card>
+                  <div>
+                    <div>{{ "Clause " + upper[i] }} :</div>
+                    <div>
+                      <span class="word-break">{{ clause.clause }}</span>
+                    </div>
+                  </div>
+                </nz-card>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container
+          *ngIf="
+            !tagMatchData ||
+            !tagMatchData.matches ||
+            !(tagMatchData.matches.length > 0)
+          "
+          ><nz-empty></nz-empty
+        ></ng-container>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>

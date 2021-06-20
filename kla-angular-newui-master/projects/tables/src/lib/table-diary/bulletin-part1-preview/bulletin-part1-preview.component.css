@@ -1,0 +1,20 @@
+.padding_25 {
+    padding: 25px;
+  }
+  .mr-6 {
+    margin-right: 6px;
+  }
+  .ml-6 {
+    margin-left: 6px;
+  }
+  .mr-tb-12 {
+  margin-top: 12px;
+  margin-bottom: 0px;
+  }
+  .myDiv .only-show-on-hover {
+  visibility: hidden;
+  }
+  .myDiv:hover .only-show-on-hover {
+  visibility: visible;
+  }
+  

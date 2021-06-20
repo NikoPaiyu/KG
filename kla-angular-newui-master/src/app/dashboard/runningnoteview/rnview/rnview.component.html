@@ -1,0 +1,104 @@
+<div class="lob-container">
+  <nz-empty *ngIf="currentDayList.length == 0"></nz-empty>
+  <!-- <div *ngIf="currentDayList.length == 0">No Running Note Available Today.</div> -->
+
+  <div *ngFor="let item of currentDayList" nz-row>
+    <div nz-col nzSpan="24">
+      <nz-collapse nzAccordion="true">
+        <nz-collapse-panel
+          [nzHeader]="item.businessNameMalayalam || item.businessName"
+        >
+          <div class="business_list">
+            <nz-collapse
+              *ngFor="let subMenu of item.businessLines"
+              nzAccordion="true"
+            >
+              <nz-collapse-panel
+                nzHeader="{{ subMenu.title }}"
+                [nzActive]="subMenu.speakerNoteUrl ? true : false"
+              >
+                <p>
+                  <span class="lobview-span mla-name-tab"
+                    >{{ "lobview.view.membername" | translate }} :
+                    {{
+                      subMenu.primaryMemberMalayalamFullName ||
+                        subMenu.primaryMemberName
+                    }}
+                    <span *ngIf="subMenu.primaryMemberDesignation">
+                      {{
+                        "( " +
+                          subMenu.primaryMemberDesignation
+                            .designationNameMalayalam +
+                          " )"
+                      }}
+                    </span>
+                  </span>
+                </p>
+                <p *ngIf="subMenu.description">
+                  <span class="lobview-span"
+                    >{{ "lobview.view.description" | translate }} :
+                    {{ subMenu.description }}
+                  </span>
+                </p>
+                <p *ngIf="subMenu.speakerNoteUrl">
+                  <span class="lobview-span"
+                    >{{ "lobview.view.speakernote" | translate }} :
+                    <a href="javascript:;" (click)="openSpeakerNote(subMenu)">{{
+                      "lobview.view.view" | translate
+                    }}</a>
+                  </span>
+                </p>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </div>
+
+  <!-- <div *ngFor="let item of currentDayList" nz-row>
+    <div nz-col nzSpan="24">
+      <nz-collapse nzAccordion>
+        <nz-collapse-panel
+          [nzHeader]="
+            item.lobAgendaLine.businessNameMalayalam ||
+            item.lobAgendaLine.businessName
+          "
+        >
+          <div class="business_list">
+            <nz-collapse>
+              <nz-collapse-panel nzHeader="{{ item.lobAgendaLine.title }}">
+                <p>
+                  <span class="lobview-span mla-name-tab"
+                    >{{ "lobview.view.membername" | translate }} :
+                    {{
+                      item.lobAgendaLine.primaryMemberMalayalamFullName ||
+                        item.lobAgendaLine.primaryMemberName
+                    }}</span
+                  >
+                </p>
+                <p *ngIf="item.lobAgendaLine.description">
+                  <span class="lobview-span"
+                    >{{ "lobview.view.description" | translate }} :
+                    {{ item.lobAgendaLine.description }}</span
+                  >
+                </p>
+
+                <p *ngIf="item.lobAgendaLine.speakerNoteUrl">
+                  <span class="lobview-span"
+                    >{{ "lobview.view.speakernote" | translate }} :
+                    <a
+                      href="javascript:;"
+                      (click)="openSpeakerNote(item.lobAgendaLine)"
+                      >{{ "lobview.view.view" | translate }}</a
+                    >
+                  </span>
+                </p>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </div> -->
+</div>

@@ -1,0 +1,149 @@
+<ng-container *ngIf="!isFileView">
+    <div class="row d-flex justify-content-space-between">
+        <div class="col-md-12 col-sm-12 mb-2">
+            <nz-breadcrumb>
+                <nz-breadcrumb-item>
+                    {{ "budget.budgetspeech.dashboard" | translate }}
+                </nz-breadcrumb-item>
+                <nz-breadcrumb-item> Prepare Bit List </nz-breadcrumb-item>
+            </nz-breadcrumb>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Prepare Bit List</h3>
+        </div>
+        <div class="col-md-6 justify-content-end d-flex">
+            <button [disabled]="!bitListData.id" style="margin-left: 6px;" nz-button [nzType]="'primary'" class="float-right" nz-popconfirm nzPopconfirmTitle='{{"are you sure you want to submit & attachtofile?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="resubmitFile()">
+            {{"Submit/Attach to File" |translate}}
+        </button>
+        </div>
+    </div>
+</ng-container>
+<nz-divider></nz-divider>
+<div class="col-md-6" *ngIf="!sdfgId">
+    <div class="row">
+        <div class="col-md-4">
+            <nz-form-label>{{ "Select SDFG/VOA"}}</nz-form-label>
+        </div>
+        <div class="col-md-8">
+            <nz-select [(ngModel)]="bitListData.sdfgId" name="selsdfgId" [ngModelOptions]="{standalone: true}" (ngModelChange)="getSDFGByLineId($event)" nzShowSearch>
+                <nz-option *ngFor="let option of sdfgList" [nzLabel]="option.title" [nzValue]="option">
+                </nz-option>
+            </nz-select>
+        </div>
+    </div>
+</div>
+<ng-container *ngIf="bitListData.sdfgId">
+    <div class="row mrgT20 d-flex justify-content-center">
+        <div class="col-md-12">
+            <nz-card style="width: 619px;">
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <b>List of Demands for Grants to be Submitted to the Vote of the
+            House</b>
+                    </div>
+                </div>
+
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <div class="row">Choose Date</div>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <nz-select nzShowSearch nzPlaceHolder="--select one--" [(ngModel)]="cosDate" [ngModelOptions]="{standalone: true}" (ngModelChange)="fitData($event)">
+                                    <nz-option *ngFor="let date of bitListData.cosdates" [nzLabel]="date.value | date: 'dd/MM/yyyy'" [nzValue]="date"></nz-option>
+                                </nz-select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <div class="row">Demand Number and Name</div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <nz-card [nzTitle]="null" style="width: 100%; height: 300px; overflow-y: scroll" class="committee_blk">
+                                    <ul class="checklis">
+                                        <li *ngFor="let demandsList of bitListData.demandsList; let i = index">
+                                            <label nz-checkbox [(ngModel)]="demandsList.isSelectedForBitList" name="checkbox{{ i }}">{{ demandsList.demandNameEng}}</label>
+                                        </li>
+                                    </ul>
+                                </nz-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mrgT20">
+                    <div class="col-md-12">
+                        <button [disabled]="bitListData.demandsList.length == 0" nzType="dashed" nz-button (click)="showHead()">
+            <i nz-icon nzType="plus-circle" nzTheme="outline"></i>
+            Add Head
+          </button>
+                    </div>
+                </div>
+                <div class="row mrgT20">
+                    <div class="col-md-12 align-right">
+                        <!-- <button class="mr-6" nz-button (click)="cancelDemand()">Cancel</button> -->
+                        <button nz-button nz-popconfirm nzPopconfirmTitle='{{"are you sure you want to save?" | translate}}' nzCancelText="No" nzOkText="Yes" (nzOnConfirm)="createDemand()">OK</button>
+                    </div>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+</ng-container>
+<!-- <nz-card class="report">
+    <budget-bit-list-report></budget-bit-list-report>
+</nz-card> -->
+<nz-modal [(nzVisible)]="showHeadPopUp" nzTitle="Add Demand Heads" (nzOnCancel)="showHeadPopUp = false" [nzFooter]="null" nzWidth="800">
+    <div class="padding_25">
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <b>Previosly Unselected Demand Heads</b>
+                    </div>
+                    <div class="col-md-4">
+                        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="--select one--" [(ngModel)]="cosDate" [ngModelOptions]="{standalone: true}" (ngModelChange)="filterpreviousDemandDta($event)">
+                            <nz-option *ngFor="let date of listToAddHeads.previousUnselectedHeads.dates" [nzLabel]="date | date: 'dd/MM/yyyy'" [nzValue]="date"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div *ngIf="listToAddHeads.previousUnselectedHeads.dates.length > 0" class="row margnrtp-15">
+                    <ul class="checklis">
+                        <li *ngFor="let box of listToAddHeads.previousUnselectedHeads.datas; let i = index">
+                            <label class="mr-6" nz-checkbox [(ngModel)]="box.isSelectedForBitList" name="checkbox{{ i }}">{{ box.demandNameEng }}</label>
+                            <span>dd/MM/yyyy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-4">
+                        <b>UpComing Demand Heads</b>
+                    </div>
+                    <div class="col-md-4">
+                        <nz-select nzShowSearch [(ngModel)]="cosDate" nzPlaceHolder="--select one--" [ngModelOptions]="{standalone: true}" (ngModelChange)="filterUpcomingDemandDta($event)">
+                            <nz-option *ngFor="let date of listToAddHeads.upcomingHeads.dates" [nzLabel]="date | date: 'dd/MM/yyyy'" [nzValue]="date"></nz-option>
+                        </nz-select>
+                    </div>
+                </div>
+                <div *ngIf="listToAddHeads.upcomingHeads.dates.length > 0" class="row margnrtp-15">
+                    <ul class="checklis">
+                        <li *ngFor="let box of listToAddHeads.upcomingHeads.datas; let i = index">
+                            <label class="mr-6" nz-checkbox [(ngModel)]="box.isSelectedForBitList" name="checkbox{{ i }}">{{ box.demandNameEng }}</label>
+                            <span>dd/MM/yyyy</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row margnrtp-15">
+            <div class="col-md-12 align-right">
+                <button class="mr-6" nz-button nzType="primary" (click)="setlistToAddHeads()">Add Head</button>
+            </div>
+        </div>
+    </div>
+</nz-modal>

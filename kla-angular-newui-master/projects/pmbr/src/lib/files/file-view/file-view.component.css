@@ -1,0 +1,36 @@
+.bg_block {
+    background: #f1f7fb;
+    border: #e6eff4 solid 1px;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
+  }
+  .bg_block {
+    background: #f1f7fb;
+    border: #e6eff4 solid 1px;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 5px;
+    cursor: pointer;
+  }
+  .mrB10{
+    margin-bottom: 10px;
+}
+.text-align-right {
+   text-align: right;
+ }
+ .blthd {
+    font-weight: 600;
+    width: 100%;
+    float: left;
+  }
+  .marginbtm-25{
+    margin-bottom: 25px;
+  }
+  .mrgT10 {
+    margin-top: 10px;
+  }
+  .mrgR10 {
+    margin-right: 10px;
+  }

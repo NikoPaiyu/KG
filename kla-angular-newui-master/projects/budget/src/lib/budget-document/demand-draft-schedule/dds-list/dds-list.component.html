@@ -1,0 +1,183 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{"budget.budgetspeech.document" |translate}}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"> {{"Demand Draft Schedule List" |translate}} </h2>
+    </div>
+    <div class="col-md-6 justify-content-end">
+        <button *ngIf="tableParams.showCreateBtn" class="ml-6" nz-button [nzType]="'primary'" class="float-right" (click)="navigate()">
+            {{"Create" |translate}}
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row marginbtm-10">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-3 d-flex align-items-center marginbtm-10">
+                <button class="plus-arrange margnrt-5" nz-button [nzType]="'primary'" (click)="showModal()">
+                    {{"Add Filter" |translate}} 
+                </button>
+
+                <nz-modal [(nzVisible)]="isVisibleFilter" nzTitle="{{
+              'business-dashboard.cpl.documents.filtercoloums'
+                | translate
+            }}" (nzOnCancel)="_hideFilter()" (nzOnOk)="_showFilter()">
+                    <div class="pading-all">
+                        <p *ngFor="let box of filterCheckboxes; let i = index" class="checkbox-style">
+                            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+                        </p>
+                    </div>
+                </nz-modal>
+
+                <button nz-button nzType="default" (click)="clearFilter()" (keyup.enter)="DoNothing()">
+                    {{"table.listga.clearFilter" |translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row fltr">
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.fileNumberdisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ "file Number" | translate }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['fileNumber']" name="budgetTitle" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let fileNumber of budgetfiltrParams.data.fileNumber" nzLabel="{{ fileNumber }}" nzValue="{{ fileNumber }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(1)"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.fileSubjectdisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ ("File Subject" | translate) }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['fileSubject']" name="date" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let fileSubject of budgetfiltrParams.data.fileSubject" nzLabel="{{ fileSubject }}" nzValue="{{ fileSubject }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(2)"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.createdOndisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ "Created On" | translate }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['createdOn']" name="status" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let createdOn of budgetfiltrParams.data.createdOn" nzLabel="{{ createdOn }}" nzValue="{{ createdOn }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(3)"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" *ngIf="budgetfiltrParams.disable.statusdisable">
+        <div class="row align-items-center">
+            <div class="col-md-5 wordbreak">
+                {{ "business-dashboard.question.questionlist.status" | translate }}
+            </div>
+            <div class="col-md-6">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filterSelected['status']" name="status" (ngModelChange)="searchCol(filterSelected)">
+                    <nz-option *ngFor="let s of budgetfiltrParams.data.status" nzLabel="{{ s }}" nzValue="{{ s }}">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero icon-color">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(4)"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row margnrtp-15 justify-content-end">
+    <div class="col-md-4">
+        <div class="row">
+            <div class="col-md-12">
+                <nz-input-group [nzSuffix]="suffixIconSearch">
+                    <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder="{{
+                'business-dashboard.question.questionlist.inputsearch' | translate
+              }}" (ngModelChange)="onSearchUser()" />
+                </nz-input-group>
+                <ng-template #suffixIconSearch>
+                    <i nz-icon nzType="search"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+<nz-table #filterTable [nzShowPagination]="false" nzShowSizeChanger [nzData]="listOfData" (nzCurrentPageDataChange)="currentPageDataChange($event)" class="table-all">
+    <thead *ngIf="isChecked" (nzSortChange)="sort($event)" nzSingleSort>
+        <tr>
+            <th nzShowSort nzSortKey="assemblyValue">
+                {{"Assembly" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="sessionValue">
+                {{"Session" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="fileNumber">
+                {{"File Number" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="fileSubject">
+                {{"File Subject" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="createdOn">
+                {{"Created On" |translate}}
+            </th>
+            <th nzShowSort nzSortKey="status">
+                {{"business-dashboard.question.questionlist.status" |translate}}
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let list of filterTable.data">
+            <td (mouseover)="showLinks(list.id)">
+                <tr>
+                    <td>{{ list.assemblyValue}}</td>
+                </tr>
+                <tr *ngIf="list.viewLinks">
+                    <td><a class="viewlink" (click)="viewDDS(list)">{{ "cpl.docpreparion.view" | translate }}</a></td>
+                    <td *ngIf="list.isOLGenerated"><a class="viewlink" nz-popconfirm nzPopconfirmTitle="Are you sure you want to generate bulletin?" (nzOnConfirm)="generateScheduleBulletin(list)">{{ "Generate Schedule Bulletin" | translate }}</a></td>
+                </tr>
+            </td>
+            <td>{{ list.sessionValue}}</td>
+            <td class="titlestyle">
+                {{ list.fileNumber }}
+            </td>
+            <td>{{ list.fileSubject}}</td>
+            <td>{{ list.createdOn | date: "dd-MM-yyyy"}}</td>
+            <td>
+                <nz-tag>{{ list.status }}</nz-tag>
+            </td>
+        </tr>
+    </tbody>
+</nz-table>
+<nz-pagination [nzPageIndex]="1" [nzPageSize]="paginationParams.numberOfItem" [nzTotal]="paginationParams.total" (nzPageIndexChange)="pageIndexChange($event - 1)" nzShowSizeChanger (nzPageSizeChange)="pageSizeChange($event)">
+</nz-pagination>

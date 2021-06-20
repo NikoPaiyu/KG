@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-md-12">
+      <div class="overflownote">
+        <nz-steps nzSize="small" [nzDirection]="'horizontal'">
+          <nz-step
+            *ngFor="let status of stepStatusDetail"
+            [nzStatus]="getStatusByReason(status.reason)"
+            [nzTitle]="status.taskDefinitionKey"
+            [nzDescription]="status.reason"
+          ></nz-step>
+        </nz-steps>
+      </div>
+    </div>
+  </div>

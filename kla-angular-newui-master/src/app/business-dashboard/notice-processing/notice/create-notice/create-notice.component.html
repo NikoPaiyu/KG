@@ -1,0 +1,264 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{ "noticeprocessing.notice.createnotice.dashboard" | translate }}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{ "noticeprocessing.notice.createnotice.create" | translate }} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">{{ "noticeprocessing.notice.createnotice.create" | translate }}</h2>
+  </div>
+  <div class="col-md-6 text-align-right">
+    <!-- <button nz-button nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"><span class="mrgR6">Attachments</span></button> -->
+    <nz-dropdown-menu #menu="nzDropdownMenu"
+     >
+     <ul nz-menu nzSelectable>
+      <li nz-menu-item>Attachment1<i nz-icon nzType="download"></i><i nz-icon nzType="delete"></i></li>
+      <li nz-menu-item>Attachment2<i nz-icon nzType="download"></i><i nz-icon nzType="delete"></i></li>
+      <li nz-menu-divider></li>
+      <li nz-menu-item (click)="showModal()"><i nz-icon nzType="paper-clip"></i>New Attachment</li>
+    </ul>
+     </nz-dropdown-menu>
+     <button nz-button nzType="default" class="mrgL6" (click)="backToList()">
+      {{ "noticeprocessing.notice.versions.back" | translate }}
+    </button>
+    <button nz-button nzType="primary" class="mrgL6" (click)="saveNotice(0)">
+      {{ "noticeprocessing.notice.createnotice.save" | translate }}
+    </button>
+    <button
+      nz-button
+      nzType="primary"
+      class="mrgL6 btn-primary-1"
+      *ngIf="notice.doIHaveAnAccess('NOTICE', 'CREATE')"
+      (click)="saveNotice(1)"
+    >
+      {{ "noticeprocessing.notice.createnotice.submit" | translate }}
+    </button>
+    <!-- <button nz-button nzType="default" class="mrgL6" (click)="reSubmitNotice()" *ngIf ="noticeButtons.Resubmit">
+     Resubmit
+    </button> -->
+   
+  </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+
+
+<nz-modal
+      [(nzVisible)]="isVisible"
+      nzTitle="New notice attachment"
+      (nzOnCancel)="handleCancel1()"
+      [nzFooter]="null"
+    >
+    <div class="row">
+      <div class="col-md-6">
+    <nz-upload nzType="drag" [nzMultiple]="true"  nzRequired>
+      <p class="ant-upload-drag-icon">
+        <i nz-icon nzType="inbox"></i>
+      </p>
+      <p class="ant-upload-text">Add attachments</p>
+      <p class="ant-upload-hint">
+        (Drag & drop or click to browse files)
+      </p>
+      <button nz-button nz-type="default">Browse File</button>
+    </nz-upload>
+  </div>
+  <div class="col-md-6">
+    &nbsp;&nbsp;
+        <p>File Name.ext<i nz-icon nzType="delete"  class="col-md-6 text-align-right"></i></p>
+         <nz-divider></nz-divider>
+         <p>File Name.ext<i nz-icon nzType="delete" class="col-md-6 text-align-right"></i></p>
+  </div>
+  </div>
+<br/>
+<div class="width-100">
+    <div class="d-flex justify-content-space-end text-align-right">
+      <button nz-button [nzType]="'primary'">
+        <span>Attach</span>
+      </button>
+    </div>
+  </div>
+</nz-modal>
+<form [formGroup]="noticeForm">
+  <ng-template #errorTpl let-control>
+    <ng-container *ngIf="control.hasError('required')">
+      {{ "noticeprocessing.noticetemplate.createtemplate.input" | translate }}
+    </ng-container>
+  </ng-template>
+  <div class="row">
+    <div class="col-md-4 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="9">{{
+          "noticeprocessing.notice.listnotice.assembly" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="15" nzHasFeedback [nzErrorTip]="errorTpl">
+          <nz-select nzShowSearch nzAllowClear formControlName="assemblyId">
+            <nz-option [nzLabel]="activeAssemblySession?.assemblyValue" [nzValue]="activeAssemblySession?.assemblyId"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+    <div class="col-md-4 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="9">{{
+          "noticeprocessing.notice.listnotice.session" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="15" nzHasFeedback [nzErrorTip]="errorTpl">
+          <nz-select nzShowSearch nzAllowClear formControlName="sessionId">
+            <nz-option [nzLabel]="activeAssemblySession?.sessionValue" [nzValue]="activeAssemblySession?.sessionId"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <!-- <nz-form-label [nzSpan]="9">{{
+          "noticeprocessing.noticeprocess.subject" | translate
+        }}</nz-form-label> -->
+        <nz-form-label [nzSpan]="9">{{"noticeprocessing.notice.listnotice.noticeheading" | translate}}</nz-form-label>
+        <nz-form-control [nzSm]="15" [nzXs]="24" nzHasFeedback [nzErrorTip]="errorTpl">
+        <textarea  rows="3"  nz-input formControlName="title" id="notice-subject" ></textarea>
+       </nz-form-control>
+      </nz-form-item>
+    </div>
+
+    <div class="col-md-4 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="9">{{
+          "noticeprocessing.notice.listnotice.noticetype" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="15" nzHasFeedback [nzErrorTip]="errorTpl">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            formControlName="templateId"
+            [nzDisabled]="true"
+          >
+            <nz-option
+              *ngFor="let item of templateList"
+              [nzLabel]="item.name"
+              [nzValue]="item.id"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="9">{{
+          "noticeprocessing.noticeprocess.primary" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="15" nzHasFeedback [nzErrorTip]="errorTpl">
+          <p *ngIf="!dropDownflag">{{ userName }}</p>
+          <nz-select
+            nzShowSearch
+            formControlName="primaryMemberId"
+            *ngIf="dropDownflag"
+          >
+            <nz-option
+              *ngFor="let item of mlaList"
+              [nzLabel]="item?.details?.fullName"
+              [nzValue]="item.userId"
+            ></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mrgT10 marginbtm-15">
+      <nz-form-item>
+        <nz-form-label [nzSpan]="9">{{
+          "cpl.correspondence.attachments" | translate
+        }}</nz-form-label>
+        <nz-form-control [nzSpan]="15" *ngIf="(noticeId && noticeId > 0 && noticeDetails.notice.status === 'SAVED')
+          || noticeId === 0">
+          <nz-upload
+                  nzAccept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png"
+                  [nzAction]="uploadURL"
+                  [(nzFileList)]="fileLists"
+                  [nzShowButton]="fileLists.length < 10"
+                  [nzShowUploadList]="showUploadList"
+                  (nzChange)="handleChange($event)"
+                  [nzMultiple]="true"
+                  [nzPreview]="handlePreview"
+                >
+                  <button nz-button>
+                    <i nz-icon nzType="upload"></i>{{"cpl.actregistration.clicktoupload" | translate}}
+                  </button>
+          </nz-upload>
+        </nz-form-control>
+        <div class="row mrgT6" *ngFor="let doc of noticeDetails.notice.attachments">
+          <div class="col-md-12 d-flex justify-content-end" *ngIf="noticeId && noticeId > 0 && noticeDetails.notice.status === 'SAVED' && !doc.delete">
+            <a
+              href="javascript:;"
+              (click)="showAttachment(doc.url)"
+              >{{ doc.name }}
+            </a>
+            <i
+                nz-popconfirm
+                nzPopconfirmTitle='{{"business-dashboard.cpl.view.deleteadditionaldocument" | translate}}'
+                nzPopconfirmPlacement="bottom"
+                (nzOnConfirm)="deleteAttachment(doc.id)"
+                (nzOnCancel)="cancel()"
+                nz-icon
+                style="cursor:pointer"
+                nzType="delete"
+                nzTheme="outline"
+              ></i>
+          </div>
+        </div>
+      </nz-form-item>
+    </div>
+  </div>
+</form>
+<br />
+<div class="preview-main">
+  <div class="form mrgT20">
+    <div *ngIf="FinalcomponentArray?.length > 0">
+      <app-dynamic-form
+        [fields]="FinalcomponentArray"
+        (changes)="ShowForm($event)"
+        *ngIf="FinalcomponentArray?.length > 0"
+      >
+      </app-dynamic-form>
+    </div>
+  </div>
+  <div class="mrgT20 preview-main-text">
+    <h3>{{ "noticeprocessing.notice.createnotice.prevew" | translate }}</h3>
+    <div>
+      <quill-view-html
+        [content]="viewContent"
+        *ngIf="viewContent"
+      ></quill-view-html>
+    </div>
+  </div>
+</div>
+<!-- <div class="col-md-12 text-align-right">
+  <button nz-button nzType="default" class="mrgL6" (click)="printPreview()">
+    <span>{{ "noticeprocessing.notice.createnotice.print" | translate }}</span>
+  </button>
+  <nz-modal
+    [(nzVisible)]="isVisible"
+    nzTitle="Print Preview"
+    (nzOnCancel)="handleCancel()"
+    [nzFooter]="null"
+  >
+    <p>{{ "noticeprocessing.notice.createnotice.legislative" | translate }}</p>
+    <p>{{ "noticeprocessing.notice.createnotice.election" | translate }}</p>
+    <p>{{ "noticeprocessing.notice.createnotice.chief" | translate }}</p>
+    <p>{{ "noticeprocessing.notice.createnotice.agriculture" | translate }}</p>
+    <p>{{ "noticeprocessing.notice.createnotice.finance" | translate }}</p>
+  </nz-modal>
+</div> -->

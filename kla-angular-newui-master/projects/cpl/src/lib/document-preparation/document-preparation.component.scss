@@ -1,0 +1,42 @@
+.mr-6 {
+  margin-right: 6px;
+}
+.table_blkp {
+  width: 100%;
+  padding: 0px 20px;
+}
+.clrth {
+  background: #fff !important;
+}
+.t-r{text-align: right;}
+.mlatablefull tr:nth-child(2n) td{background: #fff0 !important;}
+.break-word {
+  word-break: break-word;
+}
+.divdr{
+  width: 100%;
+  border-bottom: #ccc 1px solid;
+  padding: 10px;
+}
+.center{
+  width: 100%;
+  text-align:center !important;
+}
+.pd20{padding: 0px 20px;}
+
+.act-year {
+  width: 100px !important;
+}
+table, th, td {
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  text-align: center;
+}
+tr,th,td {
+  text-align: center;
+}
+
+.t-r{text-align: right !important;}
+.t-l{text-align: left !important;}
+.w30{width: 30% !important;}
+.w70{width: 70% !important;}

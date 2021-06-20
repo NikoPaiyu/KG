@@ -1,0 +1,185 @@
+<div class="pading-all width-100">
+  <div class="padding-15">
+    <div class="col-md-12" *ngIf="questionVersion">
+      <nz-alert
+      *ngIf="
+      questionVersion['submissionThroughPPO']"
+      nzType="info"
+      nzMessage="This Notice Will be Submitted Through PPO"
+      nzShowIcon
+    ></nz-alert>
+      <div
+        class="row paddingT15"
+        *ngIf="questionVersion['assemblyId'] && questionVersion['sessionId']"
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.assembly" | translate }} :
+        </div>
+        <div class="col-md-2" id="assemblyV1">
+          <span>{{ questionVersion['assemblyId'] }}</span>
+        </div>
+        <div class="col-md-4">
+          {{ "business-dashboard.question.session" | translate }} :
+        </div>
+        <div class="col-md-2" id="assemblySessionV1">
+          <span>{{ questionVersion['sessionId'] }}</span>
+        </div>
+      </div>
+      <div
+        class="row paddingT15"
+        *ngIf="
+          questionVersion['clubbingDetails'] &&
+          questionVersion['clubbingDetails'].length > 0
+        "
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.mlaName" | translate }} :
+        </div>
+        <div class="col-md-8">
+          <div
+            class="row input-style"
+            *ngFor="let ma of questionVersion['clubbingDetails']; let i = index"
+          >
+            <span>{{
+              ma.memberName + (ma.primaryMember ? " ( 1st )" : "")
+            }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="row paddingT15" *ngIf="questionVersion['registrationDate']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.dateofreg" | translate }} :
+        </div>
+        <div class="col-md-8" id="regDateV1">
+          <span>{{ questionVersion['registrationDate'] }}</span>
+        </div>
+      </div>
+      <div class="row paddingT15" *ngIf="questionVersion['questionDate']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.questiondate" | translate }} :
+        </div>
+        <div class="col-md-8" id="questionDateV1">
+          <span>{{ questionVersion['questionDate'] | date: "dd/MM/yyyy" }}</span>
+        </div>
+      </div>
+      <div class="row paddingT15" *ngIf="questionVersion['category']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ncategory" | translate }}:
+        </div>
+        <div class="col-md-8">
+          <span>{{ questionVersion['category'] }}</span>
+        </div>
+      </div>
+      <div class="row paddingT15" *ngIf="questionVersion['priority'] && questionVersion['category'] === 'STARRED'">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticepriority" | translate }} :
+        </div>
+        <div class="col-md-8" id="priorityV1">
+          <span>{{ questionVersion['priority'] }}</span>
+        </div>
+      </div>
+      <div class="row paddingT15" *ngIf="questionVersion['subjectName']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.ministersubject" | translate }} :
+        </div>
+        <div class="col-md-8" id="ministerSubjectV1">
+          <span>{{ questionVersion['subjectName'] }}</span>
+        </div>
+      </div>
+      <!-- <div class="row paddingT15" *ngIf="questionVersion['portfolio']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.versioning.minister" | translate }}
+          :
+        </div>
+        <div class="col-md-8" id="ministerV1">
+          <span>{{ questionVersion['portfolio'].name }}</span>
+        </div>
+      </div> -->
+      <div class="row paddingT15" *ngIf="questionVersion['title']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.noticeheading" | translate }} :
+        </div>
+        <div class="col-md-8" id="noticeHeadingV1">
+          <span class="word-break">{{ questionVersion['title'] }}</span>
+        </div>
+      </div>
+
+      <div class="row paddingT15" *ngIf="questionVersion['reason']">
+        <div class="col-md-4">
+          {{ "business-dashboard.question.reason" | translate }} :
+        </div>
+        <div class="col-md-8" id="noticeHeadingV1">
+          <span class="word-break">{{ questionVersion['reason'] }}</span>
+        </div>
+      </div>
+      <div
+        class="row paddingT15"
+        *ngIf="questionVersion['tags'] && questionVersion['tags'].length > 0"
+      >
+        <div class="col-md-4">
+          {{ "business-dashboard.question.versioning.tags" | translate }} :
+        </div>
+        <div class="col-md-8">
+          <div class="row">
+            <div
+              class="col-auto tag-style"
+              *ngFor="let tag of questionVersion['tags']; let i = index"
+            >
+              <span>{{ tag.tag }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <div class="row">
+        <div class="col-md-12">
+          <span>
+          {{"താഴെ കാണുന്ന ചോദ്യങ്ങൾക്കു " + 
+          questionVersion['selportfolio'].nameInMalayalam + 
+          " സദയം മറുപടി പറയാമോ?"}}
+        </span>
+        </div>
+      </div>
+
+      <div
+        class="paddingT15"
+        *ngIf="
+          questionVersion['questionClauses'] &&
+          questionVersion['questionClauses'].length > 0
+        "
+      >
+        <div class="col-md-12 clause-style">
+          <ng-container
+            *ngFor="
+              let clause of questionVersion['questionClauses'];
+              let i = index
+            "
+          >
+            <div class="row paddingT15">
+              <div class="col-md-4">{{ "Clause " + clauseNo[i] }} :</div>
+
+              <div class="col-md-8">
+                <div id="clauseV1">
+                  <span class="word-break">{{ clause.clause }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="row paddingT15" *ngIf="clause.answerText">
+              <div class="col-md-4">
+                {{
+                  "business-dashboard.question.versioning.answer" | translate
+                }}:
+              </div>
+              <div class="col-md-8">
+                <div class="row" id="answerV1">
+                  <span class="word-break">{{ clause.answerText }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

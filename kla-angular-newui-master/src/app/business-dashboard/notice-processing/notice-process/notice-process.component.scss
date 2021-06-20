@@ -1,0 +1,143 @@
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+.text-align-right {
+  text-align: right;
+}
+.margin-10 {
+  margin: 10px;
+}
+.mrgL6 {
+  margin-left: 6px;
+}
+.mrgR6 {
+  margin-right: 6px;
+}
+.mrgT10 {
+  margin-top: 10px;
+}
+.mrgT20 {
+  margin-top: 20px;
+}
+.mrgB15 {
+  margin-bottom: 15px;
+}
+.p-TB30 {
+  padding: 30px 0px;
+}
+.input-bg-color {
+  background-color: #ffffa2;
+  border-bottom: transparent !important;
+}
+.menu-item-style {
+  li {
+    display: flex;
+    justify-content: space-between;
+  }
+  .m-item2 {
+    margin-left: 30px;
+  }
+}
+
+.footer-chat {
+  background: #fff;
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+  padding: 20px 15px 15px;
+  max-width: 510px;
+}
+
+.type_msg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eee;
+  border-radius: 4px;
+  padding: 5px;
+}
+textarea.ant-input {
+  padding: 18px;
+}
+.p-R15 {
+  padding-right: 15px;
+}
+
+.ant-drawer-wrapper-body {
+  background: #fff;
+}
+.p-L0 {
+  padding-left: 0px !important;
+}
+.p-0 {
+  padding: 0px !important;
+}
+.ant-input {
+  background: #eee !important;
+}
+.m-r5 {
+  margin-right: 5px;
+}
+.ant-input {
+  border-bottom: #eee !important;
+}
+.ql-editor {
+  padding: 12px 0px !important;
+}
+.notesp p {
+  margin-bottom: 0px !important;
+}
+.notesp h6 {
+  margin-bottom: 0px !important;
+}
+.preview-main {
+  background-color: #eee;
+  padding: 20px 15px;
+  margin-top: 10px;
+
+  &-text {
+    width: 100%;
+    text-align: center;
+
+    h3 {
+      text-transform: uppercase;
+      font-size: 17px;
+      font-weight: 600;
+      color: #464545;
+    }
+  }
+}
+.chat-main-body {
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: calc(100vh - 250px);
+}
+.ant-tag-checkable-checked {
+  background: transparent !important;
+}
+.ant-tag-checkable:active,
+.ant-tag-checkable-checked {
+  color: #1890ff !important;
+}
+.ant-tag {
+  padding: 3px 7px;
+  background: #eee;
+  border-radius: 4px;
+  margin: 3px;
+}
+.text-align-right {
+  text-align: right;
+}
+.justify-content-space-end {
+  justify-content: flex-end;
+}
+.p-20 {
+  padding: 20px !important;
+}
+
+.mrgT6 {
+  margin-top: 6px;
+}

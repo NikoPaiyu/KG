@@ -1,0 +1,186 @@
+<div class="padding_25">
+  <div class="row margnrtp-15">
+    <div class="col-md-12">
+      <nz-tabset>
+        <nz-tab
+          nzTitle="Upload Translated Bill"
+          *ngIf="uploadTab"
+        >
+          <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <form nz-form [formGroup]="translateForm" class="form">
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <nz-form-item>
+                      <nz-form-label>Original Language</nz-form-label>
+                      <nz-form-control>
+                        <span *ngIf="billDetails?.language == 'MAL'">
+                          {{
+                            "bill.bill-clause.list.malayalm" | translate
+                          }}</span
+                        >
+                        <span *ngIf="billDetails?.language == 'ENG'">
+                          {{
+                            "bill.bill-clause.list.english" | translate
+                          }}</span
+                        >
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <nz-form-item>
+                      <nz-form-label>Translated Language</nz-form-label>
+                      <nz-form-control>
+                        <span>
+                          {{ transData.language }}
+                        </span>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12">
+                    <nz-form-item>
+                      <nz-form-label
+                        >Bill Title in {{ transData.language }}</nz-form-label
+                      >
+                      <nz-form-control
+                        nzHasFeedback
+                        nzErrorTip="Enter Bill Title in {{ transData.language }}"
+                      >
+                        <input
+                          placeholder=""
+                          nz-input
+                          formControlName="title"
+                          oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+                        />
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-6">
+                    <nz-form-item>
+                      <nz-form-label>Upload Translated Bill</nz-form-label>
+                      <nz-form-control nzErrorTip="Upload Translated Bill">
+                        <div *ngIf="onCreate && !translateForm.value.documentUrl">
+                        <span class="text-danger">File is required</span>
+                    </div>
+                        <nz-upload
+                          nzAccept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          [nzAction]="uploadURL"
+                          [(nzFileList)]="uploadFileList"
+                          [nzShowButton]="uploadFileList.length < 1"
+                          [nzShowUploadList]="showUploadList"
+                          (nzChange)="handleGovRecFileChange($event)"
+                          [nzBeforeUpload]="beforeUpload"
+                        >
+                          <button nz-button>
+                            <i nz-icon nzType="upload"></i>Upload File
+                          </button>
+                        </nz-upload>
+                      </nz-form-control>
+                    </nz-form-item>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-md-12 align-right">
+            <button class="mr-6" nz-button (click)="canceltranslation()">
+              Cancel
+            </button>
+            <button
+              class="mr-6"
+              nzType="primary"
+              nz-button
+              (click)="submitTranslation()"
+            >
+              Submit
+            </button>
+          </div>
+        </nz-tab>
+        <nz-tab nzTitle="View Translated Bill" *ngIf="!uploadTab">
+          <div class="row margnrtp-15">
+            <div class="col-md-4">
+                 Original Language:
+          
+                  <b><span *ngIf="billDetails?.language == 'MAL'">
+                    {{
+                      "bill.bill-clause.list.malayalm" | translate
+                    }}</span
+                  >
+                  <span *ngIf="billDetails?.language == 'ENG'">
+                    {{
+                      "bill.bill-clause.list.english" | translate
+                    }}</span
+                  ></b>
+               
+            </div>
+            <div class="col-md-4">
+              Translated Language:
+           
+                  <span *ngIf="transData.language">
+                    <b>{{transData?.language}}</b>
+                    </span
+                  >
+               
+            </div>
+            </div>
+            
+              <div class="row margnrtp-15">
+                <div class="col-md-12 ">
+                  Bill Title in {{transData?.language}}:
+                      <span *ngIf="transData.title">
+                       <b>{{transData?.title}}</b> 
+                        </span
+                      >
+                   
+                </div>
+                </div>
+                <div class="row margnrtp-15">
+                  <div class="col-md-12 align-right">
+                    <!-- <button class="mr-6" nz-button (click)="downloadTranlatedBill(transData?.documentUrl)">
+                      <i nz-icon nzType="download" nzTheme="outline"></i>
+                      Print
+                    </button> -->
+                   </div>
+                </div> 
+                <nz-spin [nzSpinning]="loading" [nzSize]="'large'" nzTip="Loading....">
+                <div class="row margnrtp-15">
+                  <div class="col-md-12 ">
+                  <div class="frame-pdf" *ngIf="transData.documentUrl">
+                  <!-- <ng2-pdfjs-viewer
+                  *ngIf="transData.documentUrl"
+                  [pdfSrc]="transData.documentUrl"
+                  scroll="V"
+                  [downloadFileName]="'Translation.pdf'"
+                  [openFile]="false"
+                  [viewBookmark]="false"
+                  [download]="true"
+                  [print]="true"
+                  spread="N"
+                  [fullScreen]="false"
+                  [showSpinner]="true"
+                  [viewerId]="user.userId"
+                ></ng2-pdfjs-viewer> -->
+                    <ngx-doc-viewer
+                    [url]="transData.documentUrl"
+                    viewer="google"
+                    style="width: 100%; height: 800px;"
+                  ></ngx-doc-viewer>
+              </div>
+                </div>
+
+                </div>
+              </nz-spin>
+              <div class="width-100 pading-all" *ngIf="this.transData.documentUrl === null">
+                <h4>{{"cpl.fileworkflowdocs.nodocumentuploadedtoview" | translate }}</h4>
+              </div>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</div>

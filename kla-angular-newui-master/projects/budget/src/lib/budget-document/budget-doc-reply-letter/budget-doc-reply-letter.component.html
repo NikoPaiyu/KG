@@ -1,0 +1,32 @@
+<nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="budgetMain" class="table-all">
+    <thead nzSingleSort>
+        <tr>
+            <th>Name</th>
+            <th>
+                Document
+            </th>
+        </tr>
+    </thead>
+
+    <tbody>
+        <tr *ngFor="let list of filterTable.data">
+            <td>{{list.title}}</td>
+            <td (click)="view_doc(list)">
+                <i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+            </td>
+            <!-- <td  (click)="getContent(list.motionContent)">
+<i class="preview-icon" nz-icon nzType="file" nzTheme="outline"></i>
+</td> -->
+        </tr>
+    </tbody>
+</nz-table>
+
+<nz-modal [(nzVisible)]="previewVisible" [nzFooter]="null" (nzOnCancel)="cancelPreview()" nzWidth="800">
+    <div class="width-100 pading-all" *ngIf="this.docUrl !== null">
+        <div class="row margnrtp-15 margnrgt-15">
+            <div class="col-md-12 align-items-center">
+                <ngx-doc-viewer [url]="docUrl" viewer="url" style="width: 100%; height: 500px;"></ngx-doc-viewer>
+            </div>
+        </div>
+    </div>
+</nz-modal>

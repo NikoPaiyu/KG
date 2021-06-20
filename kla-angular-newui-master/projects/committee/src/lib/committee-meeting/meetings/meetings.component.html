@@ -1,0 +1,405 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                committee
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading"
+        > Meetings</h2>
+    </div>
+    <div class="col-md-6 justify-content-end">
+        <button class="ml-6" nz-button [nzType]="'default'" class="float-right" *ngIf="permissions.createMeeting" (click)="showMeetDetailsPopup()">
+            Create Meeting
+        </button>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row d-flex">
+    <div class="col-md-8">
+        <button type="button"  class="ant-btn ant-btn-default mr-6" (click)="showFilter('row')">
+            Add Filter
+          </button>
+        <button type="button" class="ant-btn ant-btn-default" (click)="clearFilter()" *ngIf="filtrParams.tableDto.length > 0">
+            Clear Filter
+          </button>
+    </div>
+    <div class="col-md-4 justify-content-end d-flex">
+        <nz-input-group class="table-operations" [nzSuffix]="suffixIconSearch">
+            <input type="text" [(ngModel)]="searchMeet" (ngModelChange)="searchMeetList()" nz-input placeholder="input title here" />
+        </nz-input-group>
+        <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+        </ng-template>
+        <button type="button" class="ant-btn ant-btn-default margnlft-10" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="plus" nzTheme="outline" class=" white"></i>
+            {{
+     "business-dashboard.billregister.billregisterlist.cols" | translate
+   }}
+        </button>
+
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+            <div>
+                <ul nz-menu dileTable>
+                    <li *ngFor="let col of colCheckboxes; let i = index" class="checkbox-style">
+                        <label nz-checkbox [nzDisabled]="col.disable" [(ngModel)]="col.check" name="j" (ngModelChange)="disableCheckBox()">{{ col.label }}</label>
+                    </li>
+                </ul>
+            </div>
+        </nz-dropdown-menu>
+    </div>
+</div>
+
+<div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of checkedFilters">
+        <div class="row align-items-center">
+            <div class="col-md-4 wordbreak">
+                {{ filter.label }}
+            </div>
+            <div class="col-md-7">
+                <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filter.selValue" name="{{ filter.label }}" (ngModelChange)="searchCol()">
+                    <nz-option *ngFor="let data of filter.data" [nzLabel]="data" [nzValue]="data">
+                    </nz-option>
+                </nz-select>
+            </div>
+            <div class="col-md-1 pdzero">
+                <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(filter)"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<nz-tabset>
+    <nz-tab nzTitle="Meeting" (nzClick)="_getList()">
+        <ng-template [ngTemplateOutlet]="meetingTable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="Meeting Consent" (nzClick)="getConsentsList()" *ngIf="allConsents">
+        <ng-template [ngTemplateOutlet]="consentTable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="Pending Meeting Notices" (nzClick)="_getPendingList()" *ngIf="permissions.pendingNoticeList">
+        <ng-template [ngTemplateOutlet]="pendingMeetingNoticeTable"></ng-template>
+    </nz-tab>
+    <nz-tab nzTitle="My Meetings" (nzClick)="_getMyMeetingList()" *ngIf="permissions.myMeeting">
+        <ng-template [ngTemplateOutlet]="myMeetingTable"></ng-template>
+    </nz-tab>
+</nz-tabset>
+<ng-template #meetingTable>
+    <nz-table #filterTable nzShowPagination [nzData]="result |  search:'title':searchMeet" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <!-- <th
+            nzShowCheckbox
+            [(nzChecked)]="checkbxParams.allDtCheckd"
+            (nzCheckedChange)="_checkAllRows($event)"
+            ></th> -->
+                <th>
+                    Serial No
+                </th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">
+                    Meeting Title
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="date">
+                    Meeting Date
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="venue">
+                    Venue
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="joint">
+                    Joint Meeting
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of filterTable.data;let i= index">
+                <!-- <td
+            nzShowCheckbox
+            [(nzChecked)]="mapOfCheckedId[list.id]"
+            (nzCheckedChange)="refreshStatus(list)"
+            ></td> -->
+                <td>
+                    {{i+1}}
+                    <!-- <tr>
+            {{
+                list.session
+            }}
+            </tr>
+            <tr *ngIf="list.viewLinks">
+                <a nz-button nzType="link">View</a>
+                <a nz-button nzType="link">Edit</a>
+            </tr> -->
+                </td>
+                <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.id)" (mouseleave)="hideLinks(list.id)">
+                    <tr>
+                        {{ list.title }}
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId=='null'&&permissions.createFile" (click)="showPopup(list.id)">Create/Attach File</a>
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId" (click)="showFile(list.fileId)">{{list.fileNumber}}</a>
+                        <!-- <a nz-button nzType="link" class="viewlink" (click) ="showPopup(list.id)">Create File</a> -->
+                        <a nz-button nzType="link" class="viewlink" (click)="showMeeting(list.id)">View Meeting</a>
+                        <a nz-button nzType="link" class="viewlink" 
+                        *ngIf="permissions.createFile && list.status === 'DETAIL_PENDING'"
+                        (click)="resubmitMeeting(list)">Resubmit File</a>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[1].check">
+                    {{ list?.date| date: "dd-MM-yyyy" }}
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list?.venue?.name}}</td>
+                <td *ngIf="colCheckboxes[3].check">
+                    <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.isJointMeeting"></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.isJointMeeting"></i>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+
+<ng-template #consentTable>
+    <nz-table #filterTable nzShowPagination [nzData]="allConsents |  search:'title':searchMeet" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <!-- <th
+                nzShowCheckbox
+                [(nzChecked)]="checkbxParams.allDtCheckd"
+                (nzCheckedChange)="_checkAllRows($event)"
+                ></th> -->
+                <th>
+                    Serial No
+                </th>
+                <th nzShowSort nzSortKey="title">
+                    Meeting Title
+                </th>
+                <th nzShowSort nzSortKey="date">
+                    Meeting Date
+                </th>
+                <th nzShowSort nzSortKey="venue">
+                    Venue
+                </th>
+                <th nzShowSort nzSortKey="joint">
+                    Joint Meeting
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of filterTable.data;let i= index">
+                <!-- <td
+                nzShowCheckbox
+                [(nzChecked)]="mapOfCheckedId[list.id]"
+                (nzCheckedChange)="refreshStatus(list)"
+                ></td> -->
+                <td>
+                    {{i+1}}
+                    <!-- <tr>
+                    {{
+                    list.session
+                    }}
+                </tr>
+                <tr *ngIf="list.viewLinks">
+                    <a nz-button nzType="link">View</a>
+                    <a nz-button nzType="link">Edit</a>
+                </tr> -->
+                </td>
+                <td (mouseover)="showConsentLinks(list.id)" (mouseleave)="hideConsentLinks(list.id)">
+                    <tr>
+                        {{ list.title }}
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId == 'null'" (click)="showPopup(list.id)">Create/Attach File</a>
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId" (click)="showFile(list.fileId)">{{list.fileNumber}}</a>
+                        <!-- <a nz-button nzType="link" class="viewlink" (click) ="showPopup(list.id)">Create File</a> -->
+                        <a nz-button nzType="link" class="viewlink" (click)="showMeeting(list.id)">View Meeting</a>
+                    </tr>
+                </td>
+                <td>
+                    {{ list.date| date: "dd-MM-yyyy" }}
+                </td>
+                <td>{{ list.venue?.name}}</td>
+                <td>
+                    <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.isJointMeeting"></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.isJointMeeting"></i>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+
+
+<ng-template #pendingMeetingNoticeTable>
+    <nz-table #filterTable nzShowPagination [nzData]="pendingNoticeList |  search:'title':searchMeet" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <!-- <th
+            nzShowCheckbox
+            [(nzChecked)]="checkbxParams.allDtCheckd"
+            (nzCheckedChange)="_checkAllRows($event)"
+          ></th> -->
+                <th>
+                    Serial No
+                </th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">
+                    Meeting Title
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="date">
+                    Meeting Date
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="committeName">
+                    Name of the committee to which the notice to be sent
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="venue">
+                    Venue
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="joint">
+                    Joint Meeting
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of filterTable.data;let i= index">
+                <!-- <td
+            nzShowCheckbox
+            [(nzChecked)]="mapOfCheckedId[list.id]"
+            (nzCheckedChange)="refreshStatus(list)"
+          ></td> -->
+                <td>
+                    {{i+1}}
+                    <!-- <tr>
+              {{
+                list.session
+              }}
+            </tr>
+            <tr *ngIf="list.viewLinks">
+              <a nz-button nzType="link">View</a>
+              <a nz-button nzType="link">Edit</a>
+            </tr> -->
+                </td>
+                <td *ngIf="colCheckboxes[0].check" (mouseover)="showNoticeLinks(list.id)" (mouseleave)="hideNoticeLinks(list.id)">
+                    <tr>
+                        {{ list.title }}
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <!-- <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId=='null'&&permissions.createFile" (click)="showPopup(list.id)">Create/Attach File</a>
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId" (click)="showFile(list.fileId)">{{list.fileNumber}}</a> -->
+                        <!-- <a nz-button nzType="link" class="viewlink" (click) ="showPopup(list.id)">Create File</a> -->
+                        <!-- <a nz-button nzType="link" class="viewlink" (click)="showMeeting(list.id)">View Meeting</a> -->
+                        <a nz-button nzType="link" class="viewlink" (click)="showNotice(list.meetingNoticeId)">View Meeting</a>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[1].check">
+                    {{ list.date| date: "dd-MM-yyyy" }}
+                </td>
+                <td>
+                    {{list?.committeeName}}
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list?.venue?.name}}</td>
+                <td *ngIf="colCheckboxes[3].check">
+                    <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.isJointMeeting"></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.isJointMeeting"></i>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+
+<ng-template #myMeetingTable>
+    <nz-table #filterTable nzShowPagination [nzData]="myMeetingList |  search:'title':searchMeet" class="table-all">
+        <thead (nzSortChange)="sort($event)" nzSingleSort>
+            <tr>
+                <!-- <th
+            nzShowCheckbox
+            [(nzChecked)]="checkbxParams.allDtCheckd"
+            (nzCheckedChange)="_checkAllRows($event)"
+          ></th> -->
+                <th>
+                    Serial No
+                </th>
+                <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="title">
+                    Meeting Title
+                </th>
+                <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="date">
+                    Meeting Date
+                </th>
+                <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="venue">
+                    Venue
+                </th>
+                <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="joint">
+                    Joint Meeting
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let list of filterTable.data;let i= index">
+                <!-- <td
+            nzShowCheckbox
+            [(nzChecked)]="mapOfCheckedId[list.id]"
+            (nzCheckedChange)="refreshStatus(list)"
+                ></td> -->
+                <td>
+                    {{i+1}}
+                    <!-- <tr>
+              {{
+                list.session
+              }}
+            </tr>
+            <tr *ngIf="list.viewLinks">
+              <a nz-button nzType="link">View</a>
+              <a nz-button nzType="link">Edit</a>
+            </tr> -->
+                </td>
+                <td *ngIf="colCheckboxes[0].check" (mouseover)="showMeetingLinks(list.id)" (mouseleave)="hideMeetingLinks(list.id)">
+                    <tr>
+                        {{ list.title }}
+                    </tr>
+                    <tr *ngIf="list.viewLinks">
+                        <!-- <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId=='null'&&permissions.createFile" (click)="showPopup(list.id)">Create/Attach File</a>
+                        <a nz-button nzType="link" class="viewlink" *ngIf="list.fileId" (click)="showFile(list.fileId)">{{list.fileNumber}}</a> -->
+                        <!-- <a nz-button nzType="link" class="viewlink" (click) ="showPopup(list.id)">Create File</a> -->
+                        <!-- <a nz-button nzType="link" class="viewlink" (click)="showMeeting(list.id)">View Meeting</a> -->
+                        <a nz-button nzType="link" class="viewlink" (click)="showNotice(list.meetingNoticeId)">View Meeting</a>
+                    </tr>
+                </td>
+                <td *ngIf="colCheckboxes[1].check">
+                    {{ list.date| date: "dd-MM-yyyy" }}
+                </td>
+                <td *ngIf="colCheckboxes[2].check">{{ list?.venue?.name}}</td>
+                <td *ngIf="colCheckboxes[3].check">
+                    <i nz-icon nzType="check-circle" nzTheme="outline" *ngIf="list.isJointMeeting"></i>
+                    <i nz-icon nzType="close-circle" nzTheme="outline" *ngIf="!list.isJointMeeting"></i>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+</ng-template>
+
+<nz-modal [nzFooter]="null" [(nzVisible)]="showFilePopup" (nzOnCancel)="onCancelPopup()">
+    <committee-file-popup *ngIf="committeeId" [committeeId]="committeeId" (showCreateModal)="closeModal($event)" (closePopup)="onCancelPopup()" [meetingFile]="true"></committee-file-popup>
+</nz-modal>
+
+<nz-modal [(nzVisible)]="filtrParams.rowFilter" nzTitle="" (nzOnCancel)="showFilter(null)" (nzOnOk)="_confrmFilter()">
+    <div class="padding_15">
+        <p *ngFor="let box of filtrParams.tableDto; let i = index">
+            <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)" [(ngModel)]="box.checked">{{ box.label }}</label>
+        </p>
+    </div>
+</nz-modal>
+
+<!-- meeting details popup -->
+<nz-modal [nzFooter]="null" [(nzVisible)]="showDetailsPopup" [nzClosable]="false" nzTitle="Create Meeting" nzWidth="650">
+    <div class="pading-all width-100">
+        <div class="row">
+            <div class="col-md-12">
+                <committee-meeting-details *ngIf="showDetailsPopup" [followUpMeeting]="false" (afterCreate)="afterCreateMeeting($event)">
+                </committee-meeting-details>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- end of meeting details popup -->

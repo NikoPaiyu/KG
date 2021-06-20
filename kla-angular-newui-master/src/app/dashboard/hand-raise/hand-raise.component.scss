@@ -1,0 +1,95 @@
+@import "~src/sass/utilities/variables";
+
+.ant-list-split .ant-list-item {
+  box-shadow: $outer-shadow-mla;
+  position: relative;
+  background: $mla-button-bg;
+  border-radius: $button-radius;
+  color: $mla-font-color;
+  white-space: nowrap;
+  padding: $mla-button-padng;
+  height: auto;
+  font-size: $mla-font-ml;
+  border: none;
+  margin-bottom: $margnbt-25;
+}
+
+.font-ml.ng-star-inserted {
+  font-size: 18px !important;
+}
+
+.font-ml.ng-star-inserted a {
+  color: $mla-font-color;
+}
+
+.hand_block_mla {
+  float: left;
+  width: 100%;
+  border-top: #e3ecf3 solid 1px;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.hand_mla_img {
+  width: 40px;
+  float: left;
+  margin-right: 4%;
+  overflow: hidden;
+  border-radius: 100%;
+  display: flex;
+  justify-content: center;
+  height: 40px;
+  background: #e3edf7;
+}
+
+.hand_mla_img img {
+  max-width: 100%;
+}
+
+.name_time {
+  float: left;
+  width: 81%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mla_name_hand {
+  float: left;
+  width: 100%;
+}
+
+.mla_time_hand {
+  display: flex;
+  float: left;
+  width: 100%;
+  margin-bottom: 0px;
+  font-size: 16px;
+  color: $mla-font-color;
+  justify-content: space-between;
+}
+
+.mla_name_hand h4 {
+  margin-bottom: 0px;
+  font-size: 17px !important;
+  color: $mla-font-color;
+}
+.overflw-hand {
+  height: auto !important;
+  overflow: visible !important;
+}
+.brd-block {
+  margin-bottom: 5px;
+  border-radius: 15px;
+  margin-top: 10px;
+  padding-top: 15px;
+  background: $mla-bg;
+  border: 1px solid #d9d9d9;
+}
+.ruling_party {
+  color: #be2edd;
+}
+.opposition_party {
+  color: #4834d4;
+}

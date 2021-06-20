@@ -1,0 +1,33 @@
+.list-holder {
+    width: 100%;
+    border:0px;
+  }
+.header-box {
+    background-color: rgb(218, 214, 214);
+    width: 100%;
+    min-height: 200px;
+    padding: 20px;
+}
+.text-align-center {
+    text-align: center;
+}
+.text-align-left {
+    text-align: left;
+}
+.text-align-rigt {
+    text-align: right;
+}
+.mr-top {
+    margin-top: 20px;
+}
+.mr-bottom {
+    margin-top: 20px;
+}
+.mr-right {
+    margin-right: 10px;
+}
+.header-content {
+    vertical-align: middle;
+    text-align: center;
+}
+

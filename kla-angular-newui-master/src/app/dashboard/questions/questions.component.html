@@ -1,0 +1,23 @@
+<ul class="folder-list-view d-flex flex-wrap justify-content-between">
+    <li
+    (click)="openStarredQuesTemplate()">
+    <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+    <!-- <img src="../../assets/img/03.png" alt="" /> -->
+    <span> {{"dashboard.questions.starredquestions" | translate}}</span>
+    <div>
+      <!-- <span>Date: </span
+      ><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span> -->
+    </div>
+  </li>
+
+  <li
+    (click)="openUnStarredQuesTemplate()">
+    <img src="../../assets/img/Icon-feather-folder.svg" alt="" />
+    <!-- <img src="../../assets/img/03.png" alt="" /> -->
+    <span>{{"dashboard.questions.unstarredquestions" | translate}}</span>
+    <div>
+      <!-- <span>Date: </span
+      ><span>{{ item.createdAt | date: "dd / MM / yyyy" }}</span> -->
+    </div>
+  </li>
+  </ul>

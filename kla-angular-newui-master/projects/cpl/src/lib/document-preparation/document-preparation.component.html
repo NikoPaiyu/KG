@@ -1,0 +1,849 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.dash" | translate }}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                {{ "cpl.actregistration.cpl" | translate }}
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-3">
+        <h4>{{"cpl.docpreparion.cpldocumentslist" | translate}}</h4>
+    </div>
+    <div class="col-md-9  d-flex justify-content-end">
+        <div class="col-md-3"  *ngIf="refresh">
+        <nz-select
+        [(ngModel)]="currentVersion"
+        (ngModelChange)="getVersion($event)"
+      >
+        <nz-option
+          *ngFor="
+            let versions of counter(
+                tempResponse?.latestList?.currentVersion
+            );
+            let i = index
+          "
+          [nzValue]="i + 1"
+          nzLabel="{{returnVersion()|translate}}{{i+1}}"
+        >
+        </nz-option>
+        </nz-select>
+        </div>
+        <div class="d-flex justify-content-between">
+        <button nz-button [nzType]="'default'" (click)="goBack()" class="btn btn-primary primary-button">
+            {{"cpl.docupload.back" | translate}}
+          </button>
+        <button nz-button [nzType]="'default'" [disabled]="docListTables?.length === 0"
+        (click)="printableScreen()" *ngIf="refresh && tempResponse?.latestList?.fileId"  class="secondary-button button-admin-radius button-font dark-border dark-font">
+            {{"cpl.docpreparion.printpreview" | translate}}
+        </button>
+        <button nz-button [nzType]="'primary'" class="secondary-button button-admin-radius button-font dark-border dark-font" [disabled]="docListTables?.length === 0"
+       
+        (click)="saveDocumentList()" *ngIf="!refresh" class="btn btn-primary primary-button">
+            {{"cpl.docupload.save" | translate}}
+        </button>
+        <button nz-button [nzType]="'primary'" class="secondary-button button-admin-radius button-font dark-border dark-font" 
+         (click)="showCreateModal()" [disabled]="docListTables?.length === 0"
+         *ngIf="this.listId === null || tempResponse?.latestList?.fileNumber === null">
+            {{"cpl.docpreparion.createfile" | translate}}
+        </button>
+        <nz-modal [(nzVisible)]="isCreateVisible" [nzFooter]="null" [nzClosable]="false">
+            <div class="width-100 pading-all">
+                <div class="row">
+                    <div class="col-md-12">
+                        <b>{{"cpl.docpreparion.createfile" | translate}}</b>
+                        <div class="row margnrtp-15">
+                            <div class="col-md-4">
+                                {{"cpl.docamendments.filesubject" | translate}}
+                            </div>
+                            <div class="col-md-8">
+                                <input nz-input placeholder='{{"cpl.docupload.entersubject" | translate}}' [(ngModel)]="fileSub"/>
+                            </div>
+                        </div>
+                        <div class="row margnrtp-15">
+                            <div class="col-md-4">
+                                {{"cpl.docamendments.filepriority" | translate}}
+                            </div>
+                            <div class="col-md-8">
+                                <nz-radio-group [(ngModel)]="filePriority">
+                                    <label nz-radio nzValue="URGENT">{{"cpl.docamendments.urgent" | translate}}</label>
+                                    <label nz-radio nzValue="NORMAL">{{"cpl.docamendments.normal" | translate}}</label>
+                                    <label nz-radio nzValue="ACTION_TODAY">{{"cpl.docamendments.actiontoday" | translate}}</label>
+                                    <label nz-radio nzValue="ASSEMBLY_URGENT">{{"cpl.docamendments.assemblyurgent" | translate}}</label>
+                                </nz-radio-group>
+                            </div>
+                        </div>
+                        <div class="row margnrtp-15">
+                            <div class="col-md-4">
+                                {{"cpl.docamendments.description" | translate}}
+                            </div>
+                            <div class="col-md-8">
+                                <textarea nz-input rows="2" placeholder='{{"cpl.docamendments.filedescription" | translate}}' [(ngModel)]="fileDesc"></textarea>
+                            </div>
+                        </div>
+                        <div class="row mrt-50 margnrtp-15">
+                            <div class="col-md-12 d-flex justify-content-end">
+                                <button type="button" nz-button nzType="primary" class="secondary-button button-font dark-border dark-font" (click)="handleCancel()">
+                                    {{"cpl.correspondencelist.cancel" | translate}}
+                                </button>
+                                <button type="button" nz-button nzType="primary" (click)="createFile()"
+                                    class="btn btn-primary primary-button " [disabled]="(fileSub === '') || (filePriority === null)">
+                                    {{ "cpl.docamendments.create" | translate}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nz-modal>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+    <div class="col-md-2 d-flex align-items-center whitespace">
+        {{"cpl.docupload.assembly" | translate}}
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="assemblyId" [(ngModel)]="assemblyId"
+            (ngModelChange)="getSessionForAssembly()" [nzDisabled]="refresh">
+            <nz-option *ngFor="let item of assemblyList" [nzLabel]="item.assemblyId" [nzValue]="item.id">
+            </nz-option>
+        </nz-select>
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+        {{"cpl.docupload.session" | translate}}
+        <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="sessionId" [(ngModel)]="sessionId"
+            (ngModelChange)="getDateList()" [nzDisabled]="refresh">
+            <nz-option *ngFor="let item of sessionList" [nzLabel]="item.sessionId" [nzValue]="item.id"></nz-option>
+        </nz-select>
+    </div>
+    <div class="col-md-3 d-flex align-items-center whitespace pading-all" *ngIf="!refresh">
+        {{ "cpl.dashboard.ordinance" | translate }}?&nbsp;
+    <nz-radio-group [(ngModel)]="isOrdinance" (ngModelChange)="getDoCList()">
+        <label nz-radio nzValue="YES">{{"cpl.templatecreate.yes" | translate}}</label>
+        <label nz-radio nzValue="NO">{{"cpl.templatecreate.no" | translate}}</label>
+    </nz-radio-group>
+    </div>
+    <div class="col-md-3 d-flex align-items-center whitespace pading-all" *ngIf="isOrdinance || refresh">
+        {{ "cpl.docpreparion.date" | translate }}
+        <nz-date-picker
+              #datepicker
+             [nzDisabledDate]="disabledCosDates"
+             [nzDisabled]="refresh"
+             nzFormat="dd/MM/yyyy"
+             [(ngModel)]="date"
+             (ngModelChange)="onDateChange()"
+          >
+          </nz-date-picker>
+        <!-- <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" name="date" [(ngModel)]="date"
+            (ngModelChange)="onDateChange()" [nzDisabled]="refresh">
+            <nz-option *ngFor="let dates of dateList" [nzLabel]="dates | date: 'dd-MM-yyyy'" [nzValue]="dates"></nz-option>
+        </nz-select> -->
+    </div>
+    <div class="col-md-2 d-flex align-items-center whitespace">
+        <button nz-button [nzType]="'default'" (click)="showAttachModal()" *ngIf="refresh">
+            {{"cpl.docpreparion.refreshlist" | translate}}
+        </button>
+    </div>
+</div>
+<ng-container *ngFor="let docTable of docListTables; let i =index" class="marginbtm-15">
+    <ng-container *ngIf="!docTable.isEmpty">
+     <div class="row margntp-25">
+        <div class="col-md-6" *ngIf="docTable.type !== 'ACT' && docListTables[i]?.minister !== docListTables[i-1]?.minister">
+            {{docTable.serialNumber}}.&nbsp;{{"cpl.docpreparion.minister" | translate}}: <b>{{ translate.getDefaultLang()=='mal'?(docTable.ministerNameMalayam + '(' + docTable.portfolioNameMalayalam + ')'):(docTable.minister + '(' + docTable.portfolioName + ')')}}</b>
+        </div>
+        <div class="col-md-6" *ngIf="docTable.type !== 'ACT' && docListTables[i]?.minister === docListTables[i-1]?.minister">
+        </div>
+        <div class="col-md-6" *ngIf="docTable.type === 'ACT'">
+            {{docTable.serialNumber}}.&nbsp;<b>{{"cpl.docpreparion.secretary" | translate}}</b>
+            <!-- : <b>{{ docTable.minister }}</b> -->
+        </div>
+        <div class="col-md-6 t-r">
+            {{"cpl.actregistration.doctype" | translate }}: <b>{{ docTable.type }}</b>
+        </div>
+     </div>
+     <nz-table #docListTable [nzData]="docTable.documentMetaDatas" class="table-all marginbtm-15"
+     [nzShowPagination]="false">
+        <thead nzSingleSort>
+            <tr>
+                <!-- <th nzShowSort nzSortKey="nameOfInst" *ngIf="docTable.type !== 'REPORT'">
+                    Document Number
+                </th> -->
+                <th>{{"cpl.docamendments.slno" | translate }}</th>
+                <th *ngIf="docTable.type === 'ORDINANCE'">
+                    {{"cpl.fileworkflow.ordinanceyear" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ORDINANCE'">
+                    {{"cpl.docpreparion.ordinanceno" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'SRO'">
+                    {{"cpl.docamendments.sronumber" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ACT'">
+                    {{"cpl.actregistration.actno" | translate}}
+                </th>
+              
+                <th nzShowSort *ngIf="docTable.type === 'REPORT'" nzSortKey="nameOfInst">
+                    {{"cpl.filelistflow.nameofinstitution" | translate }}
+                </th>
+                <th nzShowSort nzSortKey="nameOfInst" *ngIf="docTable.type == 'REPORT'">
+                    {{"cpl.fileworkflow.reportyear" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ACT'" class="act-year">
+                    {{ "cpl.actregistration.actyear"| translate}}
+                </th>
+                <!-- <th nzShowSort *ngIf="docTable.type  !== 'REPORT'" nzSortKey="nameOfInst">
+                    Document Name
+                </th> -->
+                <th *ngIf="docTable.type === 'SRO'">
+                {{"cpl.docpreparion.notificationnumber" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ORDINANCE'">
+                    {{ "cpl.docpreparion.ordinancename" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ACT'">
+                    {{"cpl.actregistration.actname" | translate}}
+                </th>
+                <!-- <th nzShowSort nzSortKey="docType" *ngIf="docTable.type === 'SRO'|| docTable.type ==='SRO_AMENDMENT'
+                ">
+                    Days to be laid in sadha
+                </th> -->
+                <!-- <th nzShowSort nzSortKey="nameOfInst" *ngIf="docTable.type == 'REPORT'">
+                    {{"cpl.docpreparion.reportname" | translate}}
+                </th>
+                <th nzShowSort nzSortKey="nameOfInst" *ngIf="docTable.type == 'REPORT'">
+                    {{"cpl.fileworkflow.reporttype" | translate}}
+                </th> -->
+                <!-- <th   nzShowSort nzSortKey="nameOfInst" *ngIf="docTable.type !== 'REPORT'">
+                    Document Date
+                    </th> -->
+                    
+                    <th *ngIf="docTable.type === 'SRO'">
+                        {{ "cpl.cplview.Godate" | translate }}
+                    </th>
+                    <th nzShowSort nzSortKey="subType" *ngIf="docTable.type == 'REPORT'">
+                        {{"cpl.fileworkflow.reportSubtype" | translate}}
+                    </th>
+                   
+                   
+                    <!-- <th  *ngIf="docTable.type === 'ORDINANCE'">
+                        Statement by Minister
+                    </th> --> 
+                <th *ngIf="docTable.type !== 'ORDINANCE' && docTable.type !=='ACT'">
+                 {{"cpl.docpreparion.withdelaystatement" | translate}}
+                </th>
+                <th *ngIf="docTable.type === 'ORDINANCE'">
+                    {{"cpl.docpreparion.StatementasperRule75(2)" | translate}}
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let document of docListTable.data; let i = index">
+            <!-- *ngIf="!docTable.type.split('_').includes('AMENDMENT'); else amendments" -->
+            <tr>
+                <ng-container *ngIf="!document.deleted">
+                <!-- <td class="break-word" *ngIf="docTable.type !== 'REPORT'">
+                        {{ document.typeNumber }}
+                        <tr>
+                            <a  href="javascript:;" (click)="viewDocument(document.id)">View</a> |
+                            <a  href="javascript:;" nz-popconfirm
+                            nzPopconfirmTitle="Are you sure you want to delete this document?" (nzOnConfirm)="removeDocument(document.id); document.deleted=true"
+                            (nzOnCancel)="cancel()">Delete</a>
+                        </tr>
+                </td> --><td>
+                    {{i+1}}
+                </td>
+                <td class="break-word" *ngIf="docTable.type === 'ORDINANCE'">
+                   
+                    {{ document.typeYear }}
+                </td>
+                <td class="break-word" *ngIf="docTable.type === 'ORDINANCE'">
+                    {{ document.typeNumber }}
+                    <tr>
+                        <a  href="javascript:;" (click)="viewDocument(document.id)">{{ "cpl.docpreparion.view" | translate}}</a> |
+                        <a  href="javascript:;" nz-popconfirm
+                        nzPopconfirmTitle='{{"business-dashboard.cpl.documents.wanttodeletedocument" | translate}}' (nzOnConfirm)="removeDocument(document.id); document.deleted=true"
+                        (nzOnCancel)="cancel()">{{"cpl.docpreparion.delete" | translate}}</a>
+                    </tr>
+            </td>
+                <td class="break-word" *ngIf="docTable.type === 'SRO' || docTable.type === 'ACT'">
+                    {{ document.typeNumber }}
+                    <tr>
+                        <a  href="javascript:;" (click)="viewDocument(document.id)">{{ "cpl.docpreparion.view" | translate}}</a> |
+                        <a  href="javascript:;" nz-popconfirm
+                        nzPopconfirmTitle='{{"business-dashboard.cpl.documents.wanttodeletedocument" | translate}}' (nzOnConfirm)="removeDocument(document.id); document.deleted=true"
+                        (nzOnCancel)="cancel()">{{"cpl.docpreparion.delete" | translate}}</a>
+                    </tr>
+            </td>
+           
+                <td *ngIf="docTable.type === 'REPORT'" class="break-word">
+                    
+                        {{ document.nameOfInstitution }}
+                        <tr>
+                            <a  href="javascript:;" (click)="viewDocument(document.id)">{{ "cpl.docpreparion.view" | translate}}</a> |
+                            <a  href="javascript:;" nz-popconfirm
+                            nzPopconfirmTitle='{{"business-dashboard.cpl.documents.wanttodeletedocument" | translate}}' (nzOnConfirm)="removeDocument(document.id); document.deleted=true"
+                            (nzOnCancel)="cancel()">{{"cpl.docpreparion.delete" | translate}}</a>
+                        </tr>
+                </td>
+                <td class="break-word" *ngIf="docTable.type === 'REPORT' || docTable.type === 'ACT'">
+                   
+                    {{ document.typeYear }}
+                </td>
+                    <td class="break-word" *ngIf="docTable.type !== 'REPORT' &&  docTable.type !== 'SRO'">
+                        {{ document.typeName }}
+                        
+                    </td>
+                    <td class="break-word" *ngIf="docTable.type === 'SRO'">
+                        {{ document.goNumber }}
+                        
+                    </td>
+
+                    <!-- <td class="break-word" *ngIf="docTable.type === 'SRO' || docTable.type ==='SRO_AMENDMENT'">
+                        {{ document.numberOfDaysInSabha }}
+                    </td> -->
+                    <!-- <td class="break-word" *ngIf="docTable.type === 'REPORT' ">
+                   
+                        {{ document.typeName }}
+                    </td> -->
+                <td class="break-word" *ngIf="docTable.type === 'REPORT'">
+                   
+                    {{ document.subType }}
+                </td>
+                <td class="break-word" *ngIf="docTable.type === 'SRO'">
+                    {{ document.goDate | date: 'dd-MM-yyyy'}}
+                </td>
+                <!-- <td class="break-word" *ngIf="docTable.type === 'REPORT'">
+                   
+                    {{ document.typeDate | date: 'dd-MM-yyyy' }}
+                </td> -->
+               
+               
+                <!-- <td *ngIf="docTable.type === 'ORDINANCE'">
+                    <nz-tag *ngIf="docTable.type === 'ORDINANCE'" [nzColor]="document.isStatementAsPerRule ? 'green' : 'red'">{{ document.isStatementAsPerRule? 'Yes' : 'No' }}</nz-tag>
+                </td> -->
+                <td *ngIf="docTable.type === 'SRO'">
+                    <nz-tag *ngIf="docTable.type === 'SRO'" [nzColor]="document.isDelayed ? 'green' : 'red'">
+                        {{ document.isDelayed ?  ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+                </td>                <!-- <td *ngIf="docTable.type === 'ORDINANCE'">
+                  Yes
+                </td> -->
+                <td *ngIf="docTable.type === 'ORDINANCE'">
+                    <nz-tag *ngIf="docTable.type === 'ORDINANCE'" [nzColor]="document.isStatementAsPerRule ? 'green' : 'red'">
+                        {{ document.isStatementAsPerRule ?  ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+                </td> 
+                 
+                <td *ngIf="docTable.type !== 'SRO' && docTable.type !== 'ORDINANCE' && docTable.type !=='ACT'">
+                    <!-- <nz-tag> {{"cpl.docpreparion.notapplicable" | translate}}
+                    </nz-tag> -->
+                    <nz-tag *ngIf="docTable.type !== 'SRO' && docTable.type !== 'ORDINANCE' && docTable.type !=='ACT'" [nzColor]="document.isDelayed ? 'green' : 'red'">
+                        {{ document.isDelayed ?  ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+                        
+                </td>
+            </ng-container>
+            </tr>
+                <!-- <ng-template #amendments>
+                <tr *ngFor="let amendment of document.cplAmendmets">
+                    <ng-container *ngIf="!amendment.deleted">
+                    <td class="break-word" *ngIf="docTable.type !== 'REPORT_AMENDMENT'">
+                            {{ amendment.typeNumber }}
+                            <tr>
+                                <a  href="javascript:;" (click)="viewDocument(document.id)">View</a> |
+                                <a  href="javascript:;" nz-popconfirm
+                                nzPopconfirmTitle="Are you sure you want to delete this document?" (nzOnConfirm)="removeDocument(amendment.id); amendment.deleted=true"
+                                (nzOnCancel)="cancel()">Delete</a>
+                            </tr>
+                    </td>
+                    <td *ngIf="docTable.type === 'REPORT_AMENDMENT'" class="break-word">
+                        
+                            {{ document.nameOfInstitution }}
+                            <tr>
+                                <a  href="javascript:;" (click)="viewDocument(document.id)">View</a> |
+                                <a  href="javascript:;" nz-popconfirm
+                                nzPopconfirmTitle="Are you sure you want to delete this document?" (nzOnConfirm)="removeDocument(amendment.id); amendment.deleted=true"
+                                (nzOnCancel)="cancel()">Delete</a>
+                            </tr>
+                    </td>
+                        <td *ngIf="docTable.type !== 'REPORT_AMENDMENT'" class="break-word">
+                            {{ amendment.typeName }}
+                            
+                        </td>
+    
+                        <td class="break-word">
+                            {{ document.type }}
+                        </td>
+            
+                    <td  *ngIf="docTable.type === 'REPORT_AMENDMENT'" class="break-word">
+                       
+                        {{ document.subType }}
+                    </td>
+                    <td class="break-word">
+                        {{ document.createdDate | date: 'yyyy'}}
+                    </td>
+                    <td class="break-word">
+                        <nz-tag [nzColor]="document.isDelayed ? 'green' : 'red'"> {{ document.isDelayed ? 'Yes' : 'No'}}
+                        </nz-tag>
+                    </td>
+                    </ng-container>
+                </tr>
+            </ng-template> -->
+          </ng-container>
+        </tbody>
+     </nz-table>
+    </ng-container>
+</ng-container>
+
+<nz-modal [(nzVisible)]="isRefreshVisible" [nzFooter]="null" [nzClosable]="false" nzWidth="1000">
+    <div class="width-100 pading-all">
+        <div class="row" *ngIf="refreshList?.length > 0">
+            <div class="col-md-12">
+                <ng-container *ngFor="let list of refreshList" class="marginbtm-15">
+                     <div class="row margntp-25">
+                        <div class="col-md-6">
+                            {{"cpl.actregistration.doctype" | translate}}: <b>{{ list.document.type }}</b>
+                        </div>
+                        <div class="col-md-6 t-r" *ngIf="list.document.type !== 'ACT'">
+                            {{"cpl.docpreparion.minister" | translate}}: <b>{{ translate.getDefaultLang()=='mal'?(list.document.ministerNameMalayam + '(' + list.document.portfolioNameMalayalam + ')'):(list.document.minister + '(' + list.document.portfolioName + ')')}}</b>
+                        </div>
+                        <div class="col-md-6 t-r" *ngIf="list.document.type === 'ACT'">
+                            {{"cpl.docpreparion.secretary" | translate}}
+                            <!-- : <b>{{ list.document.minister }}</b> -->
+                        </div>
+                     </div>
+                     <nz-table #docListTable [nzData]="list.document.documentMetaDatas" class="table-all marginbtm-15"
+                     [nzShowPagination]="false">
+                        <thead nzSingleSort>
+                            <tr>
+                                <!-- [(nzChecked)]="checked"
+                                [nzIndeterminate]="indeterminate"
+                                (nzCheckedChange)="_checkAllRows($event)" -->
+                                <th nzShowCheckbox>    </th>
+                                <th>{{"cpl.docamendments.slno" | translate}}</th>
+                               
+                        
+                                <th nzShowSort nzSortKey="nameOfInst" *ngIf="list.document.type !== 'REPORT' && list.document.type !== 'SRO'">
+                                    {{ "cpl.documents.documentnumber" | translate}}
+                                </th>
+                                <th nzShowSort nzSortKey="nameOfInst" *ngIf="list.document.type === 'SRO'">
+                                    {{"cpl.docamendments.sronumber" | translate}}
+                                </th>
+                                <th nzShowSort *ngIf="list.document.type === 'REPORT'" nzSortKey="nameOfInst">
+                                   {{"cpl.filelistflow.nameofinstitution" | translate }}
+                                </th>
+                                
+                                <th nzShowSort *ngIf="list.document.type  !== 'REPORT'" nzSortKey="nameOfInst">
+                                    {{"cpl.correspondencelist.documentname" | translate}}
+                                </th>
+                                <!-- <th nzShowSort nzSortKey="docType"*ngIf="list.document.type  === 'SRO' || list.document.type  === 'SRO_AMENDMENT'" >
+                                    Days to be laid in sadha
+                                </th> -->
+
+                                    <th nzShowSort nzSortKey="nameOfInst" *ngIf="list.document.type == 'REPORT'">
+                                        {{"cpl.docpreparion.reportname" | translate}}
+                                    </th>
+                                <th nzShowSort nzSortKey="nameOfInst" *ngIf="list.document.type == 'REPORT'">
+                                    {{"cpl.fileworkflow.docsubtype" | translate}}
+                                </th>
+                                <th   nzShowSort nzSortKey="year"  *ngIf="list.document.type !== 'SRO'">
+                                    {{"cpl.fileworkflow.documentyear" | translate}}
+                                    </th>
+                                <th>
+                                    {{ "cpl.docpreparion.currentstatus" | translate}}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <ng-container *ngFor="let document of docListTable.data; let i= index">
+                            <!-- *ngIf="!list.document.type.split('_').includes('AMENDMENT'); else amendments" -->
+                            <tr>
+                                <td nzShowCheckbox [nzChecked]="setOfCheckedId.has(document.id)"
+                                (nzCheckedChange)="onItemChecked(document.id, $event)"> </td>
+                                <td>{{i+1}}</td>
+
+                           
+                                <td class="break-word" *ngIf="list.document.type !== 'REPORT'">
+                                        {{ document.typeNumber }}
+                                </td>
+                                <td  class="break-word" *ngIf="list.document.type === 'REPORT'">
+                                    
+                                        {{ document.nameOfInstitution }}
+                                </td>
+                                    <td  class="break-word" *ngIf="list.document.type !== 'REPORT'">
+                                            {{ document.typeName }}
+                                    </td>
+                                    <!-- <td class="break-word" *ngIf="list.document.type === 'SRO'">
+                                        {{ document.numberOfDaysInSabha }}
+                                    </td> -->
+                                    <td class="break-word" *ngIf="list.document.type === 'REPORT'">
+                               
+                                        {{ document.typeName }}
+                                    </td>
+                                <td   class="break-word" *ngIf="list.document.type === 'REPORT'">
+                                   
+                                    {{ document.subType }}
+                                </td>
+            
+                                <td  class="break-word" *ngIf="list.document.type !== 'SRO'">
+                                    {{ document.typeYear | date: 'yyyy'}}
+                                </td>
+                                <td  class="break-word">
+                                    <nz-tag>  {{ list.currentStatus}}
+                                    </nz-tag>
+                                </td>
+                            </tr>
+                          </ng-container>
+                        </tbody>
+                     </nz-table>
+                    </ng-container>
+            </div>
+        </div>
+        <div class="row" *ngIf="refreshList?.length === 0">
+            <div class="col-md-12 align-center">
+                <nz-empty></nz-empty>
+            </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+                <button type="button" nz-button nzType="default" (click)="handleCancel()">
+                    {{ "cpl.correspondencelist.cancel" | translate}}
+                </button>
+                <button type="button" [disabled]="setOfCheckedId.size === 0"
+                 nz-button nzType="primary" (click)="saveDocumentList()" class="margnlft-15">
+                    {{"cpl.docpreparion.addtolist" | translate}}
+                </button>
+            </div>
+        </div>
+    </div>
+</nz-modal>
+<!-- nzOkText='{{"cpl.fileworkflow.print"|translate}}'
+nzCancelText='{{"cpl.correspondencelist.cancel"| translate}}'
+(nzOnOk)="openPDF()" -->
+<nz-modal
+    [(nzVisible)]="printable"
+    nzTitle='{{"cpl.documents.documents" | translate}}'
+    (nzOnCancel)="cancelPrint()"
+    nzWidth="800"
+    [nzFooter]="null"
+  >
+  <div class="width-100 pading-all">
+    <div class="row margnrtp-15 margnrgt-15">
+      <div class="col-md-12 align-items-center">
+        <ngx-doc-viewer
+          [url]="listPdfUrl"
+          viewer="url"
+          style="width: 100%; height: 500px;"
+        ></ngx-doc-viewer>
+      </div>
+      </div>
+  </div>
+<!-- <div id="htmlData" #htmlData>
+ <div class="width-100 pd20">
+    <table id="{{ 'head1'}}" class="table-all">
+        <tr class="t-r">
+            <th class="t-r">
+              {{ "cpl.docpreparion.list" | translate }}
+            </th>
+        </tr>
+        <tr class="center">
+          <th class="center">
+           {{assembly}}{{ "dashboard.keralalegislativeassembly"| translate}}
+          </th>
+          </tr>
+          <tr class="center">
+          <th class="center">
+            {{session}}{{ "dashboard.session"|translate}}
+        </tr>
+        <tr class="center" *ngIf="translate.getDefaultLang()==='mal'">
+          <th class="center">{{date | date : 'dd-MM-yyyy' }} -ൽ കാര്യവിവരപ്പട്ടികയിലെ, 
+            ഇനമായി സഭയുടെ മേശപ്പുറത്തുവയ്ക്കുന്ന കടലാസുകളുടെ പട്ടിക</th>
+        </tr>
+        <tr class="center" *ngIf="translate.getDefaultLang()!=='mal'">
+            <th class="center">List of papers to be laid in the sabha, the item on the&nbsp;{{date | date : 'dd-MM-yyyy' }}
+                &nbsp;List of Business
+            </th>
+          </tr>
+        <tbody></tbody>
+      </table>
+ </div>
+  
+
+  <div   class="table_blkp" *ngFor="let table of docListTables; let i = index">
+    <table  id="{{ 'head_' + i }}" class="table-all">
+        <tr class="mlatable">
+          <th class="mlatable clrth t-l w70" *ngIf="table.type !== 'ACT' && docListTables[i]?.minister !== docListTables[i-1]?.minister">
+            {{table.serialNumber}}.&nbsp;{{"cpl.docpreparion.minister" | translate}} : 
+            {{ translate.getDefaultLang()=='mal'?(table.ministerNameMalayam + '(' + table.portfolioNameMalayalam + ')'):(table.minister + '(' + table.portfolioName + ')')}}
+          </th>
+          <th class="mlatable clrth t-l w70" *ngIf="table.type !== 'ACT' && docListTables[i]?.minister === docListTables[i-1]?.minister">
+          </th>
+          <th class="mlatable clrth t-l w70"  *ngIf="table.type === 'ACT'">
+            {{table.serialNumber}}.&nbsp;{{"cpl.docpreparion.secretary" | translate}}
+        </th>
+          <th class="mlatable clrth t-r w30">
+            {{"cpl.actregistration.doctype" | translate }}: {{ table.type }}
+           
+          </th>
+          
+        </tr>
+      <tbody>
+        
+        
+      </tbody>
+    </table>
+  
+    <table  id="{{ 'table_' + i }}" class="table-all mlatablefull">
+       
+        <thead>
+          <tr class="mlatable">
+              <th>{{"cpl.docamendments.slno" | translate}}</th>
+              <th *ngIf="table.type === 'ORDINANCE'">
+                {{"cpl.fileworkflow.ordinanceyear" | translate}}
+                </th>
+                 <th *ngIf="table.type === 'ORDINANCE'">
+                    {{"cpl.docpreparion.ordinanceno" | translate }}
+                </th>
+            <th *ngIf="table.type === 'SRO'">
+                {{"cpl.docamendments.sronumber" | translate}}
+            </th>
+            <th *ngIf="table.type === 'ACT'">
+                {{"cpl.actregistration.actno" | translate}}
+            </th>
+           
+            <th *ngIf="table.type === 'ORDINANCE'">
+                {{"cpl.docpreparion.ordinancedate" | translate}}
+            </th>
+           
+            <th *ngIf="table.type === 'REPORT'">
+                {{"cpl.docpreparion.institutionName" | translate}}
+            </th>
+            <th *ngIf="table.type == 'REPORT'">
+                {{"cpl.fileworkflow.reportyear" | translate}}
+             </th>
+            <th  *ngIf="table.type  === 'SRO' || table.type === ' SRO_AMENDMENT'">
+                {{"cpl.docpreparion.notificationnumber" | translate}}
+            </th>
+            <th *ngIf="table.type == 'ACT'">
+                {{"cpl.actregistration.actyear" | translate}}
+            </th>
+            <th  *ngIf="table.type  === 'ORDINANCE'">
+                {{"cpl.docpreparion.ordinancename" | translate}}
+            </th>
+                <th *ngIf="table.type === 'SRO'">
+                    {{"cpl.cplview.Godate" | translate}}
+                    </th>
+                   
+                <th *ngIf="table.type == 'REPORT'">
+                    {{"cpl.docpreparion.reportdate" | translate}}
+                </th>
+               
+               
+                <th  *ngIf="table.type  === 'ACT'">
+                    {{"cpl.actregistration.actname" | translate}}
+                </th>
+            <th  *ngIf="table.type !== 'ORDINANCE' && table.type !=='ACT'"> 
+                {{"cpl.docpreparion.withdelaystatement" | translate}}
+            </th>
+            <th *ngIf="table.type === 'ORDINANCE'">
+               {{"cpl.docpreparion.StatementasperRule75(2)" | translate}}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+            
+          
+          <tr  *ngFor="let document of table.documentMetaDatas; let i = index" class="mlatable">
+    <td>{{i+1}}</td>
+    <td class="break-word" *ngIf="table.type === 'ORDINANCE'">
+        {{ document.typeDate | date: 'yyyy'}}
+    </td>
+    
+            <td class="break-word" *ngIf="table.type === 'SRO' || table.type === 'ACT' || table.type === 'ORDINANCE'">
+                {{ document.typeNumber }}
+        </td>
+    <td *ngIf="table.type === 'ORDINANCE'" class="break-word">
+            
+        {{ document.date |  date: 'dd-MM-yyyy' }}
+    
+</td>
+
+        <td *ngIf="table.type === 'REPORT'" class="break-word">
+            
+                {{ document.nameOfInstitution }}
+            
+        </td>
+        <td class="break-word" *ngIf="table.type === 'REPORT' || table.type === 'ACT'">
+           
+            {{ document.typeYear  }}
+        </td>
+            <td class="break-word" *ngIf="table.type !== 'REPORT' && table.type !== 'SRO'">
+                {{ document.typeName }}
+                
+            </td>
+            <td class="break-word" *ngIf="table.type === 'SRO'">
+                {{ document.goNumber }}
+                
+            </td>
+        <td class="break-word" *ngIf="table.type === 'SRO'">
+            {{ document.goDate | date: 'dd-MM-yyyy'}}
+        </td>
+       
+        <td class="break-word" *ngIf="table.type === 'REPORT'">
+           
+            {{ document.typeDate | date: 'dd-MM-yyyy' }}
+        </td>
+        
+        <td *ngIf="table.type === 'SRO'">
+            <nz-tag *ngIf="table.type === 'SRO'" [nzColor]="document.isDelayed ? 'green' : 'red'">{{ document.isDelayed ? ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+        </td>
+        <td *ngIf="table.type === 'REPORT'">
+                <nz-tag *ngIf="table.type === 'REPORT'" [nzColor]="document.isDelayed ? 'green' : 'red'">{{ document.isDelayed ? ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+        </td>
+            <td *ngIf="table.type === 'ORDINANCE'">
+                <nz-tag *ngIf="table.type === 'ORDINANCE'" [nzColor]="document.isStatementAsPerRule ? 'green' : 'red'">
+                    {{ document.isStatementAsPerRule ?  ("cpl.templatecreate.yes"|translate) : ("cpl.templatecreate.no"|translate)}}</nz-tag>
+        </td>
+          </tr> 
+        </tbody>
+      </table>
+      <div class="divdr">
+        <nz-divider></nz-divider>
+      </div>
+</div>
+<table id="{{ 'foot1' }}" class="table-all">
+    <tr class="center">
+        <th class="mlatable clrth t-l w70">
+          <li>
+            {{ translate.getDefaultLang()=='mal'?'കേരള നിയമസഭാ സെക്രട്ടേറിയറ്റ്':'Kerala Legislative Assembly' }}
+          </li>
+        </th>
+        <th class="mlatable clrth t-r w30">
+          <li>
+            {{ translate.getDefaultLang()=='mal'?'എസ്.വി. ഉണ്ണിക്കൃഷ്ണൻ നായർ':'S.V Unnikrishnan Nair' }}
+          </li>
+        </th>
+      </tr>
+      <tr class="center">
+        <th class="mlatable clrth t-l w70">
+          <li>
+            {{ translate.getDefaultLang()=='mal'?'തിരുവനന്തപുരം':'Thiruvananthapuram' }}
+          </li>
+        </th>
+        <th class="mlatable clrth t-r w30">
+          <li>
+            {{ translate.getDefaultLang()=='mal'?'സെക്രട്ടറി':'Secretary' }}
+          </li>
+        </th>
+      </tr>
+  </table>
+</div> -->
+  </nz-modal> 
+  <!-- <div id="htmlData" #htmlData>
+
+    <div   class="table_blkp" *ngFor="let table of docListTables">
+  
+      <table  id="data" class="table-all">
+          <tr class="mlatable">
+            <th class="mlatable clrth">
+                Minister : {{table.minister}}
+            </th>
+            <th class="mlatable clrth t-r">
+                Document Type: {{ table.type }}
+             
+            </th>
+            
+          </tr>
+        <tbody>
+          
+          
+        </tbody>
+      </table>
+    
+      <table  id="mladata" class="table-all mlatablefull">
+         
+          <thead>
+            <tr class="mlatable">
+              <th *ngIf="table.type !== 'REPORT'">
+                  Document Number
+              </th>
+              <th *ngIf="table.type === 'REPORT'">
+                  Institution Name
+              </th>
+              
+              <th  *ngIf="table.type  !== 'REPORT'">
+                  Document Name
+              </th>
+              <th *ngIf="table.type  === 'SRO' || table.type  === 'SRO_AMENDMENT'">
+                  Days to be laid in sabha
+              </th>
+              <th *ngIf="table.type === 'ORDINANCE'">
+                  Statement as per
+                  </th>
+                  <th *ngIf="table.type == 'REPORT'">
+                      Report Name
+                  </th>
+              <th *ngIf="table.type == 'REPORT'">
+                  Document Sub type
+              </th>
+              
+              <th>
+                  Document date
+                  </th>
+              <th>
+                  With Delay Statement / Statement By Minister
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+              
+            
+            <tr  *ngFor="let document of table.documentMetaDatas" class="mlatable"> -->
+              <!-- <td class="mlatable"> {{document.nameOfInstitution}}</td>
+              <td class="mlatable">  {{ document.type }}</td>
+              <td class="mlatable">{{ document.createdDate | date: 'yyyy'}}</td>
+              <td class="mlatable">{{ document.status }}</td> -->
+      
+              <!-- <td class="break-word" *ngIf="table.type !== 'REPORT'">
+                  {{ document.typeNumber }}
+          </td>
+          <td *ngIf="table.type === 'REPORT'" class="break-word">
+              
+                  {{ document.nameOfInstitution }}
+              
+          </td>
+              <td class="break-word" *ngIf="table.type !== 'REPORT'">
+                  {{ document.typeName }}
+                  
+              </td>
+              <td class="break-word" *ngIf="table.type === 'SRO' || table.type  === 'SRO_AMENDMENT'">
+                  {{ document.numberOfDaysInSabha }}
+              </td>
+              <td class="break-word" *ngIf="table.type === 'REPORT'">
+             
+                  {{ document.typeName }}
+              </td>
+      
+          <td class="break-word" *ngIf="table.type === 'REPORT'">
+             
+              {{ document.subType }}
+          </td>
+          <td class="break-word">
+              {{ document.typeDate | date: 'dd-MM-yyyy'}}
+          </td>
+          <td *ngIf="table.type === 'SRO'">
+              <nz-tag [nzColor]="document.isDelayed ? 'green' : 'red'"> {{ document.isDelayed ? 'Yes' : 'No'}}
+              </nz-tag>
+          </td>
+          <td *ngIf="table.type !== 'SRO'">
+              <nz-tag> NOT_APPLICABLE
+              </nz-tag>
+          </td>
+            </tr> 
+          </tbody>
+        </table> -->
+  <!-- </div>
+  </div> -->

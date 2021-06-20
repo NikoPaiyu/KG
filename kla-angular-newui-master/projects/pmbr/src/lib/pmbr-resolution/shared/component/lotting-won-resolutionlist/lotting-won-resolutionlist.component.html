@@ -1,0 +1,46 @@
+<div class="row">
+    <div class='col-md-12 d-flex justify-content-end'>
+        <div class='col-md-3'>
+            <input nz-input (input)='tableFilter($event.target.value)'
+                placeholder="{{'business-dashboard.question.questionlist.inputsearch'|translate}}" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 mrgt10 ">
+        <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="ownNoticesList" nzSingleSort>
+            <thead>
+                <tr>
+                    <th>{{'business-dashboard.question.report.slno'|translate}}</th>
+                    <th>{{"bussiness-dashboard.user-managemnet.biometric-enrollment.membername"|translate}}</th>
+                    <th>{{"presentationdate"|translate}}</th>
+                    <th>{{"noticesubmisstiondate"|translate}}</th>
+                    <th>{{"dateoflotting"|translate}}</th>
+                    <th>{{"bussiness-dashboard.user-managemnet.biometric-enrollment.action"|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of filterTable.data let i=index">
+                    <td>{{i+1}}</td>
+                    <td>{{ data.memberName }}</td>
+                    <td>{{ data.presentationDate }}</td>
+                    <td>{{ data.noticeSubmissionDate }}</td>
+                    <td>{{ data.lottingDate }}</td>
+                    <td> <button *ngIf='data.resolutionId==0||!data.resolutionId' nz-button nzType="primary"
+                            (click)='editResolutionMetaData(data.id)'>{{"create-resolution"|translate}}</button>
+                        <button *ngIf='data.resolutionId>0' nz-button nzType="primary"
+                            (click)='viewResolutionContent(data.resolutionId)'>{{"view-resolution"|translate}}</button>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+
+<nz-modal *ngIf="showHideResolutionMetaData" [(nzVisible)]="showHideResolutionMetaData" (nzOnCancel)="hidePopUp()"
+    [nzMaskClosable]="false" nzTitle='{{ "create-resolution" | translate }}' nzClosable="true" [nzFooter]="null"
+    nzWidth="600">
+    <pmbr-create-resolution-metadata [resolutionId]="null" [resolutionLottingResultId]='resolutionLottingResultId'
+        (resolutionCreateOrCancel)="createOrCancelResolutionMetaData($event)">
+    </pmbr-create-resolution-metadata>
+</nz-modal>

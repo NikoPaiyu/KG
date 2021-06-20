@@ -1,0 +1,114 @@
+.justify-content-space-between {
+    justify-content: space-between;
+  }
+  .text-align-right {
+    text-align: right;
+  }
+  h4 {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  
+  .input-group {
+    margin-bottom: 15px;
+  }
+  
+  .mrgL6 {
+    margin-left: 6px;
+  }
+  .mrgL10 {
+    margin-left: 10px;
+  }
+  .mrgR10 {
+    margin-right: 10px;
+  }
+  .mrgT10 {
+    margin-top: 10px;
+  }
+  
+  .mrgT20 {
+    margin-top: 20px;
+  }
+  .ant-row {
+    margin-bottom: 15px;
+  }
+  .disablediv {
+    pointer-events: none;
+    opacity: 0.4;
+  }
+  
+  .btn-style {
+    line-height: 1.5;
+    position: relative;
+    display: inline-block;
+    font-weight: 400;
+    white-space: nowrap;
+    text-align: center;
+    background-image: none;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    height: 32px;
+    padding: 0 15px;
+    font-size: 14px;
+    border-radius: 4px;
+    color: rgba(0, 0, 0, 0.65);
+    background-color: #fff;
+    border-color: #d9d9d9;
+  }
+  .options_template {
+    background-color: #f9f9f9;
+    width: 100%;
+    max-height: 500px;
+    overflow: auto;
+    padding: 15px;
+    h3 {
+      width: 100%;
+      float: left;
+      font-size: 17px;
+      font-weight: 600;
+    }
+    ul {
+      float: left;
+      width: 100%;
+      li {
+        width: 100%;
+        float: left;
+        list-style: none;
+        margin-bottom: 5px;
+        button {
+          line-height: 1.5;
+          position: relative;
+          display: inline-block;
+          white-space: nowrap;
+          text-align: center;
+          background-image: none;
+          border: 1px solid transparent;
+          box-shadow: 0 2px 0 rgba(0, 0, 0, 0.015);
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          touch-action: manipulation;
+          height: 32px;
+          padding: 0 15px;
+          font-size: 14px;
+          border-radius: 4px;
+          color: rgba(0, 0, 0, 0.65);
+          background: none;
+          border-color: #ccc;
+        }
+      }
+    }
+  }
+  .padng-lft {
+    padding-left: 20px;
+  }

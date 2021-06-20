@@ -1,0 +1,218 @@
+<div class="row">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        {{"business-dashboard.viewbullettin.dashboard" | translate}}
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        <b> {{"business-dashboard.bullettin-details.bulletinfileinfo" | translate}} </b>
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">
+      {{ fileDetails?.fileNumber }}
+    </h2>
+  </div>
+  <div class="col-md-6 d-flex justify-content-flex-end">
+    <button
+      class="ml-6"
+      nz-button
+      nzType="primary"
+      nz-popconfirm
+      nzPopconfirmTitle='{{"business-dashboard.bullettin-details.areusureuwantpull" | translate}}'
+      (nzOnConfirm)="showPullpopup()"
+      (nzOnCancel)="cancel()"
+      *ngIf="
+        canPull &&
+        fileDetails?.status !== 'APPROVED' &&
+        pullGroup !== currentUserActionRow.userId
+      "
+    >
+      {{"cpl.fileworkflow.pull" | translate}}
+    </button>
+    <ng-container
+      *ngIf="currentUserActionRow && pullGroup == currentUserActionRow.userId"
+    >
+      <div>
+        <nz-select
+          style="width: 290px;"
+          placeholder="Select to forward"
+          nzAllowClear
+          [(ngModel)]="userId"
+          *ngIf="workFlowActionUsers.length > 0"
+        >
+          <ng-container *ngFor="let role of workFlowActionUsers">
+            <nz-option
+              nzValue="{{
+                role.userId + '-' + role.actionRow + '-' + role.actionGroup
+              }}"
+              nzLabel="{{ role.fullName + ' - ' + role.actionName }}"
+            ></nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.question.areyousureyouwantto" | translate}}  {{ getCurrentAction() }} ?'
+        (nzOnConfirm)="forwardFile(fileId)"
+        (nzOnCancel)="cancel()"
+        [disabled]="!userId"
+        *ngIf="workFlowActionUsers.length > 0 && fileDetails?.currentAssignee"
+      >
+        {{ getCurrentAction() }}
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        nz-popconfirm
+        nzPopconfirmTitle='{{"business-dashboard.bullettin-details.douwanttoapprove" | translate}}'
+        (nzOnConfirm)="approveFile()"
+        *ngIf="fileButtons.Approve && fileDetails.currentAssignee"
+        (nzOnCancel)="cancel()"
+      >
+        {{"cpl.filelistflow.approve" | translate}}
+      </button>
+      <!-- <button nz-button [nzType]="'default'" class="secondary-button button-admin-radius button-font dark-border dark-font" nz-popconfirm nzPopconfirmTitle="Do you want to Disallow?"
+      *ngIf="fileButtons.Disallow" (nzOnConfirm)="disallowFile()"  (nzOnCancel)="cancel()">Disallow</button> -->
+      <!-- <button
+        nz-button
+        [nzType]="'default'"
+        class="secondary-button button-admin-radius button-font dark-border dark-font"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to Return?"
+        *ngIf="fileButtons.Return"
+        (nzOnConfirm)="returnFile()"
+        (nzOnCancel)="cancel()"
+      >
+        return
+      </button>
+      <button
+        nz-button
+        [nzType]="'default'"
+        class="secondary-button button-admin-radius button-font dark-border dark-font"
+        nz-popconfirm
+        nzPopconfirmTitle="Do you want to Submit?"
+        *ngIf="fileButtons.Submit"
+        (nzOnConfirm)="submitFile()"
+        (nzOnCancel)="cancel()"
+      >
+        submit
+      </button> -->
+    </ng-container>
+    <button
+        nz-button
+        [nzType]="'default'"
+        class="ml-6 ant-btn ant-btn-default"
+        (click)="goToList()"
+      >
+        {{"business-dashboard.question.questionview.back" | translate}}
+      </button>
+  </div>
+</div>
+
+<nz-divider></nz-divider>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <nz-spin [nzSpinning]="loading" [nzSize]="'large'" nzTip="Loading....">
+      <div class="frame-pdf" *ngIf="docUrl">
+        <ng2-pdfjs-viewer
+          *ngIf="docUrl"
+          [pdfSrc]="docUrl"
+          scroll="V"
+          [downloadFileName]="'Report.pdf'"
+          [openFile]="false"
+          [viewBookmark]="false"
+          [download]="true"
+          [print]="true"
+          spread="N"
+          [fullScreen]="false"
+          [showSpinner]="true"
+          [viewerId]="auth.getCurrentUser().userId"
+          (onDocumentLoad)="stopLoading()"
+        ></ng2-pdfjs-viewer>
+      </div>
+    </nz-spin>
+  </div>
+
+  <div class="col-md-6">
+    <nz-tabset>
+      <nz-tab nzTitle='{{"business-dashboard.question.questionedit.notes" | translate}}'>
+        <app-notes #notes (notes)="setLatestNote($event)" [fileDetails]="fileDetails" *ngIf="fileDetails.fileId"></app-notes>
+      </nz-tab>
+      <nz-tab nzTitle='{{"business-dashboard.aod.file-tracking.logs" | translate}}'>
+        <app-logs
+          *ngIf="fileDetails.logs && fileDetails.logs.length > 0"
+          [logDetails]="fileDetails.logs"
+        ></app-logs>
+        &nbsp;&nbsp;
+      </nz-tab>
+      <nz-tab nzTitle='{{"business-dashboard.aod.file-tracking.fileinfo" | translate}}'>
+        <app-file-info [fileDetails]="fileDetails"></app-file-info>
+        <app-process-tracker
+          *ngIf="fileDetails.workflowId"
+          [processInfoId]="fileDetails.workflowId"
+          (data)="setStepStatus($event)"
+        ></app-process-tracker>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+</div>
+
+<nz-modal [(nzVisible)]="showPullModal" [nzFooter]="null" [nzClosable]="false">
+    <div class="pading-all">
+        <div class="row">
+          <div class="col-md-12 marginbtm-15">
+            {{"cpl.fileworkflow.reasontopull" | translate}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 marginbtm-15">
+            <textarea
+              nz-input
+              placeholder='{{"cpl.fileworkflow.reasontopull" | translate}}'
+              [nzAutosize]="{ minRows: 2, maxRows: 6 }"
+              maxlength="256"
+              [(ngModel)]="pullRemark"
+              oninput="javascript: if (this.value.length==1 && this.value==' ') this.value = '';"
+            >
+            </textarea>
+          </div>
+        </div>
+        <div class="row mrt-50 margnrtp-15">
+          <div class="col-md-12 d-flex justify-content-end">
+            <button
+              type="button"
+              nz-button
+              nzType="default"
+              (click)="cancelPull()"
+              class="secondary-button button-admin-radius button-font dark-border dark-font"
+            >
+              {{"business-dashboard.question.cancel" | translate}}
+            </button>
+            <button
+              type="button"
+              [disabled]="!pullRemark"
+              nz-button
+              nzType="primary"
+              nz-popconfirm
+              nzPopconfirmTitle='{{"business-dashboard.bullettin-details.areusureuwantpull" | translate}}'
+              (nzOnConfirm)="pullFile()"
+              (nzOnCancel)="cancel()"
+              class="primary-button button-admin-radius button-font"
+            >
+              {{"cpl.fileworkflow.pullfile" | translate}}
+            </button>
+          </div>
+        </div>
+      </div>
+</nz-modal>

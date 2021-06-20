@@ -1,0 +1,82 @@
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+      <nz-breadcrumb-item>
+        Dashboard
+      </nz-breadcrumb-item>
+      <nz-breadcrumb-item>
+        Committee Management
+      </nz-breadcrumb-item>
+    </nz-breadcrumb>
+  </div>
+</div>
+<div class="row d-flex justify-content-space-between">
+  <div class="col-md-6">
+    <h2 class="admin-page-heading">Questionnaire</h2>
+  </div>
+
+  <div class="col-md-6 text-align-right">
+    <!-- <button nz-button nzType="primary" class="mrgL6">
+        Create Questionnaire
+      </button> -->
+  </div>
+</div>
+<nz-divider></nz-divider>
+<div class="row d-flex justify-content-space-between marginbtm-25">
+  <div class="col-md-6">
+  </div>
+  <!-- <div class="col-md-6"> -->
+  <div class="col-md-1">
+    <p>Add Filter</p>
+  </div>
+  <div class="col-md-3">
+    <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+      <input type="text" name="search" nz-input [(ngModel)]="searchFilter" (ngModelChange)="filterList()"
+        placeholder="" />
+    </nz-input-group>
+    <ng-template #suffixIconSearch>
+      <i nz-icon nzType="search"></i>
+    </ng-template>
+  </div>
+  <!-- </div> -->
+  <div class="col-md-2" *ngIf="true">
+    <a class="abs_btn" nzType="default" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+      <i nz-icon nzType="layout" nzTheme="outline"></i>
+      <span> Cols </span>
+    </a>
+    <nz-dropdown-menu #menu="nzDropdownMenu">
+      <div>
+        <ul nz-menu fileTable *ngFor="let box of checkboxes; let i = index" class="checkbox-style">
+          <li>
+            <label nz-checkbox [(ngModel)]="box.check" name="i">{{
+                  box.label
+                }}</label>
+          </li>
+        </ul>
+      </div>
+    </nz-dropdown-menu>
+  </div>
+</div>
+<!-- </div> -->
+<nz-divider></nz-divider>
+<div class="row">
+  <div class="col-md-12">
+    <nz-table #committeeTable [nzData]="listOfData" nzShowPagination nzShowSizeChanger>
+      <thead>
+        <tr>
+          <th *ngIf="checkboxes[0].check">Meeting Subject</th>
+          <th *ngIf="checkboxes[1].check">Date of Meeting</th>
+          <th *ngIf="checkboxes[2].check">File Number</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="cursor: pointer;" *ngFor="let data of committeeTable.data; let i = index">
+          <td *ngIf="checkboxes[0].check" (click)="viewQuestionnaire(data.id)">{{data.subject}}</td>
+          <td *ngIf="checkboxes[1].check" (click)="viewQuestionnaire(data.id)">{{data.meetingDate}}</td>
+          <td *ngIf="checkboxes[2].check">
+            <a nz-button nzType="link" class="viewlink" (click)="viewFile(data.fileId)">{{data.fileNumber}}</a>
+          </td> 
+      </tbody>
+    </nz-table>
+  </div>
+</div>

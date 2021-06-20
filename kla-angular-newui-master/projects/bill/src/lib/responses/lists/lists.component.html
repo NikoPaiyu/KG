@@ -1,0 +1,178 @@
+<div class="row d-flex jusleify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.lists" | translate }}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          {{ "business-dashboard.lists.dashboard" | translate }}
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h3>
+            {{ "business-dashboard.lists" | translate }}
+          </h3>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end">
+          <button nz-button nzType="default" class="mr-6">...</button>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+</div>
+  <div class="row">
+    <div class="col-md-6">
+      <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+        {{ "bill.ballotresult.list" | translate }}
+      </button>
+      <button type="button" class="ant-btn" (click)="clearFilter()">
+        {{ "bill.bill-clause.list.list1" | translate }}
+      </button>
+      <button type="button" class="ant-btn" (click)="clearFilter()">
+        {{ "bill.bill-clause.list.lists2" | translate }}
+      </button>
+    </div>
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input
+              type="text"
+              [(ngModel)]="searchParam"
+              name="search"
+              nz-input
+              placeholder=""
+              (ngModelChange)="searchBill()"
+            />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" 
+              nz-dropdown
+              nzTrigger="click"
+              [nzDropdownMenu]="menu"
+          >
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i> Cols
+          </button>
+        </div>
+      
+            <nz-dropdown-menu #menu="nzDropdownMenu">
+              <div>
+                <ul
+                  nz-menu
+                  fileTable
+                  *ngFor="let box of colCheckboxes; let i = index"
+                  class="checkbox-style"
+                >
+                  <li>
+                    <label nz-checkbox 
+                    [nzDisabled]="box.disable" 
+                    [(ngModel)]="box.check" name="i" 
+                    (ngModelChange)="disableCheckBox()">{{
+                      box.label
+                    }}</label>
+                  </li>
+                </ul>
+              </div>
+            </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+  
+  <div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of filtrParams.tableDto">
+      <div class="row align-items-center" *ngIf="filter.filtersel">
+        <div class="col-md-4 wordbreak">
+          {{ filter.label }}
+        </div>
+        <div class="col-md-7">
+          <nz-select
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder=""
+            [(ngModel)]="filter.selValue"
+            name="{{ filter.label }}"
+            (ngModelChange)="searchCol()"
+          >
+            <nz-option
+              *ngFor="let data of filter.data"
+              [nzLabel]="data"
+              [nzValue]="data"
+            >
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i
+            nz-icon
+            nzType="close-circle"
+            nzTheme="outline"
+            (click)="disableFilter(filter)"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-table
+    #filterTable
+    nzShowPagination
+    nzShowSizeChanger
+    [nzData]="billList"
+    class="table-all"
+  >
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      
+      <tr>
+        <th
+          nzShowCheckbox
+          [(nzChecked)]="checkbxParams.allDtCheckd"
+          (nzCheckedChange)="_checkAllRows($event)"
+        ></th>
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="No">
+          {{ "business-dashboard.lists.serialNo" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="billNo">
+          {{ "business-dashboard.lists.billNo" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="membername">
+            {{ "business-dashboard.lists.billTitle" | translate }}
+          </th>
+          <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="publicopinion">
+            {{ "business-dashboard.lists.type" | translate }}
+          </th>
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="ballotpriority">
+          {{ "business-dashboard.lists.fileNumber" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="status">
+          {{ "business-dashboard.lists.status" | translate }}
+        </th>
+          <showing {{ paginationParams.pageIndex  }} to
+            {{ paginationParams.numberOfItem }} of
+            {{ paginationParams.total }} entries --></showing>
+        </div>
+      </ng-container>
+    </div>
+    <div class="col-md-8 d-flex justify-content-end"> 
+      <nz-pagination
+      [nzPageIndex]="paginationParams.pageIndex"
+      [nzPageSize]="paginationParams.numberOfItem"
+      [nzTotal]="paginationParams.total"
+      (nzPageIndexChange)="pageIndexChange($event)"
+      nzShowSizeChanger
+      (nzPageSizeChange)="pageSizeChange($event)"
+      [nzShowTotal]="rangeTemplate"
+    ></nz-pagination>
+  </div>

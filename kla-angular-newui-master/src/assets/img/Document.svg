@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="56.518" height="72.666" viewBox="0 0 56.518 72.666">
+  <g id="Group_989" data-name="Group 989" transform="translate(8820 -5456.334)">
+    <path id="Path_1988" data-name="Path 1988" d="M16.615,957.362A1.683,1.683,0,0,0,15,958.977v69.437a1.678,1.678,0,0,0,1.615,1.615H58.6a1.62,1.62,0,0,0,1.135-.479l11.3-11.3a1.634,1.634,0,0,0,.479-1.135V958.977a1.678,1.678,0,0,0-1.615-1.615Zm1.615,3.23H68.289v54.9H58.6a1.654,1.654,0,0,0-1.615,1.615v9.689H18.23Zm41.985,58.133h5.778l-5.778,5.778Z" transform="translate(-8835 4498.972)" fill="#36afff"/>
+    <g id="Group_988" data-name="Group 988" transform="translate(0 2)">
+      <g id="Rectangle_923" data-name="Rectangle 923" transform="translate(-8801 5469)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="28" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="27.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_928" data-name="Rectangle 928" transform="translate(-8801 5491)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="28" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="27.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_926" data-name="Rectangle 926" transform="translate(-8801 5480)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="28" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="27.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_929" data-name="Rectangle 929" transform="translate(-8801 5502)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="28" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="27.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_924" data-name="Rectangle 924" transform="translate(-8810 5469)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="6" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="5.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_927" data-name="Rectangle 927" transform="translate(-8810 5491)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="6" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="5.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_925" data-name="Rectangle 925" transform="translate(-8810 5480)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="6" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="5.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+      <g id="Rectangle_930" data-name="Rectangle 930" transform="translate(-8810 5502)" fill="#36afff" stroke="#36afff" stroke-width="0.5">
+        <rect width="6" height="3" rx="1.5" stroke="none"/>
+        <rect x="0.25" y="0.25" width="5.5" height="2.5" rx="1.25" fill="none"/>
+      </g>
+    </g>
+  </g>
+</svg>

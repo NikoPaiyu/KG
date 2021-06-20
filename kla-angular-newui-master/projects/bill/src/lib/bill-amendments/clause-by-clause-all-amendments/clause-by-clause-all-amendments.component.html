@@ -1,0 +1,240 @@
+
+<!-- <div (mouseup)="showSelectedText()">
+  Do you think that facebook, twitter, linkedin are designed to make people
+  addict ?, Then you have to read this article. The most popular social
+  networking sites are following people's habit. It is not concept, it is
+  people's habit
+</div>
+<br />
+<h3>Selected Text</h3>
+<div>{{ selectedText }}</div> -->
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+      <nz-breadcrumb>
+        <nz-breadcrumb-item>  {{ "cpl.actregistration.dash" | translate }} </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+          <b>  {{ "bill-amendments.general-amendment.amendments" | translate }} </b>
+        </nz-breadcrumb-item>
+      </nz-breadcrumb>
+    </div>
+    <div class="col-md-12">
+      <div class="row d-flex justify-content-space-between">
+        <div class="col-md-6">
+          <h2 class="admin-page-heading">{{ "bill.bills.clausebyclauseallamendments" | translate }}</h2>
+        </div>
+        <div class="col-md-6 d-flex justify-content-end"></div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <!-- <div class="row marginbtm-25 margntp-25">
+    <div class="col-md-7">
+      <nz-tabset>
+        <nz-tab nzTitle="Bill"> </nz-tab>
+      </nz-tabset>
+    </div>
+    <div class="col-md-5">
+      <nz-tabset>
+        <nz-tab nzTitle="Amendments"> </nz-tab>
+      </nz-tabset>
+    </div>
+  </div> -->
+  <div class="row">
+    <div class="col-md-6">
+      <button type="button" class="ant-btn mr-6" (click)="showFilter('row')">
+        {{ "noticeprocessing.staff.personalregister.addfilter" | translate }}
+      </button>&nbsp;&nbsp;
+      <button type="button" class="ant-btn" (click)="clearFilter()" *ngIf="filtrParams.tableDto.length > 0">
+        {{ "bill.bill-clause.list.clearfilter" | translate }}
+      </button>
+    </div>
+    <div class="col-md-6">
+      <div class="row d-flex justify-content-end">
+        <div class="col-md-6">
+          <nz-input-group nzSearch [nzSuffix]="suffixIconSearch">
+            <input type="text" [(ngModel)]="searchParam" name="search" nz-input placeholder='{{ "cpl.documents.search" | translate }}'
+          (ngModelChange)="searchOnList()" />
+          </nz-input-group>
+          <ng-template #suffixIconSearch>
+            <i nz-icon nzType="search"></i>
+          </ng-template>
+        </div>
+  
+        <div class="col-md-3 d-flex align-items-center justify-content-end">
+          <button type="button" class="ant-btn" nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu">
+            <i nz-icon nzType="plus" nzTheme="outline" class="mr-6"></i>
+            {{
+              "business-dashboard.billregister.billregisterlist.cols" | translate
+            }}
+          </button>
+        </div>
+        <nz-dropdown-menu #menu="nzDropdownMenu">
+          <div>
+            <ul nz-menu fileTable *ngFor="let box of colCheckboxes; let i = index" class="checkbox-style">
+              <li>
+                <label nz-checkbox [nzDisabled]="box.disable" [(ngModel)]="box.check" name="i"
+                  (ngModelChange)="disableCheckBox()">{{ box.label }}</label>
+              </li>
+            </ul>
+          </div>
+        </nz-dropdown-menu>
+      </div>
+    </div>
+  </div>
+  <div class="row margnrtp-15 ma d-flex justify-content-space-between icon-color">
+    <div class="col-md-4" *ngFor="let filter of filtrParams.tableDto">
+      <div class="row align-items-center" *ngIf="filter.filtersel">
+        <div class="col-md-4 wordbreak">
+          {{ filter.label }}
+        </div>
+        <div class="col-md-7">
+          <nz-select nzShowSearch nzAllowClear nzPlaceHolder="" [(ngModel)]="filter.selValue" name="{{ filter.label }}"
+            (ngModelChange)="searchCol()">
+            <nz-option *ngFor="let data of filter.data" [nzLabel]="data" [nzValue]="data">
+            </nz-option>
+          </nz-select>
+        </div>
+        <div class="col-md-1 pdzero">
+          <i nz-icon nzType="close-circle" nzTheme="outline" (click)="disableFilter(filter)"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nz-divider></nz-divider>
+  <nz-table #filterTable nzShowPagination nzShowSizeChanger [nzData]="clauseList" class="table-all">
+    <thead (nzSortChange)="sort($event)" nzSingleSort>
+      <tr>
+        <!-- <th
+          nzShowCheckbox
+          [(nzChecked)]="checkbxParams.allDtCheckd"
+          (nzCheckedChange)="_checkAllRows($event)"
+        ></th> -->
+        <th *ngIf="colCheckboxes[0].check" nzShowSort nzSortKey="billNo">
+          {{ "business-dashboard.responses.ordapprove.billno" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[1].check" nzShowSort nzSortKey="billTitle">
+          {{ "business-dashboard.responses.ordapprove.titleofbill" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[2].check" nzShowSort nzSortKey="billType">
+          {{ "business-dashboard.responses.ordapprove.typeofbill" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[7].check" nzShowSort nzSortKey="ministerName">
+          {{ "business-dashboard.responses.ordapprove.minister" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[3].check" nzShowSort nzSortKey="fileNo">
+          {{ "business-dashboard.responses.ordapprove.fileNo" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[4].check" nzShowSort nzSortKey="numberOfAmendments">
+          {{ "bill-amendments.general-amendment.noofamendments" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[5].check" nzShowSort nzSortKey="respondedmembers">
+          {{ "bill-amendments.general-amendment.respondedmembers" | translate }}
+        </th>
+        <th *ngIf="colCheckboxes[6].check">{{ "business-dashboard.question.questionmlalisting.status" | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- <tr *ngIf="tableParams.colSpan">
+        <th colspan="10" class="tb-data">
+          {{ checkbxParams.numberOfChecked }} Selected :
+          <button class="ant-btn mr-6" (click)="assignToAssistant()">
+            Assign to Assistant
+          </button>
+        </th>
+      </tr> -->
+      <tr *ngFor="let list of filterTable.data">
+        <!-- <td nzShowCheckbox [(nzChecked)]="mapOfCheckedId[list.billId]" (nzCheckedChange)="refreshStatus(list)"></td> -->
+  
+        <td *ngIf="colCheckboxes[0].check" (mouseover)="showLinks(list.billId)" (mouseleave)="hideLinks(list.billId)">
+      <tr>
+        {{
+              list.billNumber
+            }}
+      </tr>
+      </td>
+      <td *ngIf="colCheckboxes[1].check" (mouseover)="showLinks(list.billId)" (mouseleave)="hideLinks(list.billId)">
+        <tr>
+          {{
+              list?.title
+            }}
+        </tr>
+        <tr *ngIf="list.viewLinks">
+          <div>
+            <td><a class="viewlink" (click)="view_List(list.billId)">{{ "bill.bills.viewnotices" | translate }}</a></td>
+            <td><a class="viewlink" (click)="view_Bill(list.billId)">{{ "bill.bills.viewinbill" | translate }}</a></td>
+          </div>
+        </tr>
+      </td>
+        <td *ngIf="colCheckboxes[2].check">{{ list?.type?.split("_").join(" ")}}</td>
+        <td *ngIf="colCheckboxes[7].check">{{ list.ministerName}}</td>
+        <td *ngIf="colCheckboxes[3].check">{{ list.fileNumber }}</td>
+        <td *ngIf="colCheckboxes[4].check">{{ list.clauseCount }}</td>
+        <td *ngIf="colCheckboxes[5].check">{{ list.memberCount }}</td>
+        <td *ngIf="colCheckboxes[6].check">
+          <nz-tag> {{ list.billStatus }}</nz-tag>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <nz-modal [(nzVisible)]="filtrParams.rowFilter" nzTitle='{{ "business-dashboard.question.questionlist.filtercolumns" | translate }}' (nzOnCancel)="showFilter(null)" (nzOnOk)="_confrmFilter()">
+    <div class="padding_15">
+      <p *ngFor="let box of filtrParams.tableDto; let i = index">
+        <label nz-checkbox name="checkbox{{ i }}" (ngModelChange)="_chooseFilter(box)"
+          [(ngModel)]="box.checked">{{ box.label }}</label>
+      </p>
+    </div>
+  </nz-modal>
+  
+  <!-- Assign to Assistant 
+  <nz-modal nzTitle="Assign to Assistant" [(nzVisible)]="assignAssistant.visible" [nzFooter]="null" [nzClosable]="false">
+    <div class="width-100 pading-all">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row margnrtp-15 align-items-center">
+            <div class="col-md-4">
+              {{ "cpl.documents.assigntoassisstant" | translate }}
+            </div>
+          </div>
+          <div class="row margnrtp-15 align-items-center">
+            <div class="col-md-4">{{ "cpl.documents.Filter" | translate }}</div>
+          </div>
+          <div class="row margnrtp-15"> -->
+          <!-- <div class="col-md-12">
+              <input nz-input placeholder="Search name here" [(ngModel)]="assignAssistant.searchPerson"
+                (ngModelChange)="personSearch()" />
+            </div>
+          </div>
+          <div class="row margnrtp-15">
+            <div class="col-md-12">
+              <nz-card [nzTitle]="null" class="checklist-all">
+                <nz-table #assistantListTable [nzData]="assignAssistant.assistantList">
+                  <tbody>
+                    <tr *ngFor="let person of assistantListTable.data">
+                      <td>
+                        <nz-radio-group [(ngModel)]="assignAssistant.assigneeId">
+                          <label nz-radio [nzValue]="person.userId"></label>
+                        </nz-radio-group>
+                      </td>
+                      <td>{{ person.fullName }}</td>
+                      <td>{{ person.name }}</td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </nz-card>
+            </div>
+          </div>
+          <div class="row mrt-50 margnrtp-15">
+            <div class="col-md-12 d-flex justify-content-end">
+              <button type="button" nz-button nzType="default" (click)="onCancelAssistant()">
+                Cancel
+              </button> -->
+              <!-- <button type="button" nz-button nzType="primary" (click)="onSubmitAssistant()" class="margnlft-15"
+                [disabled]="assignAssistant.assigneeId === null">
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-modal> -->

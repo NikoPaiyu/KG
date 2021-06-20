@@ -1,0 +1,75 @@
+<div class="row">
+  <div class="col-md-12">
+    <div
+      id="fullscreen"
+      [ngClass]="{
+        enlarge: fullScreenMode == true
+      }"
+      class="pdf-container"
+      *ngIf="isStreaming"
+    >
+      <div class="abs-adj">
+         <p *ngIf="pdfSrc" class="page-num">
+        {{ pageNumber > totalPages ? totalPages : pageNumber }} /
+        {{ totalPages }}
+      </p>
+
+        <button (click)="addClass()" class="mla-button margnrtp-15 padng-live">
+          <div *ngIf="fullScreenMode">
+            {{ "livescreen.normalscreen" | translate }}
+            <!-- <img src="../../assets/img/normalscreen.svg" alt="" width="15" /> -->
+          </div>
+          <div *ngIf="!fullScreenMode">
+            {{ "livescreen.fullscreen" | translate }}
+            <!-- <img src="../../assets/img/fullscreen.svg" alt="" width="15" /> -->
+          </div>
+        </button>
+        <button
+          *ngIf="pdfSrc"
+          [disabled]="pageNumber === 1"
+          (click)="previousPage()"
+          class="mla-button margnrtp-15 padng-live"
+        >
+          {{ "livescreen.prevpage" | translate }}
+          <!-- <img src="../../assets/img/prev.svg" alt="" width="10" /> -->
+        </button>
+        <button
+          *ngIf="pdfSrc"
+          (click)="nextPage()"
+          [disabled]="this.pageNumber >= this.totalPages ? true : false"
+          class="mla-button margnrtp-15 padng-live greenbtn"
+        >
+          {{ "livescreen.nextpage" | translate }}
+          <!-- <img src="../../assets/img/next.svg" alt="" width="10" /> -->
+        </button>
+      </div>
+     
+      <pinch-zoom
+        [disableZoomControl]="'disable'"
+        *ngIf="pdfSrc"
+        class="zoom-reader"
+      >
+        <div class="pdf_pd">
+          <pdf-viewer
+            *ngIf="pdfSrc"
+            [src]="pdfSrc"
+            [render-text]="false"
+            style="display: block;"
+            (after-load-complete)="afterLoadComplete($event)"
+            [show-all]="false"
+            [page]="pageNumber"
+            (pageChange)="pageChange($event)"
+          ></pdf-viewer>
+        </div>
+      </pinch-zoom>
+    </div>
+
+    <div class="live_contents paddingT30" *ngIf="!isStreaming">
+      <!-- <span><img src="../../assets/img/live.svg" alt="" width="50"/></span>
+      <span>{{
+        "currentbusiness.livescreen.livesharingwillstartsoon" | translate
+      }}</span> -->
+      <nz-empty></nz-empty>
+    </div>
+  </div>
+</div>

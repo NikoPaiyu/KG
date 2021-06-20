@@ -1,0 +1,62 @@
+@import "~src/sass/utilities/variables";
+.justify-content-space-between {
+  justify-content: space-between;
+}
+.text-align-right {
+  text-align: right;
+}
+
+.mrgL6 {
+  margin-left: 6px;
+}
+h4 {
+  font-size: 16px;
+  font-weight: 500;
+}
+.mrgT10 {
+  margin-top: 10px;
+}
+
+.mrgT20 {
+  margin-top: 20px;
+}
+
+.btn-primary-1 {
+  background-color: $primary-button-color;
+  color: $white;
+}
+.text-center {
+  text-align: center;
+}
+.ql-container.ql-snow.ngx-quill-view-html {
+  display: flex;
+  justify-content: center;
+}
+
+.preview-main {
+  background-color: #eee;
+  padding: 20px 15px;
+  margin-top: 10px;
+
+  &-text {
+    width: 100%;
+    text-align: center;
+
+    h3 {
+      text-transform: uppercase;
+      font-size: 17px;
+      font-weight: 600;
+      color: #464545;
+    }
+  }
+}
+.text-align-right {
+  text-align: right;
+}
+.justify-content-space-end {
+  justify-content: flex-end;
+}
+
+.mrgT6 {
+  margin-top: 6px;
+}

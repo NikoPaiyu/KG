@@ -1,0 +1,72 @@
+<div class="padding_25">
+<h6>Reply: Committee formation Nominees</h6>
+<div class="row">
+  <div class="col-md-8">
+<nz-card style="width: 700px">
+  <div *ngIf="!isEdit">
+  <div *ngFor="let member of committeeResponse; let i = index">
+    <div class="row mrgT20">
+      <div class="col-md-4">
+        {{i+1}}. {{ member.memberName }}
+      </div>
+      <div class="col-md-4">
+        {{ member.subjectName }}
+      </div>
+    </div>
+  </div>
+</div>
+<div *ngIf="isEdit">
+  <form [formGroup]="correspondenceFormGrp">
+    <div formArrayName="businessData">
+      <div
+        *ngFor="let data of businessData.controls; let i = index"
+        formGroupName="{{ i }}"
+      >
+        <div class="row mrgT20">
+          <div class="col-md-4">
+            {{ data.value.memberName }}
+          </div>
+          <div class="col-md-7">
+            <nz-form-item *ngIf="isEdit">
+              <nz-form-control nzErrorTip="Select Committee">
+                <nz-select
+                  nzShowSearch
+                  nzAllowClear
+                  nzPlaceHolder="Select committee"
+                  formControlName="subjectId"
+                  (ngModelChange)="setSubName($event, i)"
+                >
+                  <nz-option
+                    *ngFor="let data of subjectCommitte"
+                    [nzLabel]="data.subjectName"
+                    [nzValue]="data.id"
+                  ></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+</nz-card>
+</div>
+<div class="col-md-4">
+  <nz-collapse class="nominee-collapse">
+    <ng-container class ="mrgT20" *ngFor="let panel of previewData">
+    <nz-collapse-panel *ngIf="panel?.members?.length > 0" [nzHeader]="panel?.subjectName" >
+      <div *ngFor="let member of panel?.members; let i = index">
+        <div class="row mrgT20">
+          <div class="col">
+            {{i+1}}. {{ member }}
+          </div>
+        </div>
+      </div>
+    </nz-collapse-panel>
+  </ng-container>
+    </nz-collapse>   
+
+</div>
+</div>
+</div>

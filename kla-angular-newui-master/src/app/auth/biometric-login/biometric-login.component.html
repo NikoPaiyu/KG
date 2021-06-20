@@ -1,0 +1,23 @@
+<div class="row justify-content-center align-items-start h-100 ">
+  <div class="content-bg contentarea align-self-md-center align-self-lg-center align-self-xl-center 
+    col-md-11 d-flex justify-content-center align-items-center">
+    <div class="col-sm-12 col-md-9 col-lg-8 col-xl-6 align-self-md-center align-self-lg-center `
+      align-self-xl-center">
+      <div class="login-form login-user d-flex align-items-center flex-wrap justify-content-center">
+        <h2 class="heading-2 text-center mrgB67 ">{{'ലോഗിൻ ചെയ്യുക'| translate }}</h2>
+        <p class="margntp-25">{{'ഫിംഗർ പ്രിന്റ് റീഡറിൽ വിരൽ അമർത്തുക' | translate}}</p>
+        <button nz-button nzType="default" class="mla-button" (click)="BiometricLogin()">
+          <img [src]="fingerprintImageSource" width="30px"/>
+          {{'Initiate fingerprint' | translate}}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="login-area">
+      <h1></h1>
+    </div>
+  </div>
+</div>

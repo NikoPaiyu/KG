@@ -1,0 +1,57 @@
+<div class="row">
+    <div class="col-md-12 col-sm-12 mb-2">
+    <nz-breadcrumb>
+        <nz-breadcrumb-item>
+          {{"business-dashboard.viewbullettin.dashboard" | translate}}
+        </nz-breadcrumb-item>
+        <nz-breadcrumb-item>
+        <b> {{"business-dashboard.viewbullettin.bullettins" | translate}} </b>
+        </nz-breadcrumb-item>
+    </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+
+<div class="row">
+    <div class="col-md-3">
+      <h2 class="admin-page-heading">{{"business-dashboard.bullettindetails.bullettinno" | translate}} {{titleCategory?.bulletinNumber}}</h2>
+    </div>
+</div>    
+<nz-divider></nz-divider>
+</div>
+<div class="row">
+  <div class="col-md-6">
+      <!-- <b>Priority List</b> -->
+  </div>
+</div>
+<br/>
+<nz-card
+class="margin-10 notesp"
+> 
+  <div class="row">
+    <div class="col-md-7" >
+        <h6>{{titleCategory?.title}}</h6>
+        <br/>
+        <p>{{titleCategory?.type}}</p>
+        <br/>
+        <p>{{titleCategory?.description}}</p>
+    </div>
+  </div> 
+</nz-card>  
+
+
+
+<!-- <ng-container *ngFor = "let item of titleCategory; index as i;">
+    <div class="overflow-blt">{{item.titleCategory}}</div>
+    <div class="row" *ngFor="let data of item."> 
+      <div class="col-md-6">
+        <div class="bg_block">
+          <div class="col-md-7 pdzero">
+            <div class="width-100 d-flex marginbtm-15">
+              <div class="overflow-blt">{{data.type}}</div>
+            </div> 
+         </div>
+       </div>
+      </div>
+    </div>
+</ng-container>  -->

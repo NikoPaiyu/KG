@@ -1,0 +1,208 @@
+<div class="row d-flex justify-content-space-between">
+    <div class="col-md-12 col-sm-12 mb-2">
+        <nz-breadcrumb>
+            <nz-breadcrumb-item>
+                {{ "committee.dashboard" | translate}}
+            </nz-breadcrumb-item>
+            <nz-breadcrumb-item>
+                Tables
+            </nz-breadcrumb-item>
+        </nz-breadcrumb>
+    </div>
+</div>
+<div class="sticky_action_bar">
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="admin-page-heading">
+            Member Time Allocation
+        </h2>
+    </div>
+    <div class="col-md-6 d-flex justify-content-between">
+        <div></div>
+        <div class="d-flex justify-content-between">
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="onBack()">
+                back
+            </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="save()">
+                Save
+            </button>
+            <button class="d-flex align-items-center mr-6" nz-button nzType="default" (click)="submit()">
+                Submit
+            </button>
+        </div>
+    </div>
+</div>
+<nz-divider></nz-divider>
+</div>
+<form [formGroup]="TimeallocationForm">
+    <div class="row margnrtp-5">
+        <div class="col-md-8">
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    Session :
+                </div>
+                <div class="col-md-6">
+                    <form-item>
+                        <form-control [nzSpan]="15" nzErrorTip="Enter Session">
+                            <nz-select nzAllowClear name="sessionId" formControlName="session">
+                                <nz-option *ngFor="let item of assemblySessionObj.session" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </form-control>
+                    </form-item>
+                </div>
+            </div>
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    Day :
+                </div>
+                <div class="col-md-6">
+                    <form-item>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Date">
+                            <nz-date-picker nzFormat="dd-MM-yyyy" formControlName="Date" [nzDisabledDate]="disabledDate">
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </form-item>
+                </div>
+            </div>
+            <div class="row margnrtp-5">
+                <div class="col-md-6">
+                    Allocation For :
+                </div>
+                <div class="col-md-6">
+                    <form-item>
+                        <nz-form-control [nzSpan]="15" nzErrorTip="Select Total Time">
+                            <nz-select nzAllowClear name="sessionId" formControlName="allocation">
+                                <nz-option *ngFor="let item of assemblySessionObj.session" [nzLabel]="item.sessionId" [nzValue]="item.id">
+                                </nz-option>
+                            </nz-select>
+                        </nz-form-control>
+                    </form-item>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 d-flex justify-content-flex-end">
+            <div class="rotated">
+                <button nz-button nzType="default" (click)="drawer()" class="mrgR6">
+           Notes(20)
+          </button>
+            </div>
+        </div>
+    </div>
+    <div class="row margnrtp-10">
+        <div class="col-md-6">
+            <!-- <div class="row" *ngFor=" let item of memberList"> -->
+            <!-- <nz-card class="membr_btm"> -->
+            <div class="row margnrtp-5">
+                <div class="col-md-12 border">
+                    <ngx-nestable [(list)]="memberList" [template]="itemTemplate">
+                    </ngx-nestable>
+                    <ng-template #itemTemplate let-row>
+                        <div class="col-md-12 border">
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <i nz-icon nzType="drag" class="baseline" nzTheme="outline" [ngxNestableDragHandle]="row"></i>
+                                </div>
+                                <div class="col-md-10">
+                                    <span>{{
+                  row.item.title ? row.item.title : row.item.id
+                }}</span>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <button nz-button nzSize="small" nzType="default" class="mrgL6" (click)="deleteMember()">
+                  <i
+                    nz-icon
+                    nzType="delete"
+                    nzTheme="outline"
+                    class="baseline"
+                  ></i>
+                </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-template>
+                </div>
+
+                <!-- </nz-card> -->
+                <!-- </div> -->
+                <div class="col-md-12">
+                    <button nz-button nzType="dashed" class="add-button width-75 d-flex align-items-left justify-content-center marginbtm-15 " (click)="showMemberPopup( 'member')">
+            <i nz-icon nzType="plus "></i>
+           Add Member
+          </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nz-drawer [nzWidth]="510" [nzClosable]="true" [nzVisible]="visible" nzPlacement="right" nzTitle="Notes" (nzOnClose)="drawer()">
+        <!-- <div>
+            <div class="row marginbtm-10 margnlft-10">
+                <nz-alert nzType="warning" nzMessage="Please Ratify this File by adding a Note!" nzShowIcon></nz-alert>
+            </div>
+            <div class="overflow-blt">
+                <div *ngFor="let note of notesInfo.notes; let i = index" class="input-group brdr_nt" [ngClass]="{ yellowColor: note.temporary == true }">
+                    <div class="d-flex justify-content-between mt-20 w-100 marginbtm-25">
+                        <div class="col-md-6 pl0">
+                            <b class="width-100 fl marginbtm-5">{{
+                  note?.user?.details?.fullName
+                }}</b>
+                            <span class="width-100 fl">{{ note?.user?.roles[0]?.roleName }}</span>
+                        </div>
+                        <div class="col-md-6 d-flex justify-content-between">
+                            <span>{{ note.updatedDate | date: "hh:mm a" }} </span>
+                            <span>|</span>
+                            <span>{{ note.updatedDate | date: "dd/MM/yyyy" }}</span>
+                        </div>
+                    </div>
+                    <div *ngIf="!note.isEdit; else editNotes" class="width-100 marginbtm-15">
+                        {{ note.note }}
+                    </div>
+                    <ng-template #editNotes>
+                        <input type="text" nzSize="large" nz-input [(ngModel)]="note.note" name="editedNote" nz-input placeholder="Type your comments & notes" />
+
+                        <div class="btn-notes">
+                            <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid">
+                                <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+                                <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+                            </nz-radio-group>
+                        </div>
+                    </ng-template>
+                    <div class="fl width-100">
+                        <ng-container *ngIf="this.userId == note.user.userId &&
+                  (fileResponse?.status !== 'APPROVED' ||
+                  ratificationStatus === 'PENDING') &&
+                  (this.userId === assignee ||
+                  ratificationStatus === 'PENDING')">
+                            <a *ngIf="note.isEdit; else addNote" class="mr-6" (click)="updateNote(note)">Update</a>
+                            <ng-template #addNote><a class="mr-6" *ngIf="note.user.userId==this.userId && latestNote.noteId == note.noteId && assignee == this.userId" (click)="editNote(note)">Edit</a></ng-template>
+                            &nbsp;&nbsp; &nbsp;&nbsp;
+                            <a nz-popconfirm nzPopconfirmTitle="Do you want to delete this note?" (nzOnConfirm)="deleteNote(note.noteId)" *ngIf="note.user.userId==this.userId && latestNote.noteId == note.noteId && assignee == this.userId" nzPopconfirmPlacement="bottomLeft">Delete</a>
+                        </ng-container>
+                        <span class="note_num">{{ note.noteNumber }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row grey-border" *ngIf="(fileResponse?.status !== 'APPROVED' ||ratificationStatus === 'PENDING') &&
+              (userId === assignee || ratificationStatus === 'PENDING')">
+            <div class="width-100 d-flex bg_txtarea">
+                <div class="col-md-8">
+                    <textarea class="textarea_nt" placeholder="Enter note here..." nz-input [(ngModel)]="newNote"></textarea>
+                </div>
+                <div class="col-md-4">
+                    <div class="btn-notes d-flex align-items-center justify-content-end flexwrap">
+                        <nz-radio-group [(ngModel)]="noteType" nzButtonStyle="solid" class="d-flex">
+                            <label class="ylwbtn" nz-radio-button nzValue="true">Yellow</label>
+                            <label class="nrlbtn" nz-radio-button nzValue="false">Normal</label>
+                        </nz-radio-group>
+                    </div>
+                    <button nz-button [nzType]="'default'" class="save_btn" (click)="saveNote()" [disabled]="!newNote">
+              Save
+            </button>
+                </div>
+            </div>
+        </div> -->
+    </nz-drawer>
+</form>

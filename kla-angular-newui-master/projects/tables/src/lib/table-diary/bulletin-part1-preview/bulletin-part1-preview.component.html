@@ -1,0 +1,152 @@
+<!-- 
+  <div class="padding_25">
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h5>Bulletin Part 1</h5>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h4>
+          {{ diaryData?.assemblyValue }}th Assembly ,
+          {{ diaryData?.sessionValue }} th Session,
+          {{ diaryData?.date | date: "dd/MM/yyyy" }}
+        </h4>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h4 *ngIf = "diaryData?.bulletinId">
+         Bulletin Number:  {{ diaryData?.bulletinId}}
+          
+        </h4>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <div class="row">
+          <div class="col-md-10 align-center">
+            <div class="margnrtp-15" *ngFor="let business of diaryData?.lobLines">
+              <h5>{{ business?.businessName }}</h5>
+              <div
+                class="margnrtp-15"
+                *ngFor="let subBusiness of business?.businessLines"
+              >
+                <h6>{{ subBusiness?.title }}</h6>
+                <div class="row margnrtp-15"  *ngFor="
+                let dairy of subBusiness?.tableDiaryBulletinLines;
+                let diaryIndex = index
+              "> 
+              <div class="col-md-12"> 
+                <nz-card 
+                >
+                  <ng-container *ngIf="dairy?.id">
+                  <div class="row">
+                    <span class="mr-6"
+                      ><b>{{ dairy?.time | date : "dd-MM-yyyy"}}</b></span
+                    >
+                    <nz-tag
+                      class="ml-6"
+                      *ngIf="dairy?.type != 'DIARY_NOTE'"
+                      [nzColor]="getTagColor(dairy?.type)"
+                    >
+                      {{ getTagName(dairy?.type) }}
+                    </nz-tag>
+                  </div>
+                  <div class="row">
+                    <quill-view-html [content]="dairy?.description">
+                    </quill-view-html>
+                  </div>
+                </ng-container>
+                <ng-container *ngIf="dairy?.id == null">
+                  Bulletin Part 1 not yet generated
+                </ng-container>
+                </nz-card>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+   -->
+
+
+   <div class="padding_25">
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h4>{{ diaryData?.assemblyValue }}{{"tables.assembly-election.member-position-details.assembly" | translate}}</h4>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h4>{{ diaryData?.sessionValue }}{{"dashboard.session" | translate}}</h4>
+      </div>
+    </div>
+    <div class="row margnrtp-15">
+      <div class="col-md-12 align-center">
+        <h4>{{"business-dashboard.table.table-diary.bulletin-Part1" | translate}}</h4>
+      </div>
+    </div>
+    
+
+  <div class="row margnrtp-15">
+    <div class="col-md-12 align-center">
+      <h5>{{"business-dashboard.table-diary.bulletin-part1-preview.description" | translate }}</h5>
+    </div>
+  </div>
+</div>
+
+<div class="row margnrtp-15">
+  <div class="col-md-12 align-center">
+    <h5>{{ formatDate(diaryData?.date) }}</h5>
+  </div>
+</div>
+<div class="row margnrtp-15" *ngIf = "diaryData?.bulletinId">
+  <div class="col-md-12 align-center">
+    <h5>{{ "business-dashboard.table.table-diary.bulletin_number" | translate }} 
+      {{ diaryData?.bulletinId}}
+    </h5>
+  </div>
+</div>
+
+<div class="row margnrtp-15">
+  <div class="col-md-12 align-center">
+    <div class="row">
+      <div class="col-md-10 align-center">
+        <div class="margnrtp-15" *ngFor="let business of diaryData?.lobLines">
+          <h5>{{ business?.businessName }}</h5>
+          <div
+            class="margnrtp-15"
+            *ngFor="let subBusiness of business?.businessLines"
+          >
+            <!-- <h6>{{ subBusiness?.title }}</h6> -->
+            <div class="row margnrtp-15"  *ngFor="
+            let dairy of subBusiness?.tableDiaryBulletinLines;
+            let diaryIndex = index
+          "> 
+          <div class="col-md-12"> 
+            
+            
+              <ng-container *ngIf="dairy?.id">
+              
+              <div class="row">
+                <quill-view-html [content]="dairy?.description">
+                </quill-view-html>
+              </div>
+            </ng-container>
+            <!-- <ng-container *ngIf="dairy?.id == null">
+              Bulletin Part 1 not yet generated
+            </ng-container>
+             -->
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  
