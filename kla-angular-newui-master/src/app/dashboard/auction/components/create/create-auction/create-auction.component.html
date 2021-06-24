@@ -1,7 +1,7 @@
 <app-create [createTitle]="createTitle" [createStatus]="statusOfAuction.value" [createBreadCums]="auctionBreadCums">
     <div class="header-action" *ngIf="(UIState$ | async) === 'CREATE'">
-            <button nz-button nzType="primary" (click)="onSubmit('Draft','create')" class="mr-2">Save as Draft</button>
-            <button nz-button nzType="primary" [disabled]="auctionFormGroup.invalid" (click)="onSubmit()" class="mr-2" >Submit</button>
+            <button nz-button nzType="primary" (click)="onSubmit('Draft')" class="mr-2">Save as Draft</button>
+            <button nz-button nzType="primary" [disabled]="auctionFormGroup.invalid" (click)="onSubmit('Active')" class="mr-2" >Submit</button>
             <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
     </div>
     <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">

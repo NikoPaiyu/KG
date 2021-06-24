@@ -1,8 +1,8 @@
 import { NgModule } from "@angular/core";
-import { TablesModule } from "tables";
+
 
 @NgModule({
   declarations: [],
-  imports: [TablesModule],
+  imports: [],
 })
 export class TablesWrapperModule {}

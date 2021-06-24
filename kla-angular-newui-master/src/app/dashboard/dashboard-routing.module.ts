@@ -88,11 +88,6 @@ const routes: Routes = [
           .then(x => x.NoticeProcessingModule)
       },
       {
-        path: "cpl",
-        loadChildren:
-        "./cpl-dashboard-wrapper.module#CplDashboardWrapperModule"
-      },
-      {
         path: "question",
         loadChildren: "../business-dashboard/question/question.module#QuestionModule",
         data: {

@@ -1,7 +1,7 @@
 <app-create [createTitle]="requestTitle" [createBreadCums]="deliveryNoteBreadCums">
     <div class="header-action" *ngIf="(UIState$ | async) === 'CREATE'">
             <button nz-button nzType="primary" (click)="onSubmit('Draft','create')" class="mr-2">Save as Draft</button>
-            <button nz-button nzType="primary" [disabled]="deliveryNoteFormGroup.invalid" (click)="onSubmit()" class="mr-2" >Submit</button>
+            <button nz-button nzType="primary" [disabled]="deliveryNoteFormGroup.invalid" (click)="onSubmit('Active','create')" class="mr-2" >Submit</button>
             <button nz-button nzType="default" (click)="navigateToDashboard()" >Discard</button>
     </div>
     <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">
@@ -10,7 +10,7 @@
     </div>
     <div class="header-action" *ngIf="(UIState$ | async) === 'EDIT'">
         <button nz-button nzType="primary"  (click)="onEdit()" class="mr-2" [disabled]="deliveryNoteFormGroup.invalid" [disabled]="deliveryNoteFormGroup.get('requestStatus').value !== 'Draft'">Save as Draft</button>
-        <button nz-button nzType="primary" [disabled]="deliveryNoteFormGroup.invalid" (click)="onSubmit()" class="mr-2" [disabled]="deliveryNoteFormGroup.get('requestStatus').value !== 'Draft'" >Submit</button>
+        <button nz-button nzType="primary" [disabled]="deliveryNoteFormGroup.invalid" (click)="onSubmit('Active','edit')" class="mr-2" [disabled]="deliveryNoteFormGroup.get('requestStatus').value !== 'Draft'" >Submit</button>
         <button nz-button nzType="default" (click)="navigateToDashboard()">Discard</button>
     </div>
 

@@ -269,10 +269,6 @@ const routes: Routes = [
           import("./pmbr-wrapper.module").then((p) => p.PmbrWrapperModule),
       },
       {
-        path: "tables",
-        loadChildren: "./tables-wrapper.module#TablesWrapperModule",
-      },
-      {
         path: "vote-results",
         loadChildren:
           "../dashboard/listvote-results/listvote-results.module#ListvoteResultsModule",

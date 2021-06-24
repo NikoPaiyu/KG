@@ -6,7 +6,7 @@
     </div>
     <div class="header-action" *ngIf="(UIState$ | async) === 'VIEW'">
         <button nz-button nzType="primary" (click)="onEditState()" class="mr-2" [disabled]="statusOfDisposal?.value === 'AWAITING_APPROVAL'">Edit</button>
-        <button nz-button nzType="primary" (click)="onSubmit('view',null)" class="mr-2" [disabled]="disposalFormGroup?.invalid || statusOfDisposal?.value === 'AWAITING_APPROVAL'">Submit</button>
+        <button nz-button nzType="primary" (click)="onSubmit('view')" class="mr-2" [disabled]="disposalFormGroup?.invalid || statusOfDisposal?.value === 'AWAITING_APPROVAL'">Submit</button>
         <button nz-button nzType="dashed" (click)="onCreateAuction()" class="mr-2" *ngIf="statusOfDisposal?.value === 'AWAITING_APPROVAL'">Create Auction</button>
         <button nz-button nzType="default" (click)="navigateToDashboard()" nzDanger>Discard</button>
     </div>  
